@@ -213,7 +213,7 @@ var coreAppMap = {
 
 var coreAppShim =  {
     'core-bundle': {
-        dpes:['nonamd-libs', 'jquery-ui']
+        deps:['nonamd-libs', 'jquery-ui']
     },
     'jquery' : {
         exports: 'jQuery'

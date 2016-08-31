@@ -1,0 +1,80 @@
+<!--
+    Copyright (c) 2014 Juniper Networks, Inc.
+    All rights reserved.
+-->
+
+<script type="text/x-handlebars-template" id="core-form-label-template">
+    {{#IfCompare label false operator='!=' }}
+        <label for="{{id}}">
+            <span class="label-text">{{label}}</span>
+            {{#if viewConfig.help}}
+                {{#IfCompare viewConfig.help.target 'tooltip' operator='==='}}
+                    <span class="label-help" title="{{viewConfig.help.content}}">
+                        <i class="fa fa-question-circle"></i>
+                    </span>
+                {{/IfCompare}}
+            {{/if}}
+            {{#if lockAttr}}
+                <span class="label-group-edit" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
+                </span>
+            {{/if}}
+    </label>
+    {{/IfCompare}}
+</script>
+
+<script type="text/x-handlebars-template" id="title-lblval-tooltip-template">
+    <div class="row chart-tooltip" style="width:250px;">
+        {{#each this}}
+        {{#IfCompare @index 0}}
+        <div class="row chart-tooltip-title">
+            <p>{{value}}</p>
+        </div>
+        <div class="row chart-tooltip-body ">
+            {{else}}
+            {{#IfCompare true options.noLabelColon}}
+            <div class="row chart-tooltip-row" >
+                <span class="key col-xs-4" style="min-height:20px;">{{label}}</span>
+                <span class="value col-xs-8" style="min-height:20px;">{{value}}</span>
+            </div>
+            {{else}}
+            <div class="row chart-tooltip-row" >
+                <span class="key col-xs-4" style="min-height:20px;">{{label}}:</span>
+                <span class="value col-xs-8" style="min-height:20px;">{{value}}</span>
+            </div>
+            {{/IfCompare}}
+            {{/IfCompare}}
+            {{/each}}
+        </div>
+    </div>
+</script>
+
+<!-- To be removed later-->
+<script type="text/x-handlebars-template" id="title-lblval-tooltip-template-new">
+    <div class="row chart-tooltip" style="width:250px;">
+        {{#each this}}
+        {{#IfCompare @index 0}}
+        <div class="row chart-tooltip-title">
+            <p>{{value}}</p>
+        </div>
+        <div class="row chart-tooltip-body ">
+            {{else}}
+            <div class="row chart-tooltip-row" >
+                <span class="key {{keyClass}}" style="min-height:20px;">{{label}}:</span>
+                <span class="value {{valueClass}}" style="min-height:20px;">{{value}}</span>
+            </div>
+            {{/IfCompare}}
+            {{/each}}
+        </div>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="statusTemplate">
+    {{#IfCompare color colorSevMap.red }}
+    <span class="status-badge-rounded-small status-inactive"></span>
+    {{else}}
+    {{#IfCompare color colorSevMap.orange}}
+    <span class="status-badge-rounded-small status-partially-active"></span>
+    {{/IfCompare}}
+    {{/IfCompare}}
+</script>

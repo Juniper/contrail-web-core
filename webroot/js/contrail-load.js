@@ -113,7 +113,6 @@ $(document).ready(function () {
             if (this.hidden == false) {
                 helpHandler.disable();
                 var toggle_btn = $('#page-help-toggle-btn');
-                toggle_btn.find('.page-help-toggle-text').removeClass('page-help-toggle-text');
                 toggle_btn.parent().toggleClass('active');
             }
         });
@@ -129,7 +128,6 @@ $(document).ready(function () {
         helpHandler.toggle();
 
         var toggle_btn = $('#page-help-toggle-btn');
-        toggle_btn.find('.page-help-toggle-text').removeClass('page-help-toggle-text');
         toggle_btn.parent().toggleClass('active');
     }
 

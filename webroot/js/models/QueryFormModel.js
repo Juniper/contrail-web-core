@@ -667,16 +667,11 @@ define([
 
     function setChecked4SelectFields(selectFields, checkedMap) {
 
-        var selectFieldsByAggregateTypes = {
-            "Time Range": [],
-            "Default": [],
-            "Sum": [],
-            "Avg": [],
-            "Count": [],
-            "Min": [],
-            "Max": [],
-            "Percentiles": []
-        };
+        var selectFieldsGroups = {};
+
+        _.each(cowc.SELECT_FIELDS_GROUPS, function(fieldGroupValue, fieldGroupKey) {
+            selectFieldsGroups[fieldGroupValue] = [];
+        });
 
         for (var key in checkedMap) {
             delete checkedMap[key];
@@ -687,20 +682,20 @@ define([
                 aggregateType =  cowl.getFirstCharUpperCase(key.substring(0, key.indexOf('(')));
 
             if(key == 'T' || key == 'T=' ){
-                selectFieldsByAggregateTypes["Time Range"].push(key);
+                selectFieldsGroups["Time Range"].push(key);
                 aggregateType = "Time Range";
             } else  if(aggregateType == ''){
-                selectFieldsByAggregateTypes["Default"].push(key);
-                aggregateType = "Default";
+                selectFieldsGroups["Non Aggregate"].push(key);
+                aggregateType = "Non Aggregate";
             } else {
-                selectFieldsByAggregateTypes[aggregateType].push(key);
+                selectFieldsGroups[aggregateType].push(key);
             }
 
             selectFieldValue['aggregate_type'] = cowl.getFirstCharUpperCase(aggregateType);
 
         });
 
-        _.each(selectFieldsByAggregateTypes, function(aggregateFields, aggregateKey) {
+        _.each(selectFieldsGroups, function(aggregateFields, aggregateKey) {
             _.each(aggregateFields, function(fieldValue, fieldKey) {
                 checkedMap[fieldValue] = ko.observable(false);
             });

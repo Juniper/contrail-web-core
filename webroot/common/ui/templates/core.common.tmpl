@@ -1,25 +1,55 @@
 <!-- Copyright (c) 2014 Juniper Networks, Inc. All rights reserved. -->
 
 <script type="text/x-handlebars-template" id="menu-shortcuts">
-    <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
-        {{#each this}}
-        {{#IfCompare this.cssClass 'disabledBtn' operator='!='}}
-        <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');">
-            {{else}}
-            <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');" disabled>
-                {{/IfCompare}}
-                <i class="{{this.iconClass}} fa fa-lg"></i>
-            </button>
-            {{/each}}
-    </div>
+            <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+                {{#each this}}
+                    {{#IfCompare this.cssClass 'disabledBtn' operator='!='}}
+                        <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');">
+                    {{else}}
+                        <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');" disabled>
+                    {{/IfCompare}}
+                            <i class="{{this.iconClass}} fa fa-lg"></i>
+                    </button>
+                {{/each}}
+            </div>
 
-    <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
-        {{#each this}}
-        <span class="btn btn-{{this.id}}"></span>
-        {{/each}}
-    </div>
+            <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+                {{#each this}}
+                    <span class="btn btn-{{this.id}}"></span>
+                {{/each}}
+            </div>
 </script>
 
+<!-- main-container-template renders the content below page header -->
+<script type="text/x-handlebars-template" id="main-container-template">
+        <a id="menu-toggler" href="#">
+            <span></span>
+        </a>
+
+        <div id="sidebar">
+            <div id="sidebar-shortcuts">
+            </div>  
+            <ul id="menu" class="nav nav-list"></ul>
+        </div> 
+
+        <div id="main-content" class="clearfix">
+            <div id="breadcrumbs" class="fixed">
+                <ul id="breadcrumb" class="breadcrumb">
+                </ul> 
+                <div class="hardrefresh breadcrumb" style="display:none">
+                    <span> <i class="icon-time" style="cursor:default"></i></span><span data-bind="text:timeObj.timeStr"></span>
+                    <span class="loading"><i class="icon-spinner icon-spin"></i></span>
+                    <span class="refresh" title="refresh" style="color: #3182bd;cursor:pointer">Refresh</i></span>
+                </div>
+            </div>
+            <div id="page-content" class="clearfix">
+                <div id='content-container'></div>
+            </div>
+        </div> 
+</script>
+<script type="text/x-handlebars-template" id="iframe-template">
+    <iframe class="iframe-view" src={{this.url}}></iframe>
+</script>
 <script type="text/x-handlebars-template" id="menu-template">
     <li class="head">
         <a data-link='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
@@ -30,80 +60,80 @@
         </a>
     </li>
     {{#each this.items.item}}
-    <li class="item mainMenu" {{#if this.hash}}id="{{this.hash}}"{{/if}}>
-    <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}' data-link='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
-        <i class="{{this.iconClass}}"></i>
-        <span>{{this.label}}</span>
-    </a>
-    {{#IfCompare this.items null operator='!='}}
-    <ul class="submenu">
-        {{#each this.items.item}}
-        <li id="{{this.hash}}">
-            <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
-                {{this.label}}
+        <li class="item mainMenu" {{#if this.hash}}id="{{this.hash}}"{{/if}} data-help="{{#if this.help}} {{this.help}} {{/if}}">
+            <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}' data-link='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
+                <i class="{{this.iconClass}}"></i>
+                <span>{{this.label}}</span>
             </a>
+            {{#IfCompare this.items null operator='!='}}
+                <ul class="submenu">
+                    {{#each this.items.item}}
+                        <li id="{{this.hash}}" data-help="{{#if this.help}} {{this.help}} {{/if}}">
+                            <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
+                                {{this.label}}
+                            </a>
+                        </li>
+                   {{/each}}
+               </ul>
+            {{/IfCompare}}
         </li>
-        {{/each}}
-    </ul>
-    {{/IfCompare}}
-    </li>
     {{/each}}
 </script>
 <script type="text/x-handlebars-template" id="current-breadcrumb">
-    {{#each this}}
-    {{#if @last}}
-    <li class="active">
-        <a href={{href}}>{{link}}</a>
-    </li>
-    {{else}}
-    <li>
-        <a href={{href}}>{{link}}</a>
-        <span class="divider"><i class="fa fa-angle-right"></i></span>
-    </li>
-    {{/if}}
-    {{/each}}
+ {{#each this}}
+   {{#if @last}}
+      <li class="active">
+          <a href={{href}}>{{link}}</a>
+      </li>
+   {{else}}
+      <li>
+          <a href={{href}}>{{link}}</a>
+          <span class="divider"><i class="fa fa-angle-right"></i></span>
+      </li>
+   {{/if}}
+ {{/each}}
 </script>
 
 <script type="text/x-handlebars-template" id="dashboard-template">
     <div class="row">
         <div id="dashboard-box" class="widget-box transparent">
             {{#IfCompare noTitle null operator="=="}}
-            <div class="widget-header">
-                <h4 class="smaller">
-                    {{#if widgetBoxId}}
-                    <i id="{{widgetBoxId}}-loading" class="fa fa-spinner fa fa-spin blue bigger-125" style="display:none"></i>
-                    {{/if}}
-                    {{#if title}}
-                    {{title}}
-                    {{else}}
-                    Information
-                    {{/if}}
-                </h4>
-                <div class="widget-toolbar pull-right">
-                    <a  data-action="collapse">
-                        <i class="fa fa-chevron-up"></i>
-                    </a>
-                </div>
-                {{#if showSettings}}
-                <div class="widget-toolbar pull-right">
-                    <a data-action="settings" data-toggle="dropdown">
-                        <i class="fa fa-cog"></i>
-                    </a>
-                    <ul class="pull-right dropdown-menu dropdown-caret dropdown-closer">
-                        <li>
-                            <a onclick="showBasicDetails();">
-                                <i class="fa fa-list"></i> &nbsp; Basic view
+                <div class="widget-header">
+                    <h4 class="smaller">
+                        {{#if widgetBoxId}}
+                            <i id="{{widgetBoxId}}-loading" class="fa fa-spinner fa fa-spin blue bigger-125" style="display:none"></i>
+                        {{/if}}
+                        {{#if title}}
+                            {{title}}
+                        {{else}}
+                            Information
+                        {{/if}}
+                    </h4>
+                    <div class="widget-toolbar pull-right">
+                        <a  data-action="collapse">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                    {{#if showSettings}}
+                        <div class="widget-toolbar pull-right">
+                            <a data-action="settings" data-toggle="dropdown">
+                                <i class="fa fa-cog"></i>
                             </a>
-                        </li>
-                        <li>
-                            <a onclick="showAdvancedDetails();">
-                                <i class="fa fa-code"></i> &nbsp; Advanced view
-                            </a>
-                        </li>
-                    </ul>
+                            <ul class="pull-right dropdown-menu dropdown-caret dropdown-closer">
+                                <li>
+                                    <a onclick="showBasicDetails();">
+                                        <i class="fa fa-list"></i> &nbsp; Basic view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a onclick="showAdvancedDetails();">
+                                        <i class="fa fa-code"></i> &nbsp; Advanced view
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    {{/if}}
                 </div>
-                {{/if}}
-            </div>
             {{/IfCompare}}
             <div class="widget-body">
             </div><!--/widget-body-->
@@ -115,78 +145,32 @@
     <div class='no-data-text'>No Statistics available for this duration</div>
 </script>
 
-<script type="text/x-handlebars-template" id="title-lblval-tooltip-template">
-    <div class="row chart-tooltip" style="width:250px;">
-        {{#each this}}
-        {{#IfCompare @index 0}}
-        <div class="row chart-tooltip-title">
-            <p>{{value}}</p>
-        </div>
-        <div class="row chart-tooltip-body ">
-            {{else}}
-            {{#IfCompare true options.noLabelColon}}
-            <div class="row chart-tooltip-row" >
-                <span class="key col-xs-4" style="min-height:20px;">{{label}}</span>
-                <span class="value col-xs-8" style="min-height:20px;">{{value}}</span>
-            </div>
-            {{else}}
-            <div class="row chart-tooltip-row" >
-                <span class="key col-xs-4" style="min-height:20px;">{{label}}:</span>
-                <span class="value col-xs-8" style="min-height:20px;">{{value}}</span>
-            </div>
-            {{/IfCompare}}
-            {{/IfCompare}}
-            {{/each}}
-        </div>
-    </div>
-</script>
-
-<!-- To be removed later-->
-<script type="text/x-handlebars-template" id="title-lblval-tooltip-template-new">
-    <div class="row chart-tooltip" style="width:250px;">
-        {{#each this}}
-        {{#IfCompare @index 0}}
-        <div class="row chart-tooltip-title">
-            <p>{{value}}</p>
-        </div>
-        <div class="row chart-tooltip-body ">
-            {{else}}
-            <div class="row chart-tooltip-row" >
-                <span class="key {{keyClass}}" style="min-height:20px;">{{label}}:</span>
-                <span class="value {{valueClass}}" style="min-height:20px;">{{value}}</span>
-            </div>
-            {{/IfCompare}}
-            {{/each}}
-        </div>
-    </div>
-</script>
-
 <script type="text/x-handlebars-template" id="overlapped-bubble-tooltip">
-    <div id="overlapped-bubble-wrapper" class="enabledPointer">
-        <div class="row" >
-            <div class="left-arrow-wrapper">
-                <div class="left-arrow">
-                    <i class="fa fa-chevron-left" style="font-size: 20px;"></i>
-                </div>
-            </div>
-            <div class="tooltip-wrapper">
-                {{#each content}}
-                {{> scatterTooltip}}
-                {{/each}}
-            </div>
-            <div class="right-arrow-wrapper">
-                <div class="close-button">
-                    <button type="button" id="overlapClosebutton" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
-                </div>
-                <div class="right-arrow">
-                    <i class="fa fa-chevron-right" style="font-size: 20px;"></i>
-                </div>
+<div id="overlapped-bubble-wrapper" class="enabledPointer">
+     <div class="row" >
+        <div class="left-arrow-wrapper">
+            <div class="left-arrow">
+                <i class="fa fa-chevron-left" style="font-size: 20px;"></i>
             </div>
         </div>
-        <div class="row pagecount">
-            <span class="pull-right">{{pagestr}}</span>
+        <div class="tooltip-wrapper">
+          {{#each content}}
+              {{> scatterTooltip}}
+          {{/each}}
         </div>
+        <div class="right-arrow-wrapper">
+            <div class="close-button">
+                <button type="button" id="overlapClosebutton" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+            </div>
+            <div class="right-arrow">
+                <i class="fa fa-chevron-right" style="font-size: 20px;"></i>
+            </div>
+        </div>
+     </div>
+     <div class="row pagecount">
+        <span class="pull-right">{{pagestr}}</span>
     </div>
+</div>
 </script>
 
 <script type="text/x-handlebars-template" id="overlapped-bubble-tooltip-new">
@@ -199,7 +183,7 @@
             </div>
             <div class="tooltip-wrapper">
                 {{#each content}}
-                {{> scatterTooltipNew}}
+                    {{> scatterTooltipNew}}
                 {{/each}}
             </div>
             <div class="right-arrow-wrapper">
@@ -218,25 +202,25 @@
 </script>
 
 <script type="text/x-handlebars-template" id="title-lblval-tooltip-template_new">
-    <div class="row chart-tooltip">
-        {{#each this}}
-        {{#IfCompare @index 0 }}
+<div class="row chart-tooltip">
+ {{#each this}}
+    {{#IfCompare @index 0 }}
         <div class="row chart-tooltip-title">
             <p>{{value}}</p>
         </div>
-        {{/IfCompare}}
-        {{#IfCompare @index 0 operator='!='}}
-        <div class="row chart-tooltip-body ">
-            <div class="row chart-tooltip-row">
-                {{#IfCompare label '' operator='!='}}
-                <span class="key">{{label}}:</span>
-                {{/IfCompare}}
-                <span class="value">{{value}}</span>
-            </div>
+    {{/IfCompare}}
+    {{#IfCompare @index 0 operator='!='}}
+    <div class="row chart-tooltip-body ">
+        <div class="row chart-tooltip-row">
+            {{#IfCompare label '' operator='!='}}
+            <span class="key">{{label}}:</span>
+            {{/IfCompare}}
+            <span class="value">{{value}}</span>
         </div>
-        {{/IfCompare}}
-        {{/each}}
     </div>
+    {{/IfCompare}}
+ {{/each}}
+</div>
 </script>
 
 <script type="text/x-handlebars-template" id="sparkline-template">
@@ -281,16 +265,16 @@
 </script>
 
 <script type="text/x-handlebars-template" id="lblval-tooltip-template">
-    <div class="row chart-tooltip">
-        <div class="row chart-tooltip-body ">
-            {{#each this}}
-            <div class="row chart-tooltip-row">
-                <span class="key">{{label}}</span>
-                <span class="value"> {{value}}</span>
-            </div>
-            {{/each}}
-        </div>
+<div class="row chart-tooltip">
+    <div class="row chart-tooltip-body ">
+     {{#each this}}
+         <div class="row chart-tooltip-row">
+             <span class="key">{{label}}</span>
+             <span class="value"> {{value}}</span>
+         </div>
+       {{/each}}
     </div>
+</div>
 </script>
 
 <script type="text/x-handlebars-template" id="element-tooltip-template">
@@ -323,12 +307,12 @@
     </div>
     <div class="popover-info">
         <div class="">
-            {{#each info}}
+        {{#each info}}
             <div class="popover-tooltip-row {{#if dividerClass}} {{dividerClass}} {{/if}}" title="{{value}}">
                 <span class="key">{{label}} </span>
                 <span class="value">{{value}}</span>
-            </div>
-            {{/each}}
+             </div>
+        {{/each}}
         </div>
     </div>
     {{#if actions}}
@@ -347,37 +331,33 @@
 <script type="text/x-handlebars-template" id="infoList-template">
     <ul class="item-list">
         {{#each this}}
-        <li>
-            <label class="inline">
-                <span class="key"> {{lbl}} </span>
-                <span class="value"> {{value}} </span>
-            </label>
-        </li>
+            <li>
+                <label class="inline">
+                    <span class="key"> {{lbl}} </span>
+                    <span class="value"> {{value}} </span>
+                </label>
+            </li>
         {{/each}}
     </ul>
 </script>
 <script type="text/x-handlebars-template" id="logList-template">
     <ul class="item-list">
         {{#each this}}
-        <div class="itemdiv commentdiv infobox-blue">
-            <div class="body">
-                <div class="row">
-                    <div class="name col-xs-9 word-break-all">
-                        <span {{#if link}}class="hyperlink" onclick=javascript:layoutHandler.setURLHashObj({{#jsonStringify link}}{{/jsonStringify}}){{else}}class="hyperlink-inactive"{{/if}}> {{moduleId}} </span></div>
-                    <div class="time col-xs-3">
-                        <i class="fa fa-clock-o" style="cursor:default"></i>
-                        <span class="green"> {{timeStr}} </span>
+            <div class="itemdiv commentdiv infobox-blue">
+                <div class="body">
+                    <div class="row">
+                        <div class="name col-xs-9 word-break-all">
+                            <span {{#if link}}class="hyperlink" onclick=javascript:layoutHandler.setURLHashObj({{#jsonStringify link}}{{/jsonStringify}}){{else}}class="hyperlink-inactive"{{/if}}> {{moduleId}} </span></div>
+                            <div class="time col-xs-3">
+                                <i class="fa fa-clock-o" style="cursor:default"></i>
+                                <span class="green"> {{timeStr}} </span>
+                            </div>
+                        </div>
+                        <div class="text"> {{#truncate message 200}} {{/truncate}}</div>
                     </div>
                 </div>
-                <div class="text"> {{#truncate message 200}} {{/truncate}}</div>
-            </div>
-        </div>
         {{else}}
-        {{#if this}}
-        <p>{{this}}</p>
-        {{else}}
-        <p>No Logs found.</p>
-        {{/if}}
+            <p>No Logs found.</p>
         {{/each}}
     </ul>
 </script>
@@ -385,58 +365,58 @@
 <script type="text/x-handlebars-template" id="alerts-template">
     <ul class="item-list">
         {{#each this}}
-        <div class="itemdiv commentdiv infobox-blue">
-            <div class="body">
-                {{#typeof timeStamp "string"}}
-                <div class="text word-break-all" style="width:75%">
+            <div class="itemdiv commentdiv infobox-blue">
+                <div class="body">
+                    {{#typeof timeStamp "string"}}
+                        <div class="text word-break-all" style="width:75%">
                     {{/typeof}}
                     {{#IfCompare timeStamp null operator="=="}}
-                    <div class="text word-break-all">
-                        {{/IfCompare}}
-                        {{#IfCompare name null operator="=="}}
-                        {{msg}}</div>
+                        <div class="text word-break-all">
+                    {{/IfCompare}}
+                    {{#IfCompare name null operator="=="}}
+                         {{msg}}</div>
                     {{else}}
-                    {{#IfCompare link null operator="!="}}
-                    <span class="hyperlink" onclick=javascript:layoutHandler.setURLHashObj({{#jsonStringify link}}{{/jsonStringify}})>{{name}}</span> , {{type}} , {{msg}}</div>
-                {{else}}
-                {{name}} , {{type}} , {{msg}}</div>
-            {{/IfCompare}}
-            {{/IfCompare}}
-            {{#typeof timeStamp "string"}}
-            <div class="time" style="width:90px">
-                <i class="fa fa-clock-o"></i>
-                <span> {{#getRelativeTime timeStamp}}{{/getRelativeTime}} </span>
+                        {{#IfCompare link null operator="!="}}
+                            <span class="hyperlink" onclick=javascript:layoutHandler.setURLHashObj({{#jsonStringify link}}{{/jsonStringify}})>{{name}}</span> , {{type}} , {{msg}}</div>
+                        {{else}}
+                             {{name}} , {{type}} , {{msg}}</div>
+                        {{/IfCompare}}
+                    {{/IfCompare}}
+                    {{#typeof timeStamp "string"}}
+                        <div class="time" style="width:90px">
+                            <i class="fa fa-clock-o"></i>
+                            <span> {{#getRelativeTime timeStamp}}{{/getRelativeTime}} </span>
+                        </div>
+                    {{/typeof}}
+                </div>
             </div>
-            {{/typeof}}
-        </div>
-        </div>
-        {{else}}
-        <p>No Alerts found.</p>
+            {{else}}
+                <p>No Alarms found.</p>
         {{/each}}
         {{#IfCompare this.length 0 operator=">"}}
-        <div id="moreAlertsLink" style="cursor:pointer;margin-left:5px"><a>More</a></div>
+            <div id="moreAlertsLink" style="cursor:pointer;margin-left:5px"><a>More</a></div>
         {{/IfCompare}}
     </ul>
 </script>
 
 <script type="text/x-handlebars-template" id="moreAlerts-template">
-    <div id="moreAlerts" class="modal fade modal-840">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
-                    <h6 class="modal-header-title">Alerts</h6>
-                </div>
-                <div class="modal-body">
-                    <div id="alertContent"></div>
-                </div>
-                <div class="modal-footer">
-                    <button id="alertsClose" class="btn btn-primary btn-mini" data-dismiss="modal" aria-hidden="true">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    </div>
+<div id="moreAlerts" class="modal fade modal-840">
+<div class="modal-dialog">
+<div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-remove"></i></button>
+        <h6 class="modal-header-title">Alerts</h6>
+     </div>
+     <div class="modal-body">
+       <div id="alertContent"></div>
+     </div>
+      <div class="modal-footer">
+         <button id="alertsClose" class="btn btn-primary btn-mini" data-dismiss="modal" aria-hidden="true">Close</button>
+      </div>
+     </div>
+</div>
+</div>
+</div>
 </script>
 
 <script type="text/x-handlebars-template" id="infobox-template">
@@ -445,17 +425,17 @@
             <i class="fa fa-sitemap"></i>
         </div>
         {{#if totalCntField}}
-        <div class="infobox-data">
-            <span class="infobox-data-number" data-bind='text:{{totalCntField}}'>&nbsp;</span>
-        </div>
-        {{!--<div class="stat stat-success" data-bind='text:{{activeCntField}}'>&nbsp;</div>--}}
-        <div class="stat stat-important" style="display:none" data-bind='text:{{inactiveCntField}}'>&nbsp;</div>
+            <div class="infobox-data">
+                <span class="infobox-data-number" data-bind='text:{{totalCntField}}'>&nbsp;</span>
+            </div>
+            {{!--<div class="stat stat-success" data-bind='text:{{activeCntField}}'>&nbsp;</div>--}}
+            <div class="stat stat-important" style="display:none" data-bind='text:{{inactiveCntField}}'>&nbsp;</div>
         {{else}}
-        <div class="infobox-data">
-            <span class="infobox-data-number">{{totalCnt}}</span>
-        </div>
-        <div class="stat stat-success">{{activeCnt}}</div>
-        <div class="stat stat-important">{{inactiveCnt}}</div>
+            <div class="infobox-data">
+                <span class="infobox-data-number">{{totalCnt}}</span>
+            </div>
+            <div class="stat stat-success">{{activeCnt}}</div>
+            <div class="stat stat-important">{{inactiveCnt}}</div>
         {{/if}}
         <div class="infobox-content">{{title}}</div>
     </div>
@@ -594,18 +574,18 @@
     End:Dashboard templates
 -->
 <script type="text/x-handlebars-template" id="widget-header-template">
-    <h4 class="smaller">
-        {{#if widgetBoxId}}
-        <i id="{{widgetBoxId}}-loading" class="fa fa-spinner fa fa-spin blue bigger-125" style="display:none"></i>
-        {{/if}}
-        <span>{{title}}</span>
-    </h4>
+        <h4 class="smaller">
+            {{#if widgetBoxId}}
+                <i id="{{widgetBoxId}}-loading" class="fa fa-spinner fa fa-spin blue bigger-125" style="display:none"></i>
+            {{/if}}
+            <span>{{title}}</span>
+        </h4>
 
-    <div class="widget-toolbar pull-right">
-        <a data-action="collapse">
-            <i class="fa fa-chevron-up"></i>
-        </a>
-    </div>
+        <div class="widget-toolbar pull-right">
+            <a data-action="collapse">
+                <i class="fa fa-chevron-up"></i>
+            </a>
+        </div>
 </script>
 <script type="text/x-handlebars-template" id="gridsTemplateJSONDetails">
     <div>
@@ -617,103 +597,93 @@
                 <div><pre>{{{displayJson raw_json}}}</pre></div>
             </div>
         </div>
-    </div>
+   </div>
 </script>
 <script type="text/x-handlebars-template" id = "overallNodeStatusTemplate">
     <div id = "overallNodeStatus">
         <div id = "allItems" class="hide">
             {{#each this.result}}
-            <p style="margin: 0 0 0 0">
-                {{#IfCompare sevLevel null operator='!='}}
-                {{#renderStatusTemplate sevLevel}}{{/renderStatusTemplate}}
-                {{/IfCompare}}
-                {{msg}}
-            </p>
+                <p style="margin: 0 0 0 0">
+                    {{#IfCompare sevLevel null operator='!='}}
+                        {{#renderStatusTemplate sevLevel}}{{/renderStatusTemplate}}
+                    {{/IfCompare}}
+                    {{msg}}
+                </p>
             {{/each}}
             <span class="hyperlink" onclick="toggleOverallNodeStatus(['#allItems','#defaultItems']);"> hide</span>
         </div>
         {{#IfCompare this.showMore true}}
-        <div id = "defaultItems">
-            {{#each this.result}}
-            <p style="margin: 0 0 0 0">
-                {{#IfCompare @index ../defaultItems operator='<'}}
-                {{#IfCompare sevLevel null operator='!='}}
-                {{#renderStatusTemplate sevLevel}}{{/renderStatusTemplate}}
-                {{/IfCompare}}
-                {{msg}}
-                {{/IfCompare}}
-            </p>
-            {{/each}}
-            {{#IfCompare this.result.length this.defaultItems operator='>'}}
-            <span class="hyperlink" onclick="toggleOverallNodeStatus(['#allItems','#defaultItems']);"> {{#ArthematicOps this.result.length this.defaultItems operator='-'}}
+            <div id = "defaultItems">
+                {{#each this.result}}
+                    <p style="margin: 0 0 0 0">
+                        {{#IfCompare @index ../defaultItems operator='<'}}
+                            {{#IfCompare sevLevel null operator='!='}}
+                                {{#renderStatusTemplate sevLevel}}{{/renderStatusTemplate}}
+                            {{/IfCompare}}
+                            {{msg}}
+                        {{/IfCompare}}
+                    </p>
+                {{/each}}
+                {{#IfCompare this.result.length this.defaultItems operator='>'}}
+                    <span class="hyperlink" onclick="toggleOverallNodeStatus(['#allItems','#defaultItems']);"> {{#ArthematicOps this.result.length this.defaultItems operator='-'}}
                     {{/ArthematicOps}} more</span>
-            {{/IfCompare}}
-        </div>
+               {{/IfCompare}}
+            </div>
         {{/IfCompare}}
     </div>
 </script>
 
-<script type = "text/x-handlebars-template" id = "statusTemplate">
-    {{#IfCompare color colorSevMap.red }}
-        <span class="status-badge-rounded-small status-inactive"></span>
-    {{else}}
-        {{#IfCompare color colorSevMap.orange}}
-            <span class="status-badge-rounded-small status-partially-active"></span>
-        {{/IfCompare}}
-    {{/IfCompare}}
-</script>
-
 <script type="text/x-handlebars-template" id="dashboard-body-template">
     <div class="widget-main row">
-        {{#IfCompare showSettings true options='=='}}
-        <div id="divAdvanced" class="row hide">
-            <div id="divAdvanced-loading" class="fa fa-spinner fa fa-spin blue bigger-125" style="display: none;"></div>
-            <div><pre>{{{displayJson nodeData}}}</pre></div>
-        </div>
-        {{/IfCompare}}
-        <div id="divBasic" class="row">
-            <ul id="detail-columns" class="item-list">
-                {{#each d}}
-                {{#if this}}
-                <li>
-                    <label class="inline row">
-                        <div class="key col-xs-4">{{{this.lbl}}}</div>
-                        <div class="value col-xs-7">
-                            {{#if this.value}}
-                            {{{this.value}}}
-                            {{else}}
-                            {{#IfCompare this.value '0' options='=='}}
-                            0
-                            {{else}}
-                            --
-                            {{/IfCompare}}
-                            {{/if}}
-                        </div>
-                    </label>
-                </li>
-                {{/if}}
-                {{/each}} <!-- /each d -->
-            </ul>
-        </div><!--/span-->
-        <div id="divStatus" hidden="true" class="row">
-            <div id="divContrailStatus" class="row"></div>
-            <!-- <div class="row">
-                <label class="col-xs-3">Opentstack Status</label><i id="icon_divOpenStackStatus" class="fa fa-expand-alt" onclick="toggleDetails('divOpenStackStatus');"></i>
+            {{#IfCompare showSettings true options='=='}}
+                <div id="divAdvanced" class="row hide">
+                    <div id="divAdvanced-loading" class="fa fa-spinner fa fa-spin blue bigger-125" style="display: none;"></div>
+                    <div><pre>{{{displayJson nodeData}}}</pre></div>
+                </div>
+            {{/IfCompare}}
+            <div id="divBasic" class="row">
+                <ul id="detail-columns" class="item-list">
+                    {{#each d}}
+                        {{#if this}}
+                            <li>
+                                <label class="inline row">
+                                    <div class="key col-xs-4">{{{this.lbl}}}</div>
+                                    <div class="value col-xs-7">
+                                        {{#if this.value}}
+                                            {{{this.value}}}
+                                        {{else}}
+                                            {{#IfCompare this.value '0' options='=='}}
+                                                0
+                                            {{else}}
+                                                --
+                                            {{/IfCompare}}
+                                        {{/if}}
+                                    </div>
+                                </label>
+                            </li>
+                        {{/if}}
+                    {{/each}} <!-- /each d -->
+                </ul>
+            </div><!--/span-->
+            <div id="divStatus" hidden="true" class="row">
+                <div id="divContrailStatus" class="row"></div>
+                <!-- <div class="row">
+                    <label class="col-xs-3">Opentstack Status</label><i id="icon_divOpenStackStatus" class="fa fa-expand-alt" onclick="toggleDetails('divOpenStackStatus');"></i>
+                </div>
+                <div id="divOpenStackStatus" hidden="true" class="widget-main padding-4" class="row"></div>
+                -->
             </div>
-            <div id="divOpenStackStatus" hidden="true" class="widget-main padding-4" class="row"></div>
-            -->
-        </div>
     </div><!-- /widget-main -->
 </script>
 
 <script type="text/x-handlebars-template" id="checked-multiselect-optgroup-template">
     <select multiple="multiple" size="5" class="row">
         {{#each data}}
-        <optgroup label="{{text}}" data-value={{id}}>
-            {{#each children}}
-            <option value="{%22parent%22:%22{{../id}}%22,%22value%22:%22{{id}}%22}" {{#IfCompare selected true operator='==' }}selected="true"{{/IfCompare}}>{{text}}</option>
-            {{/each}}
-        </optgroup>
+            <optgroup label="{{text}}" data-value={{id}}>
+                {{#each children}}
+                    <option value="{%22parent%22:%22{{../id}}%22,%22value%22:%22{{id}}%22}" {{#IfCompare selected true operator='==' }}selected="true"{{/IfCompare}}>{{text}}</option>
+                {{/each}}
+            </optgroup>
         {{/each}}
     </select>
 </script>
@@ -722,10 +692,10 @@
     <div class="row chart-tooltip">
         <div class="row chart-tooltip-body ">
             {{#each this}}
-            <div class="row chart-tooltip-row">
-                <span class="key col-xs-4" style="min-height:20px;">{{lbl}}:</span>
-                <span class="value col-xs-8" style="min-height:20px;">{{value}}</span>
-            </div>
+                <div class="row chart-tooltip-row">
+                    <span class="key col-xs-4" style="min-height:20px;">{{lbl}}:</span>
+                    <span class="value col-xs-8" style="min-height:20px;">{{value}}</span>
+                </div>
             {{/each}}
         </div>
     </div>
@@ -789,18 +759,18 @@
                     </div>
                     <div class="axis-params">
                         {{# each this}}
-                        <div style="padding-top: 5px;">
-                            <div style="display:inline-block;">
-                                <label style="margin-bottom:0px;display:inline-block;font-size:11px;">{{this.lbl}} : </label><div id="{{this.id}}" style="font-size:11px;"></div>
-                            </div>
-                            <div style="display:inline-block;">
-                                <div id="{{this.id}}_crossfilter" class="chart" style="width:320px;">
-                                    <div class="title">
-                                        <span class="reset" style="display: none;">reset</span>
+                            <div style="padding-top: 5px;">
+                                <div style="display:inline-block;">
+                                     <label style="margin-bottom:0px;display:inline-block;font-size:11px;">{{this.lbl}} : </label><div id="{{this.id}}" style="font-size:11px;"></div>
+                                </div>
+                                <div style="display:inline-block;">
+                                    <div id="{{this.id}}_crossfilter" class="chart" style="width:320px;">
+                                        <div class="title">
+                                            <span class="reset" style="display: none;">reset</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                             </div>
                         {{/each}}
                     </div>
                     <div>
@@ -808,8 +778,8 @@
                         <div id="div-bucket-options" class="chart-sub-settings">
                             <button class="btnBucketSettingsApply btn btn-primary btn-minier">Apply</button>
                         </div>
-                    </div>
-                </div>
+                   </div>
+               </div>
             </div>
             <!-- <div style="background-color: white;margin-left: 70px; margin-right: 20px;" class="upArrow">
                 <img src="/img/upArrow.png"></img>
@@ -817,10 +787,10 @@
         </div>
         <div class = "chart-settings-hide upArrow">
             <div class="chart-settings-reset">
-                <!--  <div class="color-filter-settings-reset">
-                      <label class="chart-settings-label hyperlink-active">Severity Filter</label>
-                      <a href="#" id="chart-settings-severity-filter-remove" class="chart-settings-close" tabindex="-1">x</a>
-                  </div> -->
+              <!--  <div class="color-filter-settings-reset">
+                    <label class="chart-settings-label hyperlink-active">Severity Filter</label>
+                    <a href="#" id="chart-settings-severity-filter-remove" class="chart-settings-close" tabindex="-1">x</a>
+                </div> -->
                 <div class="bucketize-reset">
                     <label class="chart-settings-label">Bucketize</label>
                     <a href="#" id="chart-settings-bucketization-remove" class="chart-settings-close" tabindex="-1">x</a>
@@ -835,14 +805,14 @@
                 </div> -->
             </div>
             <label class="chart-settings-label hyperlink-active position-right chart-setting-options underline" >Options</label>
-            <!-- <label class="chart-settings-label hyperlink-active position-right chart-setting-options underline" id="zommout">Zoom Out</label> -->
+           <!-- <label class="chart-settings-label hyperlink-active position-right chart-setting-options underline" id="zommout">Zoom Out</label> -->
             <!-- <i class="fa fa-gear position-right"></i> -->
         </div>
-        <!-- <div class="chart-settings-hide">
-              <img src="/img/downArrow.png"></img>
-         </div> -->
+      <!-- <div class="chart-settings-hide">
+            <img src="/img/downArrow.png"></img>
+       </div> -->
     </div>
-    </div>
+</div>
 </script>
 
 <script type="text/x-handlebars-template" id="chart-footer">
@@ -896,18 +866,18 @@
 <script type="text/x-handlebars-template" id="core-section-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         {{#if viewConfig.title}}
-        <h5 class="margin-0-0-10">{{viewConfig.title}}</h5>
+            <h5 class="margin-0-0-10">{{viewConfig.title}}</h5>
         {{/if}}
         {{#each viewConfig.rows}}
-        <div class="section-content" data-bind="{{#if this.viewConfig.visible}} visible: {{this.viewConfig.visible}} {{/if}}">
-            <div class="row margin-0-0-5">
-                {{#each this.columns}}
-                <div id="{{this.elementId}}" class="{{this.viewConfig.class}}" style="{{this.viewConfig.style}}"
-                     data-bind="{{#if this.viewConfig.visible}} visible: {{this.viewConfig.visible}} {{/if}}">
+            <div class="section-content" data-bind="{{#if this.viewConfig.visible}} visible: {{this.viewConfig.visible}} {{/if}}">
+                <div class="row margin-0-0-5">
+                    {{#each this.columns}}
+                        <div id="{{this.elementId}}" class="{{this.viewConfig.class}}" style="{{this.viewConfig.style}}"
+                        data-bind="{{#if this.viewConfig.visible}} visible: {{this.viewConfig.visible}} {{/if}}">
+                        </div>
+                    {{/each}}
                 </div>
-                {{/each}}
             </div>
-        </div>
         {{/each}}
     </div>
 </script>
@@ -915,115 +885,98 @@
 <script type="text/x-handlebars-template" id="core-wizard-view-template">
     <div id="{{elementId}}" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         {{#each viewConfig.steps}}
-        <h2>{{this.title}}</h2>
-        <section>
-            <div class="alert alert-error" style="display:none;" data-bind="visible: errors().{{this.elementId}}_form_error">
-                <button type="button" class="close" data-dismiss="alert"></button>
-                <strong>Error: </strong>
-                <span data-bind="text: errors().{{this.elementId}}_form_error"></span>
-            </div>
-            <div id="{{this.elementId}}"></div>
-            <div class="stepInfo row hide">
-                <p class="col-xs-12">Selected Servers: <span class="selectedServerCount">None</span></p>
-            </div>
-        </section>
+            <h2>{{this.title}}</h2>
+            <section>
+                <div class="alert alert-error" style="display:none;" data-bind="visible: errors().{{this.elementId}}_form_error">
+                    <button type="button" class="close" data-dismiss="alert"></button>
+                    <strong>Error: </strong>
+                    <span data-bind="text: errors().{{this.elementId}}_form_error"></span>
+                </div>
+                <div id="{{this.elementId}}"></div>
+                <div class="stepInfo row hide">
+                    <p class="col-xs-12">Selected Servers: <span class="selectedServerCount">None</span></p>
+                </div>
+            </section>
         {{/each}}
     </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-composite-view-template">
-    <div class="row form-label" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="col-xs-10">
-            <label>{{label}}</label>
+     <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        {{> coreFormLabel}}
+        <div class="row" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+            {{#each this.childView}}
+                <div id="{{this.elementId}}" class="{{this.viewConfig.class}}" data-bind="{{#if this.viewConfig.visible}} visible: {{this.viewConfig.visible}} {{/if}}"></div>
+            {{/each}}
         </div>
-    </div>
-    <div class="row"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        {{#each this.childView}}
-        <div id="{{this.elementId}}" class="{{this.viewConfig.class}}" data-bind="{{#if this.viewConfig.visible}} visible: {{this.viewConfig.visible}} {{/if}}"></div>
-        {{/each}}
-    </div>
+     </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-input-view-template">
     <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <label for="{{id}}">
-            {{label}}
-            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-            </span>
-        </label>
+        {{> coreFormLabel}}
         {{#IfCompare type 'password' operator='==='}}
-        <div class="input-group inset col-xs-12">
-            <input type="{{type}}" name="{{id}}" class="col-xs-12 {{class}}"
-                   data-bind="
+            <div class="input-group inset col-xs-12">
+                <input type="{{type}}" name="{{id}}" class="col-xs-12 {{class}}"
+                            data-bind="
                                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                                 value: {{viewConfig.dataBindValue}},
                                 event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } }"
-            />
-            <span class="input-group-addon input-type-toggle-action"><i class="fa fa-eye"></i></span>
-        </div>
+                        />
+                <span class="input-group-addon input-type-toggle-action"><i class="fa fa-eye"></i></span>
+            </div>
         {{else}}
-        <input type="{{type}}" name="{{id}}" placeholder="{{viewConfig.placeholder}}" class="form-control"
-               data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+            <input type="{{type}}" name="{{id}}" placeholder="{{viewConfig.placeholder}}" class="form-control"
+                data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } }"
-        />
+            />
         {{/IfCompare}}
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-editable-grid-input-view-template">
-    <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        {{#IfCompare type 'password' operator='==='}}
-        <div class="input-append editable-grid-input-append inset col-xs-12">
-            <input type="{{type}}" name="{{id}}" class="col-xs-12 {{class}}"
-                   data-bind="
+        <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+            {{#IfCompare type 'password' operator='==='}}
+                <div class="input-append editable-grid-input-append inset col-xs-12">
+                    <input type="{{type}}" name="{{id}}" class="col-xs-12 {{class}}"
+                        data-bind="
                             {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                             value: {{viewConfig.dataBindValue}},
                             event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data) } }"
-            />
-            <span class="input-group-addon input-type-toggle-action"><i class="fa fa-eye-open"></i></span>
-        </div>
-        {{else}}
-        <input type="{{type}}" name="{{name}}" class="form-control" placeholder="{{viewConfig.placeholder}}"
-               data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}
+                    />
+                    <span class="input-group-addon input-type-toggle-action"><i class="fa fa-eye-open"></i></span>
+                </div>
+            {{else}}
+                <input type="{{type}}" name="{{name}}" class="form-control" placeholder="{{viewConfig.placeholder}}"
+                    data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}
                         value: {{viewConfig.dataBindValue}},
                         event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data)} }"
-        />
-        {{/IfCompare}}
-    </div>
+                    />
+                {{/IfCompare}}
+        </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-checkbox-view-template">
-    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="row form-label">
-            <div class="col-xs-10">
-                <label>{{label}}</label>
-            </div>
-            <div class="col-xs-2">
-                <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-                </span>
-            </div>
-        </div>
+    <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        {{> coreFormLabel}}
         <div class="row col-xs-12 form-element">
-            <input type="{{type}}" name="{{id}}" class="{{class}} ace-input"
-                   data-bind="
-                    {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
-                    checked: {{viewConfig.dataBindValue}},
-                    event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } }"
-            />
-            <span class="ace-lbl"></span>
-            <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
-        </div>
+        <input type="{{type}}" name="{{id}}" class="{{class}} ace-input"
+            data-bind="
+                {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                checked: {{viewConfig.dataBindValue}},
+                event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } }"
+        />
+        <span class="ace-lbl"></span>
+        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
 </script>
 <script type="text/x-handlebars-template" id="core-checkbox-label-right-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <div class="row col-xs-12 form-element" >
             <input type="{{type}}" name="{{id}}" class="{{class}} ace-input"
-                   data-bind="
+                data-bind="
                     {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                     checked: {{viewConfig.dataBindValue}},
                     event: { focusout: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } }"
@@ -1041,37 +994,32 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-radio-button-view-template">
-    <div class="row form-radio-button-label" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <div class="col-xs-10">
-            <label>{{label}}</label>
+    <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        {{> coreFormLabel}}
+        <div class="row">
+            {{#each elementConfig.dataObj}}
+                <div class="col-xs-4">
+                    <input type="radio" name="{{../id}}" value="{{value}}" class="{{../class}}"  data-bind="{{#if ../lockAttr}}disable: locks().{{name}}_locked, {{/if}} checked: {{../dataBindValue}},event: { focusout: function() { validateAttr('{{../path}}', '{{../validation}}') } }" />
+                    <span class="margin-0-0-0-5">{{label}}</span>
+                </div>
+            {{/each}}
         </div>
-        <div class="col-xs-2">
-            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-            </span>
-        </div>
-    </div>
-    <div class="row col-xs-12 form-element" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        {{#each elementConfig.dataObj}}
-        <input type="radio" name="{{../id}}" value="{{value}}" class="{{../class}} ace-input"  data-bind="{{#if ../lockAttr}}disable: locks().{{name}}_locked, {{/if}} checked: {{../dataBindValue}},event: { focusout: function() { validateAttr('{{../path}}', '{{../validation}}') } }" />
-        <span class="ace-lbl">{{label}}</span>
-        {{/each}}
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-dropdown-view-template">
-    <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        {{#IfCompare label false operator='!=' }}
-        <label for="{{id}}">
-            {{label}}
-            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-                </span>
-        </label>
-        {{/IfCompare}}
+   <div class="form-group"
+        data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}"
+        {{#if viewConfig.help}}
+            {{#IfCompare viewConfig.help.target 'tooltip' operator='!=='}}
+                data-help="{{viewConfig.help.content}}"
+            {{/IfCompare}}
+        {{/if}}
+   >
+        {{> coreFormLabel}}
         <input id="{{id}}" name="{{name}}" class="{{class}}"
-               data-bind="
+            data-bind="
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 optionList: {{viewConfig.dataBindOptionList}},
@@ -1079,7 +1027,7 @@
                 contrailDropdown: {}"
         />
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
-    </div>
+   </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-editable-grid-dropdown-view-template">
@@ -1088,7 +1036,7 @@
         style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }
         ">
         <input id="{{id}}" name="{{name}}" class="{{class}}"
-               data-bind="
+            data-bind="
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 optionList: {{viewConfig.dataBindOptionList}},
@@ -1102,48 +1050,45 @@
     <div data-bind="
         {{#if viewConfig.visible}} visible: {{viewConfig.visible}}, {{/if}}
         style:
-        {
+        { 
             {{#if viewConfig.width}}
-                width: '{{viewConfig.width}}px'
-            {{/if}}
+                width: '{{viewConfig.width}}px' 
+            {{/if}} 
         }
         ">
         <div class="col-xs-2 form-label margin-0-0-5">
             <label style="margin-top:5px;text-align:left;">{{label}}</label>
         </div>
-        <input id="{{id}}" name="{{name}}" class="col-xs-10 {{class}}"
-               data-bind="
-                {{#if viewConfig.disabled}}
-                    disable: {{viewConfig.disabled}},
-                {{/if}}
-                {{#if lockAttr}}
-                     disable: locks().{{name}}_locked,
-                {{/if}}
-                event: {
-                    change: function() {
-                    validateAttr()('{{viewConfig.path}}', '{{validation}}', $data);
-                    }
-                },
-                value: {{viewConfig.dataBindValue}},
-                {{#if viewConfig.customValue}}
-                    customValue: {{viewConfig.customValue}},
-                {{/if}}
-                optionList: {{viewConfig.dataBindOptionList}},
-                contrailDropdown: {}"
-        />
+        <div class="form-element col-xs-10">
+            <input id="{{id}}" name="{{name}}" class="{{class}}"
+                data-bind="
+                    {{#if viewConfig.disabled}}
+                        disable: {{viewConfig.disabled}},
+                    {{/if}}
+                    {{#if lockAttr}}
+                         disable: locks().{{name}}_locked,
+                    {{/if}}
+                    event: {
+                        change: function() {
+                        validateAttr()('{{viewConfig.path}}', '{{validation}}', $data);
+                        }
+                    },
+                    value: {{viewConfig.dataBindValue}},
+                    {{#if viewConfig.customValue}}
+                        customValue: {{viewConfig.customValue}},
+                    {{/if}}
+                    optionList: {{viewConfig.dataBindOptionList}},
+                    contrailDropdown: {}"
+            />
+        </div>
     </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-multiselect-view-template">
-    <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <label for="{{id}}">
-            {{label}}
-            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-            </span>
-        </label>
+   <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+       {{> coreFormLabel}}
         <input id="{{id}}" name="{{name}}" class="{{class}}"
-               data-bind="
+            data-bind="
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 optionList: {{viewConfig.dataBindOptionList}},
@@ -1160,7 +1105,7 @@
         style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }
     ">
         <input id="{{id}}" name="{{name}}" class="{{class}}"
-               data-bind="
+            data-bind="
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 optionList: {{viewConfig.dataBindOptionList}},
@@ -1171,7 +1116,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-editable-grid-label-left-multiselect-view-template">
-    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}}
+   <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} 
                    {{/if}}">
         <div class="row">
             <div class="col-xs-2 form-label margin-0-0-5">
@@ -1179,24 +1124,24 @@
             </div>
             <div class="form-element col-xs-10">
                 <input id="{{id}}" name="{{name}}" class="{{class}}"
-                       data-bind="
+                    data-bind="
                         {{#if viewConfig.disabled}}
-                            disable: {{viewConfig.disabled}},
+                            disable: {{viewConfig.disabled}}, 
                         {{/if}}
                         {{#if lockAttr}}
-                            disable: locks().{{name}}_locked,
+                            disable: locks().{{name}}_locked, 
                         {{/if}}
                         value: {{viewConfig.dataBindValue}},
                         optionList: {{viewConfig.dataBindOptionList}},
-                        event: {
+                        event: { 
                             change: function() {
                             validateAttr()('{{viewConfig.path}}', '{{validation}}', $data);
-                            }
+                            } 
                         },
                         contrailMultiselect: {}"
                 />
-                <span class="help-block red"
-                      data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error">
+                <span class="help-block red" 
+                    data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error">
                 </span>
             </div>
         </div>
@@ -1205,14 +1150,9 @@
 
 <script type="text/x-handlebars-template" id="core-combobox-view-template">
     <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <label for="{{id}}">
-            {{label}}
-            <span class="pull-right" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-            </span>
-        </label>
+        {{> coreFormLabel}}
         <input type="{{type}}" id="{{id}}" name="{{name}}" class="{{class}}"
-               data-bind="
+            data-bind="
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 optionList: {{viewConfig.dataBindOptionList}},
@@ -1226,7 +1166,7 @@
 <script type="text/x-handlebars-template" id="core-editable-grid-combobox-view-template">
     <div class=""  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <input id="{{id}}" name="{{name}}" class="{{class}}"
-               data-bind="
+            data-bind="
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
                 optionList: {{viewConfig.dataBindOptionList}},
@@ -1237,17 +1177,19 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-textarea-view-template">
-    <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}" >
-        <label for="{{id}}">
-            {{label}}
-            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-            </span>
-        </label>
+    <div class="form-group"
+         data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}"
+         {{#if viewConfig.help}}
+             {{#IfCompare viewConfig.help.target 'tooltip' operator='!=='}}
+                data-help="{{viewConfig.help.content}}"
+            {{/IfCompare}}
+        {{/if}}
+    >
+        {{> coreFormLabel}}
         <div class="textarea-input-group input-group inset theme-addon">
             <textarea
-                    name="{{id}}" value="" placeholder="{{placeHolder}}" rows="1" class="form-control"
-                    data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }">
+                name="{{id}}" value="" placeholder="{{placeHolder}}" rows="1" class="form-control"
+                data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }">
             </textarea>
             <span class="input-group-addon theme-addon" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="fa fa-pencil"></i></span>
         </div>
@@ -1259,12 +1201,12 @@
     <div class="row"  data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <div class="textarea-input-append input-group inset">
             <textarea
-                    name="{{id}}" class="where-textarea {{class}}" value="" placeholder="{{placeHolder}}"
-                    {{#if viewConfig.rows}} rows:'{{viewConfig.rows}}' {{/if}}
-            data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}
-            {{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
-            value: {{dataBindValue}},
-            event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data) }}">
+                name="{{id}}" class="where-textarea {{class}}" value="" placeholder="{{placeHolder}}"
+                {{#if viewConfig.rows}} rows:'{{viewConfig.rows}}' {{/if}}
+                data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}
+                {{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                value: {{dataBindValue}},
+                event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data) }}">
             </textarea>
             <span class="input-group-addon" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="fa fa-pencil"></i></span>
         </div>
@@ -1273,14 +1215,7 @@
 
 <script type="text/x-handlebars-template" id="core-datetimepicker-view-template">
     <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        {{#IfCompare label false operator='!=' }}
-        <label for="{{id}}">
-            {{label}}
-            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-                </span>
-        </label>
-        {{/IfCompare}}
+        {{> coreFormLabel}}
         <input id="{{id}}" name="{{name}}" class="{{class}}" type="text" data-bind="
         {{#if disabled}}disable: {{disabled}},
         {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}value: {{dataBindValue}},
@@ -1292,16 +1227,9 @@
 
 <script type="text/x-handlebars-template" id="core-numerictextbox-view-template">
     <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        {{#IfCompare label false operator='!=' }}
-        <label for="{{id}}">
-            {{label}}
-            <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
-                    <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
-                </span>
-        </label>
-        {{/IfCompare}}
+        {{> coreFormLabel}}
         <input id="{{id}}" name="{{name}}" class="{{class}}" type="text"
-               data-bind="
+            data-bind="
                 {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{dataBindValue}},
                 contrailNumericTextbox: {}"
@@ -1326,7 +1254,7 @@
         {{/IfCompare}}
         <div class="row col-xs-12 form-element">
             <input id="{{id}}" name="{{name}}" class="{{class}}" type="text"
-                   data-bind="
+                data-bind="
                     {{#if disabled}}disable: {{disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                     value: {{dataBindValue}},
                     contrailAutoComplete: {}"
@@ -1420,43 +1348,43 @@
     <label style="margin:0px">{{label}}</label>
     {{/IfCompare}}
     <table class="contrail-editable-grid-table" {{#if width}} width='{{width}}' {{/if}}>
-    <thead style="background:#f9f9f9">
-    <tr>
-        {{#each columns}}
-        <th class="{{this.class}}" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }">{{this.name}}</th>
-        {{/each}}
-        {{#each rowActions}}
-        <th class="action-cell">&nbsp;</th>
-        {{/each}}
-    </tr>
-    </thead>
-    <tbody data-bind="foreach: {{collection}}">
-    <tr class="data-row" data-bind="css: 'data-row-' + $index()">
-        {{#each columns}}
-        <td class="data-cell data-cell-{{elementId}}" style="{{#if viewConfig.verticalAlign}}
+        <thead style="background:#f9f9f9">
+        <tr>
+            {{#each columns}}
+                <th class="{{this.class}}" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }">{{this.name}}</th>
+            {{/each}}
+            {{#each rowActions}}
+                <th class="action-cell">&nbsp;</th>
+            {{/each}}
+        </tr>
+        </thead>
+        <tbody data-bind="foreach: {{collection}}">
+        <tr class="data-row" data-bind="css: 'data-row-' + $index()">
+            {{#each columns}}
+                <td class="data-cell data-cell-{{elementId}}" style="{{#if viewConfig.verticalAlign}}
                                 vertical-align:{{viewConfig.verticalAlign}}
                             {{/if}}"></td>
-        {{/each}}
-        {{#each rowActions}}
-        <td class="action-cell"
-            style="{{#if verticalAlign}}
+            {{/each}}
+            {{#each rowActions}}
+            <td class="action-cell"
+                style="{{#if verticalAlign}}
                           vertical-align:{{verticalAlign}}
                        {{/if}}">
-            <a data-bind='click: {{this.onClick}}'>
-                <i class="{{this.iconClass}}"></i>
-            </a>
-        </td>
-        {{/each}}
-    </tr>
-    <tr class="error-row">
-        {{#each columns}}
-        <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
-        {{/each}}
-        {{#each rowActions}}
-        <td></td>
-        {{/each}}
-    </tr>
-    </tbody>
+                <a data-bind='click: {{this.onClick}}'>
+                    <i class="{{this.iconClass}}"></i>
+                </a>
+            </td>
+            {{/each}}
+        </tr>
+        <tr class="error-row">
+            {{#each columns}}
+            <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
+            {{/each}}
+            {{#each rowActions}}
+            <td></td>
+            {{/each}}
+        </tr>
+        </tbody>
     </table>
     {{#each gridActions}}
     <div class="row margin-10-0-0">
@@ -1470,59 +1398,59 @@
     <label style="margin:0px">{{label}}</label>
     {{/IfCompare}}
     <table class="contrail-editable-grid-table" {{#if width}} width='{{width}}' {{/if}}>
-    <thead style="background:#fafafa">
-    <tr>
-        {{#each columns}}
-        <th class="{{this.class}}" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }">{{this.name}}</th>
-        {{/each}}
+        <thead style="background:#fafafa">
+        <tr>
+            {{#each columns}}
+                <th class="{{this.class}}" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }">{{this.name}}</th>
+            {{/each}}
 
-        {{#each gridActions}}
-        <th>
-            <div class=" margin-10-0-0  headerRowAction">
-                <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="fa fa-plus"></i>{{this.buttonTitle}}</a>
-            </div>
-        </th>
-        {{/each}}
-    </tr>
-    </thead>
-    <tbody data-bind="foreach: {{collection}}">
-    <tr class="data-row" data-bind="css: 'data-row-' + $index()">
-        {{#each columns}}
-        <td class="data-cell data-cell-{{elementId}}"
-            style="{{#if viewConfig.verticalAlign}}
+                {{#each gridActions}}
+                <th>
+    <div class=" margin-10-0-0  headerRowAction">
+        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'><i class="fa fa-plus"></i>{{this.buttonTitle}}</a>
+    </div>
+    </th>
+    {{/each}}
+        </tr>
+        </thead>
+        <tbody data-bind="foreach: {{collection}}">
+        <tr class="data-row" data-bind="css: 'data-row-' + $index()">
+            {{#each columns}}
+            <td class="data-cell data-cell-{{elementId}}"
+                style="{{#if viewConfig.verticalAlign}}
                             vertical-align:{{viewConfig.verticalAlign}}
                         {{/if}}"
-        ></td>
-        {{/each}}
-        <td class="action-cell"
-            style="{{#if verticalAlign}}
+            ></td>
+            {{/each}}
+            <td class="action-cell"
+                style="{{#if verticalAlign}}
                           vertical-align:{{verticalAlign}}
                        {{/if}}">
-            {{#each rowActions}}
-            <a data-bind='click: {{this.onClick}}'>
-                <i class="{{this.iconClass}}"></i>
-            </a>
-            {{/each}}
-        </td>
+                {{#each rowActions}}
+                <a data-bind='click: {{this.onClick}}'>
+                    <i class="{{this.iconClass}}"></i>
+                </a>
+                {{/each}}
+            </td>
 
-    </tr>
-    <tr class="error-row">
-        {{#each columns}}
-        <td class="error-cell">
+        </tr>
+        <tr class="error-row">
+            {{#each columns}}
+            <td class="error-cell">
             <span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span>
-        </td>
-        {{/each}}
-        {{#each rowActions}}
-        <td></td>
-        {{/each}}
-    </tr>
-    </tbody>
+            </td>
+            {{/each}}
+            {{#each rowActions}}
+            <td></td>
+            {{/each}}
+        </tr>
+        </tbody>
     </table>
 
 </script>
 <script type="text/x-handlebars-template" id="core-collection-view-template">
     {{#IfCompare viewConfig.label null operator='!='}}
-    <label style="margin:0px">{{viewConfig.label}}</label>
+        <label style="margin:0px">{{viewConfig.label}}</label>
     {{/IfCompare}}
     <div>
         <table class="collection-table">
@@ -1548,7 +1476,7 @@
     {{#if viewConfig.collectionActions}}
     <div class="row collection-actions collection-actions-add">
         <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
-            <i class="{{viewConfig.collectionActions.add.iconClass}}"></i> &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
+            <i class="{{viewConfig.collectionActions.add.iconClass}}"></i> {{viewConfig.collectionActions.add.buttonTitle}}
         </a>
     </div>
     {{/if}}
@@ -1568,11 +1496,11 @@
             {{/each}}
             <th>
                 {{#each viewConfig.gridActions}}
-                <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'>
-                    <i class="fa fa-plus"></i> &nbsp;{{this.buttonTitle}}
-                </a>
-                {{/each}}
-            </th>
+        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'>
+            <i class="fa fa-plus"></i> {{this.buttonTitle}}
+        </a>
+    {{/each}}
+    </th>
         </tr>
         </thead>
         <tbody data-bind="foreach: {{viewConfig.collection}}">
@@ -1581,28 +1509,30 @@
             {{#each columns}}
             <td class="data-cell data-cell-{{elementId}}"
                 {{#IfCompare viewConfig.colSpan null operator='!='}}
-                colspan="{{viewConfig.colSpan}}"
+                    colspan="{{viewConfig.colSpan}}"
                 {{/IfCompare}}
-            data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
-            style: {width: '{{width}}px' }">
+                data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
+                style: {width: '{{width}}px' }">
             </td>
             {{/each}}
-            <td class="action-cell">
-                {{#each rowActions}}
+            {{#if rowActions}}
+            <td class="action-cell" >
+            {{#each rowActions}}
                 <a data-bind='click: {{this.onClick}}'>
                     <i class="{{this.iconClass}}"></i>
                 </a>
-                {{/each}}
+            {{/each}}
             </td>
+            {{/if}}
         </tr>
         <tr class="error-row">
             {{#each columns}}
             <td class="error-cell"
                 {{#IfCompare viewConfig.colSpan null operator='!='}}
-                colspan="{{viewConfig.colSpan}}"
+                    colspan="{{viewConfig.colSpan}}"
                 {{/IfCompare}}>
-            <span class="help-block red"
-                  data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
+                <span class="help-block red" 
+                    data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
                 </span>
             </td>
             {{/each}}
@@ -1631,92 +1561,92 @@
     <table class="contrail-editable-grid-table">
         <thead>
         <tr>
-            <th style="min-width:15px">&nbsp;</th>
+        <th style="min-width:15px">&nbsp;</th>
             {{#each viewConfig.rows.0.columns}}
             <th class="{{this.class}}" data-bind="style: {width: '{{width}}px' }">
                 {{this.name}}
             </th>
             {{/each}}
-            {{#unless viewConfig.hideAdd}}
-            <th class="action-cell">
-                {{#each viewConfig.gridActions}}
-                <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'>
-                    <i class="fa fa-plus"></i> &nbsp;{{this.buttonTitle}}
-                </a>
-                {{/each}}
-            </th>
-            {{/unless}}
+        {{#unless viewConfig.hideAdd}}
+        <th class="action-cell">
+            {{#each viewConfig.gridActions}}
+        <a class="editable-grid-add-link" data-bind='click: {{this.onClick}}'>
+            <i class="fa fa-plus"></i> {{this.buttonTitle}}
+        </a>
+    {{/each}}
+        </th>
+        {{/unless}}
         </tr>
         </thead>
         <tbody data-bind="foreach: {{viewConfig.collection}}">
-        <tr class="data-row" data-bind="css: 'data-row-' + $index()">
-            <td style="min-width:15px" {{#IfCompare viewConfig.rows.1.columns.length 0 operator='>'}}onclick="
+            <tr class="data-row" data-bind="css: 'data-row-' + $index()">
+                        <td style="min-width:15px" {{#IfCompare viewConfig.rows.1.columns.length 0 operator='>'}}onclick="
     $(this).parent().closest('tr').next().closest('tr').next().slideToggle(20);$(this).children('i').toggleClass('fa-caret-down');$(this).children('i').toggleClass('fa-caret-right');"><i class="fa fa-caret-right toggleDetailIcon " ></i>{{/IfCompare}}</td>
-            {{#each viewConfig.rows.0.columns}}
-            <td class="data-cell data-cell-{{elementId}}"
-                {{#IfCompare viewConfig.colSpan null operator='!='}}
-                colspan="{{viewConfig.colSpan}}"
-                {{/IfCompare}}
-            data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
-            style: {width: '{{width}}px' }">
-            </td>
-            {{/each}}
-            {{#unless viewConfig.hideAdd}}
-            <td class="action-cell">
-                {{#each viewConfig.rows.0.rowActions}}
-                <a data-bind='click: {{this.onClick}}'>
-                    <i class="{{this.iconClass}}"></i>
-                </a>
+                {{#each viewConfig.rows.0.columns}}
+                <td class="data-cell data-cell-{{elementId}}"
+                    {{#IfCompare viewConfig.colSpan null operator='!='}}
+                        colspan="{{viewConfig.colSpan}}"
+                    {{/IfCompare}}
+                    data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
+                    style: {width: '{{width}}px' }">
+                </td>
                 {{/each}}
-            </td>
-            {{/unless}}
-        </tr>
-        <tr class="error-row">
+                {{#unless viewConfig.hideAdd}}
+                <td class="action-cell">
+                {{#each viewConfig.rows.0.rowActions}}
+                    <a data-bind='click: {{this.onClick}}'>
+                        <i class="{{this.iconClass}}"></i>
+                    </a>
+                {{/each}}
+                </td>
+                {{/unless}}
+            </tr>
+            <tr class="error-row">
             <td></td>
-            {{#each viewConfig.rows.0.columns}}
-            <td class="error-cell">
+                {{#each viewConfig.rows.0.columns}}
+                <td class="error-cell">
                     <span class="help-block red"
-                          data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
+                        data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
                     </span>
-            </td>
-            {{/each}}
-        </tr>
+                </td>
+                {{/each}}
+            </tr>
 
-        <tr class="collapsibleChildContainer" style="display:none" data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}} {{/if}}">
-            <td  colspan="{{viewConfig.rows.1.columns.0.viewConfig.colSpan}}">
-                <!--Child Control -->
-                <table >
-                    <tr class="data-row" data-bind="css: 'data-row-' + $index()">
-                        {{#each viewConfig.rows.1.columns}}
-                        <td class="data-cell data-cell-{{elementId}}"
-                            {{#IfCompare viewConfig.colSpan null operator='!='}}
-                            colspan="{{viewConfig.colSpan}}"
-                            {{/IfCompare}}
-                        data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
-                        style: {width: '{{width}}px' }">
-                        </td>
-                        {{/each}}
+            <tr class="collapsibleChildContainer" style="display:none" data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}} {{/if}}">
+                <td  colspan="{{viewConfig.rows.1.columns.0.viewConfig.colSpan}}">
+                    <!--Child Control -->
+                    <table >
+                        <tr class="data-row" data-bind="css: 'data-row-' + $index()">
+                            {{#each viewConfig.rows.1.columns}}
+                            <td class="data-cell data-cell-{{elementId}}"
+                                {{#IfCompare viewConfig.colSpan null operator='!='}}
+                                    colspan="{{viewConfig.colSpan}}"
+                                {{/IfCompare}}
+                                data-bind="{{#if viewConfig.visible}}visible: {{viewConfig.visible}}, {{/if}}
+                                style: {width: '{{width}}px' }">
+                            </td>
+                            {{/each}}
 
-                        {{#each viewConfig.rows.1.rowActions}}
-                        <td class="action-cell">
-                            <a data-bind='click: {{this.onClick}}'>
-                                <i class="{{this.iconClass}}"></i>
-                            </a>
-                        </td>
-                        {{/each}}
-                    </tr>
-                    <tr class="error-row">
-                        {{#each viewConfig.rows.1.columns}}
-                        <td class="error-cell">
+                            {{#each viewConfig.rows.1.rowActions}}
+                            <td class="action-cell">
+                                <a data-bind='click: {{this.onClick}}'>
+                                    <i class="{{this.iconClass}}"></i>
+                                </a>
+                            </td>
+                            {{/each}}
+                        </tr>
+                        <tr class="error-row">
+                            {{#each viewConfig.rows.1.columns}}
+                            <td class="error-cell">
                                 <span class="help-block red"
-                                      data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
+                                    data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
                                 </span>
-                        </td>
-                        {{/each}}
-                    </tr>
-                </table>
-            </td>
-        </tr>
+                            </td>
+                            {{/each}}
+                        </tr>
+                    </table>
+                </td>
+            </tr>
         </tbody>
     </table>
     {{#if viewConfig.collectionActions}}
@@ -1731,7 +1661,7 @@
 
 <script type="text/x-handlebars-template" id="query-or-collection-view-template">
     {{#IfCompare viewConfig.label null operator='!='}}
-    <label class="margin-0">{{viewConfig.label}}</label>
+        <label class="margin-0">{{viewConfig.label}}</label>
     {{/IfCompare}}
     <div id="{{elementId}}" class="collection or-clause-collection row-fluid" data-bind="foreach: {{viewConfig.collection}}">
         <div class="row or-clause" data-bind="css: 'or-clause-' + $index()">
@@ -1739,28 +1669,28 @@
                 <p class="or-text">OR</p>
             </div>
             <div class="col-xs-10">
-                {{#each viewConfig.rows}}
+            {{#each viewConfig.rows}}
                 <div class="row or-clause-header">
                     <p class="or-clause-text col-xs-10" data-bind="text: getOrClauseText()($data)"></p>
                     {{#each rowActions}}
-                    <a class="collection-actions collection-actions-{{@index}} pull-right" data-bind='click: {{onClick}}'>
-                        <i class="pull-right {{iconClass}}"></i>
-                    </a>
+                        <a class="collection-actions collection-actions-{{@index}} pull-right" data-bind='click: {{onClick}}'>
+                            <i class="pull-right {{iconClass}}"></i>
+                        </a>
                     {{/each}}
                 </div>
                 <div class="row">
                     {{#each columns}}
-                    <div class="and-clause-collection data-cell-{{elementId}}" />
+                        <div class="and-clause-collection data-cell-{{elementId}}" />
                     {{/each}}
                 </div>
-                {{/each}}
+            {{/each}}
             </div>
         </div>
     </div>
 </script>
 <script type="text/x-handlebars-template" id="query-routing-policy-terms-template">
     {{#IfCompare viewConfig.label null operator='!='}}
-    <label style="margin:0">{{viewConfig.label}}</label>
+        <label style="margin:0">{{viewConfig.label}}</label>
     {{/IfCompare}}
     <div id="{{elementId}}" class="collection or-clause-collection row" data-bind="foreach: {{viewConfig.collection}}">
         <div class="row or-clause" data-bind="css: 'or-clause-' + $index()">
@@ -1774,13 +1704,13 @@
             </div>
             <div class="row">
                 {{#each viewConfig.rows}}
-                <div style="padding: 5px 5px 0 5px;">
-                    <div class="row">
-                        {{#each columns}}
-                        <div class="and-clause-collection data-cell{{elementId}}" />
-                        {{/each}}
+                    <div style="padding: 5px 5px 0 5px;">
+                        <div class="row">
+                            {{#each columns}}
+                                <div class="and-clause-collection data-cell-{{elementId}}" />
+                            {{/each}}
+                        </div>
                     </div>
-                </div>
                 {{/each}}
             </div>
         </div>
@@ -1796,38 +1726,38 @@
 <script type="text/x-handlebars-template" id="core-detail-foundation-template">
     <div class="row detail-foundation-container group-detail-container">
         <div class="row detail-foundation-action">
-            {{#each actions}}
+        {{#each actions}}
             {{#IfCompare type 'link' operator='==' }}
-            <a class="detail-foundation-action-item group-detail-action-item pull-right" title="{{title}}"><i class="{{iconClass}}"></i></a>
+                <a class="detail-foundation-action-item group-detail-action-item pull-right" title="{{title}}"><i class="{{iconClass}}"></i></a>
             {{/IfCompare}}
             {{#IfCompare type 'dropdown' operator='==' }}
-            <div class="dropdown" data-title="{{title}}">
-                <a class="detail-foundation-action-item group-detail-action-item pull-right dropdown-toggle" data-toggle="dropdown" href="#" title="{{title}}">
-                    <i class="{{iconClass}}"></i>
-                </a>
-                <ul class="pull-right dropdown-menu dropdown-caret group-detail-action-item-dropdown-menu">
-                    {{#each optionList}}
-                    {{#IfCompare divider true operator='=='}}
-                    <li class="divider"></li>
-                    {{/IfCompare}}
-                    <li>
-                        <a data-title="{{title}}">
-                            <i class="{{iconClass}}"></i> &nbsp; {{title}}
-                        </a>
-                    </li>
-                    {{/each}}
-                </ul>
-            </div>
+                <div class="dropdown" data-title="{{title}}">
+                    <a class="detail-foundation-action-item group-detail-action-item pull-right dropdown-toggle" data-toggle="dropdown" href="#" title="{{title}}">
+                        <i class="{{iconClass}}"></i>
+                    </a>
+                    <ul class="pull-right dropdown-menu dropdown-caret group-detail-action-item-dropdown-menu">
+                        {{#each optionList}}
+                            {{#IfCompare divider true operator='=='}}
+                                <li class="divider"></li>
+                            {{/IfCompare}}
+                            <li>
+                                <a data-title="{{title}}">
+                                    <i class="{{iconClass}}"></i> &nbsp; {{title}}
+                                </a>
+                            </li>
+                        {{/each}}
+                    </ul>
+                </div>
             {{/IfCompare}}
-            {{/each}}
-            {{#IfCompare advancedViewOptions false operator='!=' }}
+        {{/each}}
+        {{#IfCompare advancedViewOptions false operator='!=' }}
             <a class="detail-foundation-action-item group-detail-action-item group-detail-advanced-action-item pull-right selected" title="Basic List View" data-view="basic-list">
                 <i class="fa fa-list"></i>
             </a>
             <a class="detail-foundation-action-item group-detail-action-item group-detail-advanced-action-item pull-right" title="Advanced JSON View" data-view="advanced-json">
                 <i class="fa fa-code"></i>
             </a>
-            {{/IfCompare}}
+        {{/IfCompare}}
         </div>
         <div class="detail-foundation-content-basic group-detail-basic-list group-detail-item"></div>
         <div class="row detail-foundation-content-advanced group-detail-advanced-json group-detail-item customHide"></div>
@@ -1854,9 +1784,9 @@
 <script type="text/x-handlebars-template" id="core-2-column-1-row-2row-content-template">
     <div id="left-column-container" class="col-xs-5"></div>
     <div id="right-column-container" class="col-xs-7">
-        <!--  <div id="top-right-content-container" class="row margin-0-0-5"></div>
-          <div id="bottom-right-content-container" class="row margin-0-0-5"></div>
-          -->
+      <!--  <div id="top-right-content-container" class="row margin-0-0-5"></div>
+        <div id="bottom-right-content-container" class="row margin-0-0-5"></div>
+        -->
     </div>
 </script>
 
@@ -1921,7 +1851,7 @@
 
 <script type="text/x-handlebars-template" id="core-tabs-link-template">
     {{#each this}}
-    <li>
+        <li>
         <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">
             {{#if iconClass}}
             <i class="contrail-tab-link-icon {{iconClass}}"></i>
@@ -1936,15 +1866,15 @@
             <i class="fa fa-ellipsis-v"></i>
         </a>
         {{/if}}
-    </li>
+        </li>
     {{/each}}
 </script>
 
 <script type="text/x-handlebars-template" id="core-tabs-content-template">
     {{#each this}}
-    <div id="{{elementId}}-tab">
-        <div id="{{elementId}}" class="contrail-tab-content {{viewConfig.class}}"></div>
-    </div>
+        <div id="{{elementId}}-tab">
+            <div id="{{elementId}}" class="contrail-tab-content {{viewConfig.class}}"></div>
+        </div>
     {{/each}}
 </script>
 
@@ -1954,24 +1884,24 @@
             <h4>{{title}}</h4>
         </div>
         {{#if iconClass}}
-        <div class="row">
-            <h2 class="not-found-icon"><i class="{{iconClass}}"></i></h2>
-        </div>
+            <div class="row">
+                <h2 class="not-found-icon"><i class="{{iconClass}}"></i></h2>
+            </div>
         {{/if}}
         <div class="row not-found-text">
             {{#if errorMessage}}
-            <h6>{{errorMessage}}</h6>
+                <h6 >{{errorMessage}}</h6>
             {{/if}}
             {{#IfCompare defaultErrorMessage false operator='!=='}}
-            <h6>The link you followed may be broken, or there must be some change in the configuration for this page.</h6>
+                <h6>The link you followed may be broken, or there must be some change in the configuration for this page.</h6>
             {{/IfCompare}}
             <h6>
                 {{#IfCompare defaultNavLinks false operator='!='}}
-                <a class="not-found-nav-link" href="/">Go to the Contrail Homepage</a> |
-                <a onclick="history.back();" >Go back to the previous page</a>
+                    <a class="not-found-nav-link" href="/">Go to the Contrail Homepage</a> |
+                    <a onclick="history.back();" >Go back to the previous page</a>
                 {{/IfCompare}}
                 {{#each navLinks}}
-                | <a href="{{href}}">{{text}}</a>
+                    | <a href="{{href}}">{{text}}</a>
                 {{/each}}
             </h6>
         </div>
@@ -1981,12 +1911,12 @@
 <script type="text/x-handlebars-template" id="core-control-panel-template">
     <div id="control-panel-items" class="control-panel-items pull-right">
         {{#IfCompare default.zoom.enabled true}}
-        <div class="control-panel-item zoom-in" title="Zoom In"><i class="fa fa-search-plus"></i></div>
-        <div class="control-panel-item zoom-out" title="Zoom Out"><i class="fa fa-search-minus"></i></div>
-        <div class="control-panel-item zoom-reset" title="Zoom Reset"><i class="fa fa-times-circle-o"></i></div>
+            <div class="control-panel-item zoom-in" title="Zoom In"><i class="fa fa-search-plus"></i></div>
+            <div class="control-panel-item zoom-out" title="Zoom Out"><i class="fa fa-search-minus"></i></div>
+            <div class="control-panel-item zoom-reset" title="Zoom Reset"><i class="fa fa-times-circle-o"></i></div>
         {{/IfCompare}}
         {{#each custom}}
-        <div class="control-panel-item {{@key}}" title="{{title}}"><i class="{{iconClass}}"></i></div>
+            <div class="control-panel-item {{@key}}" title="{{title}}"><i class="{{iconClass}}"></i></div>
         {{/each}}
     </div>
 </script>
@@ -2004,31 +1934,31 @@
             {{#each viewConfig.groups}}
             <div class="control-panel-filter-group margin-10">
                 {{#IfCompare title false operator='!='}}
-                <h6 class="control-panel-group-filter-title">{{title}}</h6>
+                    <h6 class="control-panel-group-filter-title">{{title}}</h6>
                 {{/IfCompare}}
                 <div id="control-panel-filter-group-items-{{id}}" class="control-panel-filter-group-items padding-5-0;">
 
-                    {{#IfCompare type 'checkbox-circle' operator='=='}}
+                {{#IfCompare type 'checkbox-circle' operator='=='}}
                     {{#each items}}
-                    <div class="control-panel-filter-group-item padding-5-0 col-xs-12">
-                        <input type="checkbox" name="control-panel-filter" class="ace-input checkbox-circle" checked/>
-                        <span class="ace-lbl checkbox-circle {{labelCssClass}}"> {{text}}</span>
-                    </div>
+                        <div class="control-panel-filter-group-item padding-5-0 col-xs-12">
+                            <input type="checkbox" name="control-panel-filter" class="ace-input checkbox-circle" checked/>
+                            <span class="ace-lbl checkbox-circle {{labelCssClass}}"> {{text}}</span>
+                        </div>
                     {{/each}}
-                    {{/IfCompare}}
+                {{/IfCompare}}
 
-                    {{#IfCompare type 'radio' operator='=='}}
+                {{#IfCompare type 'radio' operator='=='}}
                     {{#each items}}
-                    <div class="control-panel-filter-group-item row">
-                        <div class="col-xs-1">
-                            <input type="radio" name="control-panel-filter" {{#IfCompare @index 0 operator='=='}} checked {{/IfCompare}} class="margin-0"/>
+                        <div class="control-panel-filter-group-item row">
+                            <div class="col-xs-1">
+                                <input type="radio" name="control-panel-filter" {{#IfCompare @index 0 operator='=='}} checked {{/IfCompare}} class="margin-0"/>
+                            </div>
+                            <div class="col-xs-11 control-panel-filter-text">
+                                <span class="margin-2 {{labelCssClass}}" title="{{text}}"> {{text}}</span>
+                            </div>
                         </div>
-                        <div class="col-xs-11 control-panel-filter-text">
-                            <span class="margin-2 {{labelCssClass}}" title="{{text}}"> {{text}}</span>
-                        </div>
-                    </div>
                     {{/each}}
-                    {{/IfCompare}}
+                {{/IfCompare}}
 
                 </div>
             </div>
@@ -2087,33 +2017,16 @@
                                     <span class="margin-2 {{labelCssClass}}" title="{{text}}"> {{text}}</span>
                                 </div>
                             </div>
-                            <div class="col-xs-11 control-panel-filter-text">
-                                <span class="margin-2 {{labelCssClass}}" title="{{text}}"> {{text}}</span>
-                            </div>
-                        </div>
-                        {{/each}}
-                        {{/IfCompare}}
+                            {{/each}}
+                            {{/IfCompare}}
 
-                        {{#IfCompare type 'checkbox' operator='=='}}
-                        {{#each items}}
-                        <div class="control-panel-filter-group-item row">
-                            <div class="col-xs-1">
-                                <input type="checkbox" name="control-panel-filter-{{../id}}-{{id}}" value="{{text}}" {{#IfCompare checked true operator='=='}} checked {{/IfCompare}} class="margin-0"/>
-                            </div>
-                            <div class="col-xs-11 control-panel-filter-text">
-                                <span class="margin-2 {{labelCssClass}}" title="{{text}}"> {{text}}</span>
-                            </div>
                         </div>
-                        {{/each}}
-                        {{/IfCompare}}
-
                     </div>
-                </div>
-                {{/each}}
-            </div>
             {{/each}}
-        </div>
+            </div>
+        {{/each}}
     </div>
+</div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-template">
@@ -2151,11 +2064,11 @@
                 <h6 class="control-panel-group-legend-title">{{title}}</h6>
                 <div id="control-panel-legend-group-items-{{id}}" class="control-panel-legend-group-items padding-5-0;">
 
-                    {{#each items}}
+                {{#each items}}
                     <div class="control-panel-legend-group-item padding-5-0">
                         <i class="{{labelCssClass}}"></i> &nbsp;{{text}}
                     </div>
-                    {{/each}}
+                {{/each}}
                 </div>
             </div>
             {{/each}}
@@ -2168,37 +2081,37 @@
         {{#IfCompare controls.top false operator='!=='}}
         <div class="widget-header">
             <p class="smaller" {{#IfCompare controls.top.default.collapseable false operator='!=='}} data-action="widget-collapse"{{/IfCompare}}>
-            {{#IfCompare header.iconClass false operator='!=='}}<i class="{{header.iconClass}}"></i>{{/IfCompare}} {{header.title}}
+                {{#IfCompare header.iconClass false operator='!=='}}<i class="{{header.iconClass}}"></i>{{/IfCompare}} {{header.title}}
             </p>
             <div class="widget-toolbar pull-right">
                 {{#IfCompare controls.top.default.collapseable false operator='!=='}}
-                <a data-action="widget-collapse">
-                    <i class="{{#IfCompare controls.top.default.collapsedOnLoad true operator='==='}} fa fa-chevron-down {{else}} fa fa-chevron-up {{/IfCompare}}"></i>
-                </a>
+                    <a data-action="widget-collapse">
+                        <i class="{{#IfCompare controls.top.default.collapsedOnLoad true operator='==='}} fa fa-chevron-down {{else}} fa fa-chevron-up {{/IfCompare}}"></i>
+                    </a>
                 {{/IfCompare}}
             </div>
         </div>
         {{/IfCompare}}
         <div class="widget-body-collapsed" data-action="widget-collapse"
-             {{#IfCompare controls.top.default.collapsedOnLoad true operator='!=='}} style="display:none;"{{/IfCompare}}>
-        <a>Click here to expand <i class="fa fa-angle-double-down"></i></a>
-    </div>
-    <div class="widget-body" {{#IfCompare controls.top.default.collapsedOnLoad true operator='==='}} style="display:none;"{{/IfCompare}}>
-    <div class="widget-main padding-4">
-        {{#IfCompare controls.right false operator='!=='}}
-        <div class="widget-main-rightmenu colmask rightmenu">
-            <div class="colleft">
-                <div class="col1wrap">
-                    <div class="col1"></div>
-                </div>
-                <div class="col2 control-panel-container"></div>
-                <div class="control-panel-expanded-container hidden" style="{{#if controls.right.expandedContainerWidth}}width: {{controls.right.expandedContainerWidth}}px; {{/if}}
+            {{#IfCompare controls.top.default.collapsedOnLoad true operator='!=='}} style="display:none;"{{/IfCompare}}>
+            <a>Click here to expand <i class="fa fa-angle-double-down"></i></a>
+        </div>
+        <div class="widget-body" {{#IfCompare controls.top.default.collapsedOnLoad true operator='==='}} style="display:none;"{{/IfCompare}}>
+            <div class="widget-main padding-4">
+                {{#IfCompare controls.right false operator='!=='}}
+                <div class="widget-main-rightmenu colmask rightmenu">
+                    <div class="colleft">
+                        <div class="col1wrap">
+                            <div class="col1"></div>
+                        </div>
+                        <div class="col2 control-panel-container"></div>
+                        <div class="control-panel-expanded-container hidden" style="{{#if controls.right.expandedContainerWidth}}width: {{controls.right.expandedContainerWidth}}px; {{/if}}
                                     {{#if controls.right.expandedContainerHeight}}height: {{controls.right.expandedContainerHeight}}px;{{/if}}"></div>
+                    </div>
+                </div>
+                {{/IfCompare}}
             </div>
         </div>
-        {{/IfCompare}}
-    </div>
-    </div>
     </div>
 </script>
 
@@ -2223,7 +2136,7 @@
 <script type="text/x-handlebars-template" id="core-button-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
         <button class="btn btn-mini {{viewConfig.elementConfig.btnClass}}"
-                data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}},
+            data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}},
             {{/if}}click: {{viewConfig.elementConfig.onClick}}"
         >
             {{#if viewConfig.iconClass}}<i class="{{viewConfig.iconClass}}"/>&nbsp;{{/if}}{{viewConfig.label}}
@@ -2234,33 +2147,33 @@
 <script type="text/x-handlebars-template" id="node-details-sparkline-template">
     <div id="{{prefix}}-sparklines" class="col-xs-4 infobox infobox-details infobox-grey  infobox-content  {{prefix}}-chart-link sparklines-box">
         <p class="infobox-content infobox-details-title">{{title}}</p>
-        <div class="row infobox-content">
+         <div class="row infobox-content">
            <span class="col-xs-6">
                 <small>{{sparklineTitle1}}</small>
            </span>
-            <span class='sparkline1 col-xs-6'>
+           <span class='sparkline1 col-xs-6'>
            </span>
-        </div>
-        <div class="row infobox-content">
+         </div>
+         <div class="row infobox-content">
            <span class="col-xs-6">
                 <small>{{sparklineTitle2}}</small>
            </span>
-            <span class='sparkline2 col-xs-6'>
+           <span class='sparkline2 col-xs-6'>
            </span>
-        </div>
+         </div>
     </div>
 </script>
 
 <script type="text/x-handlebars-template" id="query-page-template">
     <div id="qe-{{queryPrefix}}-container">
         {{#if text}}
-        <div id='qe-{{queryPrefix}}-text-container'>
-            <div id='qe-{{queryPrefix}}-text-{{formQueryIdSuffix}}'></div>
-        </div>
+            <div id='qe-{{queryPrefix}}-text-container'>
+                <div id='qe-{{queryPrefix}}-text-{{formQueryIdSuffix}}'></div>
+            </div>
         {{else}}
-        <div id='qe-{{queryPrefix}}-form-container'>
-            <div id='qe-{{queryPrefix}}-form{{formQueryIdSuffix}}'></div>
-        </div>
+            <div id='qe-{{queryPrefix}}-form-container'>
+                <div id='qe-{{queryPrefix}}-form{{formQueryIdSuffix}}'></div>
+            </div>
         {{/if}}
         <div id="qe-{{queryPrefix}}-results-container" class="margin-10-0-0">
             <div id='qe-{{queryPrefix}}-results{{formQueryIdSuffix}}'></div>
@@ -2307,13 +2220,13 @@
 
 <script type="text/x-handlebars-template" id="core-sparkline-template">
     <div class="chart-container row">
-        <!-- <svg style="height:{{height}}px;"></svg> -->
+         <!-- <svg style="height:{{height}}px;"></svg> -->
     </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-stacked-bar-chart-template">
     <div class="stacked-bar-chart-container chart-container">
-        <!-- <svg style="height:{{height}}px;"></svg> -->
+         <!-- <svg style="height:{{height}}px;"></svg> -->
     </div>
 </script>
 
@@ -2340,7 +2253,7 @@
         </div>
     </div>
 </script>
-
+ 
 <script type="text/x-handlebars-template" id="core-modal-template">
     <div id="{{prefixId}}_modal"></div>
 </script>
@@ -2360,8 +2273,8 @@
 
 <script type="text/x-handlebars-template" id="core-generic-collection-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        <table class="contrail-editable-grid-table" >
-            <tbody data-bind="foreach: {{viewConfig.collection}}">
+    <table class="contrail-editable-grid-table" >
+        <tbody data-bind="foreach: {{viewConfig.collection}}">
             <div class="row collection-actions collection-actions-add">
                 <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
                     <i class="{{viewConfig.collectionActions.add.iconClass}}"></i> &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
@@ -2379,9 +2292,9 @@
                 {{#each columns}}
                 <td class="data-cell data-cell-{{elementId}}"
                     {{#IfCompare viewConfig.colSpan null operator='!='}}
-                    colspan="{{viewConfig.colSpan}}"
+                        colspan="{{viewConfig.colSpan}}"
                     {{/IfCompare}}
-                class="data-cell" data-bind="style: {width: '{{width}}px' }">
+                    class="data-cell" data-bind="style: {width: '{{width}}px' }">
                 </td>
                 {{/each}}
                 {{#each rowActions}}
@@ -2394,47 +2307,47 @@
                 <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
                 {{/each}}
             </tr>
-            </tbody>
-        </table>
+        </tbody>
+    </table>
 
     </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-collection-common-heading-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
-        {{#IfCompare viewConfig.label null operator='!='}}
-        <label style="margin:0px" class="text-left">{{viewConfig.label}}</label>
-        {{/IfCompare}}
-        <table class="contrail-editable-grid-table" >
-            <thead style="background:#fafafa">
-            <tr class="data-row">
-                {{#each viewConfig.rows.0.columns}}
-                <th class="{{this.class}}" data-bind="style: {width: '{{width}}px' }">{{viewConfig.label}}</th>
-                {{/each}}
-                {{#if viewConfig.collectionActions.add.iconClass}}
-                <th>
-                    <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
-                        <i class="{{viewConfig.collectionActions.add.iconClass}}"></i> &nbsp;{{viewConfig.collectionActions.add.buttonTitle}}
-                    </a>
-                </th>
-                {{/if}}
-            </tr>
-            </thead>
-            <tbody data-bind="foreach: {{viewConfig.collection}}">
+    {{#IfCompare viewConfig.label null operator='!='}}
+    <label style="margin:0px" class="text-left">{{viewConfig.label}}</label>
+    {{/IfCompare}}
+    <table class="contrail-editable-grid-table" >
+        <thead style="background:#fafafa">
+          <tr class="data-row">
+            {{#each viewConfig.rows.0.columns}}
+            <th class="{{this.class}}" data-bind="style: {width: '{{width}}px' }">{{viewConfig.label}}</th>
+            {{/each}}
+            {{#if viewConfig.collectionActions.add.iconClass}}
+            <th>
+                <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
+                    <i class="{{viewConfig.collectionActions.add.iconClass}}"></i> {{viewConfig.collectionActions.add.buttonTitle}}
+                </a>
+            </th>
+            {{/if}}
+        </tr>
+        </thead>
+        <tbody data-bind="foreach: {{viewConfig.collection}}">
             {{#each viewConfig.rows}}
             <tr class="data-row" data-bind="css: 'data-row-' + $index()">
                 {{#each columns}}
                 <td class="data-cell data-cell-{{elementId}}"
                     {{#IfCompare viewConfig.colSpan null operator='!='}}
-                    colspan="{{viewConfig.colSpan}}"
+                        colspan="{{viewConfig.colSpan}}"
                     {{/IfCompare}}
-                data-bind="style: {width: '{{width}}px' }">
+                    data-bind="style: {width: '{{width}}px' }">
                 </td>
                 {{/each}}
                 <td class="action-cell">
-                    {{#each rowActions}}
-                    <a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a>
-                    {{/each}}
+                {{#each rowActions}}
+                <a data-bind='click: {{this.onClick}}'><i class="{{this.iconClass}}"></i></a>
+                {{/each}}
                 </td>
             </tr>
             {{/each}}
@@ -2443,8 +2356,8 @@
                 <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
                 {{/each}}
             </tr>
-            </tbody>
-        </table>
+        </tbody>
+    </table>
     </div>
 </script>
 
@@ -2504,39 +2417,36 @@
                 </div>
             </div>
             <div class="col-xs-5 network-policy-destination detail-section-column-content">
-                <div class="detail-block-list-content row">
-                    <h6>Destination</h6>
-                    <ul class="item-list network-policy-dst-address">
-                        {{#each data.dst_addresses}}
-                        <li>
-                            <label class="inline row">
-                                {{#if this.network_policy}}
-                                <span> class="key col-xs-4"> Network Policy </span><span class="value col-xs-7"> {{this.network_policy}}</span>
-                                {{/if}}
-                                {{#if this.security_group}}
-                                <span class="key col-xs-4"> Security Group </span><span class="value col-xs-7"> {{this.security_group}}</span>
-                                {{/if}}
-                                {{#if this.subnet}}
-                                <span class="key col-xs-4"> Subnet </span><span class="value col-xs-7"> {{this.subnet.ip_prefix}}/{{this.subnet.ip_prefix_len}}</span>
-                                {{/if}}
-                                {{#if this.virtual_network}}
-                                <span class="key col-xs-4"> Virtual Network </span><span class="value col-xs-7"> {{{this.virtual_network_tmpl}}}</span>
-                                {{/if}}
-                            </label>
-                        </li>
-                        {{/each}}
-                        <li><label class="inline row">
-                            <span class="key col-xs-4"> Port Range </span>
-                            <span class="value col-xs-7">
-                                {{#each data.dst_ports}}
-                                    <span class="row"> {{this.start_port}} to {{this.end_port}}</span>
-                                {{/each}}
-                            </span>
-                            </label>
-                        </li>
-                    </ul>
-                </div>
+            <div class="detail-block-list-content row">
+                <h6>Destination</h6>
+                <ul class="item-list network-policy-dst-address">
+                    {{#each data.dst_addresses}}
+                    <li><label class="inline row">
+                        {{#if this.network_policy}}
+                        <span> class="key col-xs-4"> Network Policy </span><span class="value col-xs-7"> {{this.network_policy}}</span>
+                        {{/if}}
+                        {{#if this.security_group}}
+                        <span class="key col-xs-4"> Security Group </span><span class="value col-xs-7"> {{this.security_group}}</span>
+                        {{/if}}
+                        {{#if this.subnet}}
+                        <span class="key col-xs-4"> Subnet </span><span class="value col-xs-7"> {{this.subnet.ip_prefix}}/{{this.subnet.ip_prefix_len}}</span>
+                        {{/if}}
+                        {{#if this.virtual_network}}
+                        <span class="key col-xs-4"> Virtual Network </span><span class="value col-xs-7"> {{{this.virtual_network_tmpl}}}</span>
+                        {{/if}}
+                    </label></li>
+                    {{/each}}
+                    <li><label class="inline row">
+                        <span class="key col-xs-4"> Port Range </span>
+                        <span class="value col-xs-7">
+                            {{#each data.dst_ports}}
+                                <span class="row"> {{this.start_port}} to {{this.end_port}}</span>
+                            {{/each}}
+                        </span>
+                    </label></li>
+                </ul>
             </div>
+        </div>
         </div>
     </div>
 </script>
@@ -2544,11 +2454,23 @@
 <script type="text/x-handlebars-template" id="grid-grouping-heading-template">
     <span class='slick-grid-grouping-heading'>{{{mainText}}}</span>
     {{#if rowsCount}}
-    <span>({{{rowsCount}}} {{{rowsCountSuffix}}})</span>
+        <span>({{{rowsCount}}} {{{rowsCountSuffix}}})</span>
     {{/if}}
 </script>
 
 <script type="text/x-handlebars-template" id="alarm-severity-template">
     <div data-color={{{color}}} class="circle {{{color}}} {{#IfCompare ack false}}filled{{/IfCompare}} alarms-circle-grid-style alarms-circle-display-flex"></div>
     {{#if showText}}<div class="alarms-display-inline">&nbsp;{{{text}}}</div>{{/if}}
+</script>
+
+<script type="text/x-handlebars-template" id="core-2-row-4-column-template">
+    <div class="row margin-0-0-5 top-container">
+        <div class="col-xs-6 left-column"></div>
+        <div class="col-xs-6 right-column"></div>
+    </div>
+    <div style='clear:both'></div>
+    <div class="row-fluid margin-0-0-5 bottom-container">
+        <div class="col-xs-6 left-column"></div>
+        <div class="col-xs-6 right-column"></div>
+    </div>
 </script>
