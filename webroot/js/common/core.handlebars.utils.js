@@ -2,10 +2,11 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 define([
+    'jquery',
     'underscore',
     'handlebars',
     'text!core-basedir/common/ui/templates/core.partials.tmpl'
-], function (_, Handlebars, CorePartialsTmpls) {
+], function ($, _, Handlebars, CorePartialsTmpls) {
 
     /*
      * Handlebars Partials
