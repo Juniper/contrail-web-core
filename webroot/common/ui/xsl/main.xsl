@@ -1,8 +1,8 @@
 <!-- Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.  -->
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:import href="xsl/params.xsl"/>
-	<xsl:import href="xsl/common.xsl"/>
+	<xsl:import href="common/ui/xsl/params.xsl"/>
+	<xsl:import href="common/ui/xsl/common.xsl"/>
 
 	<!--set the doc type publice tp -//W3C//DTD HTML 4.0 Transitional//EN.-->
 	<xsl:output method="html" indent="yes" doctype-public="-//W3C//DTD HTML 4.0 Transitional//EN"/>
