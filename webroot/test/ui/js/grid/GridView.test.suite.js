@@ -4,11 +4,12 @@
 
 define([
     'underscore',
+    'handlebars',
     'co-test-utils',
     'co-test-messages',
     'co-test-constants',
     'co-test-runner'
-], function (_, cotu, cotm, cotc, cotr) {
+], function (_, Handlebars, cotu, cotm, cotc, cotr) {
 
     var testSuiteClass = function (viewObj, suiteConfig){
 

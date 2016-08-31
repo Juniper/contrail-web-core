@@ -79,7 +79,7 @@ define([
                 maxScale: 2,
                 duration: 200,
                 easing: "ease-out",
-                contain: 'invert'
+                contain: false
             },
             panzoomConfig = $.extend(true, panZoomDefaultConfig, controlPanelConfig.default.zoom.config);
 

@@ -1,7 +1,13 @@
 /*
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
-(function($) {
+
+define([
+    'jquery',
+    'underscore',
+    'moment',
+    'jquery-ui'
+], function($, _, moment) {
     $.ui.tabs.prototype._tabKeydown = function(event){
         return;
     };
@@ -69,10 +75,10 @@
                     }
                     $(self).tabs('refresh');
                 },
-                
+
                 /*
                  * This function disables the tab and hides it based on the flag
-                 * accepts either array of tab indexes or single tab index  
+                 * accepts either array of tab indexes or single tab index
                  */
                 disableTab: function (tabIndex, hide) {
                     if($.isArray(tabIndex)) {
@@ -81,7 +87,7 @@
                         }
                         return;
                     }
-                    
+
                     // Get the array of disabled tabs, if any
                     var disabledTabs = self.tabs("option", "disabled");
 
@@ -103,7 +109,7 @@
                 },
                 /*
                  * This function enables the tab which accepts either array of
-                 * indexes or single tab index  
+                 * indexes or single tab index
                  */
                 enableTab: function (tabIndex) {
                     if($.isArray(tabIndex)) {
@@ -416,7 +422,7 @@
                 });
 
             if(contrail.checkIfExist(config.defaultValue)){
-                    input.val(config.defaultValue);
+                input.val(config.defaultValue);
             }
 
             input.data("ui-autocomplete")._renderItem = function (ul, item) {
@@ -460,7 +466,7 @@
     };
 
     $.fn.contrail2WayMultiselect = function (givenOptions) {
-    	var self = this;
+        var self = this;
         var defaultOptions = {
             dataTextField: "label",
             dataValueField: "value",
@@ -469,17 +475,17 @@
             sizeLeft: 8,
             sizeRight: 8,
             controls: {
-            	single: true,
-            	all: true
+                single: true,
+                all: true
             },
-			beforeMoveOneToRight: function() { return true; },
-			afterMoveOneToRight: function(){},
-			beforeMoveAllToRight: function(){ return true; },
-			afterMoveAllToRight: function(){},
-			beforeMoveOneToLeft: function(){ return true; },
-			afterMoveOneToLeft: function(){},
-			beforeMoveAllToLeft: function(){ return true; },
-			afterMoveAllToLeft: function(){}
+            beforeMoveOneToRight: function() { return true; },
+            afterMoveOneToRight: function(){},
+            beforeMoveAllToRight: function(){ return true; },
+            afterMoveAllToRight: function(){},
+            beforeMoveOneToLeft: function(){ return true; },
+            afterMoveOneToLeft: function(){},
+            beforeMoveAllToLeft: function(){ return true; },
+            afterMoveAllToLeft: function(){}
         };
         var options = $.extend({}, defaultOptions, givenOptions);
         constructContrail2WayMultiselect(this, options);
@@ -487,20 +493,20 @@
         options = (typeof options === "undefined") ? {} : options;
 
         var multiselectContainer = {
-        		lists: {
-        			left: $(this).find('.multiselect-left'),
-            		right: $(this).find('.multiselect-right')
-        		},
-        		controls: {
-        			leftAll: $(this).find('.multiselect-control-left-all'),
-        			leftSelected: $(this).find('.multiselect-control-left-selected'),
-        			rightAll: $(this).find('.multiselect-control-right-all'),
-        			rightSelected: $(this).find('.multiselect-control-right-selected')
-        		}
-        	};
+            lists: {
+                left: $(this).find('.multiselect-left'),
+                right: $(this).find('.multiselect-right')
+            },
+            controls: {
+                leftAll: $(this).find('.multiselect-control-left-all'),
+                leftSelected: $(this).find('.multiselect-control-left-selected'),
+                rightAll: $(this).find('.multiselect-control-right-all'),
+                rightSelected: $(this).find('.multiselect-control-right-selected')
+            }
+        };
 
         function getListData(selector){
-        	var result = [];
+            var result = [];
             selector.each(function() {
                 var item = {};
                 item[options.dataValueField] = $(this).data('value');
@@ -511,64 +517,64 @@
         }
 
         function moveLeftToRight(){
-        	if(options.beforeMoveOneToRight() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
-	        	var leftSelectedData = getListData(multiselectContainer.lists.left.find('li.ui-selected'));
-	        	self.data('contrail2WayMultiselect').deleteLeftData(leftSelectedData);
-	        	self.data('contrail2WayMultiselect').updateRightData(leftSelectedData);
-	        	options.afterMoveOneToRight();
-        	}
-        	
+            if(options.beforeMoveOneToRight() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
+                var leftSelectedData = getListData(multiselectContainer.lists.left.find('li.ui-selected'));
+                self.data('contrail2WayMultiselect').deleteLeftData(leftSelectedData);
+                self.data('contrail2WayMultiselect').updateRightData(leftSelectedData);
+                options.afterMoveOneToRight();
+            }
+
         }
 
         function moveRightToLeft(){
-        	if(options.beforeMoveOneToLeft() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
-	        	var rightSelectedData = getListData(multiselectContainer.lists.right.find('li.ui-selected'));
-	        	self.data('contrail2WayMultiselect').deleteRightData(rightSelectedData);
-	        	self.data('contrail2WayMultiselect').updateLeftData(rightSelectedData);
-	        	options.afterMoveOneToLeft();
-        	}
+            if(options.beforeMoveOneToLeft() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
+                var rightSelectedData = getListData(multiselectContainer.lists.right.find('li.ui-selected'));
+                self.data('contrail2WayMultiselect').deleteRightData(rightSelectedData);
+                self.data('contrail2WayMultiselect').updateLeftData(rightSelectedData);
+                options.afterMoveOneToLeft();
+            }
         }
 
         function moveLeftAll(){
-        	if(options.beforeMoveAllToRight() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
-	        	var leftData = getListData(multiselectContainer.lists.left.find('li'));
-	        	self.data('contrail2WayMultiselect').deleteLeftAllData();
-	        	self.data('contrail2WayMultiselect').updateRightData(leftData);
-	        	options.afterMoveAllToRight();
-        	}
+            if(options.beforeMoveAllToRight() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
+                var leftData = getListData(multiselectContainer.lists.left.find('li'));
+                self.data('contrail2WayMultiselect').deleteLeftAllData();
+                self.data('contrail2WayMultiselect').updateRightData(leftData);
+                options.afterMoveAllToRight();
+            }
         }
 
         function moveRightAll(){
-        	if(options.beforeMoveAllToLeft() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
-	        	var rightData = getListData(multiselectContainer.lists.right.find('li'));
-	        	self.data('contrail2WayMultiselect').deleteRightAllData();
-	        	self.data('contrail2WayMultiselect').updateLeftData(rightData);
-	        	options.afterMoveAllToLeft();
-        	}
+            if(options.beforeMoveAllToLeft() && !self.find('.contrail2WayMultiselect').hasClass('disabled')){
+                var rightData = getListData(multiselectContainer.lists.right.find('li'));
+                self.data('contrail2WayMultiselect').deleteRightAllData();
+                self.data('contrail2WayMultiselect').updateLeftData(rightData);
+                options.afterMoveAllToLeft();
+            }
         }
 
         multiselectContainer.controls.leftSelected.on('click', function(){
-        	moveLeftToRight();
+            moveLeftToRight();
         });
 
         multiselectContainer.controls.rightSelected.on('click', function(){
-        	moveRightToLeft();
+            moveRightToLeft();
         });
 
         multiselectContainer.controls.leftAll.on('click', function(){
-        	moveLeftAll();
+            moveLeftAll();
         });
 
         multiselectContainer.controls.rightAll.on('click', function(){
-        	moveRightAll();
+            moveRightAll();
         });
 
         self.data('contrail2WayMultiselect', {
             getLeftData: function () {
-            	return getListData(multiselectContainer.lists.left.find('li'));
+                return getListData(multiselectContainer.lists.left.find('li'));
             },
             getRightData: function () {
-            	return getListData(multiselectContainer.lists.right.find('li'));
+                return getListData(multiselectContainer.lists.right.find('li'));
             },
             setLeftData: function (data) {
                 this.deleteLeftAllData();
@@ -580,38 +586,38 @@
             },
             updateLeftData: function (data) {
                 $.each(data, function(key,val){
-                	$(multiselectContainer.lists.left).append('<li class="ui-widget-content" data-value="' + val[options.dataValueField] + '">' + val[options.dataTextField] + '</li>');
+                    $(multiselectContainer.lists.left).append('<li class="ui-widget-content" data-value="' + val[options.dataValueField] + '">' + val[options.dataTextField] + '</li>');
                 });
             },
             updateRightData: function (data) {
-            	$.each(data, function(key,val){
-                	$(multiselectContainer.lists.right).append('<li class="ui-widget-content" data-value="' + val[options.dataValueField] + '">' + val[options.dataTextField] + '</li>');
+                $.each(data, function(key,val){
+                    $(multiselectContainer.lists.right).append('<li class="ui-widget-content" data-value="' + val[options.dataValueField] + '">' + val[options.dataTextField] + '</li>');
                 });
             },
             getLeftSelectedData: function () {
-            	return getListData(multiselectContainer.lists.left.find('li.ui-selected'));
+                return getListData(multiselectContainer.lists.left.find('li.ui-selected'));
             },
             getRightSelectedData: function () {
-            	return getListData(multiselectContainer.lists.right.find('li.ui-selected'));
+                return getListData(multiselectContainer.lists.right.find('li.ui-selected'));
             },
             deleteLeftData: function (data) {
-            	$.each(data, function(key,val){
-                	$(multiselectContainer.lists.left).find('li[data-value="' + val[options.dataValueField] + '"]').remove();
+                $.each(data, function(key,val){
+                    $(multiselectContainer.lists.left).find('li[data-value="' + val[options.dataValueField] + '"]').remove();
                 });
             },
             deleteLeftAllData: function () {
                 multiselectContainer.lists.left.find('li').remove();
             },
             deleteRightData: function (data) {
-            	$.each(data, function(key,val){
-                	$(multiselectContainer.lists.right).find('li[data-value="' + val[options.dataValueField] + '"]').remove();
+                $.each(data, function(key,val){
+                    $(multiselectContainer.lists.right).find('li[data-value="' + val[options.dataValueField] + '"]').remove();
                 });
             },
             deleteRightAllData: function () {
                 multiselectContainer.lists.right.find('li').remove();
             },
             show: function () {
-            	self.find('.contrail2WayMultiselect').show();
+                self.find('.contrail2WayMultiselect').show();
             },
             hide: function () {
                 self.find('.contrail2WayMultiselect').hide();
@@ -621,16 +627,16 @@
                 self.find('.multiselect-list').selectable('disable');
             },
             enable: function () {
-            	self.find('.contrail2WayMultiselect').removeClass('disabled');
-            	self.find('.multiselect-list').selectable('enable');
+                self.find('.contrail2WayMultiselect').removeClass('disabled');
+                self.find('.multiselect-list').selectable('enable');
             },
             destroy: function(){
-            	self.find('.multiselect-list').selectable('destroy');
-            	self.html('');
+                self.find('.multiselect-list').selectable('destroy');
+                self.html('');
             }
         });
         function constructContrail2WayMultiselect(self, options){
-        	self.html('<div class="contrail2WayMultiselect row-fluid">\
+            self.html('<div class="contrail2WayMultiselect row-fluid">\
                 <div class="col-xs-5">\
                     <label>'+options.leftTitle+'</label>\
                     <ol class="row-fluid multiselect-left multiselect-list" style="height:'+(options.sizeLeft * 30).toString()+'px;"></ol>\
@@ -870,11 +876,11 @@
             template = null, preChecked = [],
             multiSelectMenu = null;
 
-            if(config.tristate) {
-                config.optgrouptoggle = function(event, ui) {
-                   multiSelectMenu.find('input[type="checkbox"]').tristate('state', ui.checked);
-                }
+        if(config.tristate) {
+            config.optgrouptoggle = function(event, ui) {
+                multiSelectMenu.find('input[type="checkbox"]').tristate('state', ui.checked);
             }
+        }
 
         function constructCheckedMultiselect (config, defaultFilterConfig) {
             template = contrail.getTemplate4Id('checked-multiselect-optgroup-template');
@@ -905,7 +911,7 @@
             multiSelectMenu.find('input[type="checkbox"]').each(function(){
                 $(this).next('span').attr('title', $(this).attr('title'));
             });
-            
+
             /*
              * Appending controls and related events
              */
@@ -1031,7 +1037,7 @@
             options.id = options.id != undefined ? options.id : '';
             var className = (options.className == null) ? '' : options.className;
 
-            var modalHTML = '<div id="' + options.id + '" class="' + className + ' modal fade contrail-modal" tabindex="-1" role="dialog" aria-hidden="true"> \
+            var modalHTML = '<div id="' + options.id + '" class="modal fade contrail-modal ' + className + '" tabindex="-1" role="dialog" aria-hidden="true"> \
                 <div class="modal-dialog" role="document">\
                     <div class="modal-content">\
                         <div class="modal-header"> \
@@ -1127,425 +1133,425 @@
             }
         }
     });
-})(jQuery);
 
-//Formatting data as an array of strings.
-function formatData(data, option) {
-    var formattedData = [];
-    if (typeof data[0] === 'object') {
-        if (typeof option.dataValueField !== 'undefined' && typeof option.dataTextField !== 'undefined') {
+    //Formatting data as an array of strings.
+    function formatData(data, option) {
+        var formattedData = [];
+        if (typeof data[0] === 'object') {
+            if (typeof option.dataValueField !== 'undefined' && typeof option.dataTextField !== 'undefined') {
+                $.each(data, function (key, val) {
+                    if ('children' in val){
+                        formatData(val.children, option);
+                    }
+                    data[key][option.dataValueField.apiVar] = val[option.dataValueField.dsVar];
+                    data[key][option.dataTextField.apiVar] = val[option.dataTextField.dsVar];
+                });
+            }
+        } else {
             $.each(data, function (key, val) {
-                if ('children' in val){
-                    formatData(val.children, option);
-                }
-                data[key][option.dataValueField.apiVar] = val[option.dataValueField.dsVar];
-                data[key][option.dataTextField.apiVar] = val[option.dataTextField.dsVar];
+                formattedData.push({
+                    id: val,
+                    value: String(val),
+                    text: String(val)
+                });
             });
+            data = formattedData;
         }
-    } else {
-        $.each(data, function (key, val) {
-            formattedData.push({
-                id: val,
-                value: String(val),
-                text: String(val)
-            });
+        return data;
+    };
+
+    function constructSourceMap(data, fieldName) {
+        return traverseMap(typeof data != 'undefined' ? data : [],fieldName,'');
+    };
+
+    function traverseMap(obj, fieldName, parentKey){
+        var returnObj = {};
+        $.each(obj, function (key, val) {
+            returnObj[val[fieldName]] = parentKey + key;
+            if('children' in val){
+                returnObj = $.extend(returnObj,traverseMap(val.children, fieldName, parentKey + key + '.'));
+            }
         });
-        data = formattedData;
-    }
-    return data;
-};
-
-function constructSourceMap(data, fieldName) {
-    return traverseMap(typeof data != 'undefined' ? data : [],fieldName,'');
-};
-
-function traverseMap(obj, fieldName, parentKey){
-    var returnObj = {};
-    $.each(obj, function (key, val) {
-        returnObj[val[fieldName]] = parentKey + key;
-        if('children' in val){
-            returnObj = $.extend(returnObj,traverseMap(val.children, fieldName, parentKey + key + '.'));
-        }
-    });
-    return returnObj;
-};
-function findTextInObj(text, data){
-    var found = false;
-    for (var i = 0; i < data.length; i++){
-        if (data[i].text === text){
-            return data[i];
-        }
-        if('children' in data[i]){
-            var found = findTextInObj(text, data[i].children);
-            if(found){
-                break;
+        return returnObj;
+    };
+    function findTextInObj(text, data){
+        var found = false;
+        for (var i = 0; i < data.length; i++){
+            if (data[i].text === text){
+                return data[i];
+            }
+            if('children' in data[i]){
+                var found = findTextInObj(text, data[i].children);
+                if(found){
+                    break;
+                }
             }
         }
-    }
-    return found;
-};
+        return found;
+    };
 
-function  fetchSourceMapData(index, data){
-    var arr = index.split("."),
-        returnVal = data;
+    function  fetchSourceMapData(index, data){
+        var arr = index.split("."),
+            returnVal = data;
 
-    $.each(arr, function(key, value){
-        if('children' in returnVal){
-            returnVal = returnVal.children[value];
+        $.each(arr, function(key, value){
+            if('children' in returnVal){
+                returnVal = returnVal.children[value];
+            } else{
+                returnVal = returnVal[value];
+            }
+        });
+        return returnVal;
+    };
+
+    function constructSelect2(self, customConfig, args) {
+        if(typeof args !== 'undefined') {
+            self.select2(customConfig, args);
         } else{
-            returnVal = returnVal[value];
-        }
-    });
-    return returnVal;
-};
+            var dataObject = {
+                    cachedValue: null,
+                    isRequestInProgress: false
+                },
+                config = {},
+                defaultConfig = {
+                    minimumResultsForSearch : 7,
+                    dropdownAutoWidth : false,
+                    dataTextField: 'text',
+                    dataValueField: 'id',
+                    data: [],
+                    query: function (q) {
+                        if(q.term != null){
+                            var pageSize = 50;
+                            var results = _.filter(this.data,
+                                function(e) {
+                                    return (q.term == ""  || e.text.toUpperCase().indexOf(q.term.toUpperCase()) >= 0 );
+                                });
+                            q.callback({results:results.slice((q.page-1)*pageSize, q.page*pageSize),
+                                more:results.length >= q.page*pageSize });
+                        } else {
+                            var t = q.term,filtered = { results: [] }, process;
+                            process = function(datum, collection) {
+                                var group, attr;
+                                datum = datum[0];
+                                if (datum.children) {
+                                    group = {};
+                                    for (attr in datum) {
+                                        if (datum.hasOwnProperty(attr)) group[attr]=datum[attr];
+                                    }
+                                    group.children=[];
+                                    $(datum.children).each2(function(i, childDatum) { process(childDatum, group.children); });
+                                    if (group.children.length || q.matcher(t, '', datum)) {
+                                        collection.push(group);
+                                    }
+                                } else {
+                                    if (q.matcher(t, '', datum)) {
+                                        collection.push(datum);
+                                    }
+                                }
+                            };
+                            if(t != ""){
+                                $(this.data).each2(function(i, datum) { process(datum, filtered.results); })
+                            }
+                            q.callback({results:this.data});
+                        }
+                    },
+                    formatResultCssClass: function(obj){
+                        if(obj.label && 'children' in obj){
+                            return 'select2-result-label';
+                        }
+                    }
 
-function constructSelect2(self, customConfig, args) {
-    if(typeof args !== 'undefined') {
-        self.select2(customConfig, args);
-    } else{
-        var dataObject = {
-                cachedValue: null,
-                isRequestInProgress: false
-            },
-            config = {},
-            defaultConfig = {
-                minimumResultsForSearch : 7,
-                dropdownAutoWidth : false,
-                dataTextField: 'text',
-                dataValueField: 'id',
-                data: [],
-                query: function (q) {
-                    if(q.term != null){
-                        var pageSize = 50;
-                        var results = _.filter(this.data,
-                            function(e) {
-                                return (q.term == ""  || e.text.toUpperCase().indexOf(q.term.toUpperCase()) >= 0 );
-                            });
-                        q.callback({results:results.slice((q.page-1)*pageSize, q.page*pageSize),
-                            more:results.length >= q.page*pageSize });
-                    } else {
-                        var t = q.term,filtered = { results: [] }, process;
-                        process = function(datum, collection) {
-                            var group, attr;
-                            datum = datum[0];
-                            if (datum.children) {
-                                group = {};
-                                for (attr in datum) {
-                                    if (datum.hasOwnProperty(attr)) group[attr]=datum[attr];
-                                }
-                                group.children=[];
-                                $(datum.children).each2(function(i, childDatum) { process(childDatum, group.children); });
-                                if (group.children.length || q.matcher(t, '', datum)) {
-                                    collection.push(group);
-                                }
-                            } else {
-                                if (q.matcher(t, '', datum)) {
-                                    collection.push(datum);
+                    // Use dropdownCssClass : 'select2-large-width' when initialzing ContrailDropDown
+                    // to specify width of dropdown for Contrail Dropdown
+                    // Adding a custom CSS class is also possible. Just add a custom class to the contrail.custom.css file
+                },
+                source = [];
+
+            //To add newly entered text to the option of multiselect.
+            if (customConfig.multiple == true && customConfig.tags != null && customConfig.tags == true) {
+                customConfig['createSearchChoice'] = function (term,data) {
+                    return {
+                        id: $.trim(term),
+                        text: $.trim(term)
+                    };
+                }
+                customConfig['tags'] = true;
+                customConfig['tokenSeparators'] = [","];
+                customConfig['initSelection'] = function (element, callback) {
+                    var data = [];
+
+                    function splitVal(string, separator) {
+                        var val, i, l;
+                        if (string === null || string.length < 1) return [];
+                        val = string.split(separator);
+                        for (i = 0, l = val.length; i < l; i = i + 1) val[i] = $.trim(val[i]);
+                        return val;
+                    }
+
+                    $(splitVal(element.val(), ",")).each(function () {
+                        data.push({
+                            id: this,
+                            text: this
+                        });
+                    });
+
+                    callback(data);
+                };
+            }
+
+            if (customConfig.showParentInSelection){
+                customConfig['formatSelection'] = function (object) {
+                    var allData = this.data;
+                    var parent = '';
+                    //find the parent
+                    for (var i = 0 ; i < allData.length; i++) {
+                        if (allData[i].children && allData[i].children.length > 0){
+                            var children = allData[i]['children'];
+                            if (object['parent'] != null && object['parent'] == children[0]['parent']) {
+                                for (var j = 0 ;j < children.length; j++) {
+                                    if (object[this.dataValueField.dsVar] == children[j][this.dataValueField.dsVar]) {
+                                        parent = allData[i][this.dataTextField.dsVar];
+                                        break;
+                                    }
                                 }
                             }
-                        };
-                        if(t != ""){
-                            $(this.data).each2(function(i, datum) { process(datum, filtered.results); })
                         }
-                        q.callback({results:this.data});
+                    }
+                    return (parent != '')?'<span style="font-weight:600">'+ parent + '</span>' + ' : '  + object.text : object.text;
+                }
+            }
+
+            if (contrail.checkIfExist(customConfig.dropdownCssClass)) {
+                customConfig.dropdownAutoWidth = true;
+            }
+
+            $.extend(true, config, defaultConfig, customConfig);
+            config.dataTextField = {dsVar: config.dataTextField, apiVar: 'text'};
+            config.dataValueField = {dsVar: config.dataValueField, apiVar: 'id'};
+
+            var changeFunction = function(e) {
+                if (contrail.checkIfFunction(config.change)) {
+                    config.change(e);
+                }
+            };
+            //subcribe to popup open and close events
+            var openFunction = function() {
+                if (contrail.checkIfFunction(config.open)) {
+                    config.open();
+                }
+            };
+
+            var closeFunction = function() {
+                if (contrail.checkIfFunction(config.close)) {
+                    config.close();
+                }
+            };
+
+            var selectingFunction = function(e) {
+                if (contrail.checkIfFunction(config.selecting)) {
+                    config.selecting(e);
+                }
+            };
+
+            function initSelect2(option, value, triggerChange) {
+                var triggerChange = contrail.checkIfExist(triggerChange) ? triggerChange : false;
+
+                option.data = formatData(option.data, option);
+
+                if (contrail.checkIfExist(self.data('select2'))) {
+                    self.select2('destroy');
+                }
+
+                self.select2(option)
+                    .off("change", changeFunction)
+                    .on("change", changeFunction)
+                    .off("select2-selecting", selectingFunction)
+                    .on("select2-selecting", selectingFunction)
+                    .off("select2-open", openFunction)
+                    .on("select2-open", openFunction)
+                    .off("select2-close", closeFunction)
+                    .on("select2-close", closeFunction);
+
+                option.sourceMap = constructSourceMap(option.data, 'id');
+
+                if (option.data.length > 0) {
+                    if (contrail.checkIfExist(option.multiple)) {
+                        // set value for Multiselect
+                        if (contrail.checkIfExist(value)){
+                            self.select2('val', value, triggerChange);
+                        }
+                    } else {
+
+                        // set value for Dropdown
+                        if (contrail.checkIfExist(value) && value !== '' && contrail.checkIfExist(option.sourceMap[value])) {
+                            self.select2('val', value, triggerChange);
+                        } else if (contrail.checkIfExist(option.defaultValueId) &&
+                            option.defaultValueId >= 0 && option.data.length > option.defaultValueId) {
+
+                            // set default value
+                            var selectedOption = option.data[option.defaultValueId];
+                            if (contrail.checkIfExist(option.data[0].children) && option.data[0].children.length > 1) {
+                                selectedOption = option.data[0].children[option.defaultValueId];
+                            }
+
+                            self.select2('val', selectedOption[option.dataValueField.dsVar], triggerChange);
+                        }
+                    }
+                }
+
+            }
+
+            if(!$.isEmptyObject(config) && contrail.checkIfExist(config.dataSource)) {
+                var dataSourceOption = config.dataSource;
+                if(dataSourceOption.type == "remote"){
+                    var ajaxConfig = {
+                        url: dataSourceOption.url,
+                        //async: contrail.checkIfExist(dataSourceOption.async) ? dataSourceOption.async : false,
+                        dataType: contrail.checkIfExist(dataSourceOption.dataType) ? dataSourceOption.dataType : 'json'
+                    };
+                    if(dataSourceOption.contentType) {
+                        ajaxConfig['contentType'] = dataSourceOption.contentType;
+                    }
+                    if(dataSourceOption.timeout) {
+                        ajaxConfig['timeout'] = dataSourceOption.timeout;
+                    }
+                    if(dataSourceOption.requestType && (dataSourceOption.requestType).toLowerCase() == 'post') {
+                        ajaxConfig['type'] = 'POST';
+                        ajaxConfig['data'] = dataSourceOption.postData;
+                    }
+
+                    contrail.ajaxHandler(ajaxConfig, function(){
+                        dataObject.isRequestInProgress = true
+                    }, function(data) {
+                        dataObject.isRequestInProgress = false;
+
+                        if(typeof dataSourceOption.parse !== "undefined"){
+                            data = dataSourceOption.parse(data);
+                        }
+
+                        dataObject.setData(data, dataObject.cachedValue, true);
+                    });
+
+                } else if(dataSourceOption.type == "local"){
+                    source = formatData(dataSourceOption.data, config);
+                }
+                config.data = source;
+            }
+            if (contrail.checkIfExist(config.data)) {
+                initSelect2(config);
+            }
+
+            $.extend(true, dataObject, {
+                getAllData: function(){
+                    if(self.data('select2') != null)
+                        return self.data('select2').opts.data;
+                },
+                getSelectedData: function() {
+                    var selectedValue = self.select2('val'),
+                        selectedObjects = [], index;
+                    if (selectedValue == null) {
+                        selectedValue = [];
+                    } else if (!(selectedValue instanceof Array)) {
+                        selectedValue = [selectedValue];
+                    }
+                    for(var i = 0; i < selectedValue.length; i++) {
+                        index = config.sourceMap[selectedValue[i]];
+                        selectedObjects.push(fetchSourceMapData(index, config.data));
+                    }
+                    return selectedObjects;
+                },
+                text: function(text) {
+                    if(typeof text !== 'undefined') {
+                        var data = self.data('select2').opts.data;
+                        var answer = findTextInObj(text, data);
+                        self.select2('val', answer.id);
+                    } else {
+                        if(self.select2('data') != null && typeof self.select2('data').length !== 'undefined' && self.select2('data').length > 0){
+                            var result = [];
+                            for(var i=0; i< self.select2('data').length; i++){
+                                result.push(self.select2('data')[i].text);
+                            }
+                            return result;
+                        }
+                        if (self.select2('data') != null){
+                            return (self.select2('data') != null) ? self.select2('data').text : null;
+                        }
                     }
                 },
-                formatResultCssClass: function(obj){
-                    if(obj.label && 'children' in obj){
-                        return 'select2-result-label';
-                    }
-                }
-
-                // Use dropdownCssClass : 'select2-large-width' when initialzing ContrailDropDown
-                // to specify width of dropdown for Contrail Dropdown
-                // Adding a custom CSS class is also possible. Just add a custom class to the contrail.custom.css file
-            },
-            source = [];
-
-        //To add newly entered text to the option of multiselect.
-        if (customConfig.multiple == true && customConfig.tags != null && customConfig.tags == true) {
-            customConfig['createSearchChoice'] = function (term,data) {
-                return {
-                    id: $.trim(term),
-                    text: $.trim(term)
-                };
-            }
-            customConfig['tags'] = true;
-            customConfig['tokenSeparators'] = [","];
-            customConfig['initSelection'] = function (element, callback) {
-                var data = [];
-
-                function splitVal(string, separator) {
-                    var val, i, l;
-                    if (string === null || string.length < 1) return [];
-                    val = string.split(separator);
-                    for (i = 0, l = val.length; i < l; i = i + 1) val[i] = $.trim(val[i]);
-                    return val;
-                }
-
-                $(splitVal(element.val(), ",")).each(function () {
-                    data.push({
-                        id: this,
-                        text: this
-                    });
-                });
-
-                callback(data);
-            };
-        }
-
-        if (customConfig.showParentInSelection){
-            customConfig['formatSelection'] = function (object) {
-                var allData = this.data;
-                var parent = '';
-                //find the parent
-                for (var i = 0 ; i < allData.length; i++) {
-                    if (allData[i].children && allData[i].children.length > 0){
-                        var children = allData[i]['children'];
-                        if (object['parent'] != null && object['parent'] == children[0]['parent']) {
-                            for (var j = 0 ;j < children.length; j++) {
-                                if (object[this.dataValueField.dsVar] == children[j][this.dataValueField.dsVar]) {
-                                    parent = allData[i][this.dataTextField.dsVar];
-                                    break;
-                                }
-                            }
+                value: function(value, triggerChange) {
+                    if (contrail.checkIfExist(value)) {
+                        if (dataObject.isRequestInProgress == true) {
+                            dataObject.cachedValue = value;
                         }
+                        self.select2('val', value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
+                    } else {
+                        return self.select2('val');
                     }
-                }
-                return (parent != '')?'<span style="font-weight:600">'+ parent + '</span>' + ' : '  + object.text : object.text;
-            }
-        }
-
-        if (contrail.checkIfExist(customConfig.dropdownCssClass)) {
-            customConfig.dropdownAutoWidth = true;
-        }
-
-        $.extend(true, config, defaultConfig, customConfig);
-        config.dataTextField = {dsVar: config.dataTextField, apiVar: 'text'};
-        config.dataValueField = {dsVar: config.dataValueField, apiVar: 'id'};
-
-        var changeFunction = function(e) {
-            if (contrail.checkIfFunction(config.change)) {
-                config.change(e);
-            }
-        };
-        //subcribe to popup open and close events
-        var openFunction = function() {
-            if (contrail.checkIfFunction(config.open)) {
-                config.open();
-            }
-        };
-
-        var closeFunction = function() {
-            if (contrail.checkIfFunction(config.close)) {
-                config.close();
-            }
-        };
-
-        var selectingFunction = function(e) {
-            if (contrail.checkIfFunction(config.selecting)) {
-                config.selecting(e);
-            }
-        };
-
-        function initSelect2(option, value, triggerChange) {
-            var triggerChange = contrail.checkIfExist(triggerChange) ? triggerChange : false;
-
-            option.data = formatData(option.data, option);
-
-            if (contrail.checkIfExist(self.data('select2'))) {
-                self.select2('destroy');
-            }
-
-            self.select2(option)
-                .off("change", changeFunction)
-                .on("change", changeFunction)
-                .off("select2-selecting", selectingFunction)
-                .on("select2-selecting", selectingFunction)
-                .off("select2-open", openFunction)
-                .on("select2-open", openFunction)
-                .off("select2-close", closeFunction)
-                .on("select2-close", closeFunction);
-
-            option.sourceMap = constructSourceMap(option.data, 'id');
-
-            if (option.data.length > 0) {
-                if (contrail.checkIfExist(option.multiple)) {
-                    // set value for Multiselect
-                    if (contrail.checkIfExist(value)){
-                        self.select2('val', value, triggerChange);
-                    }
-                } else {
-
-                    // set value for Dropdown
-                    if (contrail.checkIfExist(value) && value !== '' && contrail.checkIfExist(option.sourceMap[value])) {
-                        self.select2('val', value, triggerChange);
-                    } else if (contrail.checkIfExist(option.defaultValueId) &&
-                        option.defaultValueId >= 0 && option.data.length > option.defaultValueId) {
-
-                        // set default value
-                        var selectedOption = option.data[option.defaultValueId];
-                        if (contrail.checkIfExist(option.data[0].children) && option.data[0].children.length > 1) {
-                            selectedOption = option.data[0].children[option.defaultValueId];
-                        }
-
-                        self.select2('val', selectedOption[option.dataValueField.dsVar], triggerChange);
-                    }
-                }
-            }
-
-        }
-
-        if(!$.isEmptyObject(config) && contrail.checkIfExist(config.dataSource)) {
-            var dataSourceOption = config.dataSource;
-            if(dataSourceOption.type == "remote"){
-                var ajaxConfig = {
-                    url: dataSourceOption.url,
-                    //async: contrail.checkIfExist(dataSourceOption.async) ? dataSourceOption.async : false,
-                    dataType: contrail.checkIfExist(dataSourceOption.dataType) ? dataSourceOption.dataType : 'json'
-                };
-                if(dataSourceOption.contentType) {
-                    ajaxConfig['contentType'] = dataSourceOption.contentType;
-                }
-                if(dataSourceOption.timeout) {
-                    ajaxConfig['timeout'] = dataSourceOption.timeout;
-                }
-                if(dataSourceOption.requestType && (dataSourceOption.requestType).toLowerCase() == 'post') {
-                    ajaxConfig['type'] = 'POST';
-                    ajaxConfig['data'] = dataSourceOption.postData;
-                }
-
-                contrail.ajaxHandler(ajaxConfig, function(){
-                    dataObject.isRequestInProgress = true
-                }, function(data) {
-                    dataObject.isRequestInProgress = false;
-
-                    if(typeof dataSourceOption.parse !== "undefined"){
-                        data = dataSourceOption.parse(data);
-                    }
-
-                    dataObject.setData(data, dataObject.cachedValue, true);
-                });
-
-            } else if(dataSourceOption.type == "local"){
-                source = formatData(dataSourceOption.data, config);
-            }
-            config.data = source;
-        }
-        if (contrail.checkIfExist(config.data)) {
-            initSelect2(config);
-        }
-
-        $.extend(true, dataObject, {
-            getAllData: function(){
-                if(self.data('select2') != null)
-                    return self.data('select2').opts.data;
-            },
-            getSelectedData: function() {
-                var selectedValue = self.select2('val'),
-                    selectedObjects = [], index;
-                if (selectedValue == null) {
-                    selectedValue = [];
-                } else if (!(selectedValue instanceof Array)) {
-                    selectedValue = [selectedValue];
-                }
-                for(var i = 0; i < selectedValue.length; i++) {
-                    index = config.sourceMap[selectedValue[i]];
-                    selectedObjects.push(fetchSourceMapData(index, config.data));
-                }
-                return selectedObjects;
-            },
-            text: function(text) {
-                if(typeof text !== 'undefined') {
-                    var data = self.data('select2').opts.data;
-                    var answer = findTextInObj(text, data);
-                    self.select2('val', answer.id);
-                } else {
-                    if(self.select2('data') != null && typeof self.select2('data').length !== 'undefined' && self.select2('data').length > 0){
-                        var result = [];
-                        for(var i=0; i< self.select2('data').length; i++){
-                            result.push(self.select2('data')[i].text);
-                        }
-                        return result;
-                    }
-                    if (self.select2('data') != null){
-                        return (self.select2('data') != null) ? self.select2('data').text : null;
-                    }
-                }
-            },
-            value: function(value, triggerChange) {
-                if (contrail.checkIfExist(value)) {
-                    if (dataObject.isRequestInProgress == true) {
+                },
+                setData: function(data, value, triggerChange) {
+                    if(dataObject.isRequestInProgress == true && contrail.checkIfExist(value)) {
                         dataObject.cachedValue = value;
                     }
-                    self.select2('val', value, (contrail.checkIfExist(triggerChange) ? triggerChange : false));
-                } else {
-                    return self.select2('val');
-                }
-            },
-            setData: function(data, value, triggerChange) {
-                if(dataObject.isRequestInProgress == true && contrail.checkIfExist(value)) {
-                    dataObject.cachedValue = value;
-                }
 
-                config.data = data;
-                initSelect2(config, value, triggerChange)
-            },
-            enableOptionList: function (flag, disableItemList) {
-                for (var j = 0; j < disableItemList.length; j++) {
-                    for (var i = 0; i < config.data.length; i++) {
-                        if(config.data[i].children === undefined) {
-                            if (disableItemList[j] === config.data[i][config.dataValueField.dsVar]) {
-                                config.data[i].disabled = !flag;
-                            }
-                        } else {
-                            for(var k = 0;k < config.data[i].children.length; k++) {
-                                if(disableItemList[j] === config.data[i].children[k][config.dataValueField.dsVar]) {
-                                    config.data[i].children[k].disabled = !flag;
+                    config.data = data;
+                    initSelect2(config, value, triggerChange)
+                },
+                enableOptionList: function (flag, disableItemList) {
+                    for (var j = 0; j < disableItemList.length; j++) {
+                        for (var i = 0; i < config.data.length; i++) {
+                            if(config.data[i].children === undefined) {
+                                if (disableItemList[j] === config.data[i][config.dataValueField.dsVar]) {
+                                    config.data[i].disabled = !flag;
+                                }
+                            } else {
+                                for(var k = 0;k < config.data[i].children.length; k++) {
+                                    if(disableItemList[j] === config.data[i].children[k][config.dataValueField.dsVar]) {
+                                        config.data[i].children[k].disabled = !flag;
+                                    }
                                 }
                             }
                         }
                     }
-                }
-                self.select2('destroy');
-                self.select2(config);
-                self.select2('val', "");
-            },
-            enable: function(flag){
-                self.select2("enable", flag);
-            },
-            isEnabled: function(){
-                if($(self.selector).prop('disabled')){
-                    return false;
-                }else{
-                    return true;
-                }
-            },
-            isEnabledOption: function (optionText) {
-                for (var i = 0; i < config.data.length; i++) {
-                    if (config.data[i].text === optionText) {
-                        if (config.data[i].disabled) {
-                            return false;
+                    self.select2('destroy');
+                    self.select2(config);
+                    self.select2('val', "");
+                },
+                enable: function(flag){
+                    self.select2("enable", flag);
+                },
+                isEnabled: function(){
+                    if($(self.selector).prop('disabled')){
+                        return false;
+                    }else{
+                        return true;
+                    }
+                },
+                isEnabledOption: function (optionText) {
+                    for (var i = 0; i < config.data.length; i++) {
+                        if (config.data[i].text === optionText) {
+                            if (config.data[i].disabled) {
+                                return false;
+                            }
                         }
                     }
+                    return true;
+                },
+                destroy: function(){
+                    self.off("change", changeFunction)
+                        .select2('destroy');
+                },
+                hide: function() {
+                    self.select2("container").hide();
+                },
+                show: function() {
+                    self.select2("container").show();
                 }
-                return true;
-            },
-            destroy: function(){
-                self.off("change", changeFunction)
-                    .select2('destroy');
-            },
-            hide: function() {
-                self.select2("container").hide();
-            },
-            show: function() {
-                self.select2("container").show();
-            }
-        });
+            });
 
-        return dataObject;
+            return dataObject;
+        }
     }
-}
+})
 
 function startWidgetLoading(selectorId) {
     $("#" + selectorId + "-loading").show();

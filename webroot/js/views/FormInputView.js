@@ -35,6 +35,8 @@ define([
             };
 
             self.$el.html(inputTemplate(tmplParameters));
+            self.$el.find(".label-help").tooltip({placement: "right", container: 'body'});
+
             if (onBlur) {
                 self.$el.find('input').blur(onBlur);
             }
