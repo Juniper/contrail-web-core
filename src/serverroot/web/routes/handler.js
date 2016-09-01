@@ -139,9 +139,8 @@ function logoutCB (req, res, appData, redURL)
 
 function vcenter_logout (req, res, appData)
 {
-    req.session.isAuthenticated = false;
-    res.clearCookie('_csrf');
-    res.clearCookie('connect.sid');
+    /* First invalidate the session object */
+    commonUtils.invalidateReqSession(req, res);
     var orch = config.orchestration.Manager;
     var models = orch.split(',');
     if (req.session.loggedInOrchestrationMode != 'vcenter') {

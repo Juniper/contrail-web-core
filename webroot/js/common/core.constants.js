@@ -1012,6 +1012,7 @@ define([
             return cowu.getValueFromTemplate(args);
         };
         this.DEFAULT_COLOR = '#adcfdc';
+        this.HTTP_STATUS_CODE_AUTHORIZATION_FAILURE = 401;
     };
     //Export to global scope
     cowc = new CoreConstants();
