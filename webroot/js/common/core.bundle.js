@@ -14,7 +14,7 @@ define([
     'contrail-common',
     'core-contrail-form-elements',
     'chart-utils',
-    'text!core-basedir/templates/core.common.tmpl',
+    'text!core-basedir/common/ui/templates/core.common.tmpl',
     'core-basedir/js/common/graph.utils',
     // 'core-alarm-utils',
     // 'core.app.utils',

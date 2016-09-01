@@ -16,13 +16,11 @@ define([
                 selectDataObject = self.model.select_data_object(),
                 selectFields = $.makeArray(selectDataObject.select_fields()),
                 queryPrefix = self.model.query_prefix(),
-                aggregateTypes = [], selectTmplData, selectTmplHtml,
+                aggregateTypes = ["Time Range"], selectTmplData, selectTmplHtml,
                 queryPrefix = self.model.query_prefix(),
                 modalId = queryPrefix + cowl.QE_SELECT_MODAL_SUFFIX,
                 className = viewConfig['className'],
                 specialQueryPrefix = false;
-
-            aggregateTypes.push("Time Range");
 
             _.each(selectFields, function(selectFieldValue, selectFieldKey) {
                 aggregateTypes.push(selectFieldValue['aggregate_type']);
@@ -35,7 +33,7 @@ define([
             selectTmplData = {
                 queryPrefix: queryPrefix,
                 fields: selectFields,
-                aggregateTypes: _.uniq(aggregateTypes),
+                aggregateTypes: _.intersection(cowc.SELECT_FIELDS_GROUPS, aggregateTypes),
                 specialQueryPrefix:specialQueryPrefix
             };
 

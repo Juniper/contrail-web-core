@@ -2,3 +2,4 @@
 
 test/
 build/
+**/url.routes.js

@@ -19,7 +19,7 @@ require([
         'core-basedir/js/common/graph.utils',
         'core-basedir/js/common/core.alarms.utils',
         'core-basedir/js/common/core.alarms.parsers',
-        'text!core-basedir/templates/core.common.tmpl'
+        'text!core-basedir/common/ui/templates/core.common.tmpl'
 
     ], function (CoreUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig,
                  LayoutHandler, QEUtils, QEModelConfig, QEGridConfig, QEParsers, ChartUtils, GraphUtils, CoreAlarmUtils, CoreAlarmParsers, CoreCommonTmpls) {

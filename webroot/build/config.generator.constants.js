@@ -38,7 +38,7 @@ constants.coreModules  = [
       'core-basedir/js/common/qe.grid.config',
       'core-basedir/js/common/qe.parsers',
       'core-basedir/js/common/chart.utils',
-      'text!templates/core.common.tmpl',
+      'text!common/ui/templates/core.common.tmpl',
 
       'contrail-remote-data-handler',
       'layout-handler',
@@ -165,7 +165,6 @@ constants.coreModules  = [
     name: './js/common/nonamd.libs',
     exclude: [
       'jquery','jquery-ui','knockout','bootstrap','jquery.xml2json',
-      //'jquery.ba-bbq',
       'jquery.json','d3','backbone','validation',
       'core-bundle'
     ],

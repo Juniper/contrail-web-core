@@ -99,14 +99,14 @@ cp -r ./$THIRD_PARTY/bootstrap-v3.3.6/dist/css webroot/assets/bootstrap/css
 
 #Start - Copy Font-Awesome from $THIRD_PARTY
 rm -rf webroot/assets/font-awesome
-rm -rf webroot/fonts
+rm -rf webroot/common/ui/fonts
 
 mkdir -p webroot/assets/font-awesome
-mkdir -p webroot/fonts
+mkdir -p webroot/common/ui/fonts
 
 cp -r ./$THIRD_PARTY/font-awesome-v4.6.3/css webroot/assets/font-awesome/css
 cp -r ./$THIRD_PARTY/font-awesome-v4.6.3/fonts webroot/assets/font-awesome/fonts
-cp -r ./$THIRD_PARTY/font-awesome-v4.6.3/fonts/* webroot/fonts/
+cp -r ./$THIRD_PARTY/font-awesome-v4.6.3/fonts/* webroot/common/ui/fonts/
 #End - Copy Font-Awesome from $THIRD_PARTY
 
 #Start - Copy Font-Opensans from $THIRD_PARTY
@@ -138,9 +138,9 @@ mkdir -p webroot/assets/select2/styles
 cp -af ./$THIRD_PARTY/select2-v3.4.6/select2.min.js webroot/assets/select2/js/select2.min.js
 cp -af ./$THIRD_PARTY/select2-v3.4.6/select2.css webroot/assets/select2/styles/select2.css
 cp -af ./$THIRD_PARTY/select2-v3.4.6/select2-bootstrap.css webroot/assets/select2/styles/select2-bootstrap.css
-cp -af ./$THIRD_PARTY/select2-v3.4.6/select2.png webroot/css/select2.png
-cp -af ./$THIRD_PARTY/select2-v3.4.6/select2x2.png webroot/css/select2x2.png
-cp -af ./$THIRD_PARTY/select2-v3.4.6/select2-spinner.gif webroot/css/select2-spinner.gif
+cp -af ./$THIRD_PARTY/select2-v3.4.6/select2.png webroot/common/ui/css/select2.png
+cp -af ./$THIRD_PARTY/select2-v3.4.6/select2x2.png webroot/common/ui/css/select2x2.png
+cp -af ./$THIRD_PARTY/select2-v3.4.6/select2-spinner.gif webroot/common/ui/css/select2-spinner.gif
 cp -af ./$THIRD_PARTY/select2-v3.4.6/select2.png webroot/assets/select2/styles/select2.png
 cp -af ./$THIRD_PARTY/select2-v3.4.6/select2x2.png webroot/assets/select2/styles/select2x2.png
 cp -af ./$THIRD_PARTY/select2-v3.4.6/select2-spinner.gif webroot/assets/select2/styles/select2-spinner.gif
@@ -263,9 +263,9 @@ cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/dist/jsoneditor.min.css webroot/assets/js
 cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/dist/jsoneditor.css webroot/assets/jsoneditor/css/jsoneditor.css
 cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/src/css/img/jsoneditor-icons.svg webroot/assets/jsoneditor/css/img/jsoneditor-icons.svg
 
-rm -rf webroot/css/img
-mkdir -p webroot/css/img
-cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/src/css/img/jsoneditor-icons.svg webroot/css/img/jsoneditor-icons.svg
+rm -rf webroot/common/ui/css/img
+mkdir -p webroot/common/ui/css/img
+cp -af ./$THIRD_PARTY/jsoneditor-5.5.6/src/css/img/jsoneditor-icons.svg webroot/common/ui/css/img/jsoneditor-icons.svg
 #End - Copy jsoneditor.js from $THIRD_PARTY
 
 #Start - Copy jdorn-jsoneditor.js from $THIRD_PARTY
@@ -278,6 +278,6 @@ cp -af ./$THIRD_PARTY/jdorn-jsoneditor.js webroot/assets/jdorn-jsoneditor/js/jdo
 rm -f webroot/css/contrail.unified.css
 
 # compile sass
-./node_modules/node-sass/bin/node-sass webroot/scss/contrail.thirdparty.unified.scss > webroot/css/contrail.thirdparty.unified.css
-./node_modules/node-sass/bin/node-sass webroot/scss/contrail.unified.scss > webroot/css/contrail.unified.css
+./node_modules/node-sass/bin/node-sass webroot/common/ui/scss/contrail.thirdparty.unified.scss > webroot/common/ui/css/contrail.thirdparty.unified.css
+./node_modules/node-sass/bin/node-sass webroot/common/ui/scss/contrail.unified.scss > webroot/common/ui/css/contrail.unified.css
 #End - Merging ALL CSS files
