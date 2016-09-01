@@ -99,9 +99,11 @@ define([
                 setData2Chart(self, chartViewConfig, chartViewModel, chartModel);
             }
 
-            nv.utils.windowResize(function () {
-                chUtils.updateChartOnResize(selector, chartModel);
-            });
+            self.resizeFn = _.debounce(function () {
+                chUtils.updateChartOnResize($(self.$el), self.chartModel);
+            }, 500);
+            nv.utils.windowResize(self.resizeFn);
+
             //Seems like in d3 chart renders with some delay so this deferred object helps in that situation,which resolves once the chart is rendered
             if (chartOptions['deferredObj'] != null)
                 chartOptions['deferredObj'].resolve();
@@ -147,9 +149,9 @@ define([
             $(selector).find('.nv-requestState').remove();
         },
 
-        resize: function () {
-            var self = this
-            self.chartModel.update()
+        resize: function() {
+            var self = this;
+            self.resizeFn()
         }
     });
 

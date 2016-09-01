@@ -1,0 +1,18 @@
+<div id="{{ id }}">
+    <div class="widget panel panel-default">
+        <div class="panel-heading">
+            <span class="config-title"></span>
+            <div class="title" data-bind="html:title"></div>
+            <input class="edit-title" type="text" data-bind="value:title" />
+            <div class="config fa fa-gear"></div>
+            <div class="close fa fa-times"></div>
+        </div>
+        <div class="panel-body">
+            <div id="{{ id }}-config-selectors" class="config-selectors"></div>
+            <div id="{{ id }}-dataConfigView" class="data-config step"></div>
+            <div id="{{ id }}-contentConfigView" class="content-config step"></div>
+            <div id="{{ id }}-contentView" class="content-view step"></div>
+        </div>
+        <div class="panel-footer"></div>
+    </div>
+</div>

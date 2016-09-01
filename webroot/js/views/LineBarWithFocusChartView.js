@@ -81,16 +81,11 @@ define([
                 } else {
                     setData2Chart(self, chartViewConfig, chartViewModel, chartModel);
                 }
-                var resizeFunction = function (e) {
-                    if ($(selector).is(':visible')) {
-                        setData2Chart(self, chartViewConfig, chartViewModel, chartModel);
-                    }
-                };
-                $(window)
-                    .off('resize', resizeFunction)
-                    .on('resize', resizeFunction);
 
-                nv.utils.windowResize(chartModel.update);
+                self.resizeFn = _.debounce(function () {
+                    chUtils.updateChartOnResize($(self.$el), self.chartModel);
+                }, 500);
+                nv.utils.windowResize(self.resizeFn);
 
                 chartModel.dispatch.on('stateChange', function (e) {
                     nv.log('New State:', JSON.stringify(e));
@@ -130,6 +125,11 @@ define([
                 selector = contrail.handleIfNull(selector, $(self.$el));
 
             $(selector).find('.nv-requestState').remove();
+        },
+
+        resize: function () {
+            var self = this;
+            self.resizeFn();
         }
     });
 
