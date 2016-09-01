@@ -268,7 +268,8 @@ $.allajax = (function ($) {
     $(document).ajaxComplete(function (event, xhr, settings) {
         var urlHash = window.location.hash;
         var redirectHeader = xhr.getResponseHeader('X-Redirect-Url');
-        if (redirectHeader != null) {
+        if ((redirectHeader != null) ||
+            (cowc.HTTP_STATUS_CODE_AUTHORIZATION_FAILURE == xhr.status)) {
             //Show login-form
             loadUtils.onAuthenticationReq();
             /*//Carry the current hash parameters to redirect URL(login page) such that user will be taken to the same page once he logs in

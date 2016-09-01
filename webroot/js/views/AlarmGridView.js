@@ -119,7 +119,8 @@ define([
             {
                 field: 'severity',
                 name: '',
-                width: 1,
+                                  minWidth: 20,
+                                  maxWidth: 20,
                 searchFn: function (d) {
                     return d['severity'];
                 },
@@ -127,12 +128,25 @@ define([
                 sortField: 'severity',
                 formatter : function (r, c, v, cd, dc) {
                     return alarmSeverityFormatter(v,dc,false);
+                                  },
+                                  exportConfig: {
+                                    allow: false
                 }
             },
             {
+                                  field: 'severity',
+                                  name: 'Severity',
+                                  hide:true
+                              },
+                              {
+                                  field: 'ack',
+                                  name: 'Acknowledged',
+                                  hide:true
+                              },
+                              {
                 field: 'timestamp',
                 name: 'Time',
-                minWidth: 50,
+                                  minWidth: 130,
                 formatter : function (r,c,v,cd,dc) {
                     return getFormattedDate(v/1000);
                 }
@@ -140,7 +154,7 @@ define([
             {
                 field: 'alarm_msg',
                 name: 'Alarm',
-                minWidth: 200,
+                                  minWidth: 200
             },
             {
                 field: 'display_name',
@@ -153,14 +167,18 @@ define([
                 formatter : function (r,c,v,cd,dc) {
                     var formattedDiv = '';
                     if(!dc['ack'] && dc['type'] != cowc.USER_GENERATED_ALARM) {
-                        formattedDiv = '<span title="Acknowledge" style="float:right"><i class="fa fa-check-circle-o"></i></span>';
+                                          formattedDiv = '<span title="Acknowledge"><i class="fa fa-check-circle-o"></i></span>';
                     }
                     return formattedDiv;
                 },
+                                  exportConfig: {
+                                      allow: false
+                                  },
                 events: {
                     onClick: onAcknowledgeActionClicked
                 },
-                width:1
+                                  minWidth: 20,
+                                  maxWidth: 20
             }
         ];
         var gridElementConfig = {
@@ -266,14 +284,19 @@ define([
                             text:"Severity",
                             children: [
                                 {
-                                    id:"4",
+                                        id:"0",
+                                        text:"Critical",
+                                        icon:'fa-download'
+                                    },
+                                    {
+                                        id:"1",
+                                        text:'Major',
+                                        iconClass:'fa-download'
+                                    },
+                                    {
+                                        id:"2",
                                     text:'Minor',
                                     iconClass:'fa-download'
-                                },
-                                {
-                                    id:"3",
-                                    text:"Major",
-                                    icon:'<div data-color="orange" class="circle orange filled" style="opacity:1"></div>'
                                 }
                             ]
                         },
@@ -420,12 +443,12 @@ define([
 
     this.alarmSeverityFormatter = function (v, dc, showTextFlag) {
         var showText = (showTextFlag != null && showTextFlag == false)? false: true;
-        var color = (v == 3) ? 'red' : 'orange';
+        var color = (v <= 1) ? 'red' : 'orange';
         var template = contrail.getTemplate4Id(cowc.TMPL_ALARM_SEVERITY);
         return template({
             showText : showText,
             color : color,
-            text : (v == 3) ? 'Major' : 'Minor',
+            text : coreAlarmUtils.getAlarmSeverityText(v),
             ack : (dc['ack'] == null)? false : dc['ack']
         });
     }
