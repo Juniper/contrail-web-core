@@ -11,7 +11,6 @@ define(['underscore'], function (_) {
         var defaults = {
             include_all: true,
             icon_1: 'fa fa-question',
-            icon_2: 'fa fa-lightbulb-o',
             base: '',
             code_highlight: (!!window.Rainbow ? 'rainbow' : (!!window.Prism ? 'prism' : null)),
 
@@ -235,7 +234,6 @@ define(['underscore'], function (_) {
                 if(ie_fix) div.append('<span class="ie-hover-fix" />');
 
                 if(_.settings.icon_1) div.append('<i class="help-icon-1 '+_.settings.icon_1+'"></i>');
-                if(_.settings.icon_2) div.append('<i class="help-icon-2 pull-right '+_.settings.icon_2+'"></i>');
 
                 div.attr('data-section', name);
 

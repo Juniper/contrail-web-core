@@ -4,11 +4,12 @@
 
 define([
     'underscore',
+    'moment',
     'query-form-view',
     'knockback',
     'core-basedir/js/models/NodeConsoleLogsModel',
     'core-basedir/js/common/qe.utils'
-], function (_, QueryFormView, Knockback, NodeConsoleLogsModel,qewu) {
+], function (_, moment, QueryFormView, Knockback, NodeConsoleLogsModel,qewu) {
     var nodeType,hostname;
     var NodeConsoleLogsView = QueryFormView.extend({
         render: function () {

@@ -4387,7 +4387,7 @@ input.ace-input[type=checkbox] + .ace-lbl::before, input.ace-input[type=radio] +
   margin: -2px 3px 0 0;
 }
 
-input.ace-input[type=checkbox]:checked + .ace-lbl::before, input.ace-input[type=radio]:checked + .ace-lbl::before {
+input.ace-input[type=checkbox]:checked + .ace-lbl::before {
   display: inline-block;
   content: '\f00c';
   background-color: #F5F8FC;

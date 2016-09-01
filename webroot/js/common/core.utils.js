@@ -2,7 +2,11 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-define(['underscore'], function (_) {
+define([
+    'underscore',
+    'moment',
+    'handlebars'
+], function (_, moment, Handlebars) {
     var serializer = new XMLSerializer(),
         domParser = new DOMParser();
 
