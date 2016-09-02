@@ -326,9 +326,26 @@
 .contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
 .ui-tabs .ui-tabs-nav li.ui-tabs-active a,
 .contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-state-hover a,
-.ui-tabs .ui-tabs-nav li.ui-state-hover a {
+.ui-tabs .ui-tabs-nav li.ui-state-hover a,
+.contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-tabs-active .tab-edit-btn,
+.ui-tabs .ui-tabs-nav li.ui-tabs-active .tab-edit-btn,
+.contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-state-hover .tab-edit-btn,
+.ui-tabs .ui-tabs-nav li.ui-state-hover .tab-edit-btn {
     color: #3182bd;
 }
+
+.contrail-tab-link-list .tab-edit-btn {
+    border: none;
+    padding: 0;
+    background: transparent;
+    color: #3182bd;
+    display: none;
+}
+
+.contrail-tab-link-list .ui-tabs-active .tab-edit-btn {
+  display: inline-block;
+}
+
 .contrail-tabs-overcast.ui-tabs .ui-state-default a,
 .ui-tabs .ui-state-default a,
 .contrail-tabs-overcast.ui-tabs .ui-state-default a:link,
@@ -493,9 +510,6 @@
 /* Bootstrap popovers */
 .popover {
     width: 800px;
-}
-.popover .arrow {
-    display: none;
 }
 .popover .popover-title {
     background-color: #fff;

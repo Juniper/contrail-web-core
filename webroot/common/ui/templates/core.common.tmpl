@@ -1809,9 +1809,9 @@
                     {{/if}}
                 </a>
                 {{#if tabConfig.editable}}
-                <a class="tab-edit" data-toggle="popover">
+                <button type="button" class="tab-edit-btn" data-toggle="popover">
                     <i class="fa fa-ellipsis-v"></i>
-                </a>
+                </button>
                 {{/if}}
             </li>
             {{/each}}
@@ -1844,7 +1844,7 @@
 
 <script type="text/x-handlebars-template" id="core-tabs-menu-template">
     <div class="tab-menu">
-        <input class="title-updated" value="{{this}}"/>
+        <input type="text" class="title-updated" value="{{this}}"/>
         <button class="title-save btn btn-primary">Save</button>
     </div>
 </script>
@@ -1862,9 +1862,9 @@
             {{/if}}
         </a>
         {{#if tabConfig.editable}}
-        <a class="tab-edit" data-toggle="popover">
+        <button type="button" class="tab-edit-btn" data-toggle="popover">
             <i class="fa fa-ellipsis-v"></i>
-        </a>
+        </button>
         {{/if}}
         </li>
     {{/each}}
