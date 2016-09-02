@@ -104,7 +104,6 @@ define([
         },
 
         shareViewConfig: function() {
-            var projectPostData = JSON.stringify({data: [{type: "projects"}]})
             return  [{
                 elementId: 'share_list',
                 view: "FormEditableGridView",
@@ -120,28 +119,28 @@ define([
                         {
                             elementId: "tenant",
                             name: "Project",
-                            view: 'FormDropdownView',
+                            view: 'FormComboboxView',
                             viewConfig: {
                                 path : "tenant",
                                 width: 250,
                                 dataBindValue : "tenant()",
                                 templateId:
-                                    cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
+                                    cowc.TMPL_EDITABLE_GRID_COMBOBOX_VIEW,
                                 elementConfig: {
                                     dataTextField: "text",
                                     dataValueField: "value",
-                                    placeholder: "Select Project",
+                                    placeholder: "Enter or Select Project",
                                     dataSource: {
                                         type: "remote",
                                         url:
-                                         "/api/tenants/config/get-config-list",
-                                        requestType: "POST",
-                                        postData: projectPostData,
+                                         "/api/tenants/config/projects/" +
+                                         contrail.getCookie(cowc.COOKIE_DOMAIN),
+                                        requestType: "GET",
                                         parse: function(result){
                                             var dataSource = [],
                                                projects =
                                                getValueByJsonPath(result,
-                                                   "0;projects", []);
+                                                   "projects", []);
                                             _.each(projects, function(project){
                                                 var projName =
                                                     getValueByJsonPath(project,
@@ -153,7 +152,7 @@ define([
                                                     projName !==
                                                         "default-project") {
                                                     dataSource.push({
-                                                        text: projName,
+                                                        text: projName + " (" + projId + ")",
                                                         value: projId
                                                     });
                                                 }
