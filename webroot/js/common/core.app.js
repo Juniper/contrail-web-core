@@ -321,9 +321,6 @@ var coreAppShim =  {
     'd3-utils': {
         deps: ['d3']
     },
-    'qe-utils': {
-        deps: ['jquery']
-    },
     'select2-utils': {
         deps: ['jquery']
     },
@@ -637,9 +634,9 @@ function initCustomKOBindings(Knockout) {
 
                 if (contrail.checkIfFunction(optionList)) {
                     optionList = optionList(viewModel);
-                    }
+                }
 
-                var formattedOptionList = formatData(optionList, elementConfig),
+                var formattedOptionList = cowu.formatFormData(optionList, elementConfig),
                     currentOptionList = multiselect.getAllData();
 
                 if (JSON.stringify(formattedOptionList) !== JSON.stringify(currentOptionList)) {

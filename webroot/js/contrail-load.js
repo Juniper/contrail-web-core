@@ -206,6 +206,20 @@ function getWebServerInfo(project, callback,fromCache) {
     }
 };
 
+function startWidgetLoading(selectorId) {
+    $("#" + selectorId + "-loading").show();
+    $("#" + selectorId + "-box").find('a[data-action="collapse"]').hide();
+    $("#" + selectorId + "-box").find('a[data-action="settings"]').hide();
+};
+
+function endWidgetLoading(selectorId) {
+    setTimeout(function(){
+        $("#" + selectorId + "-loading").hide();
+        $("#" + selectorId + "-box").find('a[data-action="collapse"]').show();
+        $("#" + selectorId + "-box").find('a[data-action="settings"]').show();
+    },500);
+};
+
 (function ($) {
     $.extend($.fn, {
         initWidgetHeader:function (data) {
