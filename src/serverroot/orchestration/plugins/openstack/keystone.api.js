@@ -302,7 +302,7 @@ function getTenantList (req, appData, callback)
 
 function getDomainList (req, callback)
 {
-    var reqUrl = '/domains';
+    var reqUrl = '/auth/domains';
     var token = req.session.last_token_used;;
     getAuthRetryData(token, req, reqUrl, function(err, data) {
         callback(err, data);
@@ -1985,6 +1985,35 @@ function getProjectList (req, appData, callback)
             callback(error, filtProjects);
         });
     } else {
+        var projects = {'projects': []};
+        getTenantList(req, appData, function(err, projList) {
+            if ((null != err) || (null == projList)) {
+                callback(err, projects);
+                return;
+            }
+            var tenants = commonUtils.getValueByJsonPath(projList, 'tenants',
+                                                         []);
+            var defDomain = getDefaultDomain(req);
+            var domain =
+                commonUtils.getValueByJsonPath(req,
+                                               'session;last_token_used;project;domain;name',
+                                               defDomain, false);
+            var domainId =
+                commonUtils.getValueByJsonPath(req,
+                                               'session;last_token_used;project;domain;id',
+                                               defDomain, false);
+            if (isDefaultDomain(req, domainId)) {
+                domain = defDomain;
+            }
+            var tenantsCn = tenants.length;
+            for (var i = 0; i < tenantsCn; i++) {
+                projects.projects.push({'uuid':
+                                       commonUtils.convertUUIDToString(tenants[i]['id']),
+                                       fq_name: [domain, tenants[i]['name']]});
+            }
+            callback(null, projects);
+        });
+        return;
         getProjectsFromKeystone(req, appData, function(error, keystoneProjs) {
             /* Check if we have all the projects listed in req.session.tokenObjs
              */
