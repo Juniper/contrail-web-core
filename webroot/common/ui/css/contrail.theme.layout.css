@@ -189,10 +189,6 @@
     display: inline-block;
 }
 
-.customHide {
-    display: none;
-}
-
 input[type="text"]:focus {
     border-color: #D5D5D5;
 }

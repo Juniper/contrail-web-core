@@ -920,40 +920,6 @@ function changeRegion (e)
     }
 }
 
-function initDomEvents() {
-    $(document)
-        .off('click', '.group-detail-advanced-action-item')
-        .on('click', '.group-detail-advanced-action-item', function (event) {
-            if (!$(this).hasClass('selected')) {
-                var thisParent = $(this).parents('.group-detail-container'),
-                    newSelectedView = $(this).data('view');
-
-                thisParent.find('.group-detail-item').hide();
-                thisParent.find('.group-detail-' + newSelectedView).show();
-
-                thisParent.find('.group-detail-advanced-action-item').removeClass('selected');
-                $(this).addClass('selected');
-
-                if (contrail.checkIfExist($(this).parents('.slick-row-detail').data('cgrid'))) {
-                    $(this).parents('.contrail-grid').data('contrailGrid').adjustDetailRowHeight($(this).parents('.slick-row-detail').data('cgrid'));
-                }
-            }
-        });
-
-    $(document)
-        .off('click', '.input-type-toggle-action')
-        .on('click', '.input-type-toggle-action', function (event) {
-            var input = $(this).parent().find('input');
-            if (input.prop('type') == 'text') {
-                input.prop('type', 'password');
-                $(this).removeClass('blue');
-            } else {
-                input.prop('type', 'text');
-                $(this).addClass('blue');
-            }
-        });
-};
-
 /**
  * This file is also require-d during build script.
  * Run following only when its loaded in client side.
@@ -1152,7 +1118,7 @@ if (typeof document !== 'undefined' && document) {
                     if (loadUtils.getCookie('username') != null) {
                         $('#user_info').text(loadUtils.getCookie('username'));
                     }
-                    $('#user-profile').show();
+                    $('#user-profile').removeClass('hidden');
                     loadUtils.bindAppListeners();
 
                     $.when.apply(window,[menuXMLLoadDefObj,layoutHandlerLoadDefObj]).done(function(menuXML) {
@@ -1371,7 +1337,6 @@ if (typeof document !== 'undefined' && document) {
                             contentHandler = new ContentHandler();
                             initBackboneValidation();
                             initCustomKOBindings(window.ko);
-                            initDomEvents();
                             layoutHandler = new LayoutHandler();
                             layoutHandlerLoadDefObj.resolve();
                             helpHandler = new HelpHandler();
