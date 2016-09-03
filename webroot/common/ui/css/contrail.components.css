@@ -178,6 +178,26 @@
 }
 
 /*
+ * Bootstrap Tooltips
+ */
+.tooltip, .tooltip.bottom {
+    margin: 0;
+    padding: 0;
+}
+.tooltip .tooltip-arrow {
+    border: none;
+}
+.tooltip .tooltip-inner {
+    background-color: #FFFFE1;
+    color: #333;
+    text-shadow: none;
+    padding: 5px;
+    border: 1px solid #ccc;
+    font-weight: normal;
+    text-align: left;
+}
+
+/*
  * Contrail Modal
  * Extends Bootstrap Modal
  */
