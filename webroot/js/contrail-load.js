@@ -42,6 +42,51 @@ $(document).ready(function () {
         }
     });
 
+    $(document)
+        .off('click', '.group-detail-advanced-action-item')
+        .on('click', '.group-detail-advanced-action-item', function (event) {
+            if (!$(this).hasClass('selected')) {
+                var thisParent = $(this).parents('.group-detail-container'),
+                    newSelectedView = $(this).data('view');
+
+                thisParent.find('.group-detail-item').hideElement();
+                thisParent.find('.group-detail-' + newSelectedView).showElement();
+
+                thisParent.find('.group-detail-advanced-action-item').removeClass('selected');
+                $(this).addClass('selected');
+
+                if (contrail.checkIfExist($(this).parents('.slick-row-detail').data('cgrid'))) {
+                    $(this).parents('.contrail-grid').data('contrailGrid').adjustDetailRowHeight($(this).parents('.slick-row-detail').data('cgrid'));
+                }
+            }
+        });
+
+    $(document)
+        .off('click', '.input-type-toggle-action')
+        .on('click', '.input-type-toggle-action', function (event) {
+            var input = $(this).parent().find('input');
+            if (input.prop('type') == 'text') {
+                input.prop('type', 'password');
+                $(this).removeClass('blue');
+            } else {
+                input.prop('type', 'text');
+                $(this).addClass('blue');
+            }
+        });
+
+    $(document)
+        .off('click', '.input-type-toggle-action')
+        .on('click', '.input-type-toggle-action', function (event) {
+            var input = $(this).parent().find('input');
+            if (input.prop('type') == 'text') {
+                input.prop('type', 'password');
+                $(this).removeClass('blue');
+            } else {
+                input.prop('type', 'text');
+                $(this).addClass('blue');
+            }
+        });
+
     $(window).on('scroll', function () {
         var scrollHeight = $(document).height() - $(window).height(),
             previousScroll = 0,
@@ -204,6 +249,20 @@ function getWebServerInfo(project, callback,fromCache) {
             callback(globalObj['webServerInfo']);
         }
     }
+};
+
+function startWidgetLoading(selectorId) {
+    $("#" + selectorId + "-loading").show();
+    $("#" + selectorId + "-box").find('a[data-action="collapse"]').hide();
+    $("#" + selectorId + "-box").find('a[data-action="settings"]').hide();
+};
+
+function endWidgetLoading(selectorId) {
+    setTimeout(function(){
+        $("#" + selectorId + "-loading").hide();
+        $("#" + selectorId + "-box").find('a[data-action="collapse"]').show();
+        $("#" + selectorId + "-box").find('a[data-action="settings"]').show();
+    },500);
 };
 
 (function ($) {

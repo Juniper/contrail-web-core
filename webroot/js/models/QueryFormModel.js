@@ -528,6 +528,10 @@ define([
     };
 
     function getTableSchemaColumnMap (tableSchema) {
+        if (_.isEmpty(tableSchema)) {
+            return {};
+        }
+
         var tableSchemaColumnMapObj = {},
             cols = tableSchema.columns;
         for(var i = 0; i < cols.length; i++) {
@@ -538,7 +542,7 @@ define([
     };
 
     function getSelectFields4Table(tableSchema, disableFieldArray, disableSubstringArray) {
-        if ($.isEmptyObject(tableSchema)) {
+        if (_.isEmpty(tableSchema)) {
            return [];
         }
         var tableColumns = tableSchema['columns'],
@@ -572,7 +576,7 @@ define([
     };
 
     function getWhereFields4NameDropdown(tableSchema, tableName, disableWhereFields) {
-        if ($.isEmptyObject(tableSchema)) {
+        if (_.isEmpty(tableSchema)) {
             return [];
         }
         var tableSchemaFormatted = [];
