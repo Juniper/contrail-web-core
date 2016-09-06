@@ -27,10 +27,11 @@
     color:#3182bd;
 }
 .group-detail-container ul.item-list li .key.label-blue.indent-right{
-    padding-left:15px;
+    padding-left: 30px;
 }
 .group-detail-container ul.item-list li .value {
     color:#777;
+    margin: 0;
 }
 .block-grid-row {
     padding-top: 5px;
