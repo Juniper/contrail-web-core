@@ -296,6 +296,32 @@ define([
             return true;
         };
 
+        this.formatFormData = function (data, option) {
+            var self = this,
+                formattedData = [];
+            if (typeof data[0] === 'object') {
+                if (typeof option.dataValueField !== 'undefined' && typeof option.dataTextField !== 'undefined') {
+                    $.each(data, function (key, val) {
+                        if ('children' in val){
+                            self.formatFormData(val.children, option);
+                        }
+                        data[key][option.dataValueField.apiVar] = val[option.dataValueField.dsVar];
+                        data[key][option.dataTextField.apiVar] = val[option.dataTextField.dsVar];
+                    });
+                }
+            } else {
+                $.each(data, function (key, val) {
+                    formattedData.push({
+                        id: val,
+                        value: String(val),
+                        text: String(val)
+                    });
+                });
+                data = formattedData;
+            }
+            return data;
+        };
+
         this.getEditConfigObj = function (configObj, locks, schema, path) {
             var lock = null,
                 testobj = $.extend(true, {}, configObj);
