@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
 
 define([
@@ -46,6 +46,11 @@ define([
     timeSeries: function() {
       var self = this;
       return _.without((self.select() || "").split(", "), "T=");
+    },
+
+    reset: function (data, event, resetTR, resetTable) {
+      resetTable = contrail.checkIfExist(resetTable) ? resetTable : this.query_prefix() !== coreConstants.SYSTEM_LOGS_PREFIX;
+      QueryFormModel.prototype.reset.call(this, data, event, resetTR, resetTable);
     },
   });
 
