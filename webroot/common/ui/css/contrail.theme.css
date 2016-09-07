@@ -19300,9 +19300,7 @@ input.typeahead.scrollable ~ .tt-menu {
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: #000;
-    filter: alpha(opacity=5);
-    background-color: rgba(0, 0, 0, 0.05); }
+}
 
 .page-help-section {
     display: block;
@@ -19310,7 +19308,7 @@ input.typeahead.scrollable ~ .tt-menu {
     z-index: 100000;
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4DFFFFFF', endColorstr='#4DFFFFFF', GradientType=0);
     background-color: rgba(255, 255, 255, 0.3);
-    border: 1px dashed #8BBCD3;
+    border: 1px dashed #77ACC4;
     transition: background-color 0.2s, border-color 0.2s;
     -webkit-transition: background-color 0.2s, border-color 0.2s;
     text-align: center;
