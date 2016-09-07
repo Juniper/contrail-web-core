@@ -252,7 +252,7 @@ define([
                     });
 
                 } else if(option.dataSource.type == "local"){
-                    formattedData = formatData(option.dataSource.data, option);
+                    formattedData = cowu.formatFormData(option.dataSource.data, option);
                 }
             } else if (self.is('select')) {
                 self.children("option").each(function (key, val) {
@@ -313,7 +313,7 @@ define([
                     return value;
                 },
                 setData: function(data) {
-                    formattedData = formatData(data, self.option);
+                    formattedData = cowu.formatFormData(data, self.option);
                     constructCombobox(self, self.option, formattedData);
                 },
                 destroy: function(){
@@ -994,7 +994,7 @@ define([
                         throw "Error getting data from server";
                     }
                     var parsedData = (contrail.checkIfFunction(parse)) ? parse(response) : response;
-                    config.data = formatData(parsedData, config);
+                    config.data = cowu.formatFormData(parsedData, config);
                     constructCheckedMultiselect(config, defaultFilterConfig);
                 });
             } else {
@@ -1003,7 +1003,7 @@ define([
         }
 
         if (contrail.checkIfExist(config.data)) {
-            config.data = formatData((contrail.checkIfFunction(parse)) ? parse(config.data) : config.data, config);
+            config.data = cowu.formatFormData((contrail.checkIfFunction(parse)) ? parse(config.data) : config.data, config);
         }
 
         if (!contrail.checkIfExist(self.data('contrailCheckedMultiselect'))) {
@@ -1134,31 +1134,31 @@ define([
         }
     });
 
-    //Formatting data as an array of strings.
-    function formatData(data, option) {
-        var formattedData = [];
-        if (typeof data[0] === 'object') {
-            if (typeof option.dataValueField !== 'undefined' && typeof option.dataTextField !== 'undefined') {
-                $.each(data, function (key, val) {
-                    if ('children' in val){
-                        formatData(val.children, option);
-                    }
-                    data[key][option.dataValueField.apiVar] = val[option.dataValueField.dsVar];
-                    data[key][option.dataTextField.apiVar] = val[option.dataTextField.dsVar];
-                });
-            }
-        } else {
-            $.each(data, function (key, val) {
-                formattedData.push({
-                    id: val,
-                    value: String(val),
-                    text: String(val)
-                });
-            });
-            data = formattedData;
-        }
-        return data;
-    };
+    // //Formatting data as an array of strings.
+    // function formatData(data, option) {
+    //     var formattedData = [];
+    //     if (typeof data[0] === 'object') {
+    //         if (typeof option.dataValueField !== 'undefined' && typeof option.dataTextField !== 'undefined') {
+    //             $.each(data, function (key, val) {
+    //                 if ('children' in val){
+    //                     formatData(val.children, option);
+    //                 }
+    //                 data[key][option.dataValueField.apiVar] = val[option.dataValueField.dsVar];
+    //                 data[key][option.dataTextField.apiVar] = val[option.dataTextField.dsVar];
+    //             });
+    //         }
+    //     } else {
+    //         $.each(data, function (key, val) {
+    //             formattedData.push({
+    //                 id: val,
+    //                 value: String(val),
+    //                 text: String(val)
+    //             });
+    //         });
+    //         data = formattedData;
+    //     }
+    //     return data;
+    // };
 
     function constructSourceMap(data, fieldName) {
         return traverseMap(typeof data != 'undefined' ? data : [],fieldName,'');
@@ -1356,7 +1356,7 @@ define([
             function initSelect2(option, value, triggerChange) {
                 var triggerChange = contrail.checkIfExist(triggerChange) ? triggerChange : false;
 
-                option.data = formatData(option.data, option);
+                option.data = cowu.formatFormData(option.data, option);
 
                 if (contrail.checkIfExist(self.data('select2'))) {
                     self.select2('destroy');
@@ -1433,7 +1433,7 @@ define([
                     });
 
                 } else if(dataSourceOption.type == "local"){
-                    source = formatData(dataSourceOption.data, config);
+                    source = cowu.formatFormData(dataSourceOption.data, config);
                 }
                 config.data = source;
             }
@@ -1551,18 +1551,5 @@ define([
             return dataObject;
         }
     }
-})
 
-function startWidgetLoading(selectorId) {
-    $("#" + selectorId + "-loading").show();
-    $("#" + selectorId + "-box").find('a[data-action="collapse"]').hide();
-    $("#" + selectorId + "-box").find('a[data-action="settings"]').hide();
-};
-
-function endWidgetLoading(selectorId) {
-    setTimeout(function(){
-        $("#" + selectorId + "-loading").hide();
-        $("#" + selectorId + "-box").find('a[data-action="collapse"]').show();
-        $("#" + selectorId + "-box").find('a[data-action="settings"]').show();
-    },500);
-};
+});

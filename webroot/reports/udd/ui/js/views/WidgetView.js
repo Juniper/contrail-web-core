@@ -14,8 +14,8 @@ define([
     selectors: {
       heading: ".panel-heading",
       configTitle: ".config-title",
-      title: ".panel-heading>.title",
-      titleInput: ".panel-heading>input",
+      title: ".panel-heading .title-group .title",
+      titleInput: ".panel-heading .title-group .edit-title",
       steps: ".panel-body>.step",
       footer: ".panel-footer",
       configSelectors: ".panel-body>.config-selectors",
@@ -29,7 +29,7 @@ define([
       "click .panel-heading .config": "toggleConfig",
       "click .title": "editTitle",
       "keydown .edit-title": "_onKeyInTitle",
-      "blur .panel-heading>input": "saveTitle",
+      "blur .panel-heading .title-group .edit-title": "saveTitle",
       "click .panel-footer .submit": "submit",
       "click .panel-footer .reset": "reset",
       "click .panel-footer .back": "backStep",
@@ -85,6 +85,7 @@ define([
       var model = dataConfigModel.getDataModel(parserOptions);
       var config = self.model.getViewConfig("contentView");
       var element = self.$("#" + config.elementId);
+      console.debug(model);
       if (!model) {
         element.html(ctwm.NO_COMPATIBLE_DATA_SOURCES);
       }
@@ -174,7 +175,6 @@ define([
     getFooterConfig: function () {
       return {
         view: "SectionView",
-        class: "panel-footer",
         viewConfig: {
           rows: [
             {
@@ -227,6 +227,7 @@ define([
 
     remove: function () {
       var self = this;
+      self._enableConfigFocusMode(false);
       self.model.destroy();
     },
 
@@ -255,6 +256,26 @@ define([
       widgetContentView.resize();
     },
 
+    _enableConfigFocusMode: function(active) {
+      var className = "focus-config",
+          $bgMask = $(".modal-backdrop." + className),
+          containingGrid = this.$el.closest(".grid-stack").data("gridstack");
+
+      if (active) {
+        containingGrid.movable(this.$el, false);
+        containingGrid.resizable(this.$el, false);
+        this.$el.addClass(className);
+        if ($bgMask.length === 0) {
+          $('<div class="modal-backdrop ' + className + '"></div>').appendTo(document.body);
+        }
+      } else {
+        containingGrid.movable(this.$el, true);
+        containingGrid.resizable(this.$el, true);
+        this.$el.removeClass(className);
+        $(".modal-backdrop." + className).remove();
+      }
+    },
+
     goStep: function (step) {
       var self = this;
       if (self.currentStep === step) {
@@ -263,12 +284,14 @@ define([
       self.$(self.selectors.steps).hide();
       self.$(step).show();
       if (self.currentStep === self.steps.CONTENT || step === self.steps.CONTENT) {
+        self._enableConfigFocusMode(false);
         self.$(self.selectors.configSelectors).toggle();
         self.$(self.selectors.footer).toggle();
       }
 
       var configTitle = "";
       if (step === self.steps.DATA_CONFIG) {
+        self._enableConfigFocusMode(true);
         configTitle = ctwl.TITLE_UDD_DATA_CONFIG;
         self.$(self.selectors.back).hide();
         self.$(self.selectors.contentConfigDropdown).hideElement();
@@ -276,6 +299,7 @@ define([
         self.$(".submit button").html(ctwl.UDD_WIDGET_NEXT);
       }
       if (step === self.steps.CONTENT_CONFIG) {
+        self._enableConfigFocusMode(true);
         configTitle = ctwl.TITLE_UDD_CONTENT_CONFIG;
         self.$(self.selectors.back).show();
         self.$(self.selectors.dataConfigDropdown).hideElement();

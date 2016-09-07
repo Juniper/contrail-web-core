@@ -44,7 +44,7 @@ define([
     events: {
       "change .grid-stack": "onChange",
       "resizestop .grid-stack": "onResize",
-      "click .placeholder": "add",
+      "click .add-widget": "add",
     },
     placeholderHTML: Handlebars.compile(placeholderTemplate)(),
 

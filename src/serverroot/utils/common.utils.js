@@ -2277,6 +2277,13 @@ function doDeepSort (object)
     return sortedObj;
 }
 
+function invalidateReqSession (req, res)
+{
+    req.session.isAuthenticated = false;
+    res.clearCookie('_csrf');
+    res.clearCookie('connect.sid');
+}
+
 exports.filterJsonKeysWithNullValues = filterJsonKeysWithNullValues;
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
@@ -2337,4 +2344,5 @@ exports.isSubArray = isSubArray;
 exports.getValueByJsonPath = getValueByJsonPath;
 exports.getFeaturePkgs = getFeaturePkgs;
 exports.doDeepSort = doDeepSort;
+exports.invalidateReqSession = invalidateReqSession;
 

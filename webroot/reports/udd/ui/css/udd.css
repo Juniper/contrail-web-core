@@ -2,52 +2,117 @@
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
 
-.btn {
-    border: none;
+.grid-stack .grid-stack-item.widget {
+  padding: 0 5px;
 }
 
-.noselect {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+.grid-stack .grid-stack-item.widget.focus-config {
+  z-index: 1030; /* this value has to be between 1000 (customized backdrop) and 1040 (Bootstrap's default modal backdrop) */
+  display: flex;
+  height: auto;
 }
 
-#menu .new-dashboard {
-    text-align: center;
+.grid-stack-item.widget .ui-resizable-handle {
+  right: 8px;
+  bottom: 5px;
 }
 
-#menu .new-dashboard:before,
-#menu .new-dashboard:after {
+.grid-stack-item.widget .panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  border: 1px solid #ddd;
+  border-radius: 0;
+}
+
+.grid-stack-item.widget .panel .panel-heading,
+.grid-stack-item.widget .panel .panel-footer {
+  height: 36px;
+}
+
+.grid-stack-item.widget .panel .panel-heading {
+  position: relative;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.grid-stack-item.widget .panel .panel-heading .title-group {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.grid-stack-item.widget .panel .panel-heading .title-group .config-title {
+  float: left;
+  margin-right: 3px;
+  font-weight: bold;
+}
+
+.grid-stack-item.widget .panel .panel-heading .title-group .title {
+  display: inline-block;
+  width: 21em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.grid-stack-item.widget .panel .panel-heading .title-group .edit-title {
+  display: none;
+  padding: 0;
+  height: 1.4em;
+  width: 21em;
+}
+
+.grid-stack-item.widget .panel .panel-heading .widget-control {
+  float: right;
+  width: 3em;
+  color: #898989;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.grid-stack-item.widget .panel .panel-heading .widget-control > .config {
+  font-size: 1.2em;
+}
+
+.grid-stack-item.widget .panel .panel-heading .widget-control > .config:hover {
+  color: #00bfff;
+}
+
+.grid-stack-item.widget .panel .panel-heading .widget-control > .close {
+  float: none;
+  font-size: 1.3em;
+}
+
+.grid-stack-item.widget .panel .panel-heading .widget-control > .close:hover {
+  color: red;
+}
+
+.grid-stack-item.widget .panel .panel-body {
+  flex: 1;
+  padding: 10px;
+}
+
+.grid-stack-item.widget .panel .panel-body .data-config,
+.grid-stack-item.widget .panel .panel-body .content-config,
+.grid-stack-item.widget .panel .panel-body .content-view {
     display: none;
 }
 
-#menu .new-dashboard a {
+.grid-stack-item.widget .panel .panel-footer {
+  padding: 5px 15px;
+}
+
+.grid-stack-item.widget .panel .panel-footer .btn {
+    margin-left: 8px;
+}
+
+.grid-stack-item.widget .panel .panel-footer .reset {
     padding-left: 0;
-    padding-right: 0;
 }
 
-.new-widget {
-    position: fixed;
-    right: 0;
-    z-index: 13;
-    line-height: 40px;
-    border-left: 1px solid #ccc;
-    padding: 0 16px;
-}
-
-#content-container .area {
-    width: 100%;
-}
-
-#content-container .contrail-tabs-classic .ui-tabs-panel.ui-widget-content,
-.contrail-widget-tabs .ui-tabs-panel.ui-widget-content {
-    padding: 0;
-}
-
-#content-container .placeholder {
+.add-widget {
     display: block;
     margin-top: 8px;
     text-align: center;
@@ -57,135 +122,6 @@
     line-height: 56px;
 }
 
-#content-container .area .grid-stack .grid-stack-item,
-#content-container .area .grid-stack .grid-stack-item *,
-#content-container .area .grid-stack .grid-stack-item *:before,
-#content-container .area .grid-stack .grid-stack-item *:after {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
-#content-container .area .grid-stack .grid-stack-item .widget {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 4px;
-    right: 4px;
-    border: 1px solid #ddd;
-    border-radius: 0;
-    margin: 0;
-}
-
-#content-container .area .grid-stack .grid-stack-item .ui-resizable-handle {
-    right: 8px;
-    bottom: 5px;
-}
-
-#content-container .area .grid-stack .widget.panel .panel-heading,
-#content-container .area .grid-stack .widget.panel .panel-footer {
-    position: absolute;
-    display: flex;
-    justify-content: flex-start;
-    width: 100%;
-    height: 36px;
-    line-height: 36px;
-    padding: 0 8px;
-}
-
-#content-container .area .grid-stack .widget.panel .panel-heading .config-title {
-    flex: none;
-    font-weight: bold;
-}
-
-#content-container .area .grid-stack .widget.panel .panel-heading .title {
-    display: inline-block;
-    flex: 1 1 auto;
-    white-space: nowrap;
-    overflow: hidden;
-    padding-left: 4px;
-}
-
-#content-container .area .grid-stack .widget.panel .panel-heading .edit-title {
-    padding-left: 4px;
-    width: 80%;
-}
-
-#content-container .area .grid-stack .widget.panel .panel-heading .close,
-#content-container .area .grid-stack .widget.panel .panel-heading .config {
-    flex: none;
-    line-height: 36px;
-    color: #898989;
-    opacity: 1;
-    padding: 0 8px;
-}
-
-#content-container .area .grid-stack .widget.panel .panel-heading .close {
-    line-height: 36px;
-    font-size: 12px;
-}
-
-#content-container .area .grid-stack .widget.panel .panel-heading .close:hover {
-    color: red;
-}
-
-#content-container .area .grid-stack .widget.panel .panel-heading input {
-    display: none;
-    position: absolute;
-    top: 5px;
-}
-
-#content-container .area .grid-stack .widget.panel .panel-body {
-    position: absolute;
-    width: 100%;
-    overflow: auto;
-    top: 36px;
-    bottom: 36px;
-    padding: 10px;
-}
-
-#content-container .area .grid-stack .widget.panel .panel-body .data-config,
-#content-container .area .grid-stack .widget.panel .panel-body .content-config,
-#content-container .area .grid-stack .widget.panel .panel-body .content-view {
-    display: none;
-}
-
-#content-container .area .grid-stack .widget.panel ul.nav-pills {
-    text-align: center;
-}
-
-#content-container .area .grid-stack .widget.panel ul.nav-pills li {
-    float: none;
-    display: inline-block;
-}
-
-#content-container .area .grid-stack .widget.panel .panel-footer {
-    bottom: 0;
-}
-
-#content-container .area .grid-stack .widget.panel .panel-footer .btn {
-    margin-left: 8px;
-}
-
-#content-container .area .grid-stack .widget.panel .panel-footer .reset {
-    padding-left: 0;
-}
-
-#content-container .chart {
-    width: 100%;
-    height: 100%;
-    margin: 20px 0;
-    padding: 0px;
-}
-
-#content-container .chart svg {
-    display: block;
-    width: 100%;
-    min-height: 300px;
-    margin: 20px 0;
-    padding: 0px;
-}
-
-#content-container .chart text {
-    font: 12px sans-serif;
+.modal-backdrop.focus-config {
+  z-index: 1000;
 }

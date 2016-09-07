@@ -104,10 +104,7 @@ define([
         },
 
         shareViewConfig: function() {
-            var projectPostData = JSON.stringify({data: [{type: "projects",
-                parent_type: "domain",
-                parent_fq_name_str:
-                    contrail.getCookie(cowc.COOKIE_DOMAIN)}]})
+            var projectPostData = JSON.stringify({data: [{type: "projects"}]})
             return  [{
                 elementId: 'share_list',
                 view: "FormEditableGridView",
