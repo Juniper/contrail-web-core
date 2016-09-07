@@ -66,23 +66,41 @@ define([
       self.grid = $grid.data("gridstack");
       self.placeHolder = self.$el.append(self.placeholderHTML);
     },
-
+    /**
+     * place widget in most left and most top available position
+     */
     add: function () {
       var self = this;
-      // place widget last
-      var cellsX = _.map(self.model.models, function (m) {
-        return m.attributes.configModel.x();
+      var newX;
+      var newY;
+      var newL;
+      var linear = [];
+      // transform two-dimensional widgets layout to linear cells array
+      _.each(self.model.models, function (m) {
+        var topLeft = m.attributes.configModel.y() * self.p.width + m.attributes.configModel.x();
+          // mark cells of multicolumn widgets
+          for (var col = 0, cols = m.attributes.configModel.width(); col < cols; col++) {
+            //linear[topLeft + col] = true;
+            // mark cells of multirow widgets
+            for (var row = 0, rows = m.attributes.configModel.height(); row < rows; row++) {
+              linear[topLeft + col + row * self.p.width] = true;
+            }
+          }
       });
-      var cellsY = _.map(self.model.models, function (m) {
-        return m.attributes.configModel.y();
-      });
-      var x = _.isEmpty(cellsX) ? 0 : _.sortBy(cellsX, d3.max)[0] + self.p.minWidth;
-      var y = _.isEmpty(cellsY) ? 0 : _.sortBy(cellsY, d3.max)[0] || 0 + self.p.minHeight;
+      // find empty cell or use last
+      for (var i = 0, len = linear.length; i <= len; i++) {
+        if (!linear[i]) {
+          newL = i; break;
+        }
+      }
+      newX = newL % self.p.width;
+      newY = Math.floor(newL / self.p.width);
+
       self.model.add({
         dashboardId: self.p.dashboardId,
         tabId: self.p.tabId,
         tabName: self.model.getTabName(),
-        config: {x: x, y: y, width: 1, height: self.p.minHeight},
+        config: {x: newX, y: newY, width: 1, height: self.p.minHeight},
       });
     },
 

@@ -85,7 +85,6 @@ define([
       var model = dataConfigModel.getDataModel(parserOptions);
       var config = self.model.getViewConfig("contentView");
       var element = self.$("#" + config.elementId);
-      console.debug(model);
       if (!model) {
         element.html(ctwm.NO_COMPATIBLE_DATA_SOURCES);
       }
