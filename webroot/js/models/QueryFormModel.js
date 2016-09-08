@@ -96,12 +96,19 @@ define([
                         var nameOption = dataValue.name.split(':')[1];
                         resultArr.push(nameOption);
                     });
-                    self.table_name_data_object(resultArr);
+                    self.table_name_data_object({
+                        status: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY,
+                        data: resultArr
+                    });
                     if(setTableValuesCallbackFn !== null){
                         setTableValuesCallbackFn(self, resultArr);
                     }
                 }).error(function(xhr) {
-                    console.log(xhr);
+                    self.table_name_data_object({
+                        status: cowc.DATA_REQUEST_STATE_ERROR,
+                        error: xhr,
+                        data: []
+                    });
                 });
             };
 
