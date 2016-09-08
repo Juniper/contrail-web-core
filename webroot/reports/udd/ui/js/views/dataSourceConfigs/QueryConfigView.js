@@ -69,8 +69,19 @@ define([
                                 label: coreLabelProcessor.TITLE_QE_ACTIVE_TABLE,
                                 path: "table_name",
                                 dataBindValue: "table_name",
-                                dataBindOptionList: "table_name_data_object",
+                                dataBindOptionList: "table_name_data_object().data",
                                 class: "col-xs-12",
+                                disabled: "table_name_data_object().data.length === 0",
+                                dataState: {
+                                    fetching: {
+                                        visible: "table_name_data_object().status === '" + cowc.DATA_REQUEST_STATE_FETCHING + "'",
+                                        text: "Fetching Data"
+                                    },
+                                    error: {
+                                        visible: "table_name_data_object().status === '" + cowc.DATA_REQUEST_STATE_ERROR + "'",
+                                        text: "Error in Fetching Data"
+                                    }
+                                },
                                 elementConfig: {
                                     defaultValueId: 0,
                                     allowClear: false,
