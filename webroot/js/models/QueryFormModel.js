@@ -84,6 +84,10 @@ define([
                     select     : ['name', 'fields.value'],
                     where      : [[{"name": "name", "value": tabletype, "op": 7}]]
                 };
+                self.table_name_data_object({
+                    status: cowc.DATA_REQUEST_STATE_FETCHING,
+                    data: []
+                });
                 $.ajax({
                     url: '/api/qe/table/column/values',
                     type: "POST",
@@ -180,10 +184,7 @@ define([
             var self = this,
                 model = self.model();
 
-            if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE) {
-                self.reset(this, null, true, false);
-            } else if (self.table_type() == cowc.QE_STAT_TABLE_TYPE) {
-                // reset everything except time range and table name
+            if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE || self.table_type() == cowc.QE_STAT_TABLE_TYPE) {
                 self.reset(this, null, false, false);
             }
 
@@ -219,9 +220,7 @@ define([
 
                     contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
 
-                    if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE) {
-                        self.onChangeTime();
-                    } else if (self.table_type() == cowc.QE_STAT_TABLE_TYPE) {
+                    if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE || self.table_type() == cowc.QE_STAT_TABLE_TYPE) {
                         self.setTableFieldValues();
                     }
                 }).error(function(xhr) {
@@ -370,9 +369,6 @@ define([
         },
 
         reset: function (data, event, resetTR, resetTable) {
-            var resetTR = contrail.checkIfExist(resetTR) ? resetTR : true,
-                resetTable = contrail.checkIfExist(resetTable) ? resetTable : true;
-
             if(resetTR) {
                 this.time_range(600);
             }
