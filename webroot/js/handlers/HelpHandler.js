@@ -8,6 +8,8 @@ define(['underscore'], function (_) {
         var $ = window.jQuery || null;
         if($ == null) return;
 
+        var self = this;
+
         var defaults = {
             include_all: true,
             icon_1: 'fa fa-question',
@@ -25,7 +27,6 @@ define(['underscore'], function (_) {
 
         this.settings = $.extend({}, defaults);
 
-        var $base = this.settings['base'];
         var ie_fix = document.all && !window.atob;//ie9 and below need a little fix
 
         var section_start = {};
@@ -39,6 +40,7 @@ define(['underscore'], function (_) {
         var self = this, _ = this;
         var ovfx = '';
         var help_container = null;
+        var helpAvailable = false;
 
         var body_h, body_w;
 
@@ -59,17 +61,17 @@ define(['underscore'], function (_) {
                         $('body,html').scrollTop(scroll);
                         scroll = -1;
                     }
-                })
+                });
 
             $(window).on('blur.ace.help', function(){
                 scroll = $(window).scrollTop();
             });
-        }
+        };
 
         var releaseFocus = function() {
             $(document).off('focusin.ace.help');
             $(window).off('blur.ace.help');
-        }
+        };
 
         this.toggle = function() {
             if(active) {
@@ -78,37 +80,42 @@ define(['underscore'], function (_) {
             else {
                 self.enable();
             }
-        }
+        };
 
         this.enable = function() {
-            if(active) return;
-            if(typeof _.settings.before_enable === 'function' && _.settings.before_enable.call(self) === false) return;
-            active = true;
-            $('.page-help-backdrop, .page-help-section').removeClass('hidden');
-            ovfx = document.body.style.overflowX;
-            document.body.style.overflowX = 'hidden';//hide body:overflow-x
-            display_help_sections();
-            captureFocus();
-            if(typeof _.settings.after_enable === 'function') _.settings.after_enable.call(self);
-        }
+            if (active) {
+                return;
+            }
+
+            if (typeof _.settings.before_enable === 'function' && _.settings.before_enable.call(self) === false) {
+                return;
+            }
+
+            if (enableHelpSections()) {
+                $('.page-help-backdrop, .page-help-section').removeClass('hidden');
+                ovfx = document.body.style.overflowX;
+                document.body.style.overflowX = 'hidden';//hide body:overflow-x
+                captureFocus();
+                if (typeof _.settings.after_enable === 'function') _.settings.after_enable.call(self);
+                $('#page-help-toggle-btn').parent().addClass('active');
+            }
+        };
 
         this.disable = function() {
-            if(!active) return;
-            if(typeof _.settings.before_disable === 'function' && _.settings.before_disable.call(self)) return;
+            if (!active) {
+                return;
+            }
+
+            if (typeof _.settings.before_disable === 'function' && _.settings.before_disable.call(self)) {
+                return;
+            }
+
             active = false;
             $('.page-help-backdrop, .page-help-section').addClass('hidden');
-
+            $('#page-help-toggle-btn').parent().removeClass('active');
             document.body.style.overflowX = ovfx;//restore body:overflow-x
             releaseFocus();
             if(typeof _.settings.after_disable === 'function') _.settings.after_disable.call(self);
-        }
-
-        this.is_active = function() {
-            return active;
-        };
-
-        this.show_section_help = function(section) {
-            launch_help_modal(section, true);
         };
 
         this.init = function() {
@@ -118,32 +125,51 @@ define(['underscore'], function (_) {
                 $('<div id="page-help-container" class="page-help-container" tabindex="-1" />')
                     .appendTo('body');
 
-            help_container.append('<div class="page-help-backdrop hidden" />')
+            help_container.append('<div class="page-help-backdrop hidden" />');
 
-            //update to correct position and size
+            // update to correct position and size
             $(window).on('resize.onpage_help', function() {
                 if(!active) return;
-                display_help_sections();
 
-                if( help_modal != null && help_modal.hasClass('in') ) {
-                    setBodyHeight();
-                    disableBodyScroll();
+                if (enableHelpSections()) {
+                    if (help_modal != null && help_modal.hasClass('in')) {
+                        setBodyHeight();
+                        disableBodyScroll();
+                    }
                 }
             });
 
             created = true;
+
+            $(document).on('click', '#page-help-toggle-btn', function (event) {
+                event.preventDefault();
+                self.toggle();
+            });
+
+            $(document).on('click', '.page-help-backdrop', function(e) {
+                if (this.hidden == false) {
+                    self.disable();
+                }
+            });
         };
 
-        this.init();//create once at first
+        function enableHelpSections() {
+            save_sections();
 
-        this.update_sections = function() {
-            save_sections(true);//reset sections, maybe because of new elements and comments inserted into DOM
-        };
+            if (helpAvailable === true) {
+                active = true;
+                display_help_sections();
+                return true;
+            } else {
+                showInfoWindow('Help has not been configured for this page.', 'Help Not Found');
+                return false;
+            }
+        }
 
         function display_help_sections() {
-            if(!active) return;
-
-            save_sections();//finds comments and relevant help sections
+            if (!active) {
+                return;
+            }
 
             body_h = document.body.scrollHeight - 2;
             body_w = document.body.scrollWidth - 2;
@@ -153,54 +179,44 @@ define(['underscore'], function (_) {
             //next position calculation will become slow on Webkit, because it tries to re-calculate layout changes and things
             //i.e. we batch call all and save offsets and scrollWidth, etc and then use them later in highlight_section
             //Firefox doesn't have such issue
-            for(var name in section_start) {
-                if(section_start.hasOwnProperty(name)) {
+            for (var name in section_start) {
+                if (section_start.hasOwnProperty(name)) {
                     save_section_offset(name);
                 }
             }
-            for(var name in section_start) {
-                if(section_start.hasOwnProperty(name)) {
+            for (var name in section_start) {
+                if (section_start.hasOwnProperty(name)) {
                     highlight_section(name);
                 }
             }
+
         }
 
         //finds comments and relevant help sections
         function save_sections(reset) {
-            if( !(reset === true || section_count == 0) ) return;//no need to re-calculate sections, then return
-            if(reset === true) help_container.find('.page-help-section').remove();
+            if( !(reset === true || section_count == 0) ) {
+                return;
+            }
+            if(reset === true) {
+                help_container.find('.page-help-section').remove();
+            }
 
             section_start = {};
             section_end = {};
             section_count = 0;
 
-            var count1 = 0, count2 = 0;
-
             //find all relevant elements
             var domElements = $('*').contents().filter(function(){ return this.nodeType == 1 /*1=element node*/ });
             var divEle = domElements.filter(function(){ return (this.nodeName == "DIV" || this.nodeName == "LI")});
-            var flag = 0;
+
+            helpAvailable = false;
+
             $(divEle).each(function() {
-                //there is a help
-                if (this.dataset) {
-                    if (this.dataset.help) {
-                        var helpUrl = this.dataset.help;
-                        var trimmedUrl = helpUrl.trim();
-                        //the help url is not blank
-                        if (trimmedUrl != "") {
-                            flag = 1; //meaning atleast one helpSection is found
-                            section_start[trimmedUrl] = this;
-                        }
-                    }
+                if (this.dataset && this.dataset.help && this.dataset.help.trim() !== "") {
+                    section_start[this.dataset.help.trim()] = this;
+                    helpAvailable = true;
                 }
             });
-
-            if (flag == 0) {
-                $(".page-help-toggle-container").hide();
-            }
-            if (flag == 1) {
-                $(".page-help-toggle-container").show();
-            }
         }
 
         function save_section_offset(name) {

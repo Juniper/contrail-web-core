@@ -3975,10 +3975,12 @@ td.td-actions a.td-action {
 .item-list > li .key {
   font-weight: normal;
   color: #3182bd;
+    display: inherit;
 }
 .item-list > li .value {
   color: #555;
   margin: 0 0 0 5px;
+    display: inherit;
 }
 .item-list > li.selected {
   color: #8090A0;
