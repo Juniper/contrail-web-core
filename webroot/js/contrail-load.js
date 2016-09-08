@@ -89,8 +89,8 @@ $(document).ready(function () {
 
     $(window).on('scroll', function () {
         var scrollHeight = $(document).height() - $(window).height(),
-          previousScroll = 0,
-          currentScroll = $(this).scrollTop();
+            previousScroll = 0,
+            currentScroll = $(this).scrollTop();
 
         if (currentScroll < 45 || previousScroll - currentScroll > 40) {
             $("#pageHeader").show();
@@ -111,7 +111,7 @@ $(document).ready(function () {
         }
     });
 
-    $('#back-to-top').click(function (event) {
+    $(document).on('click', '#back-to-top', function (event) {
         event.preventDefault();
         $('html, body').animate({scrollTop: 0}, 500);
         return false;
@@ -148,35 +148,6 @@ $(document).ready(function () {
     //bootstrap v 2.3.1 prevents this event which firefox's middle mouse button "new tab link" action, so we off it!
     $(document).off('click.dropdown-menu');
 
-    function startHelp() {
-        $(document).on('click', '#page-help-toggle-btn', function (event) {
-            event.preventDefault();
-            toggleHelp();
-        });
-
-        $(document).on('click', '.page-help-backdrop', function(e) {
-            if (this.hidden == false) {
-                helpHandler.disable();
-                var toggle_btn = $('#page-help-toggle-btn');
-                toggle_btn.parent().toggleClass('active');
-            }
-        });
-
-        //in ajax mode when a content is loaded via ajax, we may want to update help sections
-        $(document).on('ajaxloadcomplete.ace.help', function () {
-            startHelp();
-            helpHandler.update_sections();
-        });
-    }
-
-    function toggleHelp() {
-        helpHandler.toggle();
-
-        var toggle_btn = $('#page-help-toggle-btn');
-        toggle_btn.parent().toggleClass('active');
-    }
-
-    startHelp();
 });
 
 // $.fn.modal.Constructor.prototype.enforceFocus = function () {
@@ -307,7 +278,7 @@ $.deparamURLArgs = function (query) {
 $.xhrPool = [];
 
 var previous_scroll = $(window).scrollTop(),
-  scrollHeight = $(document).height() - $(window).height();
+    scrollHeight = $(document).height() - $(window).height();
 
 $.allajax = (function ($) {
     var xhrPool = [];
@@ -332,10 +303,10 @@ $.allajax = (function ($) {
             //Show login-form
             loadUtils.onAuthenticationReq();
             /*//Carry the current hash parameters to redirect URL(login page) such that user will be taken to the same page once he logs in
-             if (redirectHeader.indexOf('#') == -1)
-             window.location.href = redirectHeader + urlHash;
-             else
-             window.location.href = redirectHeader;*/
+            if (redirectHeader.indexOf('#') == -1)
+                window.location.href = redirectHeader + urlHash;
+            else
+                window.location.href = redirectHeader;*/
         }
     });
     this.abort = function () {
@@ -358,22 +329,22 @@ $(document).on('click', '.pre-format-JSON2HTML .collapser', function(){
 });
 
 (function($) {
-    //Plugin to serializeObject similar to serializeArray.
-    $.fn.serializeObject = function() {
-        var o = {};
-        var a = this.serializeArray();
-        $.each(a, function() {
-            if (o[this.name]) {
-                if (!o[this.name].push) {
-                    o[this.name] = [o[this.name]];
-                }
-                o[this.name].push(this.value || '');
-            } else {
-                o[this.name] = this.value || '';
-            }
-        });
-        return o;
-    };
+	//Plugin to serializeObject similar to serializeArray.
+	$.fn.serializeObject = function() {
+	   var o = {};
+	   var a = this.serializeArray();
+	   $.each(a, function() {
+	       if (o[this.name]) {
+	           if (!o[this.name].push) {
+	               o[this.name] = [o[this.name]];
+	           }
+	           o[this.name].push(this.value || '');
+	       } else {
+	           o[this.name] = this.value || '';
+	       }
+	   });
+	   return o;
+	};
 
     /*
      * .hideElement()
@@ -402,52 +373,52 @@ $(document).on('click', '.pre-format-JSON2HTML .collapser', function(){
         return this;
     };
 
-    /*
-     * .addClassSVG(className)
-     * Adds the specified class(es) to each of the set of matched SVG elements.
-     */
-    $.fn.addClassSVG = function(className){
-        $(this).attr('class', function(index, existingClassNames) {
+	/*
+	 * .addClassSVG(className)
+	 * Adds the specified class(es) to each of the set of matched SVG elements.
+	 */
+	$.fn.addClassSVG = function(className){
+		$(this).attr('class', function(index, existingClassNames) {
             return ((existingClassNames !== undefined) ? (existingClassNames + ' ') : '') + className;
-        });
-        return this;
-    };
+		});
+		return this;
+	};
 
-    /*
-     * .removeClassSVG(className)
-     * Removes the specified class to each of the set of matched SVG elements.
-     */
-    $.fn.removeClassSVG = function(className){
-        $(this).attr('class', function(index, existingClassNames) {
-            var re = new RegExp('\\b' + className + '\\b', 'g');
-            return existingClassNames.replace(re, '');
-        });
-        return this;
-    };
+	/*
+	 * .removeClassSVG(className)
+	 * Removes the specified class to each of the set of matched SVG elements.
+	 */
+	$.fn.removeClassSVG = function(className){
+		$(this).attr('class', function(index, existingClassNames) {
+    		var re = new RegExp('\\b' + className + '\\b', 'g');
+    		return existingClassNames.replace(re, '');
+    	});
+		return this;
+	};
 
-    /*
-     * .hasClassSVG(className)
-     * Determine whether any of the matched SVG elements are assigned the given class.
-     */
-    $.fn.hasClassSVG = function(className){
-        var existingClassNames = $(this).attr('class').split(' ');
-        return (existingClassNames.indexOf(className) > -1 ? true : false);
-    };
+	/*
+	 * .hasClassSVG(className)
+	 * Determine whether any of the matched SVG elements are assigned the given class.
+	 */
+	$.fn.hasClassSVG = function(className){
+		var existingClassNames = $(this).attr('class').split(' ');
+		return (existingClassNames.indexOf(className) > -1 ? true : false);
+	};
 
-    /*
-     * .parentsSVG(className)
-     * Get the ancestors of each element in the current set of matched elements or SVG elements, optionally filtered by a selector
-     */
-    $.fn.parentsSVG = function(selector){
-        var parents = $(this).parents(),
-          outputParents = [];
-        $.each(parents, function(keyParents, valueParents){
-            if($(valueParents).is(selector)){
-                outputParents.push(valueParents);
-            }
-        });
-        return outputParents;
-    };
+	/*
+	 * .parentsSVG(className)
+	 * Get the ancestors of each element in the current set of matched elements or SVG elements, optionally filtered by a selector
+	 */
+	$.fn.parentsSVG = function(selector){
+		var parents = $(this).parents(),
+			outputParents = [];
+		$.each(parents, function(keyParents, valueParents){
+			if($(valueParents).is(selector)){
+				outputParents.push(valueParents);
+			}
+		});
+		return outputParents;
+	};
 
     /*
      * .heightSVG(className)
