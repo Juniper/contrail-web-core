@@ -197,52 +197,79 @@ function getRoles (req, res, appData)
     });
 };
 
-function getProjectRole (req, res, appData)
+function getTokenIdByReqObj (req, project)
 {
-    var uiRoles = null;
-    var projId = req.param('id');
-    var projUrl = '/project/' + projId + '?exclude_back_refs=true' +
-        '&exclude_children=true';
-    var authApi = require('./auth.api');
-    var adminProjList = authApi.getAdminProjectList(req);
-    var headers = {};
-    var tokenId = null;
-
-    if (global.ALL_PROJECT_UUID == projId) {
-        /* 'all' project request, so do not do anything now */
-        commonUtils.handleJSONResponse(null, res, uiRoles);
-        return;
-    }
     var tokenObjs = req.session.tokenObjs;
-    if ((null != adminProjList) && (adminProjList.length > 0)) {
-        for (project in tokenObjs) {
-            if (-1 != adminProjList.indexOf(project)) {
-                tokenId =
-                    commonUtils.getValueByJsonPath(tokenObjs[project],
-                                                   'token;id', null);
-                break;
+    var tokenId =
+        commonUtils.getValueByJsonPath(tokenObjs, project + ';token;id', null);
+    if (null == tokenId) {
+        var adminProjList = authApi.getAdminProjectList(req);
+        if ((null != adminProjList) && (adminProjList.length > 0)) {
+            for (project in tokenObjs) {
+                if (-1 != adminProjList.indexOf(project)) {
+                    tokenId =
+                        commonUtils.getValueByJsonPath(tokenObjs[project],
+                                                       'token;id', null);
+                    break;
+                }
             }
         }
     }
+    if (null == tokenId) {
+        for (var project in tokenObjs) {
+            tokenId =
+                commonUtils.getValueByJsonPath(tokenObjs[project],
+                                               'token;id', null);
+        }
+    }
+    return tokenId;
+}
 
+function getProjectTokenRole (userObj, callback)
+{
+    var projName = userObj.tenant;
+    var req = userObj.req;
+    var tokenObjs = req.session.tokenObjs;
+    var userRoles = req.session.userRoles;
+
+    if ((null != tokenObjs) && (null != tokenObjs[projName]) &&
+        (null != userRoles) && (null != userRoles[projName])) {
+        callback(null, {userObj: userObj});
+        return;
+    }
+    authApi.getUIUserRoleByTenant(userObj, function(err, roles) {
+        if ((null != err) || (null == roles)) {
+            logutils.logger.error('Did not find the roles for project ' +
+                                  projName);
+            callback(err, {redirectToLogout: true, userObj: userObj});
+            return;
+        }
+        callback(null, {data: roles, userObj: userObj});
+    });
+}
+
+function getProjectGet (dataObj, callback)
+{
+    var uiRoles = null;
+    var userObj = dataObj.userObj;
+    var req     = userObj.req;
+    var projId  = req.param('id');
+    var project = req.param('project');
+    var tokenid = userObj.tokenid;
+    var appData = userObj.appData;
+    var headers = {};
+
+    var tokenObjs = req.session.tokenObjs;
     var syncedProj =
         commonUtils.getValueByJsonPath(req,
                                        'session;syncedProjects;' + projId +
                                        ';name', null);
     if (null != syncedProj) {
-        /* We do not do anything currently with role, so comment it, will enable
-         * it when RBAC is supported in API Server
-         */
-        /*
-        var userRoles = req.session.userRoles;
-        uiRoles = [global.STR_ROLE_ADMIN];
-        if (null != userRoles) {
-            uiRoles = authApi.getUIRolesByExtRoles(req, userRoles[syncedProj]);
-        }
-        */
-        commonUtils.handleJSONResponse(null, res, uiRoles);
+        callback(null, dataObj);
         return;
     }
+
+    var tokenId = getTokenIdByReqObj(req, project);
     if (null != tokenId) {
         headers['X-Auth-Token'] = tokenId;
         try {
@@ -251,42 +278,74 @@ function getProjectRole (req, res, appData)
             headers['X_API_ROLE'] = null;
         }
     }
+    var projUrl = '/project/' + projId + '?exclude_back_refs=true' +
+        '&exclude_children=true';
     configApiServer.apiGet(projUrl, appData, function(error, data) {
         if ((null != error) || (null == data)) {
             logutils.logger.error('Project GET failed ' + req.param('id'));
-            commonUtils.handleJSONResponse(null, res, uiRoles);
+            dataObj.uiRoles = uiRoles;
+            callback(null, dataObj);
             return;
         }
-        var projName =
-            commonUtils.getValueByJsonPath(data, 'project;name',
-                                         null);
-        if (null != projName) {
-            if (null == req.session.syncedProjects) {
-                req.session.syncedProjects = {};
-            }
-            req.session.syncedProjects[projId] = {};
-            req.session.syncedProjects[projId]['name'] = projName;
+
+        if (null == req.session.syncedProjects) {
+            req.session.syncedProjects = {};
         }
-        var userRoles = req.session.userRoles;
-        if ((null != tokenObjs) && (null != tokenObjs[projName]) &&
-            (null != userRoles) && (null != userRoles[projName])) {
-            //var uiRoles = authApi.getUIRolesByExtRoles(req, userRoles[projName]);
-            /* We got, no need to deduce uiRoles now, will do once RBAC is
-             * supported */
-            commonUtils.handleJSONResponse(null, res, uiRoles);
-            return;
-        }
-        var userObj = {'tokenid': tokenId, 'tenant': projName, 'req': req};
-        authApi.getUIUserRoleByTenant(userObj, function(err, roles) {
-            if ((null != err) || (null == roles)) {
-                logutils.logger.error('Did not find the roles for project ' +
-                                      projName);
+        req.session.syncedProjects[projId] = {};
+        req.session.syncedProjects[projId]['name'] = project;
+        dataObj.uiRoles = uiRoles;
+        callback(null, dataObj);
+        return;
+    }, headers);
+}
+
+function getProjectRole (req, res, appData)
+{
+    var uiRoles = null;
+    var projId = req.param('id');
+    var projName = req.param('project');
+    var projUrl = '/project/' + projId + '?exclude_back_refs=true' +
+        '&exclude_children=true';
+    var authApi = require('./auth.api');
+    var headers = {};
+    var tokenId = null;
+
+    var syncedProj =
+        commonUtils.getValueByJsonPath(req,
+                                       'session;syncedProjects;' + projId +
+                                       ';name', null);
+    var tokenObjs = req.session.tokenObjs;
+    var userRoles = req.session.userRoles;
+
+    if ((null != syncedProj) && (null != tokenObjs) &&
+        (null != tokenObjs[projName]) && (null != userRoles) &&
+        (null != userRoles[projName])) {
+        commonUtils.handleJSONResponse(null, res, uiRoles);
+        return;
+    }
+
+    tokenId = getTokenIdByReqObj(req, projName);
+    if (global.ALL_PROJECT_UUID == projId) {
+        /* 'all' project request, so do not do anything now */
+        commonUtils.handleJSONResponse(null, res, uiRoles);
+        return;
+    }
+
+    var userObj = {'tokenid': tokenId, 'tenant': projName, 'req': req,
+                   'appData': appData};
+    async.waterfall([
+        async.apply(getProjectTokenRole, userObj),
+        getProjectGet
+    ],
+    function(error, dataObj) {
+        if (null != dataObj) {
+            if (true == dataObj.redirectToLogout) {
                 commonUtils.redirectToLogout(req, res);
                 return;
             }
-            commonUtils.handleJSONResponse(null, res, uiRoles);
-        });
-    }, headers);
+        }
+        commonUtils.handleJSONResponse(null, res, uiRoles);
+    });
 }
 
 exports.listProjectsAPIServer = listProjectsAPIServer;
