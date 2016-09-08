@@ -56,6 +56,10 @@
     "eol-last": "error",
     // To avoid potential debugging difficulty
     "eqeqeq": "error",
+    "indent": ["warn", 4, {
+      "SwitchCase": 1,
+      "VariableDeclarator": 1
+    }],
     "new-cap": "error",
     "no-caller": "error",
     "no-case-declarations": "warn",
