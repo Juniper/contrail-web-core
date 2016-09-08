@@ -1810,7 +1810,7 @@
                 </a>
                 {{#if tabConfig.editable}}
                 <button type="button" class="tab-edit-btn" data-toggle="popover">
-                    <i class="fa fa-ellipsis-v"></i>
+                    <i class="fa fa-ellipsis-v" title="Edit tab"></i>
                 </button>
                 {{/if}}
             </li>
@@ -1825,10 +1825,10 @@
             {{/each}}
             {{#if extendable }}
             <li class="tab-add">
-                    <span class="title-edit pull-right">
-                        <input type="text"/>
-                    </span>
-                <a class="link">
+                <span class="title-edit pull-right">
+                    <input type="text"/>
+                </span>
+                <a class="link" title="Add new tab">
                     <i class="fa fa-plus"></i>
                 </a>
             </li>
@@ -1845,7 +1845,7 @@
 <script type="text/x-handlebars-template" id="core-tabs-menu-template">
     <div class="tab-menu">
         <input type="text" class="title-updated" value="{{this}}"/>
-        <button class="title-save btn btn-primary">Save</button>
+        <button class="title-save btn btn-primary btn-mini" title="Update tab title">Save</button>
     </div>
 </script>
 
@@ -1854,16 +1854,16 @@
         <li>
         <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">
             {{#if iconClass}}
-            <i class="contrail-tab-link-icon {{iconClass}}"></i>
+                <i class="contrail-tab-link-icon {{iconClass}}"></i>
             {{/if}}
             {{title}}
             {{#if tabConfig.removable}}
-            <i class="contrail-tab-link-icon-remove fa fa-remove"></i>
+                <i class="contrail-tab-link-icon-remove fa fa-remove" title="Remove tab"></i>
             {{/if}}
         </a>
         {{#if tabConfig.editable}}
         <button type="button" class="tab-edit-btn" data-toggle="popover">
-            <i class="fa fa-ellipsis-v"></i>
+            <i class="fa fa-ellipsis-v" title="Edit tab"></i>
         </button>
         {{/if}}
         </li>

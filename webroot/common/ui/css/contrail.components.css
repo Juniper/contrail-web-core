@@ -530,6 +530,7 @@
 /* Bootstrap popovers */
 .popover {
     width: 800px;
+    outline: none;
 }
 .popover .popover-title {
     background-color: #fff;

@@ -1,13 +1,13 @@
 <div id="{{ id }}" class="widget">
     <div class="panel panel-default">
-        <div class="panel-heading">
+        <div class="panel-heading" title="Drag widget with header">
             <div class="widget-control">
-                <div class="remove fa fa-trash"></div>
-                <div class="config fa fa-times"></div>
+                <div class="remove fa fa-trash" title="Remove widget"></div>
+                <div class="config fa fa-times" title="Discard changes"></div>
             </div>
             <div class="title-group">
                 <span class="config-title"></span>
-                <div class="title" data-bind="html:title"></div>
+                <div class="title" title="Click to edit title" data-bind="html:title"></div>
                 <input class="edit-title" type="text" data-bind="value:title" />
             </div>
         </div>
