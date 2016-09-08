@@ -43,12 +43,16 @@ define([
       editTitleInput: ".contrail-tab-link-list .tab-add .title-edit > input",
       addLink: ".contrail-tab-link-list .tab-add .link",
     },
+
     events: {
-      "click .contrail-tab-link-list .tab-add .link": "onClickAdd",
-      "click .contrail-tab-link-list .contrail-tab-link-icon-remove": "onClickRemove",
-      "click .contrail-tab-link-list .tab-menu .title-save": "onEdit",
-      "blur .contrail-tab-link-list .tab-add .title-edit > input": "onAdd"
+      "click .contrail-tab-link-list .tab-add .link": "_onClickAdd",
+      "click .contrail-tab-link-list .contrail-tab-link-icon-remove": "_onClickRemove",
+      "click .contrail-tab-link-list .tab-menu .title-save": "_onEdit",
+      "keypress .contrail-tab-link-list .tab-menu .title-updated": "_onKeyPressedToEdit",
+      "blur .contrail-tab-link-list .tab-add .title-edit > input": "_onAdd",
+      "keypress .contrail-tab-link-list .tab-add .title-edit > input": "_onKeyPressedToAdd",
     },
+
     render: function() {
       var self = this,
           viewConfig = self.attributes.viewConfig,
@@ -159,7 +163,7 @@ define([
           tab = this.tabs[tabKey],
           $tabEdit = this.$("#" + tab.elementId + "-tab-link").siblings(this.selectors.tabEdit);
 
-      $tabEdit.on("shown.bs.popover", this.onPopoverShow);
+      $tabEdit.on("shown.bs.popover", this._onPopoverShow);
       $tabEdit.popover({
         placement: "bottom",
         trigger: "click",
@@ -274,7 +278,12 @@ define([
       });
     },
 
-    onEdit: function(event) {
+    _onKeyPressedToEdit: function (e) {
+      var self = this;
+      if (e.keyCode === 13) this._onEdit(e);
+    },
+
+    _onEdit: function(event) {
       var self = this,
           $li = $(event.target).closest("li"),
           tabPanelId = $li.attr("aria-controls"),
@@ -299,7 +308,7 @@ define([
       }
     },
 
-    onClickRemove: function() {
+    _onClickRemove: function() {
       var self = this,
           tabPanelId = $(event.target).closest("li").attr("aria-controls"),
           tabKey = self.tabsIdMap[tabPanelId],
@@ -315,14 +324,14 @@ define([
       }
     },
 
-    onClickAdd: function() {
+    _onClickAdd: function() {
       var self = this;
       self.$(self.selectors.addLink).hide();
       self.$(self.selectors.editTitle).show();
       self.$(self.selectors.editTitleInput).focus();
     },
 
-    onAdd: function() {
+    _onAdd: function() {
       var self = this,
           title = self.$(self.selectors.editTitleInput).val();
 
@@ -340,7 +349,12 @@ define([
         self.$(self.selectors.linkList).append(addBlock);
       });
     },
-    onPopoverShow: function(event) {
+
+    _onKeyPressedToAdd: function (e) {
+      if (e.keyCode === 13) this._onAdd();
+    },
+
+    _onPopoverShow: function(event) {
       var $popoverTrigger = $(event.currentTarget),
           $popover = $popoverTrigger.siblings(".popover");
 
