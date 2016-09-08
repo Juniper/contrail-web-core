@@ -13,10 +13,15 @@
 .form-group label .label-text {
     font-size: 13px;
 }
-.form-group label .label-help {
+.form-group label .label-help,
+.form-group label .label-fetching,
+.form-group label .label-error {
     margin: 0 5px;
     font-size: 1.2em;
     color: #AEAEAE;
+}
+.form-group label .label-error {
+    color: #DD5A43;
 }
 .form-group label .label-help:hover {
     color: #3182BD;
