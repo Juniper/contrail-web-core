@@ -2,15 +2,20 @@
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
 define([
-  "underscore",
+  "lodash",
   "backbone",
   "/reports/udd/ui/js/models/WidgetModel.js"
 ], function(_, Backbone, Widget) {
   var WidgetsCollection = Backbone.Collection.extend({
 
     initialize: function(attrs, options) {
+      var self = this;
       this.model = Widget;
       this.url = options ? options.url : "";
+      
+      setTimeout(function () {
+        self._tabName = self.getTabName();
+      });
     },
 
     parse: function(response) {
@@ -30,11 +35,12 @@ define([
     },
 
     tabIds: function(dashboardId) {
-      return _.uniq(this.filterBy(dashboardId).pluck("tabId"));
+      var widgetsByDashboard = this.filter(function (model) { return model.get('dashboardId') === 'networking'})
+      return _.uniq(_.pluck(widgetsByDashboard, 'attributes.tabId'))
     },
 
     setTabName: function(tabName) {
-      this.tabName = tabName;
+      this._tabName = tabName;
       _.each(this.models, function(widget) {
         widget.set("tabName", tabName);
         widget.save();
@@ -42,7 +48,7 @@ define([
     },
     // each tab has its own collection
     getTabName: function() {
-      return this.models[0] ? (this.models[0].get("tabName") || this.models[0].get("tabId")) : "";
+      return this.models[0] ? (this.models[0].get("tabName") || this.models[0].get("tabId")) : this._tabName;
     },
   });
   return WidgetsCollection;
