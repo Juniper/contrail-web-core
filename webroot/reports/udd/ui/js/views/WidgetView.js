@@ -22,11 +22,12 @@ define([
       dataConfigDropdown: "#dataConfigViewSelector",
       contentConfigDropdown: "#contentViewSelector",
       back: ".panel-footer .back",
+      config: '.widget-control .config',
     },
 
     events: {
-      "click .close": "remove",
-      "click .panel-heading .config": "toggleConfig",
+      "click .widget-control .config": "toggleConfig",
+      "click .widget-control .remove": "remove",
       "click .title": "editTitle",
       "keydown .edit-title": "_onKeyInTitle",
       "blur .panel-heading .title-group .edit-title": "saveTitle",
@@ -60,7 +61,7 @@ define([
       }
 
       self._renderDataConfigView();
-      self._renderContentConfigView();
+      self._renderContentConfigView({ renderContentView: true });
       self._renderConfigSelectors();
       self._renderFooter();
       return self;
@@ -91,14 +92,14 @@ define([
       self.renderView4Config(element, model, config);
     },
     // render content config view on the back
-    _renderContentConfigView: function () {
+    _renderContentConfigView: function (p) {
       var self = this;
+      p = p || {}
       var config = self.model.getViewConfig("contentConfigView");
       var oldView = self.childViewMap[config.elementId];
-      if (oldView) {
-        oldView.remove();
-      }
-      if (!config.view) {
+      if (oldView) oldView.remove();
+        
+      if (p.renderContentView && !config.view) {
         if (self.model.isValid()) {
           self._renderContentView();
         }
@@ -108,8 +109,8 @@ define([
       var model = self.model.get("contentConfigModel");
       self.renderView4Config(element, model, config, null, null, null, function () {
         // render Content View only after Content Config view
-        // in order for content config model to be already loaded
-        if (self.model.isValid()) {
+        // in order for content config model to be already loaded and ready for validation
+        if (p.renderContentView && self.model.isValid()) {
           self._renderContentView();
         }
       });
@@ -226,6 +227,9 @@ define([
 
     remove: function () {
       var self = this;
+      var title = this.model.get('configModel').title();
+      var proceed = confirm('Are you sure to remove widget "'+ title +'"?');
+      if (!proceed) return;
       self._enableConfigFocusMode(false);
       self.model.destroy();
     },
@@ -286,6 +290,8 @@ define([
         self._enableConfigFocusMode(false);
         self.$(self.selectors.configSelectors).toggle();
         self.$(self.selectors.footer).toggle();
+        self.$(self.selectors.config).toggleClass('fa-gear')
+          .toggleClass('fa-times');
       }
 
       var configTitle = "";
@@ -332,11 +338,10 @@ define([
 
     toggleConfig: function () {
       var self = this;
-      if (!self.model.isValid()) {
-        return;
-      }
       if (self.currentStep === self.steps.DATA_CONFIG || self.currentStep === self.steps.CONTENT_CONFIG) {
-        self._renderContentView();
+        self.model.get("viewsModel").rollback();
+        self.model.get("dataConfigModel").rollback();
+        self.model.get("contentConfigModel").rollback();
         self.goStep(self.steps.CONTENT);
       } else {
         self.goStep(self.steps.DATA_CONFIG);

@@ -65,7 +65,7 @@
 
 .grid-stack-item.widget .panel .panel-heading .widget-control {
   float: right;
-  width: 3em;
+  width: 4em;
   color: #898989;
   display: flex;
   justify-content: space-around;
@@ -81,11 +81,14 @@
 }
 
 .grid-stack-item.widget .panel .panel-heading .widget-control > .close {
-  float: none;
-  font-size: 1.3em;
+  font-size: 1.2em;
 }
 
-.grid-stack-item.widget .panel .panel-heading .widget-control > .close:hover {
+.grid-stack-item.widget .panel .panel-heading .widget-control > .remove {
+  font-size: 1.2em;
+}
+
+.grid-stack-item.widget .panel .panel-heading .widget-control > .remove:hover {
   color: red;
 }
 
