@@ -1,5 +1,18 @@
 {
   "contentViews": {
+    "GridView": {
+      "label": "Grid List",
+      "contentView": {
+        "view": "GridView",
+        "viewPathPrefix": "js/views/"
+      },
+      "contentConfigView": {
+        "view": "GridConfigView",
+        "viewPathPrefix": "reports/udd/ui/js/views/contentConfigs/",
+        "model": "GridConfigModel",
+        "modelPathPrefix": "reports/udd/ui/js/models/contentConfigs/"
+      }
+    },
     "LineWithFocusChartView": {
       "label": "Line With Focus Chart",
       "contentView": {

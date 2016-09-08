@@ -319,7 +319,7 @@ define([
         this.TITLE_ALARM_HISTORY = 'Alarm History';
         this.TITLE_ALARM_DETAILS = 'Alarm Details';
 
-        this.DASHBOARD_LOGS_URL = '/api/admin/reports/query?where=&filters=&level=4' + '&fromTimeUTC=now-10m&toTimeUTC=now&table=MessageTable&limit=10';
+        this.DASHBOARD_LOGS_URL = '/api/admin/reports/query?where=&filters=&level=4&fromTimeUTC=now-10m&toTimeUTC=now&table=MessageTable&limit=10';
         this.CACHE_DASHBORAD_LOGS = 'cache-dashboard-logs';
 
         this.CHART_BAR_COLOR = 'Bar Color';
@@ -333,6 +333,9 @@ define([
         this.CHART_Y_AXIS_VALUE = 'y Axis Value';
         this.CHART_Y_AXIS_VALUE_PLACEHOLDER = 'Select Y Axis Value'
         this.CHART_Y_AXIS_LABEL = 'y Axis Label';
+
+        this.GRID_ENTRY_WITH_DETAILS = "Use Collapsible Detailed Entry";
+        this.GRID_ENTRY_WITH_CHECKBOX = "Selectable Entry with Checkbox";
     };
 
     function capitalizeSentence(sentence) {
