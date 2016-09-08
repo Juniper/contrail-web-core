@@ -91,9 +91,10 @@ define([
               }
               proceed = confirm("Are you sure to delete all widgets in this tab?");
               if (proceed) {
-                _.each(this.model.models, function (widget) {
-                  widget.destroy();
-                });
+                var widgets = this.model.models;
+                while (widgets.length > 0) {
+                  widgets[0].destroy();
+                }
               }
             } else {
               this.model.setTabName(newTitle);

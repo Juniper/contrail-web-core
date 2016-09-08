@@ -17,8 +17,9 @@ define([
         $popover = $from.hasClass(BSPopoverClass) ? $from : $from.closest(BSPopoverSelector);
 
     if (!$to || (!$to.hasClass(BSPopoverClass) && $to.closest(BSPopoverSelector).length === 0)) {
-      var popoverDataObj = $popover.data("bs.popover"),
-          $trigger = popoverDataObj.$element;
+      var popoverDataObj = $popover.data("bs.popover");
+      if (_.isEmpty(popoverDataObj)) return;
+      var $trigger = popoverDataObj.$element;
 
       if (!$to.is($trigger)) {
         $trigger.popover("hide");
@@ -332,8 +333,9 @@ define([
     },
 
     _onAdd: function() {
-      var self = this,
-          title = self.$(self.selectors.editTitleInput).val();
+      var self = this;
+      if (!self.$(self.selectors.editTitle).is(':visible')) return;
+      var title = self.$(self.selectors.editTitleInput).val();
 
       self.$(self.selectors.editTitle).hide();
       self.$(self.selectors.addLink).show();
