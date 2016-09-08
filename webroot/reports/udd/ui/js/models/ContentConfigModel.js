@@ -3,22 +3,22 @@
  */
 
 define([
-  "contrail-model"
+    "contrail-model"
 ], function(ContrailModel) {
 
-  return ContrailModel.extend({
-    onDataModelChange: function() {},
+    return ContrailModel.extend({
+        onDataModelChange: function() {},
 
-    toJSON: function() {
-      return {};
-    },
+        toJSON: function() {
+            return {};
+        },
 
-    getParserOptions: function() {
-      return {};
-    },
+        getParserOptions: function() {
+            return {};
+        },
 
-    getContentViewOptions: function() {
-      return {};
-    },
-  });
+        getContentViewOptions: function() {
+            return {};
+        },
+    });
 });

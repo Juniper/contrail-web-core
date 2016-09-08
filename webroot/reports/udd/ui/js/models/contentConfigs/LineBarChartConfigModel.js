@@ -2,10 +2,10 @@
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
 
-define(function (require) {
+define(function(require) {
     var ContentConfigModel = require("reports/udd/ui/js/models/ContentConfigModel.js");
     var cowc = require("core-constants");
-    var cowf = new (require("core-formatters"));
+    var cowf = new(require("core-formatters"));
 
     return ContentConfigModel.extend({
         defaultConfig: {
@@ -30,12 +30,12 @@ define(function (require) {
         },
 
         // update fields dependent on data model
-        onDataModelChange: function (viewModel) {
+        onDataModelChange: function(viewModel) {
             var self = this;
             self.yAxisValues(viewModel.timeSeries());
         },
 
-        toJSON: function () {
+        toJSON: function() {
             var self = this;
             return {
                 barColor: self.barColor(),
@@ -47,7 +47,7 @@ define(function (require) {
             };
         },
 
-        getParserOptions: function () {
+        getParserOptions: function() {
             var self = this;
             return {
                 parserName: "timeSeriesParser",
@@ -55,7 +55,7 @@ define(function (require) {
             };
         },
 
-        getContentViewOptions: function () {
+        getContentViewOptions: function() {
             var self = this;
             return {
                 chartOptions: {
