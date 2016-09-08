@@ -24,10 +24,10 @@ define([
               errorAttributes,
               editingLockAttrs;
 
-            self._modelAttributes = (modelData === null) ? self.defaultConfig : modelData
+            self._modelAttributes = contrail.checkIfExist(modelData) ? self.defaultConfig : modelData
             editingLockAttrs = generateAttributes(self._modelAttributes, cowc.LOCKED_SUFFIX_ID, true);
 
-            if(self.defaultConfig !== null) {
+            if(contrail.checkIfExist(self.defaultConfig)) {
                 modelData = cowu.filterJsonKeysWithNullValues(modelData);
             }
             modelData = $.extend(true, {}, self.defaultConfig, modelData);
