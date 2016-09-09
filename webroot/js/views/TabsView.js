@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
 
 define([
@@ -31,7 +31,7 @@ define([
   });
 
   // a private method to generate unified tabsIdMap key
-  function getUnifiedTabIdKey(elID) {
+  function generatePanelId(elID) {
     return elID + "-tab";
   }
 
@@ -63,8 +63,8 @@ define([
           activeTab = contrail.handleIfNull(viewConfig.active, 0);
 
       self.tabs = viewConfig.tabs;
-      self.tabsIdMap = {};
-      self.tabRendered = [];
+      // tab indexes by tab panel id map
+      self._tabIndexByPanelId = {};
       self.activateTimeout = null;
 
       self.$el.html(tabsTemplate({
@@ -75,31 +75,30 @@ define([
         editable: viewConfig.editable,
       }));
 
-      $.each(self.tabs, function(tabKey, tabValue) {
+      $.each(self.tabs, function(tabIndex, tabConfig) {
         /*
          * Setting activeTab if set in the URL params
          */
         if (contrail.checkIfExist(tabHashUrlObj) &&
           contrail.checkIfExist(tabHashUrlObj[elId]) &&
-          tabHashUrlObj[elId] === tabValue[cowc.KEY_ELEMENT_ID]) {
-          activeTab = tabKey;
+          tabHashUrlObj[elId] === tabConfig[cowc.KEY_ELEMENT_ID]) {
+          activeTab = tabIndex;
         }
 
-        self.tabsIdMap[getUnifiedTabIdKey(tabValue[cowc.KEY_ELEMENT_ID])] = tabKey;
-        if (contrail.checkIfKeyExistInObject(true, tabValue, "tabConfig.renderOnActivate")
-          && tabValue.tabConfig.renderOnActivate === true) {
-          self.tabRendered.push(false);
+        self._tabIndexByPanelId[generatePanelId(tabConfig[cowc.KEY_ELEMENT_ID])] = tabIndex;
+        if (contrail.checkIfKeyExistInObject(true, tabConfig, "tabConfig.renderOnActivate")
+          && tabConfig.tabConfig.renderOnActivate === true) {
+          tabConfig._rendered = false
         } else {
-          self.renderTab(tabValue);
-          self.tabRendered.push(true);
+          self.renderTab(tabConfig);
         }
       });
 
       self.$("#" + elId).contrailTabs({
         active: activeTab,
         activate: function(event, ui) {
-          var tabId = ($(ui.newPanel[0]).attr("id")),
-              tabKey = self.tabsIdMap[tabId],
+          var panelId = ($(ui.newPanel[0]).attr("id")),
+              tabIndex = ui.newTab.index(),
               tabHashUrlObj = {};
 
           /*
@@ -111,9 +110,9 @@ define([
             viewConfig.activate(event, ui);
           }
 
-          if (contrail.checkIfExist(self.tabs[tabKey].tabConfig)
-            && _.isFunction(self.tabs[tabKey].tabConfig.activate)) {
-            self.tabs[tabKey].tabConfig.activate(event, ui);
+          if (contrail.checkIfExist(self.tabs[tabIndex].tabConfig)
+            && _.isFunction(self.tabs[tabIndex].tabConfig.activate)) {
+            self.tabs[tabIndex].tabConfig.activate(event, ui);
           }
 
           /*
@@ -125,9 +124,9 @@ define([
           }
 
           self.activateTimeout = setTimeout(function() {
-            if (contrail.checkIfExist(self.tabs[tabKey])
-              && contrail.checkIfExist(self.tabs[tabKey].elementId)) {
-              tabHashUrlObj[elId] = self.tabs[tabKey].elementId;
+            if (contrail.checkIfExist(self.tabs[tabIndex])
+              && contrail.checkIfExist(self.tabs[tabIndex].elementId)) {
+              tabHashUrlObj[elId] = self.tabs[tabIndex].elementId;
             }
             window.layoutHandler.setURLHashParams({ tab: tabHashUrlObj }, { triggerHashChange: false });
 
@@ -136,32 +135,26 @@ define([
         },
 
         beforeActivate: function(event, ui) {
-          var tabId = ($(ui.newPanel[0]).attr("id")),
-              tabKey = self.tabsIdMap[tabId];
+          var panelId = $(ui.newPanel[0]).attr("id");
+          var tab = self.tabs[ui.newTab.index()];
 
-          if (self.tabRendered[tabKey] === false) {
-            self.renderTab(self.tabs[tabKey]);
-            self.tabRendered[tabKey] = true;
-          }
+          if (!tab._rendered) relf.renderTab(tab);
         },
 
         create: function(event, ui) {
-          var tabId = ($(ui.panel[0]).attr("id")),
-              tabKey = self.tabsIdMap[tabId];
+          var panelId = $(ui.panel[0]).attr("id");
+          var tab = self.tabs[ui.tab.index()];
 
-          if (self.tabRendered[tabKey] === false) {
-            self.renderTab(self.tabs[tabKey]);
-            self.tabRendered[tabKey] = true;
-          }
+          if (!tab._rendered) relf.renderTab(tab);
         },
 
         theme: viewConfig.theme,
       });
     },
 
-    _initTabMenu: function(tabKey) {
+    _initTabMenu: function(tabIndex) {
       var tabMenuTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_MENU_VIEW),
-          tab = this.tabs[tabKey],
+          tab = this.tabs[tabIndex],
           $tabEdit = this.$("#" + tab.elementId + "-tab-link").siblings(this.selectors.tabEdit);
 
       $tabEdit.on("shown.bs.popover", this._onPopoverShow);
@@ -178,7 +171,6 @@ define([
     removeTab: function(tabIndex) {
       var self = this,
           elId = self.attributes.elementId,
-          tabPanelId,
           tabConfig = (contrail.checkIfExist(self.tabs[tabIndex].tabConfig) ? self.tabs[tabIndex].tabConfig : null);
 
       if ($.isArray(tabIndex)) {
@@ -188,20 +180,20 @@ define([
         return;
       }
 
-      tabPanelId = self.$("#" + elId + " li:eq(" + tabIndex + ")").attr("aria-controls");
+      var panelId = self.$("#" + elId + " li:eq(" + tabIndex + ")").attr("aria-controls");
 
       self.$("#" + elId + " li:eq(" + tabIndex + ")").remove();
-      $("#" + tabPanelId).remove();
+      $("#" + panelId).remove();
 
-      $.each(self.tabsIdMap, function(tabsIdKey, tabsIdValue) {
-        if (tabsIdValue > tabIndex) {
-          self.tabsIdMap[tabsIdKey] = tabsIdValue - 1;
+      // update indexes of tabs after removed one
+      _.each(self._tabIndexByPanelId, function(panelId, tabIndex) {
+        if (tabIndex > tabIndex) {
+          self._tabIndexByPanelId[panelId] = tabIndex - 1;
         }
       });
 
-      delete self.tabsIdMap[tabPanelId];
+      delete self._tabIndexByPanelId[panelId];
       self.tabs.splice(tabIndex, 1);
-      self.tabRendered.splice(tabIndex, 1);
 
       self.$("#" + elId).data("contrailTabs").refresh();
 
@@ -214,21 +206,23 @@ define([
       }
     },
 
-    renderTab: function(tabObj, onAllViewsRenderComplete) {
+    renderTab: function(tab, onAllViewsRenderComplete) {
       var self = this,
           elId = self.attributes.elementId,
           validation = self.attributes.validation,
           lockEditingByDefault = self.attributes.lockEditingByDefault,
           modelMap = self.modelMap,
-          childElId = tabObj[cowc.KEY_ELEMENT_ID],
-          unifiedTabId = self.tabsIdMap[getUnifiedTabIdKey(childElId)];
+          childElId = tab[cowc.KEY_ELEMENT_ID],
+        // TODO remove
+          tabIndex = self._tabIndexByPanelId[generatePanelId(childElId)];
+      tab._rendered = true;
 
       self.$("#" + elId).show();
 
-      self.renderView4Config(self.$("#" + childElId), tabObj.model || self.model, tabObj,
+      self.renderView4Config(self.$("#" + childElId), tab.model || self.model, tab,
         validation, lockEditingByDefault, modelMap,
         function(renderedBackboneView) {
-          self._initTabMenu(unifiedTabId);
+          self._initTabMenu(tabIndex);
           if (_.isFunction(onAllViewsRenderComplete)) {
             onAllViewsRenderComplete(renderedBackboneView);
           }
@@ -244,22 +238,24 @@ define([
 
       self.modelMap = modelMap;
 
-      $.each(tabViewConfigs, function(tabKey, tabValue) {
-        var unifiedTabId = self.tabsIdMap[getUnifiedTabIdKey(tabValue[cowc.KEY_ELEMENT_ID])];
+      _.each(tabViewConfigs, function(tabConfig) {
+        var tabIndex = self._tabIndexByPanelId[generatePanelId(tabConfig[cowc.KEY_ELEMENT_ID])];
 
-        if (!contrail.checkIfExist(unifiedTabId)) {
-          self.$(self.selectors.linkList).append(tabLinkTemplate([tabValue]));
-          self.$("#" + elId).append(tabContentTemplate([tabValue]));
+        if (_.isNumber(tabIndex)) {
+          // activate existing tab
+          self.$("#" + elId).data("contrailTabs").activateTab(tabIndex);
+        } else {
+          self.$(self.selectors.linkList).append(tabLinkTemplate([tabConfig]));
+          self.$("#" + elId).append(tabContentTemplate([tabConfig]));
           self.$("#" + elId).data("contrailTabs").refresh();
 
-          self.tabs.push(tabValue);
-          self.tabsIdMap[getUnifiedTabIdKey(tabValue[cowc.KEY_ELEMENT_ID])] = tabLength;
-          if (contrail.checkIfKeyExistInObject(true, tabValue, "tabConfig.renderOnActivate") && tabValue.tabConfig.renderOnActivate === true) {
-            self.tabRendered.push(false);
+          self.tabs.push(tabConfig);
+          self._tabIndexByPanelId[generatePanelId(tabConfig[cowc.KEY_ELEMENT_ID])] = tabLength;
+          if (contrail.checkIfKeyExistInObject(true, tabConfig, "tabConfig.renderOnActivate") && tabConfig.tabConfig.renderOnActivate === true) {
+            tabConfig._rendered = false;
             // TODO - onAllViewsRenderComplete should be called when rendered
           } else {
-            self.renderTab(tabValue, onAllViewsRenderComplete);
-            self.tabRendered.push(true);
+            self.renderTab(tabConfig, onAllViewsRenderComplete);
           }
 
           tabLength++;
@@ -272,9 +268,6 @@ define([
           if (!_.isUndefined(activateTabIndex)) {
             self.$("#" + elId).data("contrailTabs").activateTab(activateTabIndex);
           }
-        } else {
-          activateTabIndex = unifiedTabId;
-          self.$("#" + elId).data("contrailTabs").activateTab(activateTabIndex);
         }
       });
     },
@@ -287,12 +280,12 @@ define([
     _onEdit: function(event) {
       var self = this,
           $li = $(event.target).closest("li"),
-          tabPanelId = $li.attr("aria-controls"),
-          tabKey = self.tabsIdMap[tabPanelId],
+          panelId = $li.attr("aria-controls"),
+          tabIndex = self._tabIndexByPanelId[panelId],
           proceed = true,
-          tab = self.tabs[tabKey];
+          tab = self.tabs[tabIndex];
 
-      if (contrail.checkIfExist(self.tabs[tabKey].tabConfig) && tab.tabConfig.editable === true) {
+      if (contrail.checkIfExist(self.tabs[tabIndex].tabConfig) && tab.tabConfig.editable === true) {
         $li.find(".tab-edit-btn").popover("hide");
         var newTitle = self.$(".title-updated").val();
         if (newTitle !== tab.title && newTitle) {
@@ -300,28 +293,28 @@ define([
           tabLink.html(newTitle);
           tab.title = newTitle;
         }
-        if (self.tabs[tabKey].tabConfig.onEdit) {
-          proceed = self.tabs[tabKey].tabConfig.onEdit.bind(self.tabs[tabKey], newTitle)();
+        if (self.tabs[tabIndex].tabConfig.onEdit) {
+          proceed = self.tabs[tabIndex].tabConfig.onEdit.bind(self.tabs[tabIndex], newTitle)();
         }
         if (!newTitle && proceed) {
-          self.removeTab(tabKey);
+          self.removeTab(tabIndex);
         }
       }
     },
 
     _onClickRemove: function() {
       var self = this,
-          tabPanelId = $(event.target).closest("li").attr("aria-controls"),
-          tabKey = self.tabsIdMap[tabPanelId],
+          panelId = $(event.target).closest("li").attr("aria-controls"),
+          tabIndex = self._tabIndexByPanelId[panelId],
           proceed = true;
 
-      if (contrail.checkIfExist(self.tabs[tabKey].tabConfig) && self.tabs[tabKey].tabConfig.removable === true) {
-        if (self.tabs[tabKey].tabConfig.onRemove) {
-          proceed = self.tabs[tabKey].tabConfig.onRemove.bind(self.tabs[tabKey])();
+      if (contrail.checkIfExist(self.tabs[tabIndex].tabConfig) && self.tabs[tabIndex].tabConfig.removable === true) {
+        if (self.tabs[tabIndex].tabConfig.onRemove) {
+          proceed = self.tabs[tabIndex].tabConfig.onRemove.bind(self.tabs[tabIndex])();
         }
       }
       if (proceed) {
-        self.removeTab(tabKey);
+        self.removeTab(tabIndex);
       }
     },
 
