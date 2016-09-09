@@ -1329,13 +1329,16 @@ if (typeof document !== 'undefined' && document) {
                             _.noConflict();
                         });
                         require(['layout-handler', 'content-handler', 'help-handler', 'contrail-load','lodash'], function(LayoutHandler, ContentHandler, HelpHandler, ChartUtils,_) {
+                            var helpHandler = new HelpHandler();
+
                             window._ = _;
                             contentHandler = new ContentHandler();
                             initBackboneValidation();
                             initCustomKOBindings(window.ko);
                             layoutHandler = new LayoutHandler();
                             layoutHandlerLoadDefObj.resolve();
-                            helpHandler = new HelpHandler();
+
+                            helpHandler.init();
                         });
                     });
                 });

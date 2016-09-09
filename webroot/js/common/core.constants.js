@@ -19,22 +19,22 @@ define([
 //          NOTICE  : 2, //Blue
 //          INFO    : 3, //Green
         };
-       this.SEVERITY_TO_TEXT_MAP = {
-               0 : "Critical",
-               1 : "Major",
-               2 : "Minor"
-       };
-       this.COLOR_SEVERITY_MAP = {
-                red : 'error',
-                orange : 'warning',
-                blue : 'default',
-                green : 'okay'
-           };
-       this.SEV_TO_COLOR_MAP = {
-               0 : 'red',
-               1 : 'red',
-               2 : 'orange'
-       }
+        this.SEVERITY_TO_TEXT_MAP = {
+           0 : "Critical",
+           1 : "Major",
+           2 : "Minor"
+        };
+        this.COLOR_SEVERITY_MAP = {
+            red : 'error',
+            orange : 'warning',
+            blue : 'default',
+            green : 'okay'
+        };
+        this.SEV_TO_COLOR_MAP = {
+            0 : 'red',
+            1 : 'red',
+            2 : 'orange'
+        };
         this.PATTERN_IP_ADDRESS  = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/;
         this.PATTERN_SUBNET_MASK = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(\d|[1-2]\d|3[0-2]))?$/;
         this.PATTERN_MAC_ADDRESS = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
@@ -254,9 +254,8 @@ define([
         this.QE_DEFAULT_LIMIT_50K = "50000";
 
         this.SELECT_FIELDS_GROUPS = ["Time Range", "Non Aggregate", "Sum", "Avg", "Count", "Min", "Max", "Percentiles"];
-
+        this.DEFAULT_FS_SELECT_FIELDS = "T=, vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, sum(packets), sum(bytes)";
         this.DEFAULT_FR_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, setup_time, agg-packets, agg-bytes, action";
-        this.DEFAULT_FS_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, T=, sum(packets), sum(bytes)";
         this.DEFAULT_SL_SELECT_FIELDS = "MessageTS, Source, ModuleId, Category, Level, NodeType, Messagetype, Xmlmessage";
 
         this.QE_DEFAULT_FILTER = "limit: 150000 & sort_fields:  & sort: asc";

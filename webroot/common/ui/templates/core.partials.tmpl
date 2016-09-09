@@ -5,21 +5,37 @@
 
 <script type="text/x-handlebars-template" id="core-form-label-template">
     {{#IfCompare label false operator='!=' }}
-    <label for="{{id}}">
-        <span class="label-text">{{label}}</span>
-        {{#if viewConfig.help}}
-        {{#IfCompare viewConfig.help.target 'tooltip' operator='==='}}
-        <span class="label-help" title="{{viewConfig.help.content}}">
+        <label for="{{id}}">
+            <span class="label-text">{{label}}</span>
+            {{#if viewConfig.help}}
+                {{#IfCompare viewConfig.help.target 'tooltip' operator='==='}}
+                    <span class="label-help" title="{{viewConfig.help.content}}">
                         <i class="fa fa-question-circle"></i>
                     </span>
-        {{/IfCompare}}
-        {{/if}}
-        {{#if lockAttr}}
-        <span class="label-group-edit" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+                {{/IfCompare}}
+            {{/if}}
+            {{#if viewConfig.dataState}}
+                {{#if viewConfig.dataState.fetching}}
+                    <span class="label-fetching"
+                          style="display: none;"
+                          data-bind="visible: {{viewConfig.dataState.fetching.visible}}, attr: {title: '{{viewConfig.dataState.fetching.text}}' }">
+                        <i class="fa fa-spin fa-spinner"></i>
+                    </span>
+                {{/if}}
+                {{#if viewConfig.dataState.error}}
+                    <span class="label-error"
+                          style="display: none;"
+                          data-bind="visible: {{viewConfig.dataState.error.visible}}, attr: {title: '{{viewConfig.dataState.error.text}}' }">
+                        <i class="fa fa-exclamation-triangle"></i>
+                    </span>
+                {{/if}}
+            {{/if}}
+            {{#if lockAttr}}
+                <span class="label-group-edit" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                     <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
-        {{/if}}
-    </label>
+            {{/if}}
+        </label>
     {{/IfCompare}}
 </script>
 

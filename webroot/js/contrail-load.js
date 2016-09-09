@@ -127,10 +127,6 @@ $(document).ready(function () {
     // delete_cookie('_csrf');
 
     $(window).on('hashchange', function () {
-        if (helpHandler != null) {
-            helpHandler.update_sections();
-        }
-
         currHash = cowhu.getState();
         //Don't trigger hashChange if URL hash is updated from code
         //As the corresponding view has already been loaded from the place where hash is updated
@@ -151,36 +147,6 @@ $(document).ready(function () {
 
     //bootstrap v 2.3.1 prevents this event which firefox's middle mouse button "new tab link" action, so we off it!
     $(document).off('click.dropdown-menu');
-
-    function startHelp() {
-        $(document).on('click', '#page-help-toggle-btn', function (event) {
-            event.preventDefault();
-            toggleHelp();
-        });
-
-        $(document).on('click', '.page-help-backdrop', function(e) {
-            if (this.hidden == false) {
-                helpHandler.disable();
-                var toggle_btn = $('#page-help-toggle-btn');
-                toggle_btn.parent().toggleClass('active');
-            }
-        });
-
-        //in ajax mode when a content is loaded via ajax, we may want to update help sections
-        $(document).on('ajaxloadcomplete.ace.help', function () {
-            startHelp();
-            helpHandler.update_sections();
-        });
-    }
-
-    function toggleHelp() {
-        helpHandler.toggle();
-
-        var toggle_btn = $('#page-help-toggle-btn');
-        toggle_btn.parent().toggleClass('active');
-    }
-
-    startHelp();
 
 });
 
