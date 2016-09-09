@@ -63,8 +63,6 @@ define([
           activeTab = contrail.handleIfNull(viewConfig.active, 0);
 
       self.tabs = viewConfig.tabs;
-      // tab indexes by tab panel id map
-      self._tabIndexByPanelId = {};
       self.activateTimeout = null;
 
       self.$el.html(tabsTemplate({
@@ -85,7 +83,6 @@ define([
           activeTab = tabIndex;
         }
 
-        self._tabIndexByPanelId[generatePanelId(tabConfig[cowc.KEY_ELEMENT_ID])] = tabIndex;
         if (contrail.checkIfKeyExistInObject(true, tabConfig, "tabConfig.renderOnActivate")
           && tabConfig.tabConfig.renderOnActivate === true) {
           tabConfig._rendered = false
@@ -152,9 +149,8 @@ define([
       });
     },
 
-    _initTabMenu: function(tabIndex) {
+    _initTabMenu: function(tab) {
       var tabMenuTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_MENU_VIEW),
-          tab = this.tabs[tabIndex],
           $tabEdit = this.$("#" + tab.elementId + "-tab-link").siblings(this.selectors.tabEdit);
 
       $tabEdit.on("shown.bs.popover", this._onPopoverShow);
@@ -185,14 +181,6 @@ define([
       self.$("#" + elId + " li:eq(" + tabIndex + ")").remove();
       $("#" + panelId).remove();
 
-      // update indexes of tabs after removed one
-      _.each(self._tabIndexByPanelId, function(panelId, tabIndex) {
-        if (tabIndex > tabIndex) {
-          self._tabIndexByPanelId[panelId] = tabIndex - 1;
-        }
-      });
-
-      delete self._tabIndexByPanelId[panelId];
       self.tabs.splice(tabIndex, 1);
 
       self.$("#" + elId).data("contrailTabs").refresh();
@@ -212,9 +200,7 @@ define([
           validation = self.attributes.validation,
           lockEditingByDefault = self.attributes.lockEditingByDefault,
           modelMap = self.modelMap,
-          childElId = tab[cowc.KEY_ELEMENT_ID],
-        // TODO remove
-          tabIndex = self._tabIndexByPanelId[generatePanelId(childElId)];
+          childElId = tab[cowc.KEY_ELEMENT_ID];
       tab._rendered = true;
 
       self.$("#" + elId).show();
@@ -222,7 +208,7 @@ define([
       self.renderView4Config(self.$("#" + childElId), tab.model || self.model, tab,
         validation, lockEditingByDefault, modelMap,
         function(renderedBackboneView) {
-          self._initTabMenu(tabIndex);
+          self._initTabMenu(tab);
           if (_.isFunction(onAllViewsRenderComplete)) {
             onAllViewsRenderComplete(renderedBackboneView);
           }
@@ -239,9 +225,9 @@ define([
       self.modelMap = modelMap;
 
       _.each(tabViewConfigs, function(tabConfig) {
-        var tabIndex = self._tabIndexByPanelId[generatePanelId(tabConfig[cowc.KEY_ELEMENT_ID])];
+        var tabIndex = _.findIndex(self.tabs, function (tab) { tab.elementId === tabConfig.elementId })
 
-        if (_.isNumber(tabIndex)) {
+        if (tabIndex >= 0) {
           // activate existing tab
           self.$("#" + elId).data("contrailTabs").activateTab(tabIndex);
         } else {
@@ -250,7 +236,6 @@ define([
           self.$("#" + elId).data("contrailTabs").refresh();
 
           self.tabs.push(tabConfig);
-          self._tabIndexByPanelId[generatePanelId(tabConfig[cowc.KEY_ELEMENT_ID])] = tabLength;
           if (contrail.checkIfKeyExistInObject(true, tabConfig, "tabConfig.renderOnActivate") && tabConfig.tabConfig.renderOnActivate === true) {
             tabConfig._rendered = false;
             // TODO - onAllViewsRenderComplete should be called when rendered
@@ -280,8 +265,7 @@ define([
     _onEdit: function(event) {
       var self = this,
           $li = $(event.target).closest("li"),
-          panelId = $li.attr("aria-controls"),
-          tabIndex = self._tabIndexByPanelId[panelId],
+          tabIndex = $li.index(),
           proceed = true,
           tab = self.tabs[tabIndex];
 
@@ -304,8 +288,8 @@ define([
 
     _onClickRemove: function() {
       var self = this,
-          panelId = $(event.target).closest("li").attr("aria-controls"),
-          tabIndex = self._tabIndexByPanelId[panelId],
+          $li = $(event.target).closest("li"),
+          tabIndex = $li.index(),
           proceed = true;
 
       if (contrail.checkIfExist(self.tabs[tabIndex].tabConfig) && self.tabs[tabIndex].tabConfig.removable === true) {
