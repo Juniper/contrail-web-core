@@ -1,0 +1,107 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 6, // make ES6/ES2015 available
+    "sourceType": "script", // disable ES6/ES2015 module syntax, since it's not used currently. (Recommend to use it)
+    "ecamFeature": {
+      "globalReturn": false, // disallow global definition
+      "impliedStrict": true, // use strict mode
+      "jsx": false, // disallow jsx syntax, since ReactJS is not used
+      "experimentalObjectRestSpread": false // disallow rest operator from ES6/ES2015, since it's subject to change with ES7/8
+    }
+  },
+  "plugins": [],
+  "extends": "eslint:recommended", // using essential rule set from ESLint package
+  "env": {
+    "browser": true, // allow existense of native globals for browser
+    "node": true, // allow existense of native globals for nodeJS
+    "es6": true, // allow existense of native globals/reserved words from ES6/ES2015
+    "amd": true, // allow existense of native globals from AMD-like environment
+    "jquery": true, // allow existense of native gloabls from jQuery
+    // TODO: should make exception only to the unit test files. Move these configuration into the test folders.
+    "mocha": true, // allow existense of native globals from Mocha
+    "qunit": true // allow existense of native globals from qunit
+  },
+  // TODO: globals should likely disappear once all these globals are removed and modularized.
+  "globals": {
+    "chUtils": true,
+    "contrail": true,
+    "covdc": true,
+    "cowc": true,
+    "cowu": true,
+    "cowf": true,
+    "cowl": true,
+    "cowm": true,
+    "cowch": true,
+    "ctwDir": true,
+    "ctwc": true,
+    "ctwgc": true,
+    "ctwm": true,
+    "ctwl": true,
+    "globalObj": true,
+    "grUtils": true
+  },
+  "rules": {
+    // relax/customize the essential rule set for R3.2
+    // TODO: need to update/evovlve based on the readiness of codebase.
+    "block-scoped-var": "off",
+    "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
+    "camelcase": "warn",
+    "comma-dangle": ["error", "only-multiline"],
+    "consistent-return": "error",
+    // TODO Should be turn on as "error" once starting to use ES6/ES2015 syntax
+    "constructor-super": "off",
+    "curly": "warn",
+    "dot-location": ["error", "property"],
+    "dot-notation": "error",
+    "eol-last": "error",
+    // To avoid potential debugging difficulty
+    "eqeqeq": "error",
+    "indent": ["warn", 4, {
+      "SwitchCase": 1,
+      "VariableDeclarator": 1
+    }],
+    "new-cap": "error",
+    "no-caller": "error",
+    "no-case-declarations": "warn",
+    "no-console": "off",
+    "no-eval": "error",
+    "no-extend-native": "warn",
+    "no-implicit-globals": "warn",
+    "no-irregular-whitespace": ["error", {
+      "skipStrings": true,
+      "skipComments": true,
+      "skipTemplates": true
+    }],
+    "no-lone-blocks": "error",
+    "no-loop-func": "warn",
+    // To encourage constant variables for better maintainability and readability
+    "no-magic-numbers": ["warn", {
+      "ignoreArrayIndexes": true,
+      // TODO: turn on when starting to use ES6/ES2015 syntax
+      "enforceConst": false
+    }],
+    "no-multi-spaces": ["error", {
+      "exceptions": {
+        "Property": true,
+        "VariableDeclarator": true,
+        "ImportDeclaration": true
+      }
+    }],
+    "no-multi-str": "error",
+    "no-new-func": "error",
+    "no-return-assign": "error",
+    "no-script-url": "error",
+    "no-self-compare": "error",
+    "no-unmodified-loop-condition": "error",
+    "no-unused-expressions": "error",
+    "no-useless-concat": "warn",
+    "no-useless-escape": "warn",
+    "quotes": ["error", "double", {
+      "avoidEscape": true,
+      "allowTemplateLiterals": true
+    }],
+    "vars-on-top": "warn",
+    "semi": "error",
+    "yoda": "warn"
+  }
+}
