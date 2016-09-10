@@ -65,9 +65,7 @@ define([
             self.grid = $grid.data("gridstack");
             self.placeHolder = self.$el.append(self.placeholderHTML);
         },
-        /**
-         * place widget in most left and most top available position
-         */
+        // place widget in most left and most top available position
         add: function() {
             var self = this;
             var newX;
@@ -165,7 +163,8 @@ define([
                 self.reconcileContentHeight(widget.$el);
             }, 100);
         },
-        // update widget model config on gridstack items change
+        // Update widget model config on gridstack items change
+        // TODO Why onChange event get called with items as undefined so many time? Can we restrict it to more specific change condition?
         onChange: function(event, items) {
             var self = this;
             _.each(items, function(item) {
