@@ -190,9 +190,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
             'knockout'                    : coreWebDir + '/assets/knockout/knockout',
             'knockback'                   : coreWebDir + '/assets/backbone/knockback.min',
-            'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd',
-            'joint.contrail'              : coreWebDir + '/js/common/joint.contrail',
-            'contrail-element'            : coreWebDir + '/js/models/ContrailElement'
+            'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd'
         }
         //Merge common (for both prod & dev) alias 
         for(var currAlias in prodAliasMap)
