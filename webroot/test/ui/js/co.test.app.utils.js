@@ -58,7 +58,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'vectorizer'                  : coreWebDir + '/assets/joint/js/vectorizer',
         'joint.layout.DirectedGraph'  : coreWebDir + '/assets/joint/js/joint.layout.DirectedGraph',
         'joint'                       : coreWebDir + '/assets/joint/js/joint.clean',
-        'joint.contrail'              : coreWebDir + '/js/joint.contrail',
+        'joint.contrail'              : coreWebDir + '/js/common/joint.contrail',
 
         'core-alarm-utils'           :  coreWebDir + '/js/common/core.alarms.utils',
         'core-alarm-parsers'         :  coreWebDir + '/js/common/core.alarms.parsers',
@@ -105,6 +105,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'contrail-model'              : coreWebDir + '/js/models/ContrailModel',
             'contrail-view-model'         : coreWebDir + '/js/models/ContrailViewModel',
             'contrail-list-model'         : coreWebDir + '/js/models/ContrailListModel',
+            'contrail-element'            : coreWebDir + '/js/models/ContrailElement',
             'lodash'                      : coreWebDir + '/assets/lodash/lodash.min',
             'crossfilter'               : coreWebDir + '/assets/crossfilter/js/crossfilter',
             'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
@@ -163,7 +164,6 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'analyzer-utils'            : coreWebDir + "/js/analyzer-utils",
             'config_global'             : coreWebDir + "/js/config_global",
             'contrail-layout'           : coreWebDir + '/js/contrail-layout',
-            'joint.contrail'              : coreWebDir + '/js/common/joint.contrail',
             'contrail-common'           : coreWebDir + "/js/contrail-common",
             'uuid'                      : coreWebDir + "/js/uuid",
             'protocol'                  : coreWebDir + "/js/protocol",
@@ -178,8 +178,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'barchart-cf'                 : coreWebDir + '/js/views/BarChartView',
 
             //'core.app.utils'              : coreWebDir + "/js/common/core.app.utils",
-            'storage-init'                : 'empty:',
-            'contrail-element'            : coreWebDir + '/js/models/ContrailElement'
+            'storage-init'                : 'empty:'
         };
         //Merge common (for both prod & dev) alias 
         for(var currAlias in devAliasMap)
@@ -437,6 +436,7 @@ var coreBundles = {
             'contrail-model',
             'contrail-view-model',
             'contrail-list-model',
+            'contrail-elements',
             'lodash',
             'crossfilter',
             'text',
