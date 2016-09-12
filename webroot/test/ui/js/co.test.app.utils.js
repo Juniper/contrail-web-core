@@ -428,6 +428,7 @@ var coreBundles = {
             'core-contrail-form-elements',
             'chart-utils',
             'text!core-basedir/common/ui/templates/core.common.tmpl',
+            'core-basedir/js/common/graph.utils',
             'contrail-remote-data-handler',
             'cf-datasource',
             'contrail-view',

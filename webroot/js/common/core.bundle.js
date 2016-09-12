@@ -15,6 +15,7 @@ define([
     'core-contrail-form-elements',
     'chart-utils',
     'text!core-basedir/common/ui/templates/core.common.tmpl',
+    'core-basedir/js/common/graph.utils',
     // 'core-alarm-utils',
     // 'core.app.utils',
     'contrail-remote-data-handler',
