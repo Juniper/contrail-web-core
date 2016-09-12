@@ -441,7 +441,7 @@ function testLibApiAppInit(testAppConfig) {
 
         require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages,
                                     CoreViewsDefaultConfig, CoreLabels, Knockout, Cache, CoreCommonTmpl,
-                                    QEUtils, QEModelConfig, QEGridConfig, QEParsers, ChartUtils,
+                                    qewu, qewmc, qewgc, qewp, ChartUtils,
                                     CoreTestUtils, CoreTestConstants, LayoutHandler) {
             cowc = new CoreConstants();
             cowu = new CoreUtils();
@@ -452,10 +452,10 @@ function testLibApiAppInit(testAppConfig) {
             kbValidation = validation;
             cowch = new Cache();
 
-            qewu = new QEUtils();
-            qewmc = new QEModelConfig();
-            qewgc = new QEGridConfig();
-            qewp = new QEParsers();
+            // qewu = new QEUtils();
+            // qewmc = new QEModelConfig();
+            // qewgc = new QEGridConfig();
+            // qewp = new QEParsers();
 
             chUtils = new ChartUtils();
 

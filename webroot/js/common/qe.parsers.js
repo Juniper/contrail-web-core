@@ -5,10 +5,8 @@
 define([
     'underscore'
 ], function (_) {
-    var QEParsers = function () {
-        var self = this;
-
-        self.fsQueryDataParser = function(response) {
+    return {
+        fsQueryDataParser: function(response) {
             var chartData = [];
 
             $.each(response, function(fcKey, fcValue) {
@@ -17,8 +15,6 @@ define([
             });
 
             return chartData;
-        };
+        }
     };
-
-    return new QEParsers();
 });

@@ -5,46 +5,7 @@
 define([
     'underscore',
     'core-basedir/js/common/qe.utils'
-], function (_,qewu) {
-    var QEDefaultConfig = function () {
-
-        this.getQueryModelConfig = function (customModelConfig) {
-            var defaultModelConfig = {
-                "table_name": null,
-                "table_type": null,
-                "table_name_data_object": {
-                    status: cowc.DATA_REQUEST_STATE_FETCHING,
-                    data: []
-                },
-                "query_prefix": cowc.DEFAULT_QUERY_PREFIX,
-                "time_range": 600,
-                "from_time": Date.now() - (10 * 60 * 1000),
-                "from_time_utc": Date.now() - (10 * 60 * 1000),
-                "to_time": Date.now(),
-                "to_time_utc": Date.now(),
-                "select": null,
-                "time_granularity": 60,
-                "time_granularity_unit": 'secs',
-                "where": null,
-                "where_json": null,
-                "filter_json": null,
-                "direction": '1',
-                "filters": cowc.QE_DEFAULT_FILTER,
-                "limit": cowc.QE_DEFAULT_LIMIT_150K,
-                "sort_by" : null,
-                "sort_order" : cowc.QE_DEFAULT_SORT_ORDER,
-                "select_data_object": getSelectDataObject(),
-                "where_data_object": {},
-                "filter_data_object": {},
-                "is_request_in_progress": false,
-                "show_advanced_options": false
-            };
-
-            var modelConfig = $.extend(true, {}, defaultModelConfig, customModelConfig);
-
-            return modelConfig;
-        };
-    };
+], function (_, qewu) {
 
     function getSelectDataObject() {
         var selectDataObject = {};
@@ -274,5 +235,42 @@ define([
         return selectDataObject;
     }
 
-    return new QEDefaultConfig();
+    return {
+        getQueryModelConfig: function (customModelConfig) {
+            var defaultModelConfig = {
+                "table_name": null,
+                "table_type": null,
+                "table_name_data_object": {
+                    status: cowc.DATA_REQUEST_STATE_FETCHING,
+                    data: []
+                },
+                "query_prefix": cowc.DEFAULT_QUERY_PREFIX,
+                "time_range": 600,
+                "from_time": Date.now() - (10 * 60 * 1000),
+                "from_time_utc": Date.now() - (10 * 60 * 1000),
+                "to_time": Date.now(),
+                "to_time_utc": Date.now(),
+                "select": null,
+                "time_granularity": 60,
+                "time_granularity_unit": 'secs',
+                "where": null,
+                "where_json": null,
+                "filter_json": null,
+                "direction": '1',
+                "filters": cowc.QE_DEFAULT_FILTER,
+                "limit": cowc.QE_DEFAULT_LIMIT_150K,
+                "sort_by" : null,
+                "sort_order" : cowc.QE_DEFAULT_SORT_ORDER,
+                "select_data_object": getSelectDataObject(),
+                "where_data_object": {},
+                "filter_data_object": {},
+                "is_request_in_progress": false,
+                "show_advanced_options": false
+            };
+
+            var modelConfig = $.extend(true, {}, defaultModelConfig, customModelConfig);
+
+            return modelConfig;
+        }
+    };
 });
