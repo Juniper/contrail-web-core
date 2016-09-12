@@ -182,13 +182,17 @@ define([
                 config.height(item.height);
             });
         },
+        // TODO: this method is specific to a widget having GridView as content.
+        // It should be moved to a specific location rather that this generic one.
+        // Several locations to look into:
+        //      * add resize method to the GridView definition
+        //      * inject a resize method to the GridView instance via configuration object
         reconcileContentHeight: function(widget) {
-            var $w = $(widget);
-            if ($w.find(".contrail-grid").length === 0) {
-                return;
-            }
-            var classNames = {
+            var $w = $(widget),
+                contrailGridClass = "contrail-grid",
+                classNames = {
                     widget: "widget",
+                    contrailGrid: contrailGridClass,
                     widgetHeader: "panel-heading",
                     widgetFooter: "panel-footer",
                     gridHeader: "grid-header",
@@ -200,18 +204,26 @@ define([
                 selectors = _.mapValues(classNames, function(className) {
                     return "." + className;
                 }),
-                $widgetHeader = $w.find(selectors.widgetHeader),
-                $widgetFooter = $w.find(selectors.widgetFooter),
-                $gridHeader = $w.find(selectors.gridHeader),
-                $gridHeadingRow = $w.find(selectors.gridHeadingRow),
-                $gridBody = $w.find(selectors.gridBody),
-                $gridFooter = $w.find(selectors.gridFooter),
-                $gridContentRow = $w.find(selectors.gridContentRow),
-                newGridBodyHeight = $w.outerHeight() - $widgetHeader.outerHeight() - $gridHeader.outerHeight() - $gridFooter.outerHeight() - $widgetFooter.outerHeight(),
-                newContentHeight = newGridBodyHeight - $gridHeadingRow.outerHeight();
+                $contrailGrid = $w.find(selectors.contrailGrid);
 
-            $gridBody.outerHeight(newGridBodyHeight);
-            $gridContentRow.outerHeight(newContentHeight);
+            if ($contrailGrid.length === 0) {
+                return;
+            }
+
+            var $components = {};
+
+            _.forEach(_.omit(selectors, contrailGridClass), function(selector, name) {
+                $components[name] = $w.find(selector);
+            });
+
+            var newGridBodyHeight = $w.outerHeight() - $components.widgetHeader.outerHeight()
+                    - $components.gridHeader.outerHeight() - $components.gridFooter.outerHeight()
+                    - $components.widgetFooter.outerHeight(),
+                newContentHeight = newGridBodyHeight - $components.gridHeadingRow.outerHeight();
+
+            $components.gridBody.outerHeight(newGridBodyHeight);
+            $components.gridContentRow.outerHeight(newContentHeight);
+            $contrailGrid.data("contrailGrid")._grid.resizeCanvas();
         }
     });
     return GridStackView;
