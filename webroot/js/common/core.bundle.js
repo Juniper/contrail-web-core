@@ -15,6 +15,7 @@ define([
     'core-contrail-form-elements',
     'chart-utils',
     'text!core-basedir/common/ui/templates/core.common.tmpl',
+    'core-basedir/js/common/graph.utils',
     // 'core-alarm-utils',
     // 'core.app.utils',
     'contrail-remote-data-handler',
@@ -23,6 +24,7 @@ define([
     'contrail-model',
     'contrail-view-model',
     'contrail-list-model',
+    'contrail-element',
     'lodash',
     'crossfilter',
     'backbone',
@@ -49,8 +51,9 @@ define([
     'mon-infra-alert-grid-view',
     'mon-infra-log-list-view',
     'mon-infra-sysinfo-view',
-    'mon-infra-dashboard-view',
-], function (CoreHandlebarsUtils, CoreUtils, CoreHashUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig, Contrail, CoreContrailFormElements, ChartUtils, CoreCommonTmpls) {
+    'mon-infra-dashboard-view'
+], function (CoreHandlebarsUtils, CoreUtils, CoreHashUtils, CoreConstants, CoreFormatters, Cache, CoreLabels,
+             CoreMessages, CoreViewsDefaultConfig, Contrail, CoreContrailFormElements, ChartUtils, CoreCommonTmpls) {
     cowc = CoreConstants;
     cowf = new CoreFormatters();
     cowl = new CoreLabels();
