@@ -32,7 +32,7 @@ define([
             }
 
             var tabs = _.map(tabIds, function(tabId) {
-                return self.getTabViewConfig(tabId);
+                return self.getConfig4Tab(tabId);
             });
 
             return {
@@ -48,7 +48,7 @@ define([
                                 active: currentTabNumber,
                                 tabs: tabs,
                                 onAdd: function(title) {
-                                    var tabViewConfigs = [self.getTabViewConfig(queryEngineUtils.generateQueryUUID().slice(0, 36), title)];
+                                    var tabViewConfigs = [self.getConfig4Tab(queryEngineUtils.generateQueryUUID().slice(0, 36), title)];
                                     this.renderNewTab("widget-layout-tabs-view", tabViewConfigs, true);
                                 },
                                 extendable: true,
@@ -59,10 +59,13 @@ define([
             };
         },
 
-        getTabViewConfig: function(tabId, tabName) {
+        getConfig4Tab: function(tabId, tabName) {
             var self = this;
 
-            var defaultTabConfig = {
+            var tabModel = self.model.filterBy(self.currentDashboard, tabId);
+
+            var tabConfig = {
+                elementId: tabId,
                 view: "GridStackView",
                 viewPathPrefix: "reports/udd/ui/js/views/",
                 viewConfig: {
@@ -70,6 +73,7 @@ define([
                     tabId: tabId,
                     tabName: tabName,
                 },
+                model: tabModel,
                 tabConfig: {
                     activate: function() {
                         // TODO as we don't know the actual content of the widget use view.update()
@@ -94,21 +98,19 @@ define([
                         // TODO error handling
                         return proceed;
                     },
+                    renderOnActivate: true,
                     editable: true,
                 },
             };
-            var config = _.extend({}, defaultTabConfig);
-            config.elementId = tabId;
-            config.model = self.model.filterBy(self.currentDashboard, tabId);
-            if (config.model.isEmpty()) {
-                config.title = tabName || tabId;
-                config.model.setTabName(config.title);
+
+            if (tabConfig.model.isEmpty()) {
+                tabConfig.title = tabName || tabId;
+                tabConfig.model.setTabName(tabConfig.title);
             } else {
-                config.title = config.model.getTabName(tabId);
+                tabConfig.title = tabConfig.model.getTabName(tabId);
             }
 
-            config.viewConfig.tabId = tabId;
-            return config;
+            return tabConfig;
         },
     });
 

@@ -228,7 +228,7 @@ define([
                 });
             }
         },
-        
+
         formatModelConfig: function(modelConfig) {
             var whereOrClausesCollectionModel, filterAndClausesCollectionModel;
 
@@ -522,7 +522,7 @@ define([
                         },
                         dataParser: function (response) {
                             if (p.parserName && self[p.parserName]) return self[p.parserName](response.data, p)
-                            return response.data
+                            return response.data // TODO: This line is never reached. Rethink the logic.
                         },
                     },
                 })
@@ -546,6 +546,9 @@ define([
             }
             return series
         },
+        gridEntryParser: function(data) {
+            return data;
+        }
     });
 
     function getTableSchemaConfig(model, tableName, disableFieldArray, disableSubstringArray, disableWhereFields) {

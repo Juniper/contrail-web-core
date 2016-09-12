@@ -65,9 +65,7 @@ define([
             self.grid = $grid.data("gridstack");
             self.placeHolder = self.$el.append(self.placeholderHTML);
         },
-        /**
-         * place widget in most left and most top available position
-         */
+        // place widget in most left and most top available position
         add: function() {
             var self = this;
             var newX;
@@ -136,6 +134,8 @@ define([
                     elementId: id,
                     viewPathPrefix: "reports/udd/ui/js/views/",
                     viewConfig: {},
+                }, null, null, null, function(view) {
+                    self.reconcileContentHeight(view.childViewMap[id].$el);
                 });
             }
 
@@ -160,9 +160,11 @@ define([
             // pospone resizing due to widget animation
             setTimeout(function() {
                 widget.resize();
+                self.reconcileContentHeight(widget.$el);
             }, 100);
         },
-        // update widget model config on gridstack items change
+        // Update widget model config on gridstack items change
+        // TODO Why onChange event get called with items as undefined so many time? Can we restrict it to more specific change condition?
         onChange: function(event, items) {
             var self = this;
             _.each(items, function(item) {
@@ -180,6 +182,37 @@ define([
                 config.height(item.height);
             });
         },
+        reconcileContentHeight: function(widget) {
+            var $w = $(widget);
+            if ($w.find(".contrail-grid").length === 0) {
+                return;
+            }
+            var classNames = {
+                    widget: "widget",
+                    widgetHeader: "panel-heading",
+                    widgetFooter: "panel-footer",
+                    gridHeader: "grid-header",
+                    gridBody: "grid-body",
+                    gridFooter: "grid-footer",
+                    gridHeadingRow: "slick-header",
+                    gridContentRow: "slick-viewport"
+                },
+                selectors = _.mapValues(classNames, function(className) {
+                    return "." + className;
+                }),
+                $widgetHeader = $w.find(selectors.widgetHeader),
+                $widgetFooter = $w.find(selectors.widgetFooter),
+                $gridHeader = $w.find(selectors.gridHeader),
+                $gridHeadingRow = $w.find(selectors.gridHeadingRow),
+                $gridBody = $w.find(selectors.gridBody),
+                $gridFooter = $w.find(selectors.gridFooter),
+                $gridContentRow = $w.find(selectors.gridContentRow),
+                newGridBodyHeight = $w.outerHeight() - $widgetHeader.outerHeight() - $gridHeader.outerHeight() - $gridFooter.outerHeight() - $widgetFooter.outerHeight(),
+                newContentHeight = newGridBodyHeight - $gridHeadingRow.outerHeight();
+
+            $gridBody.outerHeight(newGridBodyHeight);
+            $gridContentRow.outerHeight(newContentHeight);
+        }
     });
     return GridStackView;
 });
