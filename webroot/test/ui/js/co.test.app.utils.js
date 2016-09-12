@@ -177,8 +177,9 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'infoboxes'                   : coreWebDir + '/js/views/InfoboxesView',
             'barchart-cf'                 : coreWebDir + '/js/views/BarChartView',
 
-            //'core.app.utils'              : coreWebDir + "/js/common/core.app.utils",
+            // 'core.app.utils'              : coreWebDir + "/js/common/core.app.utils",
             'storage-init'                : 'empty:'
+
         };
         //Merge common (for both prod & dev) alias 
         for(var currAlias in devAliasMap)

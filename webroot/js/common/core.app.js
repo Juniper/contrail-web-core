@@ -166,7 +166,6 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'analyzer-utils'            : coreWebDir + "/js/analyzer-utils",
             'config_global'             : coreWebDir + "/js/config_global",
             'contrail-layout'           : coreWebDir + '/js/contrail-layout',
-            'joint.contrail'              : coreWebDir + '/js/common/joint.contrail',
             'contrail-common'           : coreWebDir + "/js/contrail-common",
             'uuid'                      : coreWebDir + "/js/uuid",
             'protocol'                  : coreWebDir + "/js/protocol",
@@ -180,7 +179,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'infoboxes'                   : coreWebDir + '/js/views/InfoboxesView',
             'barchart-cf'                 : coreWebDir + '/js/views/BarChartView',
 
-             //'core.app.utils'              : coreWebDir + "/js/common/core.app.utils",
+            // 'core.app.utils'              : coreWebDir + "/js/common/core.app.utils",
             'storage-init'                : 'empty:'
 
         };
@@ -193,7 +192,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'controller-basedir'          : coreBaseDir,
             'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
             'knockout'                    : coreWebDir + '/assets/knockout/knockout',
-            'knockback'                   : coreWebDir + '/assets/backbone/knockback.min',
+            'knockback'                 : coreWebDir + '/assets/backbone/knockback.min',
             'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd'
         }
         //Merge common (for both prod & dev) alias
