@@ -221,7 +221,7 @@ define([
                 });
             }
         },
-        
+
         formatModelConfig: function(modelConfig) {
             var whereOrClausesCollectionModel, filterAndClausesCollectionModel;
 
