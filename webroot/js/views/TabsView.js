@@ -7,14 +7,14 @@ define([
   "contrail-view",
 ], function(_, ContrailView) {
   var BSPopoverClass = "popover",
-      BSPopoverSelector = "." + BSPopoverClass;
+    BSPopoverSelector = "." + BSPopoverClass;
 
   // A global focusout event handler used by TabView's popover
   // This will only be registered once, since each module will only be loaded once
   $(document).on("focusout.tabview.popover", BSPopoverSelector, function(event) {
     var $from = $(event.target),
-        $to = $(event.relatedTarget),
-        $popover = $from.hasClass(BSPopoverClass) ? $from : $from.closest(BSPopoverSelector);
+      $to = $(event.relatedTarget),
+      $popover = $from.hasClass(BSPopoverClass) ? $from : $from.closest(BSPopoverSelector);
 
     if (!$to || (!$to.hasClass(BSPopoverClass) && $to.closest(BSPopoverSelector).length === 0)) {
       var popoverDataObj = $popover.data("bs.popover");
@@ -30,11 +30,6 @@ define([
     }
   });
 
-  // a private method to generate unified tabsIdMap key
-  function generatePanelId(elID) {
-    return elID + "-tab";
-  }
-
   var TabsView = ContrailView.extend({
     selectors: {
       tabEdit: ".contrail-tab-link-list .tab-edit-btn",
@@ -43,6 +38,8 @@ define([
       editTitle: ".contrail-tab-link-list .tab-add .title-edit",
       editTitleInput: ".contrail-tab-link-list .tab-add .title-edit > input",
       addLink: ".contrail-tab-link-list .tab-add .link",
+      titleEdit: ".popover .tab-menu input.title-updated",
+      tabPanel: ".ui-tabs-panel",
     },
 
     events: {
@@ -54,13 +51,17 @@ define([
       "keypress .contrail-tab-link-list .tab-add .title-edit > input": "_onKeyPressedToAdd",
     },
 
+    initialize: function () {
+      this.selectors.tabs = "#" + this.attributes.elementId;
+    },
+
     render: function() {
       var self = this,
-          viewConfig = self.attributes.viewConfig,
-          elId = self.attributes.elementId,
-          tabsTemplate = contrail.getTemplate4Id(cowc.TMPL_TABS_VIEW),
-          tabHashUrlObj = window.layoutHandler.getURLHashParams().tab,
-          activeTab = contrail.handleIfNull(viewConfig.active, 0);
+        viewConfig = self.attributes.viewConfig,
+        elId = self.attributes.elementId,
+        tabsTemplate = contrail.getTemplate4Id(cowc.TMPL_TABS_VIEW),
+        tabHashUrlObj = window.layoutHandler.getURLHashParams().tab,
+        activeTab = contrail.handleIfNull(viewConfig.active, 0);
 
       self.tabs = viewConfig.tabs;
       self.activateTimeout = null;
@@ -79,28 +80,28 @@ define([
          */
         if (contrail.checkIfExist(tabHashUrlObj) &&
           contrail.checkIfExist(tabHashUrlObj[elId]) &&
-          tabHashUrlObj[elId] === tabConfig[cowc.KEY_ELEMENT_ID]) {
-          activeTab = tabIndex;
-        }
+            tabHashUrlObj[elId] === tabConfig[cowc.KEY_ELEMENT_ID]) {
+              activeTab = tabIndex;
+            }
 
         if (contrail.checkIfKeyExistInObject(true, tabConfig, "tabConfig.renderOnActivate")
           && tabConfig.tabConfig.renderOnActivate === true) {
-          tabConfig._rendered = false
-        } else {
-          self.renderTab(tabConfig);
-        }
+            tabConfig._rendered = false
+          } else {
+            self.renderTab(tabConfig);
+          }
       });
 
-      self.$("#" + elId).contrailTabs({
+      self.$(self.selectors.tabs).contrailTabs({
         active: activeTab,
         activate: function(event, ui) {
           var panelId = ($(ui.newPanel[0]).attr("id")),
-              tabIndex = ui.newTab.index(),
-              tabHashUrlObj = {};
+            tabIndex = ui.newTab.index(),
+            tabHashUrlObj = {};
 
-          /*
-           * Execute activate if defined in viewConfig or tabConfig
-           */
+            /*
+             * Execute activate if defined in viewConfig or tabConfig
+             */
           if (_.isFunction(viewConfig.activate)) {
             // TODO bind activate function with current tab
             // current element will be available as "this" context
@@ -109,12 +110,12 @@ define([
 
           if (contrail.checkIfExist(self.tabs[tabIndex].tabConfig)
             && _.isFunction(self.tabs[tabIndex].tabConfig.activate)) {
-            self.tabs[tabIndex].tabConfig.activate(event, ui);
-          }
+              self.tabs[tabIndex].tabConfig.activate(event, ui);
+            }
 
-          /*
-           * Setting activeTab to the url on activate
-           */
+            /*
+             * Setting activeTab to the url on activate
+             */
 
           if (self.activateTimeout !== null) {
             clearTimeout(self.activateTimeout);
@@ -123,8 +124,8 @@ define([
           self.activateTimeout = setTimeout(function() {
             if (contrail.checkIfExist(self.tabs[tabIndex])
               && contrail.checkIfExist(self.tabs[tabIndex].elementId)) {
-              tabHashUrlObj[elId] = self.tabs[tabIndex].elementId;
-            }
+                tabHashUrlObj[elId] = self.tabs[tabIndex].elementId;
+              }
             window.layoutHandler.setURLHashParams({ tab: tabHashUrlObj }, { triggerHashChange: false });
 
             self.activateTimeout = null;
@@ -135,14 +136,14 @@ define([
           var panelId = $(ui.newPanel[0]).attr("id");
           var tab = self.tabs[ui.newTab.index()];
 
-          if (!tab._rendered) relf.renderTab(tab);
+          if (!tab._rendered) self.renderTab(tab);
         },
 
         create: function(event, ui) {
           var panelId = $(ui.panel[0]).attr("id");
           var tab = self.tabs[ui.tab.index()];
 
-          if (!tab._rendered) relf.renderTab(tab);
+          if (!tab._rendered) self.renderTab(tab);
         },
 
         theme: viewConfig.theme,
@@ -150,10 +151,11 @@ define([
     },
 
     _initTabMenu: function(tab) {
+      var self = this;
       var tabMenuTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_MENU_VIEW),
-          $tabEdit = this.$("#" + tab.elementId + "-tab-link").siblings(this.selectors.tabEdit);
+        $tabEdit = this.$("#" + tab.elementId + "-tab-link").siblings(this.selectors.tabEdit);
 
-      $tabEdit.on("shown.bs.popover", this._onPopoverShow);
+      $tabEdit.on("shown.bs.popover", this._onPopoverShow.bind(self));
       $tabEdit.popover({
         placement: "bottom",
         trigger: "click",
@@ -166,8 +168,8 @@ define([
 
     removeTab: function(tabIndex) {
       var self = this,
-          elId = self.attributes.elementId,
-          tabConfig = (contrail.checkIfExist(self.tabs[tabIndex].tabConfig) ? self.tabs[tabIndex].tabConfig : null);
+        elId = self.attributes.elementId,
+        tabConfig = (contrail.checkIfExist(self.tabs[tabIndex].tabConfig) ? self.tabs[tabIndex].tabConfig : null);
 
       if ($.isArray(tabIndex)) {
         for (var i = 0; i < tabIndex.length; i++) {
@@ -178,15 +180,13 @@ define([
 
       var panelId = self.$("#" + elId + " li:eq(" + tabIndex + ")").attr("aria-controls");
 
-      self.$("#" + elId + " li:eq(" + tabIndex + ")").remove();
+      self.$(self.selectors.tabs + " li:eq(" + tabIndex + ")").remove();
       $("#" + panelId).remove();
-
       self.tabs.splice(tabIndex, 1);
-
-      self.$("#" + elId).data("contrailTabs").refresh();
+      self.$(self.selectors.tabs).data("contrailTabs").refresh();
 
       if (self.tabs.length === 0 && !self.attributes.viewConfig.extendable) {
-        self.$("#" + elId).hide();
+        self.$(self.selectors.tabs).hide();
       }
 
       if (tabConfig !== null && contrail.checkIfFunction(tabConfig.onRemoveTab)) {
@@ -196,14 +196,13 @@ define([
 
     renderTab: function(tab, onAllViewsRenderComplete) {
       var self = this,
-          elId = self.attributes.elementId,
-          validation = self.attributes.validation,
-          lockEditingByDefault = self.attributes.lockEditingByDefault,
-          modelMap = self.modelMap,
-          childElId = tab[cowc.KEY_ELEMENT_ID];
+        validation = self.attributes.validation,
+        lockEditingByDefault = self.attributes.lockEditingByDefault,
+        modelMap = self.modelMap,
+        childElId = tab[cowc.KEY_ELEMENT_ID];
       tab._rendered = true;
 
-      self.$("#" + elId).show();
+      self.$(self.selectors.tabs).show();
 
       self.renderView4Config(self.$("#" + childElId), tab.model || self.model, tab,
         validation, lockEditingByDefault, modelMap,
@@ -217,61 +216,77 @@ define([
 
     renderNewTab: function(elId, tabViewConfigs, activateTab, modelMap, onAllViewsRenderComplete) {
       var self = this,
-          tabLinkTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_LINK_VIEW),
-          tabContentTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_CONTENT_VIEW),
-          tabLength = self.tabs.length,
-          activateTabIndex;
+        tabLinkTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_LINK_VIEW),
+        tabContentTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_CONTENT_VIEW),
+        activateTabIndex;
 
       self.modelMap = modelMap;
 
       _.each(tabViewConfigs, function(tabConfig) {
-        var tabIndex = _.findIndex(self.tabs, function (tab) { tab.elementId === tabConfig.elementId })
+        var tabIndex = _.findIndex(self.tabs, function (tab) { return tab.elementId === tabConfig.elementId; });
 
         if (tabIndex >= 0) {
           // activate existing tab
-          self.$("#" + elId).data("contrailTabs").activateTab(tabIndex);
+          self.$(self.selectors.tabs).data("contrailTabs").activateTab(tabIndex);
         } else {
           self.$(self.selectors.linkList).append(tabLinkTemplate([tabConfig]));
-          self.$("#" + elId).append(tabContentTemplate([tabConfig]));
-          self.$("#" + elId).data("contrailTabs").refresh();
-
+          self.$(self.selectors.tabs).append(tabContentTemplate([tabConfig]));
           self.tabs.push(tabConfig);
-          if (contrail.checkIfKeyExistInObject(true, tabConfig, "tabConfig.renderOnActivate") && tabConfig.tabConfig.renderOnActivate === true) {
-            tabConfig._rendered = false;
-            // TODO - onAllViewsRenderComplete should be called when rendered
-          } else {
-            self.renderTab(tabConfig, onAllViewsRenderComplete);
-          }
 
-          tabLength++;
+          var newIndex = _.sortedIndex(_.without(self.tabs, tabConfig), tabConfig, self._tabSortIteratee);
+          if (!self.moveTab(self.tabs.length - 1, newIndex)) self.$(self.selectors.tabs).data("contrailTabs").refresh();
+
+          if (contrail.checkIfKeyExistInObject(true, tabConfig, "tabConfig.renderOnActivate") &&
+            tabConfig.tabConfig.renderOnActivate === true) {
+              tabConfig._rendered = false;
+              // TODO - onAllViewsRenderComplete should be called when rendered
+            } else {
+              self.renderTab(tabConfig, onAllViewsRenderComplete);
+            }
 
           if (activateTab === true) {
-            activateTabIndex = tabLength - 1;
+            activateTabIndex = newIndex;
           } else if (_.isNumber(activateTab)) {
             activateTabIndex = activateTab;
           }
           if (!_.isUndefined(activateTabIndex)) {
-            self.$("#" + elId).data("contrailTabs").activateTab(activateTabIndex);
+            self.$(self.selectors.tabs).data("contrailTabs").activateTab(activateTabIndex);
           }
         }
       });
     },
 
-    _onKeyPressedToEdit: function (e) {
+    moveTab: function (from, to) {
       var self = this;
+      if (from === to) return false;
+
+      var links = self.$(self.selectors.linkList + " li");
+      var panels = self.$(self.selectors.tabs + "> div");
+      links.splice(to, 0, links.splice(from, 1)[0]);
+      panels.splice(to, 0, panels.splice(from, 1)[0]);
+      panels.detach();
+      self.$(self.selectors.tabs).append(panels);
+      self.$(self.selectors.linkList).html(links);
+
+      self.tabs.splice(to, 0, self.tabs.splice(from, 1)[0]);
+      self.$(self.selectors.tabs).data("contrailTabs").refresh();
+      return true;
+    },
+
+    _onKeyPressedToEdit: function (e) {
       if (e.keyCode === 13) this._onEdit(e);
     },
 
     _onEdit: function(event) {
       var self = this,
-          $li = $(event.target).closest("li"),
-          tabIndex = $li.index(),
-          proceed = true,
-          tab = self.tabs[tabIndex];
+        $li = $(event.target).closest("li"),
+        tabIndex = $li.index(),
+        proceed = true,
+        tab = self.tabs[tabIndex];
 
       if (contrail.checkIfExist(self.tabs[tabIndex].tabConfig) && tab.tabConfig.editable === true) {
         $li.find(".tab-edit-btn").popover("hide");
-        var newTitle = self.$(".title-updated").val();
+        var newTitle = self.$(self.selectors.titleEdit).val();
         if (newTitle !== tab.title && newTitle) {
           var tabLink = $li.find("#" + tab.elementId + "-tab-link");
           tabLink.html(newTitle);
@@ -280,6 +295,7 @@ define([
         if (self.tabs[tabIndex].tabConfig.onEdit) {
           proceed = self.tabs[tabIndex].tabConfig.onEdit.bind(self.tabs[tabIndex], newTitle)();
         }
+        self.moveTab(tabIndex, _.sortedIndex(_.without(self.tabs, tab), tab, self._tabSortIteratee));
         if (!newTitle && proceed) {
           self.removeTab(tabIndex);
         }
@@ -288,9 +304,9 @@ define([
 
     _onClickRemove: function() {
       var self = this,
-          $li = $(event.target).closest("li"),
-          tabIndex = $li.index(),
-          proceed = true;
+        $li = $(event.target).closest("li"),
+        tabIndex = $li.index(),
+        proceed = true;
 
       if (contrail.checkIfExist(self.tabs[tabIndex].tabConfig) && self.tabs[tabIndex].tabConfig.removable === true) {
         if (self.tabs[tabIndex].tabConfig.onRemove) {
@@ -311,7 +327,7 @@ define([
 
     _onAdd: function() {
       var self = this;
-      if (!self.$(self.selectors.editTitle).is(':visible')) return;
+      if (!self.$(self.selectors.editTitle).is(":visible")) return;
       var title = self.$(self.selectors.editTitleInput).val();
 
       self.$(self.selectors.editTitle).hide();
@@ -334,11 +350,17 @@ define([
     },
 
     _onPopoverShow: function(event) {
+      var self = this;
       var $popoverTrigger = $(event.currentTarget),
-          $popover = $popoverTrigger.siblings(".popover");
+        $popover = $popoverTrigger.siblings(".popover");
 
       $popover.attr("tabindex", -1).focus();
-    }
+      self.$(self.selectors.titleEdit).focus();
+    },
+
+    _tabSortIteratee: function (tab) {
+      return tab.title.toLowerCase();
+    },
   });
 
   return TabsView;
