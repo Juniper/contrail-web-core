@@ -4,9 +4,8 @@
 
 define([
     'underscore',
-    'moment',
-    "core-basedir/js/common/qe.utils"
-], function (_, moment, qewu) {
+    'moment'
+], function (_, moment) {
     var serializer = new XMLSerializer(), domParser = new DOMParser();
 
     function filterXML(xmlString, is4SystemLogs) {
@@ -352,6 +351,29 @@ define([
         return operatorCode;
     };
 
+    function _parseWhereJSON2Collection(queryFormModel) {
+        var whereStr = queryFormModel.model().get('where'),
+            whereOrClauseStrArr = (whereStr == null) ? [] : whereStr.split(' OR '),
+            whereOrJSON = queryFormModel.model().get('where_json'),
+            wherOrClauseObjects = [];
+
+        queryFormModel.model().get('where_or_clauses').reset();
+
+        $.each(whereOrJSON, function(whereOrJSONKey, whereOrJSONValue) {
+            wherOrClauseObjects.push({orClauseText: whereOrClauseStrArr[whereOrJSONKey], orClauseJSON: whereOrJSONValue});
+        });
+
+        queryFormModel.addNewOrClauses(wherOrClauseObjects);
+    }
+
+    function _parseFilterJSON2Collection(queryFormModel) {
+        var filterStr = queryFormModel.model().attributes.filters,
+            filterOrJSON = queryFormModel.model().attributes.filter_json;
+
+        queryFormModel.model().get('filter_and_clauses').reset();
+        queryFormModel.addNewFilterAndClause(filterOrJSON);
+    }
+
     function _parseWhereString2JSON(queryFormModel) {
         var whereStr = queryFormModel.model().get('where'),
             whereOrClauseStrArr = (whereStr == null) ? [] : whereStr.split(' OR '),
@@ -366,19 +388,9 @@ define([
         return whereOrJSONArr;
     }
 
-    function _parseWhereJSON2Collection(queryFormModel) {
-        var whereStr = queryFormModel.model().get('where'),
-            whereOrClauseStrArr = (whereStr == null) ? [] : whereStr.split(' OR '),
-            whereOrJSON = queryFormModel.model().get('where_json'),
-            wherOrClauseObjects = [];
-
-        queryFormModel.model().get('where_or_clauses').reset();
-
-        $.each(whereOrJSON, function(whereOrJSONKey, whereOrJSONValue) {
-            wherOrClauseObjects.push({orClauseText: whereOrClauseStrArr[whereOrJSONKey], orClauseJSON: whereOrJSONValue});
-        });
-
-        queryFormModel.addNewOrClauses(wherOrClauseObjects);
+    function _parseFilterString2JSON(queryFormModel) {
+        var filtersStr = queryFormModel.model().attributes.filters;
+        return parseFilterANDClause(filtersStr);
     }
 
     function _isAggregateField(fieldName) {
@@ -714,26 +726,17 @@ define([
         },
 
         parseFilterString2Collection: function(queryFormModel) {
-            queryFormModel.filter_json(qewu.parseFilterString2JSON(queryFormModel));
-            qewu.parseFilterJSON2Collection(queryFormModel);
+            queryFormModel.filter_json(_parseFilterString2JSON(queryFormModel));
+            _parseFilterJSON2Collection(queryFormModel);
         },
 
         parseWhereJSON2Collection: _parseWhereJSON2Collection,
 
-        parseFilterJSON2Collection: function(queryFormModel) {
-            var filterStr = queryFormModel.model().attributes.filters,
-                filterOrJSON = queryFormModel.model().attributes.filter_json;
-
-            queryFormModel.model().get('filter_and_clauses').reset();
-            queryFormModel.addNewFilterAndClause(filterOrJSON);
-        },
+        parseFilterJSON2Collection: _parseFilterJSON2Collection,
 
         parseWhereString2JSON: _parseWhereString2JSON,
 
-        parseFilterString2JSON: function(queryFormModel) {
-            var filtersStr = queryFormModel.model().attributes.filters;
-            return parseFilterANDClause(filtersStr);
-        },
+        parseFilterString2JSON: _parseFilterString2JSON,
 
         getAggregateSelectFields: function(selectArray) {
             var aggregateSelectArray = [];
