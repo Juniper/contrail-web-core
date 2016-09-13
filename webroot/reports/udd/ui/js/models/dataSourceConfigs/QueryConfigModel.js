@@ -13,7 +13,9 @@ define([
         constructor: function(modelConfig, queryReqConfig) {
             var self = this;
 
-            var defaultOptions = {};
+            var defaultOptions = {},
+                flowTableDefaults = {};
+
             defaultOptions[coreConstants.QE_LOG_TABLE_TYPE] = {
                 query_prefix: coreConstants.SYSTEM_LOGS_PREFIX,
                 table_name: coreConstants.MESSAGE_TABLE,
@@ -22,8 +24,19 @@ define([
                 keywords: "",
                 limit: coreConstants.QE_DEFAULT_LIMIT_50K,
             };
+
             defaultOptions[coreConstants.QE_STAT_TABLE_TYPE] = {
                 query_prefix: coreConstants.STAT_QUERY_PREFIX,
+            };
+
+            flowTableDefaults[coreConstants.FLOW_SERIES_TABLE] = {
+                query_prefix: coreConstants.FS_QUERY_PREFIX,
+                select: coreConstants.DEFAULT_FS_SELECT_FIELDS,
+            };
+
+            flowTableDefaults[coreConstants.FLOW_RECORD_TABLE] = {
+                query_prefix: coreConstants.FR_QUERY_PREFIX,
+                select: coreConstants.DEFAULT_FR_SELECT_FIELDS,
             };
 
             var defaultConfig = queryEngineModelConfig.getQueryModelConfig({
@@ -38,6 +51,16 @@ define([
                 model.set(defaultOptions[tableType]);
                 // TODO select values are not set on first call
                 model.set(defaultOptions[tableType]);
+            });
+            self.model().on("change:table_name", function(model, tableName) {
+                var tableType = model.get("table_name");
+                if (tableType === coreConstants.QE_FLOW_TABLE_TYPE) {
+                    model.set(_.merge({
+                            table_name: tableName
+                        },
+                        flowTableDefaults[tableName])
+                    );
+                }
             });
 
             return self;

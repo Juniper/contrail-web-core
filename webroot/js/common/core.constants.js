@@ -284,7 +284,8 @@ define([
         this.TABLE_TYPES = [
             this.QE_STAT_TABLE_TYPE,
             this.QE_LOG_TABLE_TYPE,
-        ]
+            this.QE_FLOW_TABLE_TYPE
+        ];
 
         this.FS_HASH_P = 'query_flow_series';
         this.FR_HASH_P = 'query_flow_record';
