@@ -64,6 +64,8 @@ define([
                                 + coreConstants.QE_STAT_TABLE_TYPE
                                 + '" || table_type() === "'
                                 + coreConstants.QE_FLOW_TABLE_TYPE
+                                + '" || table_type() === "'
+                                + coreConstants.QE_OBJECT_TABLE_TYPE
                                 + '")',
                         },
                         columns: [{
@@ -163,9 +165,11 @@ define([
                                     elementId: "time_granularity_unit",
                                     view: "FormDropdownView",
                                     viewConfig: {
-                                        visibile: 'table_type() !== "'
+                                        visibile: '(table_type() !== "'
                                             + coreConstants.QE_FLOW_TABLE_TYPE
-                                            + '" || table_name() !== "'
+                                            + '" && table_name() !== "'
+                                            + coreConstants.QE_OBJECT_TABLE_TYPE
+                                            + '") || table_name() !== "'
                                             + coreConstants.FLOW_RECORD_TABLE + '"',
                                         label: false,
                                         path: "time_granularity_unit",

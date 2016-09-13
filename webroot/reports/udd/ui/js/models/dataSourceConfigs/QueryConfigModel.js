@@ -29,6 +29,11 @@ define([
                 query_prefix: coreConstants.STAT_QUERY_PREFIX,
             };
 
+            defaultOptions[coreConstants.QE_OBJECT_TABLE_TYPE] = {
+                query_prefix: coreConstants.OBJECT_LOGS_PREFIX,
+                limit: coreConstants.QE_DEFAULT_LIMIT_50K
+            };
+
             flowTableDefaults[coreConstants.FLOW_SERIES_TABLE] = {
                 query_prefix: coreConstants.FS_QUERY_PREFIX,
                 select: coreConstants.DEFAULT_FS_SELECT_FIELDS,
