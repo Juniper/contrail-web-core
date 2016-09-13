@@ -70,10 +70,11 @@ define([
                                                 top: false,
                                                 right: {
                                                     custom: {
-                                                        filterChart: {
+                                                        filterY: {
                                                             enable: true,
                                                             iconClass: 'fa fa-filter',
                                                             title: 'Filter',
+                                                            events: cowu.getFilterEvent(),
                                                             viewConfig: getFilterConfig(queryId, aggregateSelectFields, queryResultLineChartId)
                                                         }
                                                     },
@@ -281,6 +282,7 @@ define([
 
     function getFilterConfig(queryId, aggregateSelectFields, queryResultLineChartId, modelMap) {
         var filterConfig = {
+            groupType: '1-cols',
             groups: [
                 {
                     id: 'by-node-color-' + queryId,
