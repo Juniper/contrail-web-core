@@ -60,7 +60,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'vectorizer'                  : coreWebDir + '/assets/joint/js/vectorizer',
         'joint.layout.DirectedGraph'  : coreWebDir + '/assets/joint/js/joint.layout.DirectedGraph',
         'joint'                       : coreWebDir + '/assets/joint/js/joint.clean',
-        'joint.contrail'              : coreWebDir + '/js/joint.contrail',
+        'joint.contrail'              : coreWebDir + '/js/common/joint.contrail',
 
         'core-alarm-utils'            :  coreWebDir + '/js/common/core.alarms.utils',
         'core-alarm-parsers'          :  coreWebDir + '/js/common/core.alarms.parsers',
@@ -107,6 +107,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'contrail-model'              : coreWebDir + '/js/models/ContrailModel',
             'contrail-view-model'         : coreWebDir + '/js/models/ContrailViewModel',
             'contrail-list-model'         : coreWebDir + '/js/models/ContrailListModel',
+            'contrail-element'            : coreWebDir + '/js/models/ContrailElement',
             'lodash'                      : coreWebDir + '/assets/lodash/lodash.min',
             'crossfilter'                 : coreWebDir + '/assets/crossfilter/js/crossfilter',
             'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
@@ -180,8 +181,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'barchart-cf'                 : coreWebDir + '/js/views/BarChartView',
 
              //'core.app.utils'              : coreWebDir + "/js/common/core.app.utils",
-            'storage-init'                : 'empty:',
-            'contrail-element'            : coreWebDir + '/js/models/ContrailElement'
+            'storage-init'                : 'empty:'
 
         };
         //Merge common (for both prod & dev) alias
@@ -194,9 +194,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
             'knockout'                    : coreWebDir + '/assets/knockout/knockout',
             'knockback'                   : coreWebDir + '/assets/backbone/knockback.min',
-            'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd',
-            'joint.contrail': coreWebDir + '/js/common/joint.contrail',
-            'contrail-element': coreWebDir + '/js/models/ContrailElement'
+            'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd'
         }
         //Merge common (for both prod & dev) alias
         for(var currAlias in prodAliasMap)
@@ -423,12 +421,14 @@ var coreBundles = {
             'core-contrail-form-elements',
             'chart-utils',
             'text!core-basedir/common/ui/templates/core.common.tmpl',
+            'core-basedir/js/common/graph.utils',
             'contrail-remote-data-handler',
             'cf-datasource',
             'contrail-view',
             'contrail-model',
             'contrail-view-model',
             'contrail-list-model',
+            'contrail-element',
             'lodash',
             'crossfilter',
             'text',

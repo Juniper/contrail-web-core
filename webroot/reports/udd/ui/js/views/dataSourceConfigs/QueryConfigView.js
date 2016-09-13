@@ -57,10 +57,16 @@ define([
                                     data: coreConstants.TABLE_TYPES,
                                 },
                             },
-                        } ],
+                        }],
                     }, {
                         viewConfig: {
-                            visible: 'isAttrAvailable("table_type") && table_type() === "STAT"',
+                            visible: 'isAttrAvailable("table_type") && (table_type() === "'
+                                + coreConstants.QE_STAT_TABLE_TYPE
+                                + '" || table_type() === "'
+                                + coreConstants.QE_FLOW_TABLE_TYPE
+                                + '" || table_type() === "'
+                                + coreConstants.QE_OBJECT_TABLE_TYPE
+                                + '")',
                         },
                         columns: [{
                             elementId: "table_name",
@@ -93,7 +99,7 @@ define([
                         } ],
                     }, {
                         viewConfig: {
-                            visible: 'isAttrAvailable("table_type") && table_type() === "LOG"',
+                            visible: 'isAttrAvailable("table_type") && table_type() === "' + coreConstants.QE_LOG_TABLE_TYPE + '"',
                         },
                         columns: [{
                             elementId: "log_level",
@@ -159,6 +165,12 @@ define([
                                     elementId: "time_granularity_unit",
                                     view: "FormDropdownView",
                                     viewConfig: {
+                                        visibile: '(table_type() !== "'
+                                            + coreConstants.QE_FLOW_TABLE_TYPE
+                                            + '" && table_name() !== "'
+                                            + coreConstants.QE_OBJECT_TABLE_TYPE
+                                            + '") || table_name() !== "'
+                                            + coreConstants.FLOW_RECORD_TABLE + '"',
                                         label: false,
                                         path: "time_granularity_unit",
                                         dataBindValue: "time_granularity_unit",
@@ -207,6 +219,24 @@ define([
                                 },
                             },
                         } ],
+                    }, {
+                       viewConfig: {
+                           visible: 'show_advanced_options() && table_type() === "' + coreConstants.QE_FLOW_TABLE_TYPE + '"'
+                       },
+                        columns: [{
+                            elementId: "direction",
+                            view: "FormDropdownView",
+                            viewConfig: {
+                                path: "direction",
+                                dataBindValue: "direction",
+                                class: "col-xs-12",
+                                elementConfig: {
+                                    dataTextField: "text",
+                                    dataValueField: "id",
+                                    data: coreConstants.DIRECTION_DROPDOWN_VALUES
+                                }
+                            }
+                        }]
                     }, {
                         viewConfig: {
                             visible: 'isAttrAvailable("table_name")',

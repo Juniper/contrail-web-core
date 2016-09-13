@@ -169,8 +169,6 @@ define([
         this.TMPL_ELEMENT_TOOLTIP_TITLE = "element-tooltip-title-template";
         this.TMPL_ELEMENT_TOOLTIP_CONTENT = "element-tooltip-content-template";
 
-        this.TMPL_NETWORK_POLICY_RULE = "network-policy-rule-template";
-
         this.APP_CONTRAIL_CONTROLLER = "contrail-controller";
         this.APP_CONTRAIL_SM = "contrail-sm";
         this.APP_CONTRAIL_STORAGE = "contrail-storage";
@@ -285,8 +283,10 @@ define([
 
         this.TABLE_TYPES = [
             this.QE_STAT_TABLE_TYPE,
-            this.QE_LOG_TABLE_TYPE,
-        ]
+            this.QE_FLOW_TABLE_TYPE,
+            this.QE_OBJECT_TABLE_TYPE,
+            this.QE_LOG_TABLE_TYPE
+        ];
 
         this.FS_HASH_P = 'query_flow_series';
         this.FR_HASH_P = 'query_flow_record';

@@ -53,7 +53,9 @@ define([
         onChangeTime: function() {
             var self = this,
                 table_type = self.model().get('table_type')
-            if (table_type === cowc.QE_STAT_TABLE_TYPE || table_type === cowc.QE_OBJECT_TABLE_TYPE) {
+            if (table_type === cowc.QE_STAT_TABLE_TYPE
+                || table_type === cowc.QE_OBJECT_TABLE_TYPE
+                || table_type === cowc.QE_FLOW_TABLE_TYPE) {
                 var setTableValuesCallbackFn = function (self, resultArr){
                     var currentSelectedTable = self.model().attributes.table_name;
                     if (currentSelectedTable != null)
@@ -114,9 +116,17 @@ define([
                         data: []
                     });
                 });
-            };
+            }
 
-            if (timeRange == -1) {
+            if (tabletype === cowc.QE_FLOW_TABLE_TYPE) {
+                self.table_name_data_object({
+                    status: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY,
+                    data: [
+                        cowc.FLOW_SERIES_TABLE,
+                        cowc.FLOW_RECORD_TABLE
+                    ]
+                });
+            } else if (timeRange == -1) {
                 var fromTimeUTC = new Date(contrailViewModel.attributes.from_time).getTime(),
                     toTimeUTC = new Date(contrailViewModel.attributes.to_time).getTime();
 
@@ -184,7 +194,9 @@ define([
             var self = this,
                 model = self.model();
 
-            if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE || self.table_type() == cowc.QE_STAT_TABLE_TYPE) {
+            if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE
+                || self.table_type() == cowc.QE_STAT_TABLE_TYPE
+                || self.table_type() === cowc.QE_FLOW_TABLE_TYPE) {
                 self.reset(this, null, false, false);
             }
 
@@ -220,7 +232,9 @@ define([
 
                     contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
 
-                    if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE || self.table_type() == cowc.QE_STAT_TABLE_TYPE) {
+                    if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE
+                        || self.table_type() == cowc.QE_STAT_TABLE_TYPE
+                        || self.table_type() === cowc.QE_FLOW_TABLE_TYPE) {
                         self.setTableFieldValues();
                     }
                 }).error(function(xhr) {

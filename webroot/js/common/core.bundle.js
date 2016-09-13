@@ -24,6 +24,7 @@ define([
     'contrail-model',
     'contrail-view-model',
     'contrail-list-model',
+    'contrail-element',
     'lodash',
     'crossfilter',
     'backbone',
@@ -51,7 +52,8 @@ define([
     'mon-infra-log-list-view',
     'mon-infra-sysinfo-view',
     'mon-infra-dashboard-view'
-], function (CoreHandlebarsUtils, CoreUtils, CoreHashUtils, CoreConstants, CoreFormatters, Cache, CoreLabels, CoreMessages, CoreViewsDefaultConfig, Contrail, CoreContrailFormElements, ChartUtils, CoreCommonTmpls, GraphUtils) {
+], function (CoreHandlebarsUtils, CoreUtils, CoreHashUtils, CoreConstants, CoreFormatters, Cache, CoreLabels,
+             CoreMessages, CoreViewsDefaultConfig, Contrail, CoreContrailFormElements, ChartUtils, CoreCommonTmpls) {
     cowc = CoreConstants;
     cowf = new CoreFormatters();
     cowl = new CoreLabels();
@@ -60,7 +62,6 @@ define([
     contrail = new Contrail();
     cowch = new Cache();
     chUtils = new ChartUtils();
-    grUtils = new GraphUtils();
     webServerInfoDefObj.done(function () {
         require(['nonamd-libs'], function () {
             cowc.DROPDOWN_VALUE_SEPARATOR = getValueByJsonPath(globalObj,
