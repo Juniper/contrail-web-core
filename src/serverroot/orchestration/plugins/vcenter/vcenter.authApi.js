@@ -64,7 +64,7 @@ function authenticate (req, res, appData, callback)
         /* Once authenticated, then store the vmware_soap_session in session,
          * and pass this in header for next calls to vcenter server 
          */
-            console.log("getting err as:", err, JSON.stringify(data),
+            console.log("getting err as:", err, JSON.stringify(data), 
                         JSON.stringify(resHeaders));
         if (null != err) {
             callback(err.message);
