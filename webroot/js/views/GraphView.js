@@ -3,10 +3,11 @@
  */
 
 define([
+    'joint.contrail',
     'contrail-graph-model',
     'core-basedir/js/views/ControlPanelView',
     'jquery.panzoom'
-], function (ContrailGraphModel, ControlPanelView) {
+], function (joint, ContrailGraphModel, ControlPanelView) {
     var GraphView = joint.dia.Paper.extend({
         constructor: function (viewConfig) {
             var self = this,
