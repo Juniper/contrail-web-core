@@ -128,3 +128,8 @@
 .modal-backdrop.focus-config {
   z-index: 1000;
 }
+
+.modal .widget-to-delete {
+    font-weight: bold;
+    font-style: italic;
+}
