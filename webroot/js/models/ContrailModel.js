@@ -24,7 +24,7 @@ define([
               errorAttributes,
               editingLockAttrs;
 
-            self._modelAttributes = contrail.checkIfExist(modelData) ? self.defaultConfig : modelData
+            self._modelAttributes = contrail.checkIfExist(modelData) ? modelData : self.defaultConfig;
             editingLockAttrs = generateAttributes(self._modelAttributes, cowc.LOCKED_SUFFIX_ID, true);
 
             if(contrail.checkIfExist(self.defaultConfig)) {
