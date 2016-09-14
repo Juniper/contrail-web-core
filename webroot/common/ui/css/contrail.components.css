@@ -281,6 +281,11 @@
  * Contrail Tabs
  * Extends Jquery UI Tabs
  */
+.contrail-tab-link {
+    max-width: 640px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .contrail-tabs.ui-tabs .ui-state-default a i.contrail-tab-link-icon {
     margin-right: 10px;
     font-weight: normal;
