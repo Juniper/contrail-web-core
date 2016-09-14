@@ -53,11 +53,12 @@ define([
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
                 chartViewConfig, chartOptions, chartModel,
                 showLegend = getValueByJsonPath(viewConfig,'chartOptions;showLegend',false),
-                legendFn = getValueByJsonPath(viewConfig,'chartOptions;legendFn',null),
                 defaultZeroLineDisplay = getValueByJsonPath(viewConfig,'chartOptions;defaultZeroLineDisplay', false);
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data);
+            } else if (data != null && data.length > 0) {
+                data = cowu.chartDataFormatter(data, viewConfig['chartOptions']);
             }
 
             //plot default line
@@ -71,7 +72,6 @@ define([
                 defData.values.push({x:end, y:0.01, tooltip:false});
                 viewConfig.chartOptions.forceY = [0, 1];
                 viewConfig.chartOptions.defaultDataStatusMessage = false;
-                legendFn = null;
                 data.push(defData);
             }
 
@@ -91,6 +91,25 @@ define([
 
             //Store the chart object as a data attribute so that the chart can be updated dynamically
             $(selector).data('chart', chartModel);
+            if (chartOptions['showLegend'] && chartOptions['legendView'] != null) {
+                var lineData = [];
+                $.each(data, function(idx, obj) {
+                    lineData.push({
+                        name: obj['key'],
+                        color: obj['color']
+                    });
+                });
+                new chartOptions['legendView']({
+                    el: $(selector),
+                    legendConfig: {
+                        showLegend: chartOptions['showLegend'],
+                        legendData: [{
+                            label: getValueByJsonPath(chartOptions, 'title'),
+                            legend: lineData
+                        }]
+                    }
+                });
+            }
 
             if (!($(selector).is(':visible'))) {
                 $(selector).find('svg').bind("refresh", function () {
@@ -113,9 +132,6 @@ define([
                 });
             }
 
-            if (showLegend && legendFn != null && typeof legendFn == 'function') {
-                legendFn(data, selector);
-            }
         },
 
         renderMessage: function(message, selector, chartOptions) {
