@@ -63,6 +63,7 @@ define([
         tabHashUrlObj = window.layoutHandler.getURLHashParams().tab,
         activeTab = contrail.handleIfNull(viewConfig.active, 0);
 
+      // Array of tab view configs
       self.tabs = viewConfig.tabs;
       self.activateTimeout = null;
 
@@ -86,7 +87,7 @@ define([
 
         if (contrail.checkIfKeyExistInObject(true, tabConfig, "tabConfig.renderOnActivate")
           && tabConfig.tabConfig.renderOnActivate === true) {
-            tabConfig._rendered = false
+            tabConfig._rendered = false;
           } else {
             self.renderTab(tabConfig);
           }
@@ -95,8 +96,7 @@ define([
       self.$(self.selectors.tabs).contrailTabs({
         active: activeTab,
         activate: function(event, ui) {
-          var panelId = ($(ui.newPanel[0]).attr("id")),
-            tabIndex = ui.newTab.index(),
+          var tabIndex = ui.newTab.index(),
             tabHashUrlObj = {};
 
             /*
@@ -133,14 +133,12 @@ define([
         },
 
         beforeActivate: function(event, ui) {
-          var panelId = $(ui.newPanel[0]).attr("id");
           var tab = self.tabs[ui.newTab.index()];
 
           if (!tab._rendered) self.renderTab(tab);
         },
 
         create: function(event, ui) {
-          var panelId = $(ui.panel[0]).attr("id");
           var tab = self.tabs[ui.tab.index()];
 
           if (!tab._rendered) self.renderTab(tab);
@@ -166,10 +164,17 @@ define([
       });
     },
 
+    getTabIndex: function(id) {
+      var self = this;
+      var $li = self.$("li[aria-controls=" + id + "]");
+      return $li.index();
+    },
+
     removeTab: function(tabIndex) {
-      var self = this,
-        elId = self.attributes.elementId,
-        tabConfig = (contrail.checkIfExist(self.tabs[tabIndex].tabConfig) ? self.tabs[tabIndex].tabConfig : null);
+      var self = this;
+      var elId = self.attributes.elementId;
+      var tab = self.tabs[tabIndex];
+      if (!tab) return;
 
       if ($.isArray(tabIndex)) {
         for (var i = 0; i < tabIndex.length; i++) {
@@ -189,8 +194,8 @@ define([
         self.$(self.selectors.tabs).hide();
       }
 
-      if (tabConfig !== null && contrail.checkIfFunction(tabConfig.onRemoveTab)) {
-        tabConfig.onRemoveTab();
+      if (tab.tabConfig && contrail.checkIfFunction(tab.tabConfig.onRemoveTab)) {
+        tab.tabConfig.onRemoveTab();
       }
     },
 
@@ -218,30 +223,35 @@ define([
       var self = this,
         tabLinkTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_LINK_VIEW),
         tabContentTemplate = contrail.getTemplate4Id(cowc.TMPL_TAB_CONTENT_VIEW),
-        activateTabIndex;
+        newIndex = self.tabs.length,
+        activateTabIndex,
+        tabsRefreshed = false;
 
       self.modelMap = modelMap;
 
-      _.each(tabViewConfigs, function(tabConfig) {
-        var tabIndex = _.findIndex(self.tabs, function (tab) { return tab.elementId === tabConfig.elementId; });
+      _.each(tabViewConfigs, function(tabViewConfig) {
+        var tabIndex = _.findIndex(self.tabs, function (tab) { return tab.elementId === tabViewConfig.elementId; });
 
         if (tabIndex >= 0) {
           // activate existing tab
           self.$(self.selectors.tabs).data("contrailTabs").activateTab(tabIndex);
         } else {
-          self.$(self.selectors.linkList).append(tabLinkTemplate([tabConfig]));
-          self.$(self.selectors.tabs).append(tabContentTemplate([tabConfig]));
-          self.tabs.push(tabConfig);
+          self.$(self.selectors.linkList).append(tabLinkTemplate([tabViewConfig]));
+          self.$(self.selectors.tabs).append(tabContentTemplate([tabViewConfig]));
+          self.tabs.push(tabViewConfig);
 
-          var newIndex = _.sortedIndex(_.without(self.tabs, tabConfig), tabConfig, self._tabSortIteratee);
-          if (!self.moveTab(self.tabs.length - 1, newIndex)) self.$(self.selectors.tabs).data("contrailTabs").refresh();
+          if (tabViewConfig.tabConfig.editable) {
+            newIndex = _.sortedIndex(_.without(self.tabs, tabViewConfig), tabViewConfig, self._tabSortIteratee);
+            tabsRefreshed = self.moveTab(self.tabs.length - 1, newIndex);
+          }
+          if (!tabsRefreshed) self.$(self.selectors.tabs).data("contrailTabs").refresh();
 
-          if (contrail.checkIfKeyExistInObject(true, tabConfig, "tabConfig.renderOnActivate") &&
-            tabConfig.tabConfig.renderOnActivate === true) {
-              tabConfig._rendered = false;
+          if (contrail.checkIfKeyExistInObject(true, tabViewConfig, "tabConfig.renderOnActivate") &&
+            tabViewConfig.tabConfig.renderOnActivate === true) {
+              tabViewConfig._rendered = false;
               // TODO - onAllViewsRenderComplete should be called when rendered
             } else {
-              self.renderTab(tabConfig, onAllViewsRenderComplete);
+              self.renderTab(tabViewConfig, onAllViewsRenderComplete);
             }
 
           if (activateTab === true) {
@@ -255,18 +265,19 @@ define([
         }
       });
     },
-
+    // Move tab by indexes
     moveTab: function (from, to) {
       var self = this;
       if (from === to) return false;
 
       var links = self.$(self.selectors.linkList + " li");
+      links.detach();
       var panels = self.$(self.selectors.tabs + "> div");
       links.splice(to, 0, links.splice(from, 1)[0]);
       panels.splice(to, 0, panels.splice(from, 1)[0]);
       panels.detach();
+      self.$(self.selectors.linkList).append(links);
       self.$(self.selectors.tabs).append(panels);
-      self.$(self.selectors.linkList).html(links);
 
       self.tabs.splice(to, 0, self.tabs.splice(from, 1)[0]);
       self.$(self.selectors.tabs).data("contrailTabs").refresh();
