@@ -19,7 +19,7 @@ define([
     },
 
     comparator: function (w) {
-      return w.attributes.tabName;
+      return w.attributes.tabName.toLowerCase();
     },
 
     parse: function(response) {

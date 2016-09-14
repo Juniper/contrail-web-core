@@ -52,9 +52,13 @@
 
 .grid-stack-item.widget .panel .panel-heading .title-group .title {
   display: inline-block;
-  width: 21em;
+  min-width: 48px;
+  min-height: 18px;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.grid-stack-item.widget .panel .panel-heading .title-group .title:hover {
+  border: dashed 1px #ccc;
 }
 
 .grid-stack-item.widget .panel .panel-heading .title-group .edit-title {
