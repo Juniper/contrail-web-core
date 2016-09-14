@@ -94,6 +94,7 @@ define([
 
             if (contrailListModel.loadedFromCache || !(contrailListModel.isRequestInProgress())) {
                 if (contrail.checkIfExist(gridContainer.data('contrailGrid'))) {
+                    gridContainer.data('contrailGrid').removeGridLoading();
                     handleGridMessage();
                     performSort(gridSortColumns);
                 }
@@ -101,6 +102,7 @@ define([
 
             contrailListModel.onAllRequestsComplete.subscribe(function () {
                 if (contrail.checkIfExist(gridContainer.data('contrailGrid'))) {
+                    gridContainer.data('contrailGrid').removeGridLoading();
                     handleGridMessage();
 
                     performSort(gridSortColumns);
@@ -115,18 +117,13 @@ define([
 
             function handleGridMessage() {
                 if(contrailListModel.error) {
-                    gridContainer.data('contrailGrid').removeGridLoading();
                     if(contrailListModel.errorList.length > 0) {
                         gridContainer.data('contrailGrid').showGridMessage('error', 'Error: ' + contrailListModel.errorList[0].responseText);
                     } else {
                         gridContainer.data('contrailGrid').showGridMessage('error');
                     }
-                } else {
-                    if (contrailListModel.getItems().length == 0) {
-                        emptyGridHandler();
-                    } else {
-                        gridContainer.data('contrailGrid').removeGridLoading();
-                    }
+                } else if (gridOptions.defaultDataStatusMessage && contrailListModel.getItems().length == 0) {
+                    gridContainer.data('contrailGrid').showGridMessage('empty')
                 }
             };
 
@@ -1417,7 +1414,7 @@ define([
                         selectedFlag = true;
                     // For columns set hide/hidden to true; should display as unchecked.
                     if (contrail.checkIfExist(children.hide) && (children.hide)) {
-                        selectedFlag = false;
+                          selectedFlag = false;
                     }
                     if (contrail.checkIfExist(children.hidden) && (children.hidden)) {
                         selectedFlag = false;
@@ -1538,7 +1535,6 @@ define([
 
             function emptyGridHandler() {
                 if (!gridOptions.lazyLoading && gridOptions.defaultDataStatusMessage && gridContainer.data('contrailGrid')) {
-                    gridContainer.data('contrailGrid').removeGridLoading();
                     gridContainer.data('contrailGrid').showGridMessage('empty');
                     if (gridOptions.checkboxSelectable != false) {
                         gridContainer.find('.headerRowCheckbox').attr('disabled', true);

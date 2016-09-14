@@ -48,7 +48,7 @@ define([
                     gridHeight: 500,
                     rowSelectable: false,
                     sortable: true,
-                    lazyLoading: false,
+                    lazyLoading: true,
                     defaultDataStatusMessage: true,
                     actionCellPosition: 'end', //actionCellPosition indicates position of the settings icon whether it should be on row start and end
                     multiRowSelection: true, //This property will enable/disable selecting multiple rows of the grid, but the checkbox in the header should be removed by the client because as of now, we don't have way in api to remove the checkbox in header
