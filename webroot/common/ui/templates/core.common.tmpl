@@ -2254,3 +2254,35 @@
         <div class="col-xs-6 right-column"></div>
     </div>
 </script>
+<script type="text/x-handlebars-template" id="custom-chart-legend">
+    <div class="custom-chart-legend color-selection">
+    {{#if showControls}}
+        <div class="pull-left">
+            {{#each controlsData}}
+                <label class="pull-left"> {{this.label}} </label>
+                <div class="pull-left circle {{#IfCompare this.cssClass null operator= '!='}}{{this.cssClass}}{{/IfCompare}}"></div>
+            {{/each}}
+        </div>
+    {{/if}}
+    {{#if showLegend}}
+        <div class="pull-right">
+        {{#each legendData}}
+            <div class="pull-left" style="padding-right: 10px;">
+                {{#IfCompare label null operator='!='}}
+                    <label class="pull-left" style="padding-right: 10px;"> {{label}} </label>
+                {{/IfCompare}}
+                {{#each this.legend}}
+                    {{#IfCompare ../label null operator='=='}}
+                        {{#IfCompare this.name null operator='!='}}
+                            <label class="pull-left"> {{this.name}} </label>
+                        {{/IfCompare}}
+                    {{/IfCompare}}
+                    <div title = {{this.name}} class="pull-left square {{#IfCompare this.cssClass null operator= '!='}}{{this.cssClass}}{{/IfCompare}}"
+                         {{#IfCompare this.color null operator='!='}} style="background:{{this.color}}" {{/IfCompare}}></div>
+                {{/each}}
+            </div>
+        {{/each}}
+        </div>
+    {{/if}}
+    </div>
+</script>

@@ -84,7 +84,7 @@ define([
             , getY = function(d) { return d.y }
             , color = nv.utils.defaultColor()
             , showLegend = chartOptions.showLegend != null ? chartOptions.showLegend : true
-            , legendFn = chartOptions.legendFn
+            , legendView = chartOptions.legendView
             , focusEnable = chartOptions.focusEnable != null ? chartOptions.focusEnable : true
             , focusShowAxisY = false
             , focusShowAxisX = true
@@ -257,9 +257,7 @@ define([
                 //------------------------------------------------------------
 
                 if (requestState === cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY && showLegend) {
-                    if (legendFn != null) {
-                        legendFn (data, that, chartModel);
-                    } else {
+                    if (legendView == null){
                         var legendWidth = availableWidth,
                         legendXPosition = 0;
 
@@ -281,7 +279,7 @@ define([
 
                         g.select('.nv-legendWrap')
                             .attr('transform', 'translate(' + legendXPosition + ',' + (-margin.top) +')');
-                        }
+                     }
                 }
 
                 wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');

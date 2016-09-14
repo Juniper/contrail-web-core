@@ -790,7 +790,7 @@ p.error, p.error-text {
     transition: background-color .5s ease-in-out;
 }
 
-.circle.filled {
+.circle.filled, .square.filled {
     background-color: #666666;
 }
 
@@ -1071,4 +1071,28 @@ button#close-error-popup{
     box-sizing: border-box;
     top: 0px;
     padding-top: 52px;
+}
+
+.custom-chart-legend label{
+ color:#787878;
+ font-size:11px;
+ margin-left:10px
+}
+.custom-chart-legend label:first-child{
+ margin-left:0px;
+}
+.custom-chart-legend .circle {
+ margin: 4px;
+ border-width: thin;
+ padding: 3px;
+ cursor: pointer;
+ }
+.custom-chart-legend .square {
+ margin: 5px 4px;
+ border: none;
+ padding: 4px;
+ opacity: 1;
+}
+.custom-chart-legend{
+ padding: 10px 0px 0px 0px;
 }

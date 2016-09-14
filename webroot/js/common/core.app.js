@@ -85,7 +85,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'schema-model'               : coreWebDir + '/js/models/SchemaModel',
         'view-config-generator'      : coreWebDir + '/js/common/view.config.generator',
         'iframe-view'                 : coreWebDir + '/js/views/IframeView',
-        'jdorn-jsoneditor'            : coreWebDir + '/assets/jdorn-jsoneditor/js/jdorn-jsoneditor'
+        'jdorn-jsoneditor'            : coreWebDir + '/assets/jdorn-jsoneditor/js/jdorn-jsoneditor',
+        'legend-view'                 : coreWebDir + '/js/views/LegendView',
     };
 
     //Separate out aliases that need to be there for both prod & dev environments

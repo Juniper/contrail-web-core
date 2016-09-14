@@ -143,6 +143,9 @@ define([
         this.TMPL_NOT_FOUND_MESSAGE = "core-not-found-message-template";
         this.TMPL_INFOBOXES_VIEW = "core-infobox-template";
 
+        //stacked bar chart
+        this.TMPL_CUSTOM_CHART_LEGEND = 'custom-chart-legend';
+
         this.TMPL_NODE_DETAIL_SPARKLINE_BOX = 'node-details-sparkline-template';
         this.TMPL_NODE_DETAIL_INFOBOXES_BOX = 'node-details-infoboxes-template';
         //Top boxes in Monitor > Infra > Dashboard that show the summary count of
@@ -979,6 +982,8 @@ define([
         this.ALARM_BUCKET_DURATION = 300000000;//5 MINUTES
         this.TMPL_ALARM_SEVERITY = 'alarm-severity-template';
 
+        this.DEFAULT_BUCKET_DURATION = 5; //MINUTES
+
         this.DROPDOWN_VALUE_SEPARATOR = ";";
 
         this.GRAPH_IMAGE_MAP = {
@@ -1029,6 +1034,14 @@ define([
         };
         this.DEFAULT_COLOR = '#adcfdc';
         this.HTTP_STATUS_CODE_AUTHORIZATION_FAILURE = 401;
+
+        //Node color schemes
+        this.SINGLE_NODE_COLOR = ['#adcfdc'];
+        this.THREE_NODE_COLOR = ['#a8c0d1', '#6f97ae', '#617683'];
+        this.FIVE_NODE_COLOR = ['#819eb5', '#6b8295', '#876f8a', '#b2a198', '#eccc9b'];
+        this.FAILURE_COLOR = '#d95436';
+
+        this.FAILURE_LABEL = 'Failures';
     };
     //Export to global scope
     cowc = new CoreConstants();
