@@ -253,7 +253,7 @@ function executeQuery(res, queryOptions, appData, isGetQ) {
         asyncHeader = { "Expect": "202-accepted" };
 
     logutils.logger.debug("Query sent to Opserver at " + new Date() + " " + JSON.stringify(queryJSON));
-    queryOptions.startTime = new Date().getTime();
+    queryOptions.startTime = queryOptions.queryJSON['query_start_time'] = new Date().getTime();
     opApiServer.apiPost(global.RUN_QUERY_URL, queryJSON, appData,
         function (error, jsonData) {
             if (error) {
@@ -628,7 +628,7 @@ function getQueryData (req, res, appData) {
 
 function processQueryResults(res, queryResults, queryOptions, isGetQ) {
     var startDate = new Date(),
-        startTime = startDate.getTime(),
+        startTime = queryOptions['startTime'],
         queryId = queryOptions.queryId,
         chunkSize = queryOptions.chunkSize,
         queryJSON = queryOptions.queryJSON,
@@ -638,6 +638,7 @@ function processQueryResults(res, queryResults, queryOptions, isGetQ) {
         endTime, total, responseJSON, resultJSON;
 
     endTime = endDate.getTime();
+    queryOptions.queryJSON['query_end_time'] = endTime;
     resultJSON = (queryResults && !isEmptyObject(queryResults)) ? queryResults.value : [];
     logutils.logger.debug("Query results (" + resultJSON.length + " records) received from opserver at " + endDate + " in " + ((endTime - startTime) / 1000) + "secs. " + JSON.stringify(queryJSON));
     total = resultJSON.length;

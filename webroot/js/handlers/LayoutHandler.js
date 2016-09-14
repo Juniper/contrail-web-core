@@ -15,7 +15,8 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
             //reset the cache
             if(typeof(cowch) != "undefined")
                 cowch.reset();
-
+            //Clear the refresh link
+            cowu.clearPageRefresh();
             menuHandler.loadMenu(menuObj);
             menuHandler.handleSideMenu();
             self.onHashChange({}, cowhu.getState());
@@ -79,9 +80,13 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
                 else
                     cowhu.pushState({q: hashParams});
             }
+            //Clear the refresh link
+            cowu.clearPageRefresh();
         };
 
         this.onHashChange = function(lastHash, currHash, loadingStartedDefObj) {
+            //Clear the refresh link
+            cowu.clearPageRefresh();
             globalObj['featureAppDefObj'].done(function () {
                 contentHandler.loadContent(lastHash, currHash, loadingStartedDefObj);
             });

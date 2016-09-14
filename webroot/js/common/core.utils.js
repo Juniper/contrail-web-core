@@ -13,6 +13,7 @@ define([
     var CoreUtils = function () {
         var self = this;
         this.getAlarmsFromAnalytics = true;
+        this.pageRefreshTimers = [];
         //Setting the sevLevels used to display the node colors
         if(this.getAlarmsFromAnalytics) {
             // sevLevels = cowc.SEV_LEVELS;
@@ -1373,6 +1374,32 @@ define([
                 return sign + intPart +" "+suffix;
         };
 
+        this.getTimestampForNowFormat = function (timeStr,refTime) {
+            // Check if we have keyword now in that
+            var nowStr = 'now-';
+            var pos = timeStr.indexOf(nowStr);
+            var retTime;
+            if (pos != -1) {
+                var s = timeStr.slice(pos + nowStr.length);
+                var val = s.substr(0, s.length - 1);
+                var scale = s[s.length-1];
+                var currTime;
+                if(refTime != null) {
+                    currTime = new XDate(refTime);
+                } else {
+                    currTime = new XDate();
+                }
+                if (scale == 'm') {
+                    retTime = currTime.addMinutes(-val);
+                } else if (scale == 'h') {
+                    retTime = currTime.addHours(-val);
+                } else if (scale == 'd') {
+                    retTime = currTime.addDays(-val);
+                }
+            }
+            return retTime.getTime();
+        };
+
         /**
          * This function bucketize the given data as per the
          * bucket duration parameter
@@ -1391,10 +1418,22 @@ define([
                 return obj[timestampField];
             });
             if (insertEmptyBuckets && timeRange != null
-                   && timeRange['start_time'] && timeRange['end_time']) {
-                   minMaxTS[0] = timeRange['start_time'];
-                   minMaxTS[1] = timeRange['end_time'];
-            }
+                    && timeRange['start_time'] && timeRange['end_time']) {
+                   if(isNaN(timeRange['start_time'])) {
+                       minMaxTS[0] = ((timeRange['start_time'] == 'now')?
+                               timeRange['query_start_time'] :
+                                       this.getTimestampForNowFormat (timeRange['start_time'], timeRange['query_start_time'])) * 1000;
+                   } else {
+                       minMaxTS[0] = timeRange['start_time'];
+                   }
+                   if(isNaN(timeRange['end_time'])) {
+                       minMaxTS[1] = ((timeRange['end_time'] == 'now')?
+                               timeRange['query_start_time'] :
+                                       this.getTimestampForNowFormat (timeRange['end_time'], timeRange['query_start_time'])) * 1000;
+                   } else {
+                       minMaxTS[1] = timeRange['end_time'];
+                   }
+               }
             //If only 1 value extend the range by DEFAULT_BUCKET_DURATION (5 mins) on both sides
             if(minMaxTS[0] == minMaxTS[1]) {
                 minMaxTS[0] -= bucketSize;
@@ -1570,9 +1609,40 @@ define([
                      });
                 }
             }
-            return _.values(parsedData);;
+            return _.values(parsedData);
+        };
+
+        this.getCurrentTime = function (format) {
+            if (format == null) {
+                format = "hh:mm TT";
+            }
+            return new XDate().toString(format);
+        };
+
+        this.addPageRefresh = function (currPageView,onClickFn) {
+            var selector = '#page-refresh-link';
+            currPageView.renderView4Config($(selector), null,
+                    getPageRefreshViewConfig(currPageView,onClickFn));
+        }
+
+        this.clearPageRefresh = function () {
+            $('#page-refresh-link').empty();
+            $.each(this.pageRefreshTimers,function(i,d) {
+                clearInterval(d);
+            });
         }
     };
+
+    function getPageRefreshViewConfig (currPageView, onClickFn) {
+       return {
+           elementId : 'page_refresh_id',
+           view : "PageRefreshView",
+           viewConfig : {
+               parentView : currPageView,
+               onClick : onClickFn
+           }
+       }
+    }
 
     function filterXML(xmlString, is4SystemLogs) {
         var xmlDoc = parseXML(xmlString);
