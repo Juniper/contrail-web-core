@@ -7,11 +7,13 @@
  */
 
 define([
+    "lodash",
     "knockout",
     "knockback",
     "validation",
     "contrail-view"
-], function(ko, kb, kbValidation, ContrailView) {
+], function(_, ko, kb, kbValidation, ContrailView) {
+
     return ContrailView.extend({
         render: function() {
             var self = this;
@@ -28,7 +30,32 @@ define([
                 viewConfig: {
                     rows: [{
                         columns: [{
-                            elementId: "detailed_entry",
+                            elementId: "gridTitle",
+                            view: "FormInputView",
+                            viewConfig: {
+                                label: cowl.GRID_TITLE,
+                                path: "gridTitle",
+                                dataBindValue: "gridTitle",
+                                class: "col-xs-6",
+                            }
+                        }, {
+                            elementId: "pageSize",
+                            view: "FormDropdownView",
+                            viewConfig: {
+                                label: cowl.GRID_PAGE_SIZE,
+                                path: "pageSize",
+                                dataBindValue: "pageSize",
+                                class: "col-xs-6",
+                                elementConfig: {
+                                    dataTextField: "text",
+                                    dataValueField: "id",
+                                    data: covdc.gridConfig.footer.pager.options.pageSizeSelect,
+                                },
+                            }
+                        }]
+                    }, {
+                            columns: [{
+                            elementId: "detailedEntry",
                             view: "FormCheckboxView",
                             viewConfig: {
                                 label: cowl.GRID_ENTRY_WITH_DETAILS,
@@ -37,20 +64,32 @@ define([
                                 class: "col-xs-6"
                             },
                         }, {
-                            elementId: "checkable_entry",
+                            elementId: "selectableEntry",
                             view: "FormCheckboxView",
                             viewConfig: {
                                 label: cowl.GRID_ENTRY_WITH_CHECKBOX,
-                                path: "checkableEntry",
-                                dataBindValue: "checkableEntry",
+                                path: "selectableEntry",
+                                dataBindValue: "selectableEntry",
                                 class: "col-xs-6"
                             }
-                        }],
+                        }]
+                    }, {
+                        columns: [{
+                            elementId: "visibleColumns",
+                            view: "FormMultiselectView",
+                            viewConfig: {
+                                label: cowl.GRID_VISIBLE_COLUMNS,
+                                path: "visibleColumns",
+                                dataBindValue: "visibleColumns",
+                                dataBindOptionList: "availableColumns",
+                                class: "col-xs-12",
+                                elementConfig: {}
+                            },
+                        }]
                     }],
                 },
             };
         },
-
         remove: function() {
             var self = this;
             kb.release(self.model, self.$el[0]);

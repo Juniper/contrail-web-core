@@ -5,16 +5,23 @@
 define([
     "lodash",
     "core-constants",
+    "core-basedir/js/common/qe.utils",
     "core-basedir/js/common/qe.grid.config",
     "reports/udd/ui/js/models/ContentConfigModel.js"
-], function(_, coreConstants, QEGridConfigBuilders, ContentConfigModel) {
+], function(_, coreConstants, QEUtils, QEGridConfigBuilders, ContentConfigModel) {
+    var delimiter = ",";
+
     return ContentConfigModel.extend({
         defaultConfig: {
-            table: "",
+            gridTitle: "",
+            tableName: "",
             tableType: "",
             fields: [],
             detailedEntry: true,
-            checkableEntry: true
+            selectableEntry: true,
+            visibleColumns: "",
+            availableColumns: [],
+            pageSize: covdc.gridConfig.footer.pager.options.pageSize
         },
 
         validations: {
@@ -29,18 +36,39 @@ define([
                 return;
             }
 
-            var selectedFields = viewModel.select().replace(/\s+/g, "").split(",");
+            var selectedFields = viewModel.select().replace(/\s+/g, ""),
+                selectedFieldArray = selectedFields.split(delimiter);
 
-            this.table(tableName);
+            this.tableName(tableName);
             this.tableType(tableType);
-            this.fields(selectedFields);
+            this.fields(selectedFieldArray);
+            // this is a ViewModel which doesn't need to be saved on backend
+            this.availableColumns(_.map(selectedFieldArray, function(field) {
+                return {
+                    id: field,
+                    text: QEUtils.formatNameForGrid(field)
+                };
+            }));
+
+            var columnsToShow = this.visibleColumns().split(delimiter),
+                invalidColumnsToRemove = _.difference(columnsToShow, selectedFieldArray),
+                newColumnsToShowByDefault = _.difference(selectedFieldArray, columnsToShow);
+
+            // TODO: When Lodash@4.x.x is available, replace this whole line with _.pullAll(columnsToShow, invalidColumnsToRemove);
+            columnsToShow = _.difference(columnsToShow, invalidColumnsToRemove);
+
+            // TODO: When Lodash^4.x.x is available, replace this whole line with this.visibleColumns(_.concat(columnsToShow, newColumnsToShowByDefault).join(delimiter));
+            this.visibleColumns(columnsToShow.concat(newColumnsToShowByDefault).join(delimiter));
         },
 
         toJSON: function() {
             var self = this;
             return {
+                gridTitle: self.gridTitle(),
                 detailedEntry: self.detailedEntry(),
-                checkableEntry: self.checkableEntry()
+                selectableEntry: self.selectableEntry(),
+                visibleColumns: self.visibleColumns(),
+                pageSize: self.pageSize()
             };
         },
 
@@ -55,9 +83,16 @@ define([
             var customGridConfig = {
                 body: {
                     options: {
-                        checkboxSelectable: this.checkableEntry(),
+                        checkboxSelectable: this.selectableEntry(),
                         autoHeight: false,
                         gridHeight: 274
+                    }
+                },
+                footer: {
+                    pager: {
+                        options: {
+                            pageSize: this.pageSize()
+                        }
                     }
                 }
             };
@@ -71,8 +106,9 @@ define([
 
             customGridConfig = _.merge(
                 QEGridConfigBuilders.getQueryGridConfig({},
-                    QEGridConfigBuilders.getColumnDisplay4Grid(this.table(), this.tableType(), this.fields()), {
-                        titleText: "test Title",
+                    QEGridConfigBuilders.getColumnDisplay4Grid(this.tableName(), this.tableType(), this.fields()),
+                    {
+                        titleText: this.gridTitle(),
                         fixedRowHeight: 40,
                         actionCell: false,
                         actionCellPosition: "end",
@@ -83,85 +119,22 @@ define([
                 customGridConfig
             );
 
+            var colToShow = this.visibleColumns().split(delimiter),
+                len = colToShow.length,
+                shouldShow = _.zipObject(colToShow, _.times(len, function() {
+                    // TODO: When Lodash@4.13.x and above are available, replace this anonymous function with _.stubTrue
+                    return true;
+                }));
+
+            _.forEach(customGridConfig.columnHeader.columns, function(columnConfig) {
+                if (!shouldShow[columnConfig.field]) {
+                    columnConfig.hide = true;
+                }
+            });
+
             return {
                 elementConfig: customGridConfig
             };
-            // return {
-            //     elementConfig: {
-            //         header: {
-            //             title: {
-            //                 cssClass: 'blue',
-            //                 icon: '',
-            //                 iconCssClass: 'blue'
-            //             },
-            //             icon: false,
-            //             defaultControls: {
-            //                 collapseable: true,
-            //                 exportable: true,
-            //                 refreshable: false,
-            //                 searchable: true
-            //             },
-            //             customControls: false
-            //         },
-            //         columnHeader: {
-            //             columns: QEGridConfigBuilders.getColumnDisplay4Grid(this.table(), this.tableType(), this.fields())
-            //         },
-            //         body: {
-            //             options: {
-            //                 actionCell: false,
-            //                 autoHeight: true,
-            //                 autoRefresh: false,
-            //                 checkboxSelectable: this.checkableEntry(),
-            //                 detail: this.detailedEntry(),
-            //                 enableCellNavigation: true,
-            //                 enableColumnReorder: false,
-            //                 enableTextSelectionOnCells: true,
-            //                 fullWidthRows: true,
-            //                 multiColumnSort: true,
-            //                 rowHeight: 30,
-            //                 fixedRowHeight: false,
-            //                 gridHeight: 500,
-            //                 rowSelectable: false,
-            //                 sortable: true,
-            //                 lazyLoading: false,
-            //                 actionCellPosition: "end", //actionCellPosition indicates position of the settings icon whether it should be on row start and end
-            //                 multiRowSelection: true, //This property will enable/disable selecting multiple rows of the grid
-            //                 //but the checkbox in the header should be removed by the client because as of now
-            //                 //we don't have way in api to remove the checkbox in header
-            //             },
-            //             dataSource: {
-            //                 remote: null,
-            //                 data: null,
-            //                 events: {}
-            //             },
-            //             statusMessages: {
-            //                 loading: {
-            //                     type: 'status',
-            //                     iconClasses: '',
-            //                     text: 'Loading...'
-            //                 },
-            //                 empty: {
-            //                     type: 'status',
-            //                     iconClasses: '',
-            //                     text: 'No Records Found.'
-            //                 },
-            //                 error: {
-            //                     type: 'error',
-            //                     iconClasses: 'fa fa-warning',
-            //                     text: 'Error - Please try again later.'
-            //                 }
-            //             }
-            //         },
-            //         footer: {
-            //             pager: {
-            //                 options: {
-            //                     pageSize: 50,
-            //                     pageSizeSelect: [10, 50, 100, 200]
-            //                 }
-            //             }
-            //         }
-            //     }
-            // };
         },
     });
 });
