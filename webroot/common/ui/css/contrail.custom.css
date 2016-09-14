@@ -1072,3 +1072,13 @@ button#close-error-popup{
     top: 0px;
     padding-top: 52px;
 }
+
+.page-refresh-icon {
+	color: #555555;
+	font-size : 13px;
+}
+
+.page-refresh-text {
+	color: #898989;
+	font-size : 11px
+}

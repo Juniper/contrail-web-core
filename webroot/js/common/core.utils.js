@@ -13,6 +13,7 @@ define([
     var CoreUtils = function () {
         var self = this;
         this.getAlarmsFromAnalytics = true;
+        this.pageRefreshTimers = [];
         //Setting the sevLevels used to display the node colors
         if(this.getAlarmsFromAnalytics) {
             // sevLevels = cowc.SEV_LEVELS;
@@ -1362,7 +1363,37 @@ define([
                 return sign + intPart +" "+suffix;
         };
 
+        this.getCurrentTime = function (format) {
+            if (format == null) {
+                format = "hh:mm TT";
+            }
+            return new XDate().toString(format);
+        };
+
+        this.addPageRefresh = function (currPageView,onClickFn) {
+            var selector = '#page-refresh-link';
+            currPageView.renderView4Config($(selector), null,
+                    getPageRefreshViewConfig(currPageView,onClickFn));
+        }
+
+        this.clearPageRefresh = function () {
+            $('#page-refresh-link').empty();
+            $.each(this.pageRefreshTimers,function(i,d) {
+                clearInterval(d);
+            });
+        }
     };
+
+    function getPageRefreshViewConfig (currPageView, onClickFn) {
+       return {
+           elementId : 'page_refresh_id',
+           view : "PageRefreshView",
+           viewConfig : {
+               parentView : currPageView,
+               onClick : onClickFn
+           }
+       }
+    }
 
     function filterXML(xmlString, is4SystemLogs) {
         var xmlDoc = parseXML(xmlString);
