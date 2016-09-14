@@ -23,6 +23,7 @@ define([
             contentConfigDropdown: "#contentViewSelector",
             back: ".panel-footer .back",
             config: ".widget-control .config",
+            confirmDeletionModal: "#confirm-to-delete"
         },
 
         events: {
@@ -226,14 +227,31 @@ define([
         },
 
         remove: function() {
-            var self = this;
-            var title = this.model.get("configModel").title();
-            var proceed = confirm('Are you sure to remove widget "' + title + '"?');
-            if (!proceed) {
-                return;
-            }
-            self._enableConfigFocusMode(false);
-            self.model.destroy();
+            var self = this,
+                title = self.model.get("configModel").title(),
+                widgetToDeleteClass = "widget-to-delete",
+                $confirmationModal = $(this.selectors.confirmDeletionModal);
+
+            cowu.createModal({
+                modalId: self.selectors.confirmDeletionModal.substr(1),
+                className: "modal-700",
+                title: "Delete This Widget?",
+                body: '<p>Are you sure to <strong>remove</strong> widget <span class="' + widgetToDeleteClass + '"></span> ?',
+                btnName: "Remove",
+                onCancel: function() {
+                    console.debug("Cancel");
+                    $confirmationModal.modal("hide");
+                },
+                onSave: function() {
+                    self._enableConfigFocusMode(false);
+                    self.model.destroy();
+                    $confirmationModal.modal("hide");
+                }
+            });
+
+            $confirmationModal = $(self.selectors.confirmDeletionModal);
+
+            $confirmationModal.find("." + widgetToDeleteClass).text(title);
         },
 
         editTitle: function() {
