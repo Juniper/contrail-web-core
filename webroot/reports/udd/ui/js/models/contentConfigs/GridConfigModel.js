@@ -81,6 +81,11 @@ define([
 
         getContentViewOptions: function() {
             var customGridConfig = {
+                header: {
+                    defaultControls: {
+                        collapseable: false
+                    }
+                },
                 body: {
                     options: {
                         checkboxSelectable: this.selectableEntry(),
