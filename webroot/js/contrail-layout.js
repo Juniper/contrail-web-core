@@ -93,7 +93,6 @@ $(document).ready(function () {
         }
     });
 
-    layoutHandler.load();
 
     jQuery.support.cors = true;
 
@@ -115,6 +114,7 @@ $(document).ready(function () {
             //ajaxDefErrorHandler(xhr);
         }
     });
+    layoutHandler.load();
 
     //$(window).resize(onWindowResize);
     lastHash = $.bbq.getState();
