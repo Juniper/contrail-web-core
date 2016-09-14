@@ -119,13 +119,17 @@ define([
             }
 
             if (tabletype === cowc.QE_FLOW_TABLE_TYPE) {
-                self.table_name_data_object({
-                    status: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY,
-                    data: [
+                var resultArr = [
                         cowc.FLOW_SERIES_TABLE,
                         cowc.FLOW_RECORD_TABLE
-                    ]
+                    ];
+                self.table_name_data_object({
+                    status: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY,
+                    data: resultArr
                 });
+                if(setTableValuesCallbackFn !== null){
+                    setTableValuesCallbackFn(self, resultArr);
+                }
             } else if (timeRange == -1) {
                 var fromTimeUTC = new Date(contrailViewModel.attributes.from_time).getTime(),
                     toTimeUTC = new Date(contrailViewModel.attributes.to_time).getTime();
