@@ -240,9 +240,6 @@
     <div class='infobox-widget'>
         <div class='infobox-container row'>
             <div class="control-panel-items pull-right">
-                <div class="control-panel-item refresh" data-action="refresh" title="Refresh">
-                    <i class="fa fa-repeat"></i>
-                </div>
             </div>
         </div>
         <hr class='hr-8'></hr>
@@ -2403,6 +2400,7 @@
         <div class="col-xs-6 right-column"></div>
     </div>
 </script>
+
 <script type="text/x-handlebars-template" id="core-1-row-1-column-template">
     <div class="container-fluid {{#if this.cssClass}}{{{this.cssClass}}}{{/if}}">
 </script>
@@ -2438,6 +2436,7 @@
     {{/if}}
     </div>
 </script>
+
 <script type="text/x-handlebars-template" id="carousal-view-template">
     <div class="carousel slide" data-ride="carousel">
         <!--<ol class="carousel-indicators">
@@ -2469,3 +2468,14 @@
 <script type="text/x-handlebars-template" id="grid-tag-template">
     <span class='badge' style='background-color:{{bgcolor}}'>{{celltext}}</span>
 </script>
+
+<script type="text/x-handlebars-template" id="page-refresh-template">
+        <div class=" page-refresh pull-right">
+            <!-- <div class="pull-left page-refresh-icon" style="margin-right:8px;"><i class="fa fa-clock-o" aria-hidden="true"></i></div> -->
+            <div class="page-last-refresh-time-text page-refresh-text pull-left">
+            </div>
+            <div class="pull-left" style="margin-right:10px; margin-left:8px;">
+                <i class="fa fa-repeat" aria-hidden="true"></i>
+            </div>
+        </div>
+<script>

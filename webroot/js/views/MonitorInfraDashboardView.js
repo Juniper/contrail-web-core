@@ -10,15 +10,16 @@ define([
     'mon-infra-node-list-model',
     'mon-infra-alert-list-view',
     'mon-infra-log-list-view',
-    'mon-infra-sysinfo-view'
+    'mon-infra-sysinfo-view',
+    'contrail-view'
 ], function(_,Backbone,InfoboxesView,
         LogListModel,NodeListModel,
-        AlertListView,LogListView,SystemInfoView) {
+        AlertListView,LogListView,SystemInfoView, ContrailView) {
 
     //Ensure MonInfraDashboardView is instantiated only once and re-used always
     //Such that tabs can be added dynamically like from other feature packages
     //Instead oaf assigning the extended Backbone View to a class,instantiate it immediately
-    return new (Backbone.View.extend({
+    return new (ContrailView.extend({
         el: $(contentContainer),
         render: function () {
             var self = this;

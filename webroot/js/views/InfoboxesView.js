@@ -4,9 +4,10 @@
 
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
-    var InfoboxesView = Backbone.View.extend({
+    'backbone',
+    'contrail-view'
+], function (_, Backbone, ContrailView) {
+    var InfoboxesView = ContrailView.extend({
         initialize: function() {
             var self = this;
             self.loadedInfoboxes = [];
@@ -14,7 +15,7 @@ define([
             //Clean-up if there already exists .infobox-container
             self.$el.find('.infobox-container').remove();
             self.$el.append(contrail.getTemplate4Id(cowc.TMPL_INFOBOXES_VIEW)());
-            self.$el.find("[data-action='refresh']").on('click',function() {
+            cowu.addPageRefresh(self, function() {
                 for(var len=self.loadedInfoboxes.length,i=0;i < len;i++) {
                     var currInfobox = self.loadedInfoboxes[i];
                     currInfobox['model'].refreshData();
@@ -68,6 +69,7 @@ define([
             //Initialize view
             var chartView = new cfg['view']({
                 model: cfg['model'],
+                models : [cfg['model']],
                 el: self.$el.find('.infobox-detail-container .infobox-detail-item:last')
             });
 

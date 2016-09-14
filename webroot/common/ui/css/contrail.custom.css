@@ -1230,3 +1230,13 @@ button#close-error-popup{
 .custom-grid-stack .custom-grid-stack-item:hover {
     border: 0px solid #f2f2f2;
 }
+
+.page-refresh-icon {
+	color: #555555;
+	font-size : 13px;
+}
+
+.page-refresh-text {
+	color: #898989;
+	font-size : 11px;
+}
