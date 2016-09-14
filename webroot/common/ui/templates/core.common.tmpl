@@ -1898,6 +1898,67 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-control-panel-filter-2-col-template">
+<div class="control-panel-filter-container">
+    <div class="row">
+        <p class="control-panel-filter-title">
+            <span class="pull-left control-panel-filter-title-icon"><i class="fa fa-filter"></i></span>
+            <span class="pull-left control-panel-filter-title-text">Filter</span>
+            <span class="pull-right control-panel-filter-close"><i class="fa fa-remove"></i></span>
+        </p>
+    </div>
+    <div class="row control-panel-filter-body">
+        {{#each viewConfig.groups}}
+            <div class="col-xs-6">
+            {{#each this}}
+                    <div class="control-panel-filter-group row">
+                        {{#IfCompare title false operator='!='}}
+                        <h6 class="control-panel-group-filter-title">{{title}}</h6>
+                        {{/IfCompare}}
+                        <div id="control-panel-filter-group-items-{{id}}" class="row control-panel-filter-group-items padding-5-0;">
+                            {{#IfCompare type 'checkbox-circle' operator='=='}}
+                            {{#each items}}
+                                <div class="control-panel-filter-group-item">
+                                    <input type="checkbox" name="control-panel-filter-{{../id}}" class="ace-input checkbox-circle" checked/>
+                                    <span class="ace-lbl checkbox-circle {{labelCssClass}}"> {{text}}</span>
+                                </div>
+                            {{/each}}
+                            {{/IfCompare}}
+
+                            {{#IfCompare type 'radio' operator='=='}}
+                            {{#each items}}
+                                <div class="control-panel-filter-group-item row">
+                                    <div class="col-xs-1">
+                                        <input type="radio" name="control-panel-filter-{{../id}}" value="{{text}}" {{#IfCompare disabled true operator='=='}} disabled {{/IfCompare}} {{#IfCompare selected true operator='=='}} checked {{else}} {{#IfCompare @index 0 operator='=='}} checked {{/IfCompare}} {{/IfCompare}} class="margin-0"/>
+                                    </div>
+                                    <div class="col-xs-11 control-panel-filter-text">
+                                        <span class="margin-2 {{labelCssClass}}" title="{{text}}"> {{text}}</span>
+                                    </div>
+                                </div>
+                            {{/each}}
+                            {{/IfCompare}}
+
+                            {{#IfCompare type 'checkbox' operator='=='}}
+                            {{#each items}}
+                            <div class="control-panel-filter-group-item row">
+                                <div class="col-xs-1">
+                                    <input type="checkbox" name="control-panel-filter-{{../id}}-{{id}}" value="{{text}}" {{#IfCompare checked true operator='=='}} checked {{/IfCompare}} class="margin-0"/>
+                                </div>
+                                <div class="col-xs-11 control-panel-filter-text">
+                                    <span class="margin-2 {{labelCssClass}}" title="{{text}}"> {{text}}</span>
+                                </div>
+                            </div>
+                            {{/each}}
+                            {{/IfCompare}}
+
+                        </div>
+                    </div>
+            {{/each}}
+            </div>
+        {{/each}}
+    </div>
+</div>
+</script>
 
 <script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-template">
     <div class="zoom-scatter-chart-container colmask rightmenu">
