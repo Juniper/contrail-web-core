@@ -17,6 +17,8 @@ define([ 'underscore', 'contrail-view', 'vis'],
                 container = document.getElementById(elId),
                 visOptions = viewConfig.visOptions ? viewConfig.visOptions :
                 self.defaultVisOptions;
+            self.nodesDataSet.clear();
+            self.edgesDataSet.clear();
             self.caller = viewConfig.caller;
             self.initNetwork(container, visOptions);
 
@@ -60,6 +62,10 @@ define([ 'underscore', 'contrail-view', 'vis'],
                     } else {
                         $(div).attr("id", key);
                     }
+                    if(obj[key].hasOwnProperty("class")) {
+                        $(div).attr("class", "vis-button " +
+                            obj[key]["class"]);
+                    }
                     if(obj[key].hasOwnProperty("style")) {
                         $(div).attr("style", obj[key]["style"]);
                     }
@@ -70,9 +76,6 @@ define([ 'underscore', 'contrail-view', 'vis'],
                         $(div).on("click", function(params) {
                             obj[key]["click"](params);
                         });
-                    }
-                    if(obj[key].hasOwnProperty("class")) {
-                        $(div).append($("<i class='" + obj[key]["class"] + "' />"));
                     }
                     $('.vis-navigation').append(div);
                 }
