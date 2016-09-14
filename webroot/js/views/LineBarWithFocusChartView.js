@@ -72,6 +72,34 @@ define([
 
             //Store the chart object as a data attribute so that the chart can be updated dynamically
             $(selector).data('chart', chartModel);
+            if (chartOptions['showLegend'] && chartOptions['legendView'] != null) {
+                var barData = [], lineData = [];
+                $.each(data, function(idx, obj) {
+                    if (obj['bar']) {
+                        barData.push({
+                            name: obj['key'],
+                            color: obj['color']
+                        })
+                    } else {
+                        lineData.push({
+                            name: obj['key'],
+                            color: obj['color']
+                        })
+                    }
+                });
+                new chartOptions['legendView']({
+                    el: $(selector),
+                    legendConfig: {
+                        showLegend: chartOptions['showLegend'],
+                        legendData: [{
+                            label: getValueByJsonPath(chartOptions, 'title'),
+                            legend: barData
+                        }, {
+                            legend: lineData
+                        }]
+                    }
+                });
+            }
 
             nv.addGraph(function () {
                 if (!($(selector).is(':visible'))) {

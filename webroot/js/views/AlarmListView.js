@@ -54,7 +54,7 @@ define([
             }
             if(cfDataSource.getDimension('timeFilter') == null) {
                 cfDataSource.addDimension('timeFilter',function(d) {
-                    return d['timestamp'];
+                    return d['T'];
                 });
             }
             if(cfDataSource.getDimension('severityFilter') == null) {
@@ -157,9 +157,20 @@ define([
                                         xAxisOffset: 30,
                                         barWidth: 6,
                                         onClickBar : true,
-                                        yAxisFormatter: d3.format("d")
+                                        showLegend: false,
+                                        showControls: false,
+                                        groupBy: 'severity',
+                                        yAxisFormatter: d3.format('d'),
+                                        colors: {
+                                            '0': '#dc6660',//Critical Red
+                                            '1': '#dc6660',//Major Red
+                                            '2': '#ffbf87'//Minor Orange
+                                        },
+                                        brush: true,
+                                        tooltipFn: function (d) {
+                                            return d3.time.format("%e %b %X")(d.date) + "<br/>"  + d.y + " Alarm(s)"
+                                        }
                                     },
-                                    parseFn : coreAlarmParsers.parseAlarmsDataForStackChart,
                                     cfDataSource : self.cfDataSource
                                 }
                             }
