@@ -1,0 +1,90 @@
+<!-- Copyright (c) 2014 Juniper Networks, Inc. All rights reserved. -->
+
+<script type="text/x-handlebars-template" id="query-select-popup-template">
+    <form id="{{queryPrefix}}-select-popup-form" onsubmit="return false;">
+        <div class="row" data-bind="visible: select_data_object().requestState() == cowc.DATA_REQUEST_STATE_FETCHING">
+            <div class="col-xs-12">
+                <i class="fa fa-spinner fa-spin"></i> Fetching..
+            </div>
+        </div>
+        <div class="row" data-bind="visible: select_data_object().requestState() == cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY">
+            <div class="col-xs-12">
+                <p>Select Fields not found for this table. Please select a valid table name.</p>
+            </div>
+        </div>
+        <div class="row" data-bind="visible: select_data_object().requestState() == cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY">
+            <div class="row">
+                <a class="pull-right selectAllLink " data-bind="text: select_data_object().isSelectChecked($root) ? 'Clear All' : 'Select All', click: select_data_object().on_select_all"></a>
+            </div>
+
+            {{#IfCompare specialQueryPrefix true operator='=='}}
+                <div class="col-xs-12">
+                    {{#each aggregateTypes}}
+                        <div id="{{../queryPrefix}}-select-{{this}}-box">
+
+                            <div data-bind="if: 'Time Range' == '{{this}}'" >
+                                <div class="col-xs-12 select-aggregate-header">
+                                    <h4 class="smaller">{{this}}</h4>
+                                </div>
+                            </div>
+
+                            <div data-bind="if: 'Time Range' != '{{this}}'" >
+                                <div class="col-xs-6 select-aggregate-header">
+                                    <h4 class="smaller">{{this}}</h4>
+                                </div>
+                            </div>
+                            <div data-bind="if: 'Time Range' != '{{this}}'" >
+                                <div class="col-xs-6 select-aggregate-link">
+                                    <a class="pull-right selectAllLink " data-bind="text: select_data_object().isSelectAggregateChecked($root,'{{this}}') ? 'Clear {{this}}' : 'Select {{this}}', click: function() { select_data_object().on_select_aggregate($root, '{{this}}',event) }"></a>
+                                </div>
+                            </div>
+                             <div class="col-xs-12 row-3n select-aggregate-body" data-bind="foreach: select_data_object().select_fields()">
+                                 <div data-bind="if: $data.aggregate_type == '{{this}}'" >
+                                     <div class="col-xs-4">
+                                         <div class="row">
+                                             <div class="col-xs-1">
+                                                 <input type="checkbox"
+                                                    data-bind="
+                                                    name: name, value: name, checked: $root.select_data_object().checked_map()[name],
+                                                    click: function(data, event) { return $root.select_data_object().on_select($root, data, event); },
+                                                    enable: $root.select_data_object().enable_map()[name]()"
+                                                    class="ace-input"
+                                                 />
+                                                 <span class="ace-lbl"></span>
+                                             </div>
+                                             <div class="col-xs-11">
+                                                 <div class="select-label" data-bind="text: name, attr: { title: name }"></div>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                            </div>
+                        </div>
+                    {{/each}}
+                </div>
+            {{else}}
+                <div>
+                    <div class="row-3n" data-bind="foreach: select_data_object().select_fields()">
+                        <div class="col-xs-4">
+                            <div class="row">
+                                <div class="col-xs-1">
+                                    <input type="checkbox"
+                                        data-bind="
+                                        name: name, value: name, checked: $root.select_data_object().checked_map()[name],
+                                        click: function(data, event) { return $root.select_data_object().on_select($root, data, event); },
+                                        enable: $root.select_data_object().enable_map()[name]()"
+                                       class="ace-input"
+                                    />
+                                    <span class="ace-lbl"></span>
+                                </div>
+                                <div class="col-xs-11">
+                                    <div class="select-label" data-bind="text: name, attr: { title: name }"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{/IfCompare}}
+        </div>
+    </form>
+</script>
