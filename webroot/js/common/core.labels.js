@@ -334,6 +334,9 @@ define([
         this.CHART_Y_AXIS_VALUE_PLACEHOLDER = 'Select Y Axis Value'
         this.CHART_Y_AXIS_LABEL = 'y Axis Label';
 
+        this.GRID_TITLE = "Title";
+        this.GRID_VISIBLE_COLUMNS = "Columns to Show";
+        this.GRID_PAGE_SIZE = "Records Per Grid";
         this.GRID_ENTRY_WITH_DETAILS = "Use Collapsible Detailed Entry";
         this.GRID_ENTRY_WITH_CHECKBOX = "Selectable Entry with Checkbox";
     };
