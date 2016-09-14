@@ -497,7 +497,7 @@ define([
                 }
             }
         };
-        
+
         this.constructJsonHtmlViewer = function (jsonValue, formatDepth, currentDepth, ignoreKeys) {
             var htmlValue = '',
                 objType = {type: 'object', startTag: '{', endTag: '}'};
@@ -647,23 +647,6 @@ define([
             } else {
                 if (contrail.checkIfExist($(elements).data('contrailGrid'))) {
                     $(elements).data('contrailGrid').refreshView();
-                }
-            }
-        };
-
-        this.handleEmptyGrid4LazyLoading = function(gridId, data, count) {
-            if (contrail.checkIfExist($('#' + gridId).data('contrailGrid'))) {
-                $('#' + gridId).data('contrailGrid').removeGridLoading();
-
-                if (data.length === 0) {
-                    $('#' + gridId).data('contrailGrid').showGridMessage('empty');
-                }
-            } else {
-                count = contrail.checkIfExist(count) ? count : 1;
-                if (count < 5) {
-                    setTimeout(function () {
-                        self.handleEmptyGrid4LazyLoading(gridId, data, count);
-                    }, count * 1000);
                 }
             }
         };
