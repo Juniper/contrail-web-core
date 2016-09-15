@@ -168,18 +168,18 @@ define([
         onChange: function(event, items) {
             var self = this;
             _.each(items, function(item) {
-                if (!item.id) {
-                    return;
-                }
+                if (!item.id) return;
+                    
                 var widgetView = self.childViewMap[item.id];
-                if (!widgetView) {
-                    return;
-                }
-                var config = widgetView.model.get("configModel");
-                config.x(item.x);
-                config.y(item.y);
-                config.width(item.width);
-                config.height(item.height);
+                if (!widgetView) return;
+
+                var config = widgetView.model.get("configModel").model();
+                config.set({
+                    x: item.x,
+                    y: item.y,
+                    width: item.width,
+                    height: item.height,
+                });
             });
         },
         // TODO: this method is specific to a widget having GridView as content.

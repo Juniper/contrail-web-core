@@ -53,7 +53,7 @@ define([
         render: function() {
             var self = this;
 
-            Knockback.applyBindings(self.model.get("configModel"), self.$el.find(self.selectors.heading)[0]);
+            Knockback.applyBindings(self.model.get("configModel"), self.$el[0]);
             // show config by default for widget with no data source selected
             if (self.model.isValid()) {
                 self.goStep(self.steps.CONTENT);
