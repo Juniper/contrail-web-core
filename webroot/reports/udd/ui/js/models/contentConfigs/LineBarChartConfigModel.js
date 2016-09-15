@@ -13,9 +13,13 @@ define(function(require) {
             lineColor: "green",
             barLabel: "",
             barValue: "",
+            barValueUnit: "",
+            isInferredBarUnit: false,
             lineLabel: "",
             lineValue: "",
-            yAxisValues: [],
+            lineValueUnit: "",
+            isInferredLineUnit: false,
+            yAxisValues: []
         },
 
         validations: {
@@ -42,8 +46,12 @@ define(function(require) {
                 lineColor: self.lineColor(),
                 barLabel: self.barLabel(),
                 barValue: self.barValue(),
+                barValueUnit: self.barValueUnit(),
+                isInferredBarUnit: self.isInferredBarUnit(),
                 lineLabel: self.lineLabel(),
                 lineValue: self.lineValue(),
+                lineValueUnit: self.lineValueUnit(),
+                isInferredLineUnit: self.isInferredLineUnit()
             };
         },
 
@@ -58,16 +66,27 @@ define(function(require) {
         getContentViewOptions: function() {
             var self = this;
             return {
+                // loadChartInChunks: true,
                 chartOptions: {
                     axisLabelDistance: 5,
                     height: 300,
                     yAxisLabels: [self.barLabel(), self.lineLabel()],
                     colors: [self.barColor(), self.lineColor()],
                     forceY: [0, 10],
-                    y1Formatter: cowf.getFormattedValue.bind(cowf, cowc.QUERY_COLUMN_FORMATTER[self.barValue()]),
-                    y2Formatter: cowf.getFormattedValue.bind(cowf, cowc.QUERY_COLUMN_FORMATTER[self.lineValue()]),
-                },
+                    y1Formatter: cowf.getFormattedValue.bind(cowf, [{
+                        format: cowc.QUERY_COLUMN_FORMATTER[self.barValue()],
+                        options: {
+                            unit: self.barValueUnit()
+                        }
+                    }]),
+                    y2Formatter: cowf.getFormattedValue.bind(cowf, [{
+                        format: cowc.QUERY_COLUMN_FORMATTER[self.lineValue()],
+                        options: {
+                            unit: self.lineValueUnit()
+                        }
+                    }]),
+                }
             };
-        },
+        }
     });
 });

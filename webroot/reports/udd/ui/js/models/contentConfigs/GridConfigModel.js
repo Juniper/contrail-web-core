@@ -18,7 +18,6 @@ define([
             tableType: "",
             fields: [],
             detailedEntry: true,
-            selectableEntry: true,
             visibleColumns: "",
             availableColumns: [],
             pageSize: covdc.gridConfig.footer.pager.options.pageSize
@@ -66,7 +65,6 @@ define([
             return {
                 gridTitle: self.gridTitle(),
                 detailedEntry: self.detailedEntry(),
-                selectableEntry: self.selectableEntry(),
                 visibleColumns: self.visibleColumns(),
                 pageSize: self.pageSize()
             };
@@ -88,7 +86,7 @@ define([
                 },
                 body: {
                     options: {
-                        checkboxSelectable: this.selectableEntry(),
+                        checkboxSelectable: false,
                         autoHeight: false,
                         gridHeight: 274
                     }

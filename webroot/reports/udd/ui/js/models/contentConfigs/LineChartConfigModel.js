@@ -12,6 +12,8 @@ define(function(require) {
             color: "1f77b4",
             yAxisLabel: "",
             yAxisValue: "",
+            yAxisValueUnit: "",
+            isInferredYAxisUnit: false,
             yAxisValues: [],
         },
 
@@ -35,6 +37,8 @@ define(function(require) {
                 color: self.color(),
                 yAxisLabel: self.yAxisLabel(),
                 yAxisValue: self.yAxisValue(),
+                yAxisValueUnit: self.yAxisValueUnit(),
+                isInferredYAxisUnit: self.isInferredYAxisUnit()
             };
         },
 
@@ -55,7 +59,12 @@ define(function(require) {
                     yAxisLabel: self.yAxisLabel(),
                     colors: [self.color()],
                     forceY: [0, 10],
-                    yFormatter: cowf.getFormattedValue.bind(cowf, cowc.QUERY_COLUMN_FORMATTER[self.yAxisValue()]),
+                    yFormatter: cowf.getFormattedValue.bind(cowf, [{
+                        format: cowc.QUERY_COLUMN_FORMATTER[self.yAxisValue()],
+                        options: {
+                            unit: self.yAxisValueUnit()
+                        }
+                    }]),
                 },
             };
         },
