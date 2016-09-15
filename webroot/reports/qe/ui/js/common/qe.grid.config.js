@@ -4,8 +4,8 @@
 
 define([
     'underscore',
-    'core-basedir/js/common/qe.utils'
-], function (_, qewu) {
+    'core-basedir/reports/qe/ui/js/common/qe.utils'
+], function (_, qeUtils) {
     var QEGridConfig = function () {
         this.getColumnDisplay4Grid = function(tableName, tableType, selectArray) {
             var self = this, columnDisplay = [],
@@ -22,7 +22,7 @@ define([
             }
 
             $.each(selectArray, function(selectKey, selectValue) {
-                var columnName = qewu.formatNameForGrid(selectValue),
+                var columnName = qeUtils.formatNameForGrid(selectValue),
                     columnConfig = {
                         id: selectValue, field: selectValue,
                         name: columnName,
@@ -59,7 +59,7 @@ define([
                 columnDisplay = self.getColumnDisplay4Grid(tableName, tableType, selectArray);
 
             $.each(columnDisplay, function(columnKey, columnValue){
-                if (!qewu.isAggregateField(columnValue.id) && columnValue.id !== 'T' && columnValue.id !== 'T=' && columnValue.id !== 'UUID' && columnValue['id'].indexOf("PERCENTILES(") == -1) {
+                if (!qeUtils.isAggregateField(columnValue.id) && columnValue.id !== 'T' && columnValue.id !== 'T=' && columnValue.id !== 'UUID' && columnValue['id'].indexOf("PERCENTILES(") == -1) {
                     newColumnDisplay.push(columnValue);
                 }
             });
@@ -199,7 +199,7 @@ define([
 
         //this.setSessionAnalyzerOnClick = function(parentView, queryFormAttributes, elementId) {
         //    return function(e, selRowDataItem) {
-        //        if (qewu.enableSessionAnalyzer(selRowDataItem)) {
+        //        if (qeUtils.enableSessionAnalyzer(selRowDataItem)) {
         //            this.getOnClickSessionAnalyzer(parentView, queryFormAttributes, elementId)(e, selRowDataItem);
         //        }
         //    };
@@ -1959,7 +1959,7 @@ define([
             {select: "ModuleId", display:{width: 200, searchable:true}},
             {select: "Messagetype", display:{width:230, searchable:true}},
             {select: "Keyword", display:{width:150, searchable:true}},
-            {select: "Level", display:{width:100, searchable:true, formatter: function(r, c, v, cd, dc) { return qewu.getLevelName4Value(dc.Level); }}},
+            {select: "Level", display:{width:100, searchable:true, formatter: function(r, c, v, cd, dc) { return qeUtils.getLevelName4Value(dc.Level); }}},
             {select: "Category", display:{width: 150, searchable:true}},
             {select: "Context", display:{width:150, searchable:true}},
             {

@@ -6,8 +6,8 @@ define([
     'underscore',
     'contrail-view',
     'contrail-list-model',
-    'core-basedir/js/common/qe.grid.config'
-], function (_, ContrailView, ContrailListModel,qewgc) {
+    'core-basedir/reports/qe/ui/js/common/qe.grid.config'
+], function (_, ContrailView, ContrailListModel, qeGridConfig) {
 
     var QueryResultGridView = ContrailView.extend({
         render: function () {
@@ -91,13 +91,13 @@ define([
 
     function getQueryResultGridConfig(queryResultRemoteConfig, queryFormAttributes, gridOptions) {
         var selectArray = queryFormAttributes.select.replace(/ /g, "").split(","),
-            queryResultGridColumns = qewgc.getColumnDisplay4Grid(queryFormAttributes.table_name, queryFormAttributes.table_type, selectArray);
+            queryResultGridColumns = qeGridConfig.getColumnDisplay4Grid(queryFormAttributes.table_name, queryFormAttributes.table_type, selectArray);
 
         if (contrail.checkIfExist(gridOptions.gridColumns)) {
             queryResultGridColumns = gridOptions.gridColumns.concat(queryResultGridColumns)
         }
 
-        return qewgc.getQueryGridConfig(queryResultRemoteConfig, queryResultGridColumns, gridOptions);
+        return qeGridConfig.getQueryGridConfig(queryResultRemoteConfig, queryResultGridColumns, gridOptions);
     };
 
     return QueryResultGridView;

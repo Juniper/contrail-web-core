@@ -6,8 +6,8 @@ define([
     'underscore',
     'contrail-view',
     'contrail-list-model',
-    'core-basedir/js/common/qe.grid.config'
-], function (_, ContrailView, ContrailListModel,qewgc) {
+    'core-basedir/reports/qe/ui/js/common/qe.grid.config'
+], function (_, ContrailView, ContrailListModel, qeGridConfig) {
     var QueryQueueView = ContrailView.extend({
         render: function () {
             var self = this,
@@ -188,7 +188,7 @@ define([
                 }
             },
             columnHeader: {
-                columns: qewgc.getQueueColumnDisplay(function(queryQueueItem) {
+                columns: qeGridConfig.getQueueColumnDisplay(function(queryQueueItem) {
                     viewQueryResultAction (queryQueueItem, queryQueueView, queueColorMap, 'queue');
                 })
             },
@@ -610,7 +610,7 @@ define([
                         {
                             title: 'Analyze Session',
                             iconClass: 'fa fa-external-link-square',
-                            onClick: qewgc.getOnClickSessionAnalyzer(self, queryFormAttributes.queryId, queryFormAttributes.formModelAttrs)
+                            onClick: qeGridConfig.getOnClickSessionAnalyzer(self, queryFormAttributes.queryId, queryFormAttributes.formModelAttrs)
                         }
                     ]
                 };

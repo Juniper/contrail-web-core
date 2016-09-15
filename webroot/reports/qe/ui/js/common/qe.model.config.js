@@ -4,8 +4,8 @@
 
 define([
     'underscore',
-    'core-basedir/js/common/qe.utils'
-], function (_,qewu) {
+    'core-basedir/reports/qe/ui/js/common/qe.utils'
+], function (_, qeUtils) {
     var QEDefaultConfig = function () {
 
         this.getQueryModelConfig = function (customModelConfig) {
@@ -69,7 +69,7 @@ define([
                     isCheckedMap["T="](false);
                     for (key in isEnableMap) {
                         keyLower = key.toLowerCase();
-                        if (qewu.isAggregateField(key)) {
+                        if (qeUtils.isAggregateField(key)) {
                             isCheckedMap[key](false);
                             if (tableType === cowc.QE_FLOW_TABLE_TYPE) {
                                 isEnableMap[key](false);
@@ -84,7 +84,7 @@ define([
                 } else {
                     for (key in isEnableMap) {
                         keyLower = key.toLowerCase();
-                        if (qewu.isAggregateField(key) && tableType === cowc.QE_FLOW_TABLE_TYPE) {
+                        if (qeUtils.isAggregateField(key) && tableType === cowc.QE_FLOW_TABLE_TYPE) {
                             isEnableMap[key](true);
                         }
                     }
@@ -94,7 +94,7 @@ define([
                     isCheckedMap["T"](false);
                     for (key in isEnableMap) {
                         keyLower = key.toLowerCase();
-                        if (qewu.isAggregateField(key)) {
+                        if (qeUtils.isAggregateField(key)) {
                             if (tableType === cowc.QE_FLOW_TABLE_TYPE) {
                                 isEnableMap[key](true);
                             }
@@ -111,7 +111,7 @@ define([
                 } else {
                     for (key in isEnableMap) {
                         keyLower = key.toLowerCase();
-                        if (qewu.isAggregateField(key)) {
+                        if (qeUtils.isAggregateField(key)) {
                             isCheckedMap[key](false);
                             nonAggKey = key.substring(key.indexOf('(') + 1, key.indexOf(')'));
                             if(contrail.checkIfFunction(isEnableMap[nonAggKey]) && tableType === cowc.QE_FLOW_TABLE_TYPE) {
@@ -129,7 +129,7 @@ define([
                 dataObject = data.select_data_object(),
                 isEnableMap = dataObject.enable_map(),
                 isCheckedMap = dataObject.checked_map(),
-                checkedFields = qewu.getCheckedFields(isCheckedMap),
+                checkedFields = qeUtils.getCheckedFields(isCheckedMap),
                 key, nonAggKey;
 
             if (checkedFields.length == 0) {
@@ -141,7 +141,7 @@ define([
                 }
 
                 for (key in isEnableMap) {
-                    if (qewu.isAggregateField(key)) {
+                    if (qeUtils.isAggregateField(key)) {
                         isCheckedMap[key](true);
 
                         nonAggKey = key.substring(key.indexOf('(') + 1, key.indexOf(')'));
@@ -223,7 +223,7 @@ define([
             var tableType = root.table_type(),
                 dataObject = root.select_data_object(),
                 isCheckedMap = dataObject.checked_map(),
-                checkedFields = qewu.getCheckedFields(isCheckedMap);
+                checkedFields = qeUtils.getCheckedFields(isCheckedMap);
 
             return (checkedFields.length !== 0)
         };
@@ -233,7 +233,7 @@ define([
                 dataObject = root.select_data_object(),
                 selectFields = dataObject.select_fields,
                 isCheckedMap = dataObject.checked_map(),
-                checkedFields = qewu.getCheckedFields(isCheckedMap),
+                checkedFields = qeUtils.getCheckedFields(isCheckedMap),
                 selectAggregateChecked = false;
 
             if (checkedFields.length == 0) {

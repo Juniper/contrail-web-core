@@ -7,8 +7,8 @@ define([
     'query-form-view',
     'knockback',
     'core-basedir/reports/qe/ui/js/models/StatQueryFormModel',
-    'core-basedir/js/common/qe.utils'
-], function (_, QueryFormView, Knockback, StatQueryFormModel,qewu) {
+    'core-basedir/reports/qe/ui/js/common/qe.utils'
+], function (_, QueryFormView, Knockback, StatQueryFormModel, qeUtils) {
 
     var StatQueryFormView = QueryFormView.extend({
         render: function () {
@@ -43,7 +43,7 @@ define([
                     }
                 });
 
-                qewu.adjustHeight4FormTextarea(queryPrefix);
+                qeUtils.adjustHeight4FormTextarea(queryPrefix);
 
                 if (queryType === cowc.QUERY_TYPE_RERUN) {
                     self.renderQueryResult();
@@ -70,7 +70,7 @@ define([
             }
 
             queryFormModel.is_request_in_progress(true);
-            qewu.fetchServerCurrentTime(function(serverCurrentTime) {
+            qeUtils.fetchServerCurrentTime(function(serverCurrentTime) {
                 var queryRequestPostData = queryFormModel.getQueryRequestPostData(serverCurrentTime);
 
                 self.renderView4Config($(queryResultId), self.model,
@@ -128,7 +128,7 @@ define([
                                     viewConfig: {
                                         style: 'display: none;',
                                         path: 'from_time', dataBindValue: 'from_time', class: "col-xs-3",
-                                        elementConfig: qewu.getFromTimeElementConfig('from_time', 'to_time'),
+                                        elementConfig: qeUtils.getFromTimeElementConfig('from_time', 'to_time'),
                                         visible: "time_range() == -1"
                                     }
                                 },
@@ -137,7 +137,7 @@ define([
                                     viewConfig: {
                                         style: 'display: none;',
                                         path: 'to_time', dataBindValue: 'to_time', class: "col-xs-3",
-                                        elementConfig: qewu.getToTimeElementConfig('from_time', 'to_time'),
+                                        elementConfig: qeUtils.getToTimeElementConfig('from_time', 'to_time'),
                                         visible: "time_range() == -1"
                                     }
                                 }
@@ -184,7 +184,7 @@ define([
                                         editPopupConfig: {
                                             renderEditFn: function(event) {
                                                 var tableName = self.model.table_name();
-                                                self.renderSelect({className: qewu.getModalClass4Table(tableName)});
+                                                self.renderSelect({className: qeUtils.getModalClass4Table(tableName)});
                                             }
                                         }
                                     }

@@ -8,8 +8,8 @@ define([
     'query-form-view',
     'knockback',
     'core-basedir/js/models/NodeConsoleLogsModel',
-    'core-basedir/js/common/qe.utils'
-], function (_, moment, QueryFormView, Knockback, NodeConsoleLogsModel,qewu) {
+    'core-basedir/reports/qe/ui/js/common/qe.utils'
+], function (_, moment, QueryFormView, Knockback, NodeConsoleLogsModel, qeUtils) {
     var nodeType,hostname;
     var NodeConsoleLogsView = QueryFormView.extend({
         render: function () {
@@ -141,7 +141,7 @@ define([
             formatQueryParams(queryFormModel);
 
             queryFormModel.is_request_in_progress(true);
-            qewu.fetchServerCurrentTime(function(serverCurrentTime) {
+            qeUtils.fetchServerCurrentTime(function(serverCurrentTime) {
                 var timeRange = parseInt(queryFormModel.time_range()),
                     queryRequestPostData;
 
@@ -194,7 +194,7 @@ define([
                                     viewConfig: {
                                         style: 'display: none;',
                                         path: 'from_time', dataBindValue: 'from_time', class: "col-xs-4",
-                                        elementConfig: qewu.getFromTimeElementConfig('from_time', 'to_time'),
+                                        elementConfig: qeUtils.getFromTimeElementConfig('from_time', 'to_time'),
                                         visible: "time_range() == -1"
                                     }
                                 },
@@ -203,7 +203,7 @@ define([
                                     viewConfig: {
                                         style: 'display: none;',
                                         path: 'to_time', dataBindValue: 'to_time', class: "col-xs-4",
-                                        elementConfig: qewu.getToTimeElementConfig('from_time', 'to_time'),
+                                        elementConfig: qeUtils.getToTimeElementConfig('from_time', 'to_time'),
                                         visible: "time_range() == -1"
                                     }
                                 }

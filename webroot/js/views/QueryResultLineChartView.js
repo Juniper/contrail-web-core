@@ -6,10 +6,10 @@ define([
     'underscore',
     'contrail-view',
     'contrail-list-model',
-    'core-basedir/js/common/qe.parsers',
-    'core-basedir/js/common/qe.utils',
-    'core-basedir/js/common/qe.grid.config',
-], function (_, ContrailView, ContrailListModel, qewp, qewu, qewgc) {
+    'core-basedir/reports/qe/ui/js/common/qe.parsers',
+    'core-basedir/reports/qe/ui/js/common/qe.utils',
+    'core-basedir/reports/qe/ui/js/common/qe.grid.config',
+], function (_, ContrailView, ContrailListModel, qeParser, qeUtils, qeGridConfig) {
 
     var QueryResultLineChartView = ContrailView.extend({
         render: function() {
@@ -32,7 +32,7 @@ define([
         var queryResultChartGroupUrl = '/api/qe/query/chart-groups?queryId=' + queryId,
             selectArray = queryFormAttributes.select.replace(/ /g, "").split(","),
             queryIdSuffix = '-' + queryId,
-            aggregateSelectFields = qewu.getAggregateSelectFields(selectArray),
+            aggregateSelectFields = qeUtils.getAggregateSelectFields(selectArray),
             queryResultLineChartId = cowl.QE_QUERY_RESULT_LINE_CHART_ID + queryIdSuffix,
             chartAxesOptions = {};
 
@@ -40,8 +40,8 @@ define([
             var yFormatterKey = cowc.QUERY_COLUMN_FORMATTER[selectFieldValue];
             chartAxesOptions[selectFieldValue] = {
                 axisLabelDistance: 5,
-                yAxisLabel: qewu.formatNameForGrid(selectFieldValue),
-                yAxisDataField: qewu.formatNameForGrid(selectFieldValue),
+                yAxisLabel: qeUtils.formatNameForGrid(selectFieldValue),
+                yAxisDataField: qeUtils.formatNameForGrid(selectFieldValue),
                 forceY: [0, 10],
                 yFormatter: function (d) {
                     return cowf.getFormattedValue(yFormatterKey, d)
@@ -159,16 +159,16 @@ define([
                     }
                 }
             ],
-            columnDisplay = qewgc.getColumnDisplay4ChartGroupGrid(queryFormAttributes.table_name, queryFormAttributes.table_type, selectArray);
+            columnDisplay = qeGridConfig.getColumnDisplay4ChartGroupGrid(queryFormAttributes.table_name, queryFormAttributes.table_type, selectArray);
 
         if (queryFormAttributes.query_prefix === cowc.FS_QUERY_PREFIX) {
 
-            if (qewu.enableSessionAnalyzer(null, queryFormAttributes)) {
+            if (qeUtils.enableSessionAnalyzer(null, queryFormAttributes)) {
                 actionCell = [
                     {
                         title: 'Analyze Session',
                         iconClass: 'fa fa-external-link-square',
-                        onClick: qewgc.getOnClickSessionAnalyzer(parentView, queryId, queryFormAttributes)
+                        onClick: qeGridConfig.getOnClickSessionAnalyzer(parentView, queryId, queryFormAttributes)
                     }
                 ]
             }
@@ -219,7 +219,7 @@ define([
                         url: chartUrl,
                         type: 'GET'
                     },
-                    dataParser: qewp.fsQueryDataParser
+                    dataParser: qeParser.fsQueryDataParser
                 }
             });
 
@@ -246,7 +246,7 @@ define([
     function formatChartData(modelMap, queryFormAttributes, chartColorAvailableKeys) {
         var chartListModel = modelMap[cowc.UMID_QUERY_RESULT_CHART_MODEL],
             selectArray = queryFormAttributes.select.replace(/ /g, "").split(","),
-            aggregateSelectFields = qewu.getAggregateSelectFields(selectArray),
+            aggregateSelectFields = qeUtils.getAggregateSelectFields(selectArray),
             chartData = [];
 
         $.each(chartColorAvailableKeys, function(colorKey, colorValue) {
@@ -260,7 +260,7 @@ define([
                         color: cowc.D3_COLOR_CATEGORY7[colorKey]
                     };
 
-                qewu.addChartMissingPoints(chartDataRow, queryFormAttributes, aggregateSelectFields);
+                qeUtils.addChartMissingPoints(chartDataRow, queryFormAttributes, aggregateSelectFields);
 
                 $.each(chartDataRow.values, function (fcItemKey, fcItemValue) {
                     var ts = parseInt(fcItemKey),
@@ -295,7 +295,7 @@ define([
 
         $.each(aggregateSelectFields, function(selectFieldKey, selectFieldValue) {
             filterConfig.groups[0].items.push({
-                text: qewu.formatNameForGrid(selectFieldValue),
+                text: qeUtils.formatNameForGrid(selectFieldValue),
                 events: {
                     click: function(event) {
                         var chartModel = $('#' + queryResultLineChartId).data('chart'),

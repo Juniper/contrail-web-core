@@ -6,14 +6,17 @@ define([
     'underscore',
     'knockout',
     'query-form-model',
-    'core-basedir/js/common/qe.model.config'
-], function (_, Knockout, QueryFormModel,qewmc) {
+    'core-basedir/reports/qe/ui/js/common/qe.model.config'
+], function (_, Knockout, QueryFormModel, qeModelConfig) {
     var StatQueryFormModel = QueryFormModel.extend({
 
         defaultSelectFields: [],
 
         constructor: function (modelData, queryReqConfig) {
-            var defaultConfig = qewmc.getQueryModelConfig({table_type: cowc.QE_STAT_TABLE_TYPE, query_prefix: cowc.STAT_QUERY_PREFIX});
+            var defaultConfig = qeModelConfig.getQueryModelConfig({
+                table_type: cowc.QE_STAT_TABLE_TYPE,
+                query_prefix: cowc.STAT_QUERY_PREFIX
+            });
 
             modelData = $.extend(true, {}, defaultConfig, modelData);
             QueryFormModel.prototype.constructor.call(this, modelData, queryReqConfig);

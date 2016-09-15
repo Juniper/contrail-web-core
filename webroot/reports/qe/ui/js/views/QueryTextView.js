@@ -5,8 +5,8 @@
 define([
     'underscore',
     'query-form-view',
-    'core-basedir/js/common/qe.utils'
-], function (_, QueryFormView, qewu) {
+    'core-basedir/reports/qe/ui/js/common/qe.utils'
+], function (_, QueryFormView, qeUtils) {
 
     var QueryTextView = QueryFormView.extend({
         render: function () {
@@ -18,7 +18,7 @@ define([
 
             self.$el.append(queryPageTmpl);
 
-            self.$el.find('.queryText').append(qewu.formatEngQuery(queryFormAttributes.engQueryStr));
+            self.$el.find('.queryText').append(qeUtils.formatEngQuery(queryFormAttributes.engQueryStr));
         }
     });
 

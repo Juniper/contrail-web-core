@@ -7,7 +7,7 @@ define([
     'moment'
 ], function (_, moment) {
     var serializer = new XMLSerializer(),
-        qewu,
+        qeUtils,
         domParser = new DOMParser();
 
     var QEUtils = function () {
@@ -407,7 +407,7 @@ define([
                 aggregateType = columnName.substr(0,firstIndex),
                 aggregateColumnName = columnName.substr(firstIndex + 1,lastIndex - firstIndex - 1);
 
-            if(qewu.isAggregateField(columnName) || aggregateType == "AVG" || aggregateType == "PERCENTILES") {
+            if(qeUtils.isAggregateField(columnName) || aggregateType == "AVG" || aggregateType == "PERCENTILES") {
                 return aggregateType.toUpperCase() + " (" + cowl.get(aggregateColumnName) + ")";
             } else {
                 return cowl.get(columnName).replace(')', '');
@@ -835,6 +835,6 @@ define([
         return operatorCode;
     };
 
-    qewu = new QEUtils();
-    return qewu;
+    qeUtils = new QEUtils();
+    return qeUtils;
 });

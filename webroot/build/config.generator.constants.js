@@ -73,6 +73,10 @@ constants.coreModules  = [
         enabled: true,
         name: 'qe-module',
         include: [
+            'core-basedir/reports/qe/ui/js/common/qe.utils',
+            'core-basedir/reports/qe/ui/js/common/qe.parsers',
+            'core-basedir/reports/qe/ui/js/common/qe.grid.config',
+            'core-basedir/reports/qe/ui/js/common/qe.model.config',
             'core-basedir/reports/qe/ui/js/views/QueryEngineView',
             'core-basedir/reports/qe/ui/js/views/QueryQueueView',
             'core-basedir/reports/qe/ui/js/views/QueryTextView',
