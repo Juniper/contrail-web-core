@@ -7,8 +7,9 @@ define([
     'contrail-view',
     'core-basedir/js/models/LineBarWithFocusChartModel',
     'contrail-list-model',
-    'nv.d3'
-], function (_, ContrailView, LineBarWithFocusChartModel, ContrailListModel) {
+    'nv.d3',
+    'chart-utils'
+], function (_, ContrailView, LineBarWithFocusChartModel, ContrailListModel, nv, chUtils) {
     var LineBarWithFocusChartView = ContrailView.extend({
         render: function () {
             var viewConfig = this.attributes.viewConfig,
@@ -55,7 +56,7 @@ define([
                 data = viewConfig['parseFn'](data);
             }
 
-            chartViewConfig = getChartViewConfig(data, viewConfig.chartOptions);
+            chartViewConfig = self.getChartViewConfig(data, viewConfig.chartOptions);
             chartOptions = chartViewConfig['chartOptions'];
             //viewConfig.chartOptions = chartOptions;
             chartModel = new LineBarWithFocusChartModel(chartOptions);
@@ -130,6 +131,31 @@ define([
                 selector = contrail.handleIfNull(selector, $(self.$el));
 
             $(selector).find('.nv-requestState').remove();
+        },
+
+        getChartViewConfig: function(chartData, chartOptions) {
+            var chartViewConfig = {};
+
+            var chartOptions = $.extend(true, {}, covdc.lineBarWithFocusChartConfig, chartOptions);
+
+            chartOptions['forceY1'] = getForceY1Axis(chartData, chartOptions['forceY1']);
+            chartOptions['forceY2'] = getForceY2Axis(chartData, chartOptions['forceY2']);
+            if (chartData.length > 0 && chartOptions['focusEnable']) {
+                var values = chartData[0].values,
+                    brushExtent = null,
+                    start, end;
+
+                if (values.length >= 25) {
+                    start = values[values.length - 25];
+                    end = values[values.length - 1];
+                    chartOptions['brushExtent'] = [chUtils.getViewFinderPoint(start.x), chUtils.getViewFinderPoint(end.x)];
+                }
+            }
+
+            chartViewConfig['chartData'] = chartData;
+            chartViewConfig['chartOptions'] = chartOptions;
+
+            return chartViewConfig;
         }
     });
 
@@ -155,31 +181,6 @@ define([
             self.removeMessage();
         }
     }
-
-    function getChartViewConfig(chartData, chartOptions) {
-        var chartViewConfig = {};
-
-        var chartOptions = $.extend(true, {}, covdc.lineBarWithFocusChartConfig, chartOptions);
-
-        chartOptions['forceY1'] = getForceY1Axis(chartData, chartOptions['forceY1']);
-        chartOptions['forceY2'] = getForceY2Axis(chartData, chartOptions['forceY2']);
-        if (chartData.length > 0 && chartOptions['focusEnable']) {
-            var values = chartData[0].values,
-                brushExtent = null,
-                start, end;
-
-            if (values.length >= 25) {
-                start = values[values.length - 25];
-                end = values[values.length - 1];
-                chartOptions['brushExtent'] = [chUtils.getViewFinderPoint(start.x), chUtils.getViewFinderPoint(end.x)];
-            }
-        }
-
-        chartViewConfig['chartData'] = chartData;
-        chartViewConfig['chartOptions'] = chartOptions;
-
-        return chartViewConfig;
-    };
 
     function getForceY1Axis(chartData, defaultForceY1) {
         var dataBars = chartData.filter(function (d) {

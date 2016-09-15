@@ -6,8 +6,9 @@ define([
     'underscore',
     'contrail-view',
     'core-basedir/js/models/HorizontalBarChartModel',
-    'contrail-list-model'
-], function (_, ContrailView, HorizontalBarChartModel, ContrailListModel) {
+    'contrail-list-model',
+    'chart-utils'
+], function (_, ContrailView, HorizontalBarChartModel, ContrailListModel, chUtils) {
     var HorizontalBarChartView = ContrailView.extend({
         render: function () {
             var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),

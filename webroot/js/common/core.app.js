@@ -82,10 +82,11 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'json-model'                  : coreWebDir + "/js/models/JsonModel",
         'json-edit-view'              : coreWebDir + '/js/views/JsonEditView',
         'jquery-ui'                   : coreWebDir + '/assets/jquery-ui/js/jquery-ui.min',
-        'schema-model'               : coreWebDir + '/js/models/SchemaModel',
-        'view-config-generator'      : coreWebDir + '/js/common/view.config.generator',
+        'schema-model'                : coreWebDir + '/js/models/SchemaModel',
+        'view-config-generator'       : coreWebDir + '/js/common/view.config.generator',
         'iframe-view'                 : coreWebDir + '/js/views/IframeView',
-        'jdorn-jsoneditor'            : coreWebDir + '/assets/jdorn-jsoneditor/js/jdorn-jsoneditor'
+        'jdorn-jsoneditor'            : coreWebDir + '/assets/jdorn-jsoneditor/js/jdorn-jsoneditor',
+        'qe-module'                   : coreWebDir + '/reports/qe/ui/js/qe.module'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -178,8 +179,6 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
 
             'infoboxes'                   : coreWebDir + '/js/views/InfoboxesView',
             'barchart-cf'                 : coreWebDir + '/js/views/BarChartView',
-
-            // 'core.app.utils'              : coreWebDir + "/js/common/core.app.utils",
             'storage-init'                : 'empty:'
 
         };

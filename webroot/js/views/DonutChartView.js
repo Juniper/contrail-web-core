@@ -6,8 +6,9 @@ define([
     'underscore',
     'contrail-view',
     'core-basedir/js/models/DonutChartModel',
-    'contrail-list-model'
-], function (_, ContrailView, DonutChartModel, ContrailListModel) {
+    'contrail-list-model',
+    'chart-utils'
+], function (_, ContrailView, DonutChartModel, ContrailListModel, chUtils) {
     var DonutChartView = ContrailView.extend({
         render: function () {
             var self = this,
