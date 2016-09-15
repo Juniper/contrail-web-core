@@ -343,8 +343,7 @@ define([
         this.GRID_TITLE = "Title";
         this.GRID_VISIBLE_COLUMNS = "Columns to Show";
         this.GRID_PAGE_SIZE = "Records Per Grid";
-        this.GRID_ENTRY_WITH_DETAILS = "Use Collapsible Detailed Entry";
-        this.GRID_ENTRY_WITH_CHECKBOX = "Selectable Entry with Checkbox";
+        this.GRID_ENTRY_WITH_DETAILS = "With Collapsible Details";
     };
 
     function capitalizeSentence(sentence) {

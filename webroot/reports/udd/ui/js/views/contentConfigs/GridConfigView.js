@@ -18,10 +18,12 @@ define([
         render: function() {
             var self = this;
 
-            self.renderView4Config(self.$el, self.model, self.getViewConfig(), "validation", null, null, function() {
-                kb.applyBindings(self.model, self.$el[0]);
-                kbValidation.bind(self);
-            });
+            self.renderView4Config(self.$el, self.model, self.getViewConfig(), "validation",
+                null, null,
+                function() {
+                    kb.applyBindings(self.model, self.$el[0]);
+                    kbValidation.bind(self);
+                });
         },
 
         getViewConfig: function() {
@@ -36,7 +38,7 @@ define([
                                 label: cowl.GRID_TITLE,
                                 path: "gridTitle",
                                 dataBindValue: "gridTitle",
-                                class: "col-xs-6",
+                                class: "col-xs-4",
                             }
                         }, {
                             elementId: "pageSize",
@@ -45,35 +47,24 @@ define([
                                 label: cowl.GRID_PAGE_SIZE,
                                 path: "pageSize",
                                 dataBindValue: "pageSize",
-                                class: "col-xs-6",
+                                class: "col-xs-4",
                                 elementConfig: {
                                     dataTextField: "text",
                                     dataValueField: "id",
                                     data: covdc.gridConfig.footer.pager.options.pageSizeSelect,
                                 },
                             }
-                        }]
-                    }, {
-                            columns: [{
+                        }, {
                             elementId: "detailedEntry",
                             view: "FormCheckboxView",
                             viewConfig: {
                                 label: cowl.GRID_ENTRY_WITH_DETAILS,
                                 path: "detailedEntry",
                                 dataBindValue: "detailedEntry",
-                                class: "col-xs-6"
+                                class: "col-xs-4"
                             },
-                        }, {
-                            elementId: "selectableEntry",
-                            view: "FormCheckboxView",
-                            viewConfig: {
-                                label: cowl.GRID_ENTRY_WITH_CHECKBOX,
-                                path: "selectableEntry",
-                                dataBindValue: "selectableEntry",
-                                class: "col-xs-6"
-                            }
                         }]
-                    }, {
+                    },  {
                         columns: [{
                             elementId: "visibleColumns",
                             view: "FormMultiselectView",
