@@ -90,10 +90,12 @@ constants.coreModules  = [
         ],
         exclude: [
             'underscore',
+            'moment',
             'contrail-view',
             'contrail-model',
             'core-basedir/js/views/ZoomScatterChartView',
-            'core-basedir/js/views/LineWithFocusChartView'
+            'core-basedir/js/views/LineWithFocusChartView',
+            'text!core-basedir/reports/qe/ui/templates/qe.tmpl'
         ]
     }
 ];
