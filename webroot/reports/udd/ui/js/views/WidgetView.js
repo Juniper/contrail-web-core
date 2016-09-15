@@ -283,16 +283,18 @@ define([
                 $bgMask = $(".modal-backdrop." + className),
                 containingGrid = this.$el.closest(".grid-stack").data("gridstack");
 
+            containingGrid.movable(this.$el, !active);
+            containingGrid.resizable(this.$el, !active);
+
             if (active) {
-                containingGrid.movable(this.$el, false);
-                containingGrid.resizable(this.$el, false);
+                // hide the handle shown by hovering
+                this.$el.find(".ui-resizable-handle").css("display", "none");
+
                 this.$el.addClass(className);
                 if ($bgMask.length === 0) {
                     $('<div class="modal-backdrop ' + className + '"></div>').appendTo(document.body);
                 }
             } else {
-                containingGrid.movable(this.$el, true);
-                containingGrid.resizable(this.$el, true);
                 this.$el.removeClass(className);
                 $(".modal-backdrop." + className).remove();
             }

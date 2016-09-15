@@ -1,0 +1,152 @@
+/* Copyright (c) 2016 Juniper Networks, Inc. All rights reserved. */
+
+textarea[name="select"] {
+    max-height: 100px !important;
+}
+.select-label {
+    width: 100%; text-overflow: ellipsis; overflow-x: hidden;
+}
+
+.select-aggregate-header {
+    border-bottom: 1px solid #EEEEEE;
+    padding: 5px 0;
+}
+
+.select-aggregate-link {
+    border-bottom: 1px solid #EEEEEE;
+    padding: 3px 0;
+}
+.select-aggregate-header h4 {
+    margin: 0;
+}
+.select-aggregate-body {
+    padding: 8px 0;
+}
+.where-textarea, .filter-textarea {
+    padding-right: 30px;
+    resize: none;
+}
+.or-clause-item{background: #fff;}
+.or-clause-item-term{cursor:pointer; }
+.or-clause-item.open {background: #eee;}
+.or-clause-item.open .or-clause-item-condensed {
+    border-bottom: 1px solid #ddd;
+}
+.or-clause-item-condensed{
+    padding: 5px 0;
+}
+.or-clause-item > .span11{
+    margin-left: 0.5%;
+    width: 93.5%;
+}
+.or-clauses .or-text:first-child {
+    display: none;
+}
+.and-clause-item {
+    padding: 10px 0 0;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #ddd;
+}
+.and-clause-item .and-clause-suffix {
+    height: 38px;
+}
+.and-clauses .and-clause-item:first-child .and-text{
+    visibility: hidden;
+}
+.and-clause-item .and-text{
+    font-size: 14px;
+    text-align: center;
+    color: #555;
+    padding: 5px 10px;
+}
+.or-text {
+    font-size: 14px;
+    color: #000;
+    padding: 5px 0;
+    font-weight: 600;
+}
+.and-clause-item.row-fluid [class*="span"] {
+    min-height: 28px !important;
+}
+.and-clause-item .new-and-text {
+    padding: 0 2px;
+}
+.or-clause-item .new-or-text {
+    padding: 0 5px;
+}
+.or-clause-item .fa-remove{
+    color:#aaa;
+}
+.and-clause-item .fa-remove{
+    font-size:11px;
+}
+a.selectAllLink{
+    color:#999;
+    font-size: 11px;
+    padding: 0 0 5px;
+}
+a.selectAllLink:hover {
+    color:#3182bd;
+}
+
+/* MVC */
+.or-clause-collection.ui-accordion .ui-accordion-header {
+    border-bottom: 1px solid #fff;
+    padding: 0;
+    margin: 0;
+}
+.or-clause-collection.ui-accordion .ui-accordion-header .ui-accordion-header-icon {
+    left: 5px;
+}
+.or-clause-collection.ui-accordion .ui-accordion-content {
+    padding: 0;
+    margin-bottom: 5px;
+}
+.or-clause-collection.ui-accordion .ui-accordion-header-active,
+.or-clause-collection.ui-accordion .ui-accordion-content-active,
+.and-clause-collection {
+    background-color: #eee;
+
+}
+.or-clause-collection .or-clause:first-child .or-text {
+    visibility: hidden;
+}
+.or-clause-collection > .or-clause.row-fluid > .col-xs-1 {
+    width: 3%;
+}
+.or-clause-collection > .or-clause.row-fluid > .col-xs-10 {
+    width: 89.2%;
+}
+.or-clause-collection .or-text {
+    font-size: 14px;
+    color: #000;
+    padding: 10px 0 0;
+    font-weight: normal;
+    text-align: center;
+}
+.or-clause-collection .or-clause-text {
+    padding: 5px 10px;
+}
+.or-clause-collection .or-clause-text {
+    margin: 0 0 0 20px;
+}
+.or-clause-collection .collection-actions i {
+    color: #999;
+    padding: 10px 10px 10px 0;
+}
+.and-clause-collection table {
+    margin: 10px 0 0;
+}
+.and-clause-collection .collection-actions {
+    padding: 10px 0;
+    border-top: 1px solid #FFF;
+}
+.and-clause-collection .collection-actions a {
+    margin: 10px;
+}
+.and-clause-collection table tr:first-child td .and-clause-text {
+    display: none;
+}
+.and-clause-collection .collection-actions-add a {
+    color: #3182bd;
+}
