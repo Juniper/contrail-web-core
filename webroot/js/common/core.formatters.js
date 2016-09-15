@@ -6,6 +6,38 @@ define([
     'underscore',
     'moment'
 ], function (_, moment) {
+    var predefinedUnits = {
+        temperature: "C",
+        rotationSpeed: "RPM"
+    };
+
+    function couldBeUnit(propName) {
+        return /unit$/ig.test(propName);
+    }
+
+    function guessTheUnit(srcObj) {
+        var candidates = [srcObj],
+            inferredUnit = "";
+
+        while (!_.isEmpty(candidates) && inferredUnit === "") {
+            var currObj = candidates.shift();
+
+            _.find(currObj, function(val, prop) { // eslint-disable-line
+                var shouldStop = false;
+                if (_.isObject(val)) {
+                    candidates.push(val);
+                } else if (couldBeUnit(prop)) {
+                    inferredUnit = predefinedUnits[val] || val;
+                    candidates = [];
+                    shouldStop = true;
+                }
+                return shouldStop;
+            });
+        }
+
+        return inferredUnit;
+    }
+
     var CoreFormatters = function () {
         var self = this;
 
@@ -163,6 +195,10 @@ define([
                 }
 
                 return htmlValue;
+            },
+            "inferred": function(value, options) {
+                var unit = guessTheUnit(options);
+                return [value, " ", unit || ""].join("");
             }
         };
 

@@ -8,16 +8,25 @@ define([
     "knockout",
     "knockback",
     "validation",
+    "core-constants",
     "contrail-view"
-], function(ko, kb, kbValidation, ContrailView) {
+], function(ko, kb, kbValidation, coreConstants, ContrailView) {
     var LineChartConfigView = ContrailView.extend({
         render: function() {
             var self = this;
 
-            self.renderView4Config(self.$el, self.model, self.getViewConfig(), "validation", null, null, function() {
-                kb.applyBindings(self.model, self.$el[0]);
-                kbValidation.bind(self);
-            });
+            self.renderView4Config(self.$el, self.model, self.getViewConfig(), "validation",
+                null, null,
+                function() {
+                    var inferredFormatterKey = "inferred";
+
+                    kb.applyBindings(self.model, self.$el[0]);
+                    kbValidation.bind(self);
+
+                    self.model.yAxisValue.subscribe(function(newValue) {
+                        self.model.isInferredYAxisUnit(cowc.QUERY_COLUMN_FORMATTER[newValue] === inferredFormatterKey);
+                    });
+                });
         },
 
         getViewConfig: function() {
@@ -25,6 +34,26 @@ define([
                 view: "SectionView",
                 viewConfig: {
                     rows: [{
+                        columns: [{
+                            elementId: "color",
+                            view: "FormInputView",
+                            viewConfig: {
+                                label: cowl.CHART_LINE_COLOR,
+                                path: "color",
+                                dataBindValue: "color",
+                                class: "col-xs-6",
+                            },
+                        }, {
+                            elementId: "yAxisLabel",
+                            view: "FormInputView",
+                            viewConfig: {
+                                label: cowl.CHART_Y_AXIS_LABEL,
+                                path: "yAxisLabel",
+                                dataBindValue: "yAxisLabel",
+                                class: "col-xs-6",
+                            },
+                        }],
+                    }, {
                         columns: [{
                             elementId: "yAxisValue",
                             view: "FormDropdownView",
@@ -40,25 +69,22 @@ define([
                                 },
                             },
                         }, {
-                            elementId: "yAxisLabel",
-                            view: "FormInputView",
+                            elementId: "yAxisValueUnit",
+                            view: "FormDropdownView",
                             viewConfig: {
-                                label: cowl.CHART_Y_AXIS_LABEL,
-                                path: "yAxisLabel",
-                                dataBindValue: "yAxisLabel",
+                                visible: "isInferredYAxisUnit",
+                                label: cowl.CHART_Y_AXIS_VALUE_UNIT,
+                                path: "yAxisValueUnit",
+                                dataBindValue: "yAxisValueUnit",
                                 class: "col-xs-6",
-                            },
-                        }],
-                    }, {
-                        columns: [{
-                            elementId: "color",
-                            view: "FormInputView",
-                            viewConfig: {
-                                label: cowl.CHART_LINE_COLOR,
-                                path: "color",
-                                dataBindValue: "color",
-                                class: "col-xs-6",
-                            },
+                                elementConfig: {
+                                    dataTextField: "text",
+                                    dataValueField: "id",
+                                    data: coreConstants.INFERRED_UNIT_TYPES,
+                                    placeholder: cowl.CHART_Y_AXIS_VALUE_UNIT_PLACEHOLDER,
+                                    defaultValueId: 1
+                                }
+                            }
                         }],
                     }],
                 },

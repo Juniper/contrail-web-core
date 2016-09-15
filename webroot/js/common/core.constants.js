@@ -341,6 +341,11 @@ define([
             {'id': '0', 'text': 'EGRESS'}
         ];
 
+        this.INFERRED_UNIT_TYPES = [
+            {"id": "temperature", "text": "Temperature"},
+            {"id": "rotationSpeed", "text": "Rotation Speed"}
+        ];
+
         this.TIME_GRANULARITY_INTERVAL_VALUES = {
             secs: 1000,
             mins: 60 * 1000,
@@ -1186,6 +1191,14 @@ define([
             "SUM(file_system_view_stats.physical_disks.disk_available_kb)": "kilo-byte",
             "MAX(file_system_view_stats.physical_disks.disk_available_kb)": "kilo-byte",
             "MIN(file_system_view_stats.physical_disks.disk_available_kb)": "kilo-byte",
+
+            // sensor_stats
+            "sensor_stats.reading": "inferred",
+            "SUM(sensor_stats.reading)": "inferred",
+            "AVG(sensor_stats.reading)": "inferred",
+            "MIN(sensor_stats.reading)": "inferred",
+            "MAX(sensor_stats.reading)": "inferred",
+            "PERCENTILES(sensor_stats.reading)": "inferred",
 
             // database usage
             "COUNT(database_usage)": "number",

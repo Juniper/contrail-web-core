@@ -328,10 +328,16 @@ define([
         this.CHART_LINE_LABEL = 'Line Label';
         this.CHART_BAR_VALUE = 'Bar Value';
         this.CHART_LINE_VALUE = 'Line Value';
-        this.CHART_BAR_VALUE_PLACEHOLDER = 'Select Bar Value'
+        this.CHART_BAR_VALUE_UNIT = "Bar Value Unit";
+        this.CHART_LINE_VALUE_UNIT = "Line Value Unit";
+        this.CHART_BAR_VALUE_PLACEHOLDER = 'Select Bar Value';
         this.CHART_LINE_VALUE_PLACEHOLDER = 'Select Line Value';
+        this.CHART_BAR_VALUE_UNIT_PLACEHOLDER = "Select Bar Value Unit";
+        this.CHART_LINE_VALUE_UNIT_PLACEHOLDER = "Select Line Value Unit";
         this.CHART_Y_AXIS_VALUE = 'y Axis Value';
-        this.CHART_Y_AXIS_VALUE_PLACEHOLDER = 'Select Y Axis Value'
+        this.CHART_Y_AXIS_VALUE_PLACEHOLDER = 'Select Y Axis Value';
+        this.CHART_Y_AXIS_VALUE_UNIT = "y Axis Value Unit";
+        this.CHART_Y_AXIS_VALUE_PLACEHOLDER = "Select Y Axis Value Unit";
         this.CHART_Y_AXIS_LABEL = 'y Axis Label';
 
         this.GRID_TITLE = "Title";

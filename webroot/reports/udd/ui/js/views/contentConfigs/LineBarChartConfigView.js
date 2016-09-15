@@ -8,8 +8,9 @@ define([
     "knockout",
     "knockback",
     "validation",
+    "core-constants",
     "contrail-view"
-], function(ko, kb, kbValidation, ContrailView) {
+], function(ko, kb, kbValidation, coreConstants, ContrailView) {
     var LineBarChartConfigView = ContrailView.extend({
         render: function() {
             var self = this;
@@ -17,8 +18,17 @@ define([
             self.renderView4Config(self.$el, self.model, self.getViewConfig(), "validation",
                 null, null,
                 function() {
+                    var inferredFormatterKey = "inferred";
+
                     kb.applyBindings(self.model, self.$el[0]);
                     kbValidation.bind(self);
+
+                    self.model.barValue.subscribe(function(newValue) {
+                        self.model.isInferredBarUnit(cowc.QUERY_COLUMN_FORMATTER[newValue] === inferredFormatterKey);
+                    });
+                    self.model.lineValue.subscribe(function(newValue) {
+                        self.model.isInferredLineUnit(cowc.QUERY_COLUMN_FORMATTER[newValue] === inferredFormatterKey);
+                    });
                 });
         },
 
@@ -82,6 +92,25 @@ define([
                                 },
                             },
                         }, {
+                            elementId: "barValueUnit",
+                            view: "FormDropdownView",
+                            viewConfig: {
+                                visible: "isInferredBarUnit",
+                                label: cowl.CHART_BAR_VALUE_UNIT,
+                                path: "barValueUnit",
+                                dataBindValue: "barValueUnit",
+                                class: "col-xs-6",
+                                elementConfig: {
+                                    dataTextField: "text",
+                                    dataValueField: "id",
+                                    data: coreConstants.INFERRED_UNIT_TYPES,
+                                    placeholder: cowl.CHART_BAR_VALUE_UNIT_PLACEHOLDER,
+                                    defaultValueId: 1
+                                }
+                            },
+                        }],
+                    }, {
+                        columns: [{
                             elementId: "lineValue",
                             view: "FormDropdownView",
                             viewConfig: {
@@ -95,6 +124,23 @@ define([
                                     defaultValueId: 1,
                                 },
                             },
+                        }, {
+                            elementId: "lineValueUnit",
+                            view: "FormDropdownView",
+                            viewConfig: {
+                                visible: "isInferredLineUnit",
+                                label: cowl.CHART_LINE_VALUE_UNIT,
+                                path: "lineValueUnit",
+                                dataBindValue: "lineValueUnit",
+                                class: "col-xs-6",
+                                elementConfig: {
+                                    dataTextField: "text",
+                                    dataValueField: "id",
+                                    data: coreConstants.INFERRED_UNIT_TYPES,
+                                    placeholder: cowl.CHART_LINE_VALUE_UNIT_PLACEHOLDER,
+                                    defaultValueId: 1
+                                }
+                            }
                         }],
                     }],
                 },
