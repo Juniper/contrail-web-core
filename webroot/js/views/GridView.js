@@ -44,6 +44,7 @@ define([
 
             gridConfig = $.extend(true, {}, covdc.gridConfig, viewConfig.elementConfig);
             gridContainer = $(this.$el);
+            gridContainer.html("");
             // gridContainer = $(contentContainer);
             customGridConfig = $.extend(true, {}, gridConfig);
 
