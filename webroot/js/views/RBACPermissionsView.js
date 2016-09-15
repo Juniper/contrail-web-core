@@ -118,17 +118,17 @@ define([
                         {
                             elementId: "tenant",
                             name: "Project",
-                            view: 'FormDropdownView',
+                            view: 'FormComboboxView',
                             viewConfig: {
                                 path : "tenant",
                                 width: 250,
                                 dataBindValue : "tenant()",
                                 templateId:
-                                    cowc.TMPL_EDITABLE_GRID_DROPDOWN_VIEW,
+                                    cowc.TMPL_EDITABLE_GRID_COMBOBOX_VIEW,
                                 elementConfig: {
                                     dataTextField: "text",
                                     dataValueField: "value",
-                                    placeholder: "Select Project",
+                                    placeholder: "Enter or Select Project",
                                     dataSource: {
                                         type: "remote",
                                         url:
@@ -151,7 +151,7 @@ define([
                                                     projName !==
                                                         "default-project") {
                                                     dataSource.push({
-                                                        text: projName,
+                                                        text: projName + " (" + projId + ")",
                                                         value: projId
                                                     });
                                                 }
