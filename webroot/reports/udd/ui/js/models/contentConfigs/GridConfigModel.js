@@ -114,7 +114,7 @@ define([
                     QEGridConfigBuilders.getColumnDisplay4Grid(this.tableName(), this.tableType(), this.fields()),
                     {
                         titleText: this.gridTitle(),
-                        fixedRowHeight: 40,
+                        fixedRowHeight: false,
                         actionCell: false,
                         actionCellPosition: "end",
                         queryQueueUrl: cowc.URL_QUERY_STAT_QUEUE,
