@@ -370,6 +370,7 @@ define([
                 self.goStep(self.steps.CONTENT);
             } else {
                 self.goStep(self.steps.DATA_CONFIG);
+                self.model.get("dataConfigModel").onChangeTime()
             }
         },
 

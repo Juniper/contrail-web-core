@@ -26,6 +26,7 @@ define([
                 queryFormAttributes = contrail.checkIfExist(hashParams.queryFormAttributes) ? hashParams.queryFormAttributes : {};
 
             if (queryType === cowc.QUERY_TYPE_MODIFY) {
+                queryFormAttributes.time_range = parseInt(queryFormAttributes.time_range);
                 queryFormAttributes.from_time = parseInt(queryFormAttributes.from_time_utc);
                 queryFormAttributes.to_time = parseInt(queryFormAttributes.to_time_utc);
             }
@@ -112,7 +113,7 @@ define([
                                 dataBindValue: "from_time",
                                 class: "col-xs-3",
                                 elementConfig: qewu.getFromTimeElementConfig("from_time", "to_time"),
-                                visible: "time_range() == -1"
+                                visible: "isTimeRangeCustom()"
                             }
                         }, {
                             elementId: "to_time",
@@ -123,7 +124,7 @@ define([
                                 dataBindValue: "to_time",
                                 class: "col-xs-3",
                                 elementConfig: qewu.getToTimeElementConfig("from_time", "to_time"),
-                                visible: "time_range() == -1"
+                                visible: "isTimeRangeCustom()"
                             }
                         }]
                     }, {

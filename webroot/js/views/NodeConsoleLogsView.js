@@ -195,7 +195,7 @@ define([
                                         style: 'display: none;',
                                         path: 'from_time', dataBindValue: 'from_time', class: "col-xs-4",
                                         elementConfig: qewu.getFromTimeElementConfig('from_time', 'to_time'),
-                                        visible: "time_range() == -1"
+                                        visible: "isTimeRangeCustom()"
                                     }
                                 },
                                 {
@@ -204,7 +204,7 @@ define([
                                         style: 'display: none;',
                                         path: 'to_time', dataBindValue: 'to_time', class: "col-xs-4",
                                         elementConfig: qewu.getToTimeElementConfig('from_time', 'to_time'),
-                                        visible: "time_range() == -1"
+                                        visible: "isTimeRangeCustom()"
                                     }
                                 }
                             ]

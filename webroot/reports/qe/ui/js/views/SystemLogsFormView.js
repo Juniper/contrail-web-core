@@ -110,7 +110,7 @@ define([
                                 dataBindValue: "from_time",
                                 class: "col-xs-3",
                                 elementConfig: queryEngineUtils.getFromTimeElementConfig("from_time", "to_time"),
-                                visible: "time_range() == -1"
+                                visible: "isTimeRangeCustom()"
                             }
                         }, {
                             elementId: "to_time",
@@ -121,7 +121,7 @@ define([
                                 dataBindValue: "to_time",
                                 class: "col-xs-3",
                                 elementConfig: queryEngineUtils.getToTimeElementConfig("from_time", "to_time"),
-                                visible: "time_range() == -1"
+                                visible: "isTimeRangeCustom()"
                             }
                         }]
                     }, {

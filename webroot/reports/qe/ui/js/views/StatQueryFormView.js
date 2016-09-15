@@ -33,7 +33,6 @@ define([
             self.model = new StatQueryFormModel(queryFormAttributes);
             self.$el.append(queryPageTmpl({ queryPrefix: cowc.STAT_QUERY_PREFIX }));
 
-
             self.renderView4Config($(queryFormId), self.model, self.getViewConfig(), cowc.KEY_RUN_QUERY_VALIDATION, null, modelMap, function() {
                 self.model.showErrorAttr(statQueryId, false);
                 kb.applyBindings(self.model, document.getElementById(statQueryId));
@@ -134,7 +133,7 @@ define([
                                 dataBindValue: "from_time",
                                 class: "col-xs-3",
                                 elementConfig: queryEngineUtils.getFromTimeElementConfig("from_time", "to_time"),
-                                visible: "time_range() == -1"
+                                visible: "isTimeRangeCustom()"
                             }
                         }, {
                             elementId: "to_time",
@@ -145,7 +144,7 @@ define([
                                 dataBindValue: "to_time",
                                 class: "col-xs-3",
                                 elementConfig: queryEngineUtils.getToTimeElementConfig("from_time", "to_time"),
-                                visible: "time_range() == -1"
+                                visible: "isTimeRangeCustom()"
                             }
                         }]
                     }, {

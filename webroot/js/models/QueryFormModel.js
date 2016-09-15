@@ -312,6 +312,14 @@ define([
             }
         },
 
+        isTimeRangeCustom: function() {
+            var self = this;
+            /*
+                TODO: time_range is somehow stored as string inside the dropdown, hence use ==
+             */
+            return self.time_range() == -1;
+        },
+
         isSelectTimeChecked: function() {
             var self = this,
                 selectString = self.select(),
