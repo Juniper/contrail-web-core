@@ -39,7 +39,11 @@ exports.admin = function (req, res) {
 
 function login (req, res)
 {
-    res.sendfile('webroot/html/login.html');
+    if(commonUtils.getValueByJsonPath(req,'session;isAuthenticated',false) == true) {
+        res.redirect('/');
+    } else {
+        res.sendfile('webroot/html/login.html');
+    }
 }
 
 function vcenter_login (req, res, appData)
