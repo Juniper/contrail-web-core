@@ -269,14 +269,19 @@ define([
                                 text:"Severity",
                                 children: [
                                     {
-                                        id:"4",
-                                        text:'Minor',
+                                        id:"0",
+                                        text:"Critical",
+                                        icon:'icon-download-alt'
+                                    },
+                                    {
+                                        id:"1",
+                                        text:'Major',
                                         iconClass:'icon-download-alt'
                                     },
                                     {
-                                        id:"3",
-                                        text:"Major",
-                                        icon:'<div data-color="orange" class="circle orange filled" style="opacity:1"></div>'
+                                        id:"2",
+                                        text:'Minor',
+                                        iconClass:'icon-download-alt'
                                     }
                                 ]
                             },
@@ -423,7 +428,7 @@ define([
 
     this.alarmSeverityFormatter = function (v, dc, showTextFlag) {
         var showText = (showTextFlag != null && showTextFlag == false)? false: true;
-        var color = (v <= 3) ? 'red' : 'orange';
+        var color = (v <= 1) ? 'red' : 'orange';
         var template = contrail.getTemplate4Id(cowc.TMPL_ALARM_SEVERITY);
         return template({
             showText : showText,
