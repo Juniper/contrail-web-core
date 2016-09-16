@@ -58,7 +58,7 @@ define([
                 model.set(defaultOptions[tableType]);
             });
             self.model().on("change:table_name", function(model, tableName) {
-                var tableType = model.get("table_name");
+                var tableType = model.get("table_type");
                 if (tableType === coreConstants.QE_FLOW_TABLE_TYPE) {
                     model.set(_.merge({
                             table_name: tableName
