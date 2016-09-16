@@ -70,11 +70,13 @@
 
 .grid-stack-item.widget .panel .panel-heading .widget-control {
   float: right;
-  width: 4em;
   color: #898989;
-  display: flex;
   justify-content: space-around;
   align-items: center;
+}
+
+.grid-stack-item.widget .panel .panel-heading .widget-control > * {
+  margin: 0 4px;
 }
 
 .grid-stack-item.widget .panel .panel-heading .widget-control > .config {

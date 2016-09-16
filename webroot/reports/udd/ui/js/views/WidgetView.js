@@ -23,10 +23,12 @@ define([
             contentConfigDropdown: "#contentViewSelector",
             back: ".panel-footer .back",
             config: ".widget-control .config",
+            refresh: ".widget-control .refresh",
             confirmDeletionModal: "#confirm-to-delete"
         },
 
         events: {
+            "click .widget-control .refresh": "refresh",
             "click .widget-control .config": "toggleConfig",
             "click .widget-control .remove": "remove",
             "click .title": "editTitle",
@@ -313,6 +315,7 @@ define([
                 self.$(self.selectors.footer).toggle();
                 self.$(self.selectors.config).toggleClass("fa-gear")
                     .toggleClass("fa-times");
+                self.$(self.selectors.refresh).toggleClass("hidden");
             }
 
             var configTitle = "";
@@ -384,6 +387,13 @@ define([
             if (contentConfigModel) {
                 contentConfigModel.reset();
             }
+        },
+
+        refresh: function () {
+            var self = this;
+            var dataConfigModel = self.model.get("dataConfigModel");
+            dataConfigModel.refresh();
+            self._renderContentView();
         },
     });
     return WidgetView;

@@ -41,7 +41,7 @@ define([
             this.model().on("change:table_name", this.onChangeTable, this);
             this.model().on('change:select change:table_name change:time_range change:where change:filter change:time_granularity change:time_granularity_unit', function () {
                 // TODO ContrailListModel should have reload function instead of whole model recreation just to get new data
-                self.loader = undefined
+                self.refresh()
             })
 
             //TODO - Needs to be tested for Flow Pages
@@ -570,10 +570,16 @@ define([
                     series[seriesIndex].values.push({x: timeStamp, y: data[i][dataField]})
                 })
             }
-            return series
+            return series;
         },
+
         gridEntryParser: function(data) {
             return data;
+        },
+
+        refresh: function () {
+            var self = this;
+            self.loader = undefined;
         }
     });
 
