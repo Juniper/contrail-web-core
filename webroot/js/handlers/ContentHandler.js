@@ -80,7 +80,7 @@ define(['underscore'], function (_) {
                 webServerInfo = globalObj['webServerInfo'];
 
             try {
-                if (currPageHash == '') {
+                if (currPageHash == '' || menuHandler.isHashExists(currHash) == false) {
                     if(webServerInfo['loggedInOrchestrationMode'] == 'vcenter') {
                         //If vCenter is the only orchestration model
                         if(webServerInfo['orchestrationModel'].length == 1)
