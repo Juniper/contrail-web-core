@@ -428,47 +428,6 @@ p.error, p.error-text {
     cursor:-moz-grab;
 }
 
-/* a Links */
-a.disabled-link, a.disabled-link:hover, i.disabled-link, i.disabled-link:hover{
-    color: #ccc !important;
-    cursor: initial !important;
-}
-a.disabled-link i {
-    cursor: default;
-}
-.disabledBtn, .disabledBtn:hover {
-    background-color: #898989 !important;
-    border-color: #898989;
-    border-top: #fff 0px solid !important;
-    cursor: default;
-}
-
-.disabledBtn i {
-    cursor: default;
-}
-
-.separator-top {
-    /*  border-top : 1px solid #ddd;*/
-    background-color:#f6f9fa;
-}
-p.error, p.error-text {
-    color: #b94a48;
-}
-
-/*Style for the underlay topology svg elements*/
-.topology-visualization svg {
-    cursor:move;
-    height: auto !important;
-    width: auto !important;
-}
-
-.topology-visualization svg g.element {
-    cursor:default;
-    cursor:grab;
-    cursor:-webkit-grab;
-    cursor:-moz-grab;
-}
-
 .topology-visualization svg g.element:active {
     cursor:default;
     cursor:grabbing;

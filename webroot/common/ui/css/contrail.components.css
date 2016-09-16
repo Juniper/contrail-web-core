@@ -1102,6 +1102,23 @@ label.jqInvalid {
     font-size: 13px;
 }
 
+/*
+ * Help
+ */
+
+#helpModal {
+    z-index: 100001;
+}
+.help-title {
+    padding-bottom: 10px;
+    font-weight: bold;
+    color: grey;
+}
+
+.help-img {
+    padding-bottom: 20px;
+}
+
 li {
     line-height: 20px;
 }
