@@ -1309,7 +1309,7 @@ define([
                 if (headerConfig.defaultControls.columnPickable) {
                     var columnPickerConfig = {
                         type: 'checked-multiselect',
-                        //iconClass: 'icon-columns',
+                        title: "Show / Hide Columns",
                         placeholder: '',
                         elementConfig: {
                             elementId: 'columnPicker',
@@ -1479,9 +1479,10 @@ define([
 
             function addGridHeaderActionCheckedMultiselect(key, actionConfig, gridContainer) {
                 var actions = actionConfig.actions,
-                    actionId = (contrail.checkIfExist(actionConfig.actionId)) ? actionConfig.actionId : gridContainer.prop('id') + '-header-action-' + key;
+                    actionId = (contrail.checkIfExist(actionConfig.actionId)) ? actionConfig.actionId : gridContainer.prop('id') + '-header-action-' + key,
+                    actionTitle = (contrail.checkIfExist(actionConfig.title)) ? actionConfig.title : "";
                 var actionsTemplate = '<div id="' + actionId + '" class="widget-toolbar pull-right"> \
-		        <div class="input-multiselectbox width-15"> \
+		        <div class="input-multiselectbox width-15" title="' + actionTitle + '"> \
 		            <div class="input-icon"> \
 		            	<i class="widget-toolbar-icon ' + actionConfig.iconClass + (contrail.checkIfExist(actionConfig.disabledLink) ? ' disabled-link' : '') + '"></i> \
 		            </div> \
