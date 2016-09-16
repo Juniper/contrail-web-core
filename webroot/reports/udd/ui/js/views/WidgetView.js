@@ -84,11 +84,7 @@ define([
             var self = this;
             var parserOptions = self.model.get("contentConfigModel") ? self.model.get("contentConfigModel").getParserOptions() : {};
             var dataConfigModel = self.model.get("dataConfigModel");
-            var model = self.model.get("dataModel")
-            if (!model) {
-              model = dataConfigModel.getDataModel(parserOptions);
-              self.model.set("dataModel", model);
-            }
+            var model = dataConfigModel.getDataModel(parserOptions);
             var config = self.model.getViewConfig("contentView");
             var element = self.$("#" + config.elementId);
             if (!model) {
