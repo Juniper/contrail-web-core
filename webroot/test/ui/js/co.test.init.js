@@ -18,10 +18,6 @@ var depArray = [
 
     'text!/base/contrail-web-core/webroot/common/ui/templates/core.common.tmpl',
 
-    'core-basedir/js/common/qe.utils',
-    'core-basedir/js/common/qe.model.config',
-    'core-basedir/js/common/qe.grid.config',
-    'core-basedir/js/common/qe.parsers',
     'core-basedir/js/common/chart.utils',
 
     'co-test-utils', 'co-test-constants',
@@ -451,11 +447,6 @@ function testLibApiAppInit(testAppConfig) {
             cowl = new CoreLabels();
             kbValidation = validation;
             cowch = new Cache();
-
-            qewu = new QEUtils();
-            qewmc = new QEModelConfig();
-            qewgc = new QEGridConfig();
-            qewp = new QEParsers();
 
             chUtils = new ChartUtils();
 

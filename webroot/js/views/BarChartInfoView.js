@@ -4,8 +4,9 @@
 
 define([
     'underscore',
-    'contrail-view'
-],function(_,ContrailView) {
+    'contrail-view',
+    'chart-utils'
+],function(_,ContrailView, chUtils) {
     var BarChartInfoView = ContrailView.extend({
         el: ".chart",
         chart: null,

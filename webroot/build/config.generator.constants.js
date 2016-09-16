@@ -68,6 +68,35 @@ constants.coreModules  = [
         override: {
             wrapShim: false
         }
+    },
+    {
+        enabled: true,
+        name: 'qe-module',
+        include: [
+            'core-basedir/reports/qe/ui/js/common/qe.utils',
+            'core-basedir/reports/qe/ui/js/common/qe.parsers',
+            'core-basedir/reports/qe/ui/js/common/qe.grid.config',
+            'core-basedir/reports/qe/ui/js/common/qe.model.config',
+            'core-basedir/reports/qe/ui/js/views/QueryEngineView',
+            'core-basedir/reports/qe/ui/js/views/QueryQueueView',
+            'core-basedir/reports/qe/ui/js/views/QueryTextView',
+            'core-basedir/reports/qe/ui/js/views/ObjectLogsFormView',
+            'core-basedir/reports/qe/ui/js/views/SystemLogsFormView',
+            'core-basedir/reports/qe/ui/js/views/StatQueryFormView',
+            'core-basedir/reports/qe/ui/js/models/ContrailListModelGroup',
+            'core-basedir/reports/qe/ui/js/models/ObjectLogsFormModel',
+            'core-basedir/reports/qe/ui/js/models/StatQueryFormModel',
+            'core-basedir/reports/qe/ui/js/models/SystemLogsFormModel'
+        ],
+        exclude: [
+            'underscore',
+            'moment',
+            'contrail-view',
+            'contrail-model',
+            'core-basedir/js/views/ZoomScatterChartView',
+            'core-basedir/js/views/LineWithFocusChartView',
+            'text!core-basedir/reports/qe/ui/templates/qe.tmpl'
+        ]
     }
 ];
 constants.coreFileExclusionRegExp = constants.defaultFileExclusionRegExp;
@@ -174,25 +203,16 @@ constants.controllerModules = [
     },
     {
         enabled: true,
-        name: 'qe-module',
+        name: 'controller-qe-module',
         include: [
-            'controller-basedir/reports/qe/ui/js/views/QueryEngineView',
-            'controller-basedir/reports/qe/ui/js/views/QueryQueueView',
-            'controller-basedir/reports/qe/ui/js/views/QueryTextView',
+            'controller-basedir/reports/qe/ui/js/views/ControllerQEView',
             'controller-basedir/reports/qe/ui/js/views/FlowSeriesFormView',
             'controller-basedir/reports/qe/ui/js/views/FlowRecordFormView',
             'controller-basedir/reports/qe/ui/js/views/FlowDetailsTabView',
-            'controller-basedir/reports/qe/ui/js/views/ObjectLogsFormView',
-            'controller-basedir/reports/qe/ui/js/views/SystemLogsFormView',
             'controller-basedir/reports/qe/ui/js/views/SessionAnalyzerView',
-            'controller-basedir/reports/qe/ui/js/views/StatQueryFormView',
-            'controller-basedir/reports/qe/ui/js/models/ContrailListModelGroup',
             'controller-basedir/reports/qe/ui/js/models/SessionAnalyzerModel',
             'controller-basedir/reports/qe/ui/js/models/FlowRecordFormModel',
-            'controller-basedir/reports/qe/ui/js/models/FlowSeriesFormModel',
-            'controller-basedir/reports/qe/ui/js/models/ObjectLogsFormModel',
-            'controller-basedir/reports/qe/ui/js/models/StatQueryFormModel',
-            'controller-basedir/reports/qe/ui/js/models/SystemLogsFormModel'
+            'controller-basedir/reports/qe/ui/js/models/FlowSeriesFormModel'
         ],
         exclude: [
             'underscore',
@@ -200,7 +220,8 @@ constants.controllerModules = [
             'contrail-model',
             'core-basedir/js/views/ZoomScatterChartView',
             'core-basedir/js/views/LineWithFocusChartView',
-            'controller-init'
+            'controller-init',
+            'core-basedir/reports/qe/ui/js/models/ContrailListModelGroup'
         ]
     }
 ];

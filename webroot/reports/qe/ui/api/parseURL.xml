@@ -1,0 +1,94 @@
+<!--
+ Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
+ -->
+<urlLists>
+    <require>
+        <define>parseURLReq</define>
+        <path>process.mainModule.exports["corePath"] + '/src/serverroot/common/parseURLRequire'</path>
+    </require>
+    <require>
+        <define>qeapi</define>
+        <path>process.mainModule.exports["corePath"] + '/webroot/reports/qe/ui/api/query.api'</path>
+    </require>
+
+    <item>
+        <url>/api/qe/query</url>
+        <method>get</method>
+        <timeout>600</timeout>
+        <feature>query-engine</feature>
+        <callback>qeapi.runGETQuery</callback>
+    </item>
+    <item>
+        <url>/api/qe/query</url>
+        <method>post</method>
+        <timeout>600</timeout>
+        <feature>query-engine</feature>
+        <callback>qeapi.runPOSTQuery</callback>
+    </item>
+     <item>
+        <url>/api/qe/get-query</url>
+        <method>post</method>
+        <timeout>600</timeout>
+        <feature>query-engine</feature>
+        <callback>qeapi.getQueryData</callback>
+    </item>
+    <item>
+        <url>/api/qe/query/export</url>
+        <method>get</method>
+        <timeout>300</timeout>
+        <feature>query-engine</feature>
+        <callback>qeapi.exportQueryResult</callback>
+    </item>
+    <item>
+        <url>/api/qe/query/queue</url>
+        <method>get</method>
+        <timeout>300</timeout>
+        <feature>query-engine</feature>
+        <callback>qeapi.getQueryQueue</callback>
+    </item>
+    <item>
+        <url>/api/qe/query/chart-groups</url>
+        <method>get</method>
+        <timeout>300</timeout>
+        <feature>query-engine</feature>
+        <callback>qeapi.getChartGroups</callback>
+    </item>
+    <item>
+        <url>/api/qe/query/chart-data</url>
+        <method>get</method>
+        <timeout>300</timeout>
+        <feature>query-engine</feature>
+        <callback>qeapi.getChartData</callback>
+    </item>
+    <item>
+        <url>/api/qe/query</url>
+        <method>delete</method>
+        <feature>query-engine</feature>
+        <callback>qeapi.deleteQueryCache4Ids</callback>
+    </item>
+    <item>
+        <url>/api/qe/query/queue</url>
+        <method>delete</method>
+        <feature>query-engine</feature>
+        <callback>qeapi.deleteQueryCache4Queue</callback>
+    </item>
+    <item>
+        <url>/api/qe/tables</url>
+        <method>get</method>
+        <feature>query-engine</feature>
+        <callback>qeapi.getTables</callback>
+    </item>
+    <item>
+        <url>/api/qe/table/column/values</url>
+        <method>post</method>
+        <feature>query-engine</feature>
+        <callback>qeapi.getTableColumnValues</callback>
+    </item>
+    <item>
+        <url>/api/qe/table/schema/:tableName</url>
+        <method>get</method>
+        <feature>query-engine</feature>
+        <callback>qeapi.getTableSchema</callback>
+    </item>
+</urlLists>
+

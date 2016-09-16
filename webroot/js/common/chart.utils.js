@@ -5,11 +5,8 @@
 define([
     'underscore'
 ], function (_) {
-
-    var ChartUtils = function () {
-        var self = this;
-
-        self.updateChartOnResize = function(selector,chart){
+    var chartUtils = {
+        updateChartOnResize: function(selector,chart){
             if(selector != null && $(selector).is(':visible') && chart != null) {
                 if($(selector).find('.nv-noData').data('customMsg')) {
                     var msg = $(selector).find('.nv-noData').text();
@@ -18,20 +15,20 @@ define([
                 } else if($(selector).data('chart') != null)
                     $(selector).data('chart').update();
             }
-        };
+        },
 
-        self.getViewFinderPoint = function (time) {
+        getViewFinderPoint: function (time) {
             var navDate = d3.time.format('%x %H:%M')(new Date(time));
             return new Date(navDate).getTime();
-        };
+        },
 
-        self.getCurrentTime4MemCPUCharts = function () {
+        getCurrentTime4MemCPUCharts: function () {
             var now = new Date(), currentTime;
             currentTime = now.getTime();
             return currentTime;
-        };
+        },
 
-        self.interpolateSankey = function(points) {
+        interpolateSankey: function(points) {
             var x0 = points[0][0], y0 = points[0][1], x1, y1, x2,
                 path = [x0, ",", y0],
                 i = 0, n = points.length;
@@ -41,9 +38,9 @@ define([
                 x0 = x1, y0 = y1;
             }
             return path.join("");
-        };
+        },
 
-        self.drawSparkLine4Selector = function(selector, className, data) {
+        drawSparkLine4Selector: function(selector, className, data) {
             var sortedData = ([].concat(data)).sort(function (a, b) {
                 return a - b
             });
@@ -59,9 +56,9 @@ define([
                     return y(d);
                 });
             graph.append("svg:path").attr("d", sparkLine(data));
-        };
+        },
 
-        self.drawSparkLineBar = function(selector, data) {
+        drawSparkLineBar: function(selector, data) {
             if ($(selector).find("svg") != null) {
                 $(selector).empty();
             }
@@ -116,8 +113,8 @@ define([
                 .on("mouseout", function(d) {
                     $('body').find('.nvtooltip').remove();
                 });
-        };
+        }
     };
 
-    return ChartUtils;
+    return chartUtils;
 });

@@ -6,26 +6,26 @@ define([
     'underscore',
     'contrail-view',
     'knockback',
-    'core-basedir/js/common/qe.utils'
-], function (_, ContrailView, Knockback,qewu) {
+    'core-basedir/reports/qe/ui/js/common/qe.utils'
+], function (_, ContrailView, Knockback, qeUtils) {
 
     var QueryFormView = ContrailView.extend({
 
         renderSelect: function (options) {
-            qewu.parseSelectString2Array(this.model);
+            qeUtils.parseSelectString2Array(this.model);
             this.renderView4Config(this.$el, this.model, getSelectViewConfig(contrail.checkIfExist(options) ? options : {}));
         },
 
         renderWhere: function (options) {
-            qewu.parseWhereString2Collection(this.model);
+            qeUtils.parseWhereString2Collection(this.model);
             this.model.addNewOrClauses([{}]);
             this.renderView4Config(this.$el, this.model, getWhereViewConfig(contrail.checkIfExist(options) ? options : {}));
         },
 
         renderFilters: function (options) {
             // need to parseSelectString as filter is dependent on select
-            qewu.parseSelectString2Array(this.model);
-            qewu.parseFilterString2Collection(this.model);
+            qeUtils.parseSelectString2Array(this.model);
+            qeUtils.parseFilterString2Collection(this.model);
             this.renderView4Config(this.$el, this.model, getFilterViewConfig(contrail.checkIfExist(options) ? options : {}));
             this.model.addFilterAndClause([]);
         }
