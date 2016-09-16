@@ -25,13 +25,17 @@ define([
     parse: function(response) {
       return response && response.result ? response.result.rows : [];
     },
-
+    //TODO it would be good to use synced subcollections like: https://github.com/anthonyshort/backbone.collectionsubset
+    // both params are mandatory to access filtered collections right
     filterBy: function(dashboardId, tabId) {
-      return new WidgetsCollection(this.filter(function(item) {
+      var self = this;
+      var filtered = new WidgetsCollection(self.filter(function(item) {
         var isValid = dashboardId ? item.get("dashboardId") === dashboardId : true;
         isValid = isValid && (tabId ? item.get("tabId") === tabId : true);
         return isValid;
-      }), { url: this.url });
+      }), { url: self.url });
+      filtered.on("add", self._onAdd.bind(self));
+      return filtered;
     },
 
     dashboardIds: function() {
@@ -51,6 +55,10 @@ define([
         widget.set("tabName", tabName);
         widget.save();
       });
+    },
+    // this handler is bound to parent collection
+    _onAdd: function (model) {
+      this.add(model);
     },
     // each tab has its own collection
     getTabName: function() {
