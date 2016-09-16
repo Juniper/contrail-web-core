@@ -121,7 +121,7 @@
 }
 .breadcrumb .breadcrumb-dropdown,
 .breadcrumb .breadcrumb-text {
-    width: 120px;
+    width: calc(100% - 13px);
     border: none;
 }
 .breadcrumb .breadcrumb-text {
