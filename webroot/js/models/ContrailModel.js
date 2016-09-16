@@ -210,10 +210,25 @@ define([
         reset: function () {
             var self = this
             _.each(self._modelAttributes, function (value, attr) {
-                self[attr](null)
-            })
+                clean(self[attr]);
+            });
         },
     });
+
+    function clean(koObservable) {
+        var val = koObservable();
+        if (_.isArray(val)) {
+            koObservable([]);
+        } else if (_.isString(val)) {
+            koObservable("");
+        } else if (_.isNumber(val)) {
+            koObservable(Number.MIN_VALUE);
+        } else if (_.isBoolean(val)) {
+            koObservable(false);
+        } else {
+            koObservable(null);
+        }
+    }
 
     function setError4Key(errors, key, isInternalValid) {
         var attrErrorObj = {};
