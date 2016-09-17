@@ -60,19 +60,20 @@ define([
             }
 
             //plot default line
-            if(data.length === 0 && defaultZeroLineDisplay){
-                var defData = {key:'', color:cowc.DEFAULT_COLOR, values:[]},
-                    start = Date.now() - (2 * 60 * 60 * 1000),
-                    end = Date.now();
+            /** This condition block seems to be unnecessary. */
+            // if(data.length === 0 && defaultZeroLineDisplay){
+            //     var defData = {key:'', color:cowc.DEFAULT_COLOR, values:[]},
+            //         start = Date.now() - (2 * 60 * 60 * 1000),
+            //         end = Date.now();
 
-                defData.values.push({x:start, y:0.01, tooltip:false});
-                defData.values.push({x:start, y:0.01, tooltip:false});
-                defData.values.push({x:end, y:0.01, tooltip:false});
-                viewConfig.chartOptions.forceY = [0, 1];
-                viewConfig.chartOptions.defaultDataStatusMessage = false;
-                legendFn = null;
-                data.push(defData);
-            }
+            //     defData.values.push({x:start, y:0.01, tooltip:false});
+            //     defData.values.push({x:start, y:0.01, tooltip:false});
+            //     defData.values.push({x:end, y:0.01, tooltip:false});
+            //     viewConfig.chartOptions.forceY = [0, 1];
+            //     viewConfig.chartOptions.defaultDataStatusMessage = false;
+            //     legendFn = null;
+            //     data.push(defData);
+            // }
 
             chartViewConfig = getChartViewConfig(data, viewConfig);
             chartOptions = chartViewConfig['chartOptions'];

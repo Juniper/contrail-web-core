@@ -45,7 +45,6 @@ define(function(require) {
         getParserOptions: function() {
             var self = this;
             return {
-                parserName: "timeSeriesParser",
                 dataFields: [self.yAxisValue()],
             };
         },
@@ -53,6 +52,7 @@ define(function(require) {
         getContentViewOptions: function() {
             var self = this;
             return {
+                parseFn: cowu.timeSeriesParser.bind(self, self.getParserOptions()),
                 chartOptions: {
                     axisLabelDistance: 5,
                     height: 300,

@@ -534,47 +534,27 @@ define([
         },
 
         getDataModel: function (p) {
-            var self = this
-            // reset data model on requested parser change
-            // TODO there is no need to reload data on parser change
-            if (_.isUndefined(self.loader) || (p && p.parserName !== self._parserName)) {
-                if (p && p.parserName && !self[p.parserName]) return undefined
+            var self = this,
+                currQuery = JSON.stringify(this.toJSON()); // TOOD: modify this to use hashcode based on this.toJSON()
+
+            // reset data model on query change
+            if (_.isUndefined(self.loader) || (currQuery !== self._lastQuery)) {
                 self.loader = new ContrailListModel({
                     remote: {
                         ajaxConfig: {
-                            url: '/api/qe/query',
-                            type: 'POST',
+                            url: "/api/qe/query",
+                            type: "POST",
                             data: JSON.stringify(self.getQueryRequestPostData(+new Date)),
                         },
                         dataParser: function (response) {
-                            if (p.parserName && self[p.parserName]) return self[p.parserName](response.data, p)
-                            return response.data // TODO: This line is never reached. Rethink the logic.
+                            return response.data;
                         },
                     },
-                })
-                self._parserName = p.parserName
-            }
-            return self.loader
-        },
-        // outputs data in time series format
-        timeSeriesParser: function (data, p) {
-            if (_.isEmpty(data)) return []
-            if (p && p.dataField) p.dataFields = [p.dataField]
+                });
 
-            var series = []
-            for (var i = 0; i < data.length; i++) {
-                if (_.isUndefined(data[i]['T='])) return []
-                var timeStamp = Math.floor(data[i]['T='] / 1000)
-                _.each(p.dataFields, function (dataField, seriesIndex) {
-                    if (i === 0) series[seriesIndex] = {values: []}
-                    series[seriesIndex].values.push({x: timeStamp, y: data[i][dataField]})
-                })
+                self._lastQuery = currQuery;
             }
-            return series;
-        },
-
-        gridEntryParser: function(data) {
-            return data;
+            return self.loader;
         },
 
         refresh: function () {

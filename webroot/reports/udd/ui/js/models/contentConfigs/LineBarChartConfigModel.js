@@ -58,7 +58,6 @@ define(function(require) {
         getParserOptions: function() {
             var self = this;
             return {
-                parserName: "timeSeriesParser",
                 dataFields: [self.barValue(), self.lineValue()],
             };
         },
@@ -67,6 +66,7 @@ define(function(require) {
             var self = this;
             return {
                 // loadChartInChunks: true,
+                parseFn: cowu.timeSeriesParser.bind(self, self.getParserOptions()),
                 chartOptions: {
                     axisLabelDistance: 5,
                     height: 300,
