@@ -13,11 +13,16 @@ define([
         this.FORM_SUFFIX_ID = "_form";
 
         this.SEV_LEVELS = {
-                ERROR   : 3, //Red
-                WARNING : 4, //Orange
-//                NOTICE  : 2, //Blue
-//                INFO    : 3, //Green
-            }
+            ERROR   : 3, //Red
+            WARNING : 4, //Orange
+//          NOTICE  : 2, //Blue
+//          INFO    : 3, //Green
+        };
+       this.SEVERITY_TO_TEXT_MAP = {
+               2 : "Critical",
+               3 : "Major",
+               4 : "Minor"
+       };
        this.COLOR_SEVERITY_MAP = {
                 red : 'error',
                 orange : 'warning',
