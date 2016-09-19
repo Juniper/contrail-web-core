@@ -93,9 +93,7 @@ define([
             if (!model) {
                 element.html(ctwm.NO_COMPATIBLE_DATA_SOURCES);
             }
-            self.renderView4Config(element, model, config, null, null, null, function() {
-                self.model.get("configModel").ready(true);
-            });
+            self.renderView4Config(element, model, config);
         },
         // render content config view on the back
         _renderContentConfigView: function(p) {
