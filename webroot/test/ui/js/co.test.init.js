@@ -447,7 +447,7 @@ function testLibApiAppInit(testAppConfig) {
             cowl = new CoreLabels();
             kbValidation = validation;
             cowch = new Cache();
-            
+
             chUtils = new ChartUtils();
 
             cotu = CoreTestUtils;
