@@ -99,7 +99,7 @@ define([
             .on('click', function (event) {
                 $(this).parents('.widget-box').find('.list-view').showElement();
                 $(this).parents('.widget-box').find('.advanced-view').hideElement();
-                $(this).parents('.widget-box').find('.contrail-status-view').hide();
+                $(this).parents('.widget-box').find('.contrail-status-view').hideElement();
             });
 
         $(detailEl).find('[data-action="advanced-view"]')
@@ -120,7 +120,7 @@ define([
                 }
                 $(this).parents('.widget-box').find('.advanced-view').showElement();
                 $(this).parents('.widget-box').find('.list-view').hideElement();
-                $(this).parents('.widget-box').find('.contrail-status-view').hide();
+                $(this).parents('.widget-box').find('.contrail-status-view').hideElement();
             })
     };
 

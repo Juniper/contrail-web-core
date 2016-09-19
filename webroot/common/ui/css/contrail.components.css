@@ -1090,30 +1090,6 @@ li {
     margin-right: 10px;
 }
 
-.margin-10-0-0 {
-    margin: 10px 0 0 !important;
-}
-
-.margin-10 {
-    margin-left: 10px !important;
-}
-
-.padding-5-0 {
-    padding: 5px 0 !important;
-}
-
-.margin-2 {
-    margin: 2px !important;
-}
-
-.margin-0 {
-    margin: 0 !important;
-}
-
-.padding-10 {
-    padding: 10px !important;
-}
-
 .group-detail-advanced-json {
     padding-left: 30px;
 }
