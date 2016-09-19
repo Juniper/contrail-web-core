@@ -116,10 +116,12 @@ define([], function () {
 
                             var linkConfig = self.util.getLinkConfig();
                             linkConfig.elementId = linkKeys[k];
-                            linkConfig.view = "FormButtonView";
-                            linkConfig.viewConfig.label = label;
+                            linkConfig.view = "FormTextView";
+                            linkConfig.viewConfig.text = "'"  + label + "'";
                             var groupLinkPath = endPoint + ".properties." + linkKeys[k];
-                            linkConfig.viewConfig.elementConfig.onClick = "function(){$root.goForward('" + options.rootViewPath + "' , '" + groupLinkPath + "', '" + prefixId + "', " + options.rowIndex + ")}";
+                            linkConfig.viewConfig.class = "col-xs-6 margin-0-0-10";
+                            linkConfig.viewConfig.elementConfig.class = "sm-schema-text-link";
+                            linkConfig.viewConfig.click = "function(){$root.goForward('" + options.rootViewPath + "' , '" + groupLinkPath + "', '" + prefixId + "', " + options.rowIndex + ")}";
                             options.path = groupLinkPath;
                             options.element = linkKeys[k];
 
