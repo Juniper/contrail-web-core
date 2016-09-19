@@ -28,8 +28,12 @@ define([
                 data = window.cowm.DATA_FETCHING;
             } else {
                 data = self._format(list.slice(0, self.attributes.viewConfig.totalRecords));
-                if (!_.isEmpty(list) && _.isEmpty(data)) {
-                    data = window.cowm.DATA_COMPATIBILITY_ERROR;
+                if (_.isEmpty(data)) {
+                    if (!_.isEmpty(list)) {
+                        data = window.cowm.DATA_COMPATIBILITY_ERROR;
+                    } else {
+                        data = window.cowm.DATA_SUCCESS_EMPTY;
+                    }
                 }
             }
             self.$el.html(self.template(data));
