@@ -815,12 +815,12 @@ define([
                                         '<div class="list-view">' +
                                             self.generateBlockListTemplate(config.templateGeneratorConfig, app, config) +
                                         '</div>' +
-                                        '<div class="advanced-view hide">' +
+                                        '<div class="advanced-view hidden">' +
                                             '{{{formatGridJSON2HTML this.data' +
                                                 ((contrail.checkIfExist(config.templateGeneratorData) && config.templateGeneratorData !== '') ? '.' + config.templateGeneratorData : '') +
                                             '}}}' +
                                         '</div>' +
-                                        '<div class="contrail-status-view hide">' +
+                                        '<div class="contrail-status-view hidden">' +
                                         '</div>' +
                                     '</div>' +
                                 '</div>' +

@@ -2,22 +2,23 @@
 **/feature.list.js
 **/url.routes.js
 **/rolemap.api.js
-node_modules
-*~
-*.swp
-*.swo
-web-third-party
 
-# webroot/js/handlers/MenuHander generates those
-webroot/menu_*
+config/*.js
 
+webroot/dist/*
 webroot/assets/*
-webroot/font/*
-webroot/js/common/contrail.unified.*
-webroot/css/*.unified.css
+webroot/menu_*
+webroot/common/ui/fonts
 webroot/build/core.build.config.js
 webroot/js/config_global.js
 webroot/js/uuid.js
-webroot/css/select2*
+webroot/html/*.html
+webroot/html/*.tmpl
+webroot/img/sdn-logo.png
+webroot/test/ui/js/co.test.init.js
+
+node_modules
 dump.rdb
-config/config.global.js
+
+
+

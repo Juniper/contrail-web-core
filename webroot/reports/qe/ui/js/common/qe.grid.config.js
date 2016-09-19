@@ -4,8 +4,8 @@
 
 define([
     'underscore',
-    'core-basedir/js/common/qe.utils'
-], function (_, qewu) {
+    'core-basedir/reports/qe/ui/js/common/qe.utils'
+], function (_, qeUtils) {
     function getColumnDisplay4Query(tableName, tableType) {
         if(tableType == cowc.QE_STAT_TABLE_TYPE) {
             return columnDisplayMap["defaultStatColumns"].concat(contrail.checkIfExist(columnDisplayMap[tableName]) ? columnDisplayMap[tableName] : []);
@@ -30,7 +30,7 @@ define([
         }
 
         $.each(selectArray, function(selectKey, selectValue) {
-            var columnName = qewu.formatNameForGrid(selectValue),
+            var columnName = qeUtils.formatNameForGrid(selectValue),
                 columnConfig = {
                     id: selectValue, field: selectValue,
                     name: columnName,
@@ -1755,7 +1755,7 @@ define([
             {select: "ModuleId", display:{width: 200, searchable:true}},
             {select: "Messagetype", display:{width:230, searchable:true}},
             {select: "Keyword", display:{width:150, searchable:true}},
-            {select: "Level", display:{width:100, searchable:true, formatter: function(r, c, v, cd, dc) { return qewu.getLevelName4Value(dc.Level); }}},
+            {select: "Level", display:{width:100, searchable:true, formatter: function(r, c, v, cd, dc) { return qeUtils.getLevelName4Value(dc.Level); }}},
             {select: "Category", display:{width: 150, searchable:true}},
             {select: "Context", display:{width:150, searchable:true}},
             {
@@ -1797,7 +1797,7 @@ define([
                 columnDisplay = _getColumnDisplay4Grid(tableName, tableType, selectArray);
 
             $.each(columnDisplay, function(columnKey, columnValue){
-                if (!qewu.isAggregateField(columnValue.id) && columnValue.id !== 'T' && columnValue.id !== 'T=' && columnValue.id !== 'UUID' && columnValue['id'].indexOf("PERCENTILES(") == -1) {
+                if (!qeUtils.isAggregateField(columnValue.id) && columnValue.id !== 'T' && columnValue.id !== 'T=' && columnValue.id !== 'UUID' && columnValue['id'].indexOf("PERCENTILES(") == -1) {
                     newColumnDisplay.push(columnValue);
                 }
             });

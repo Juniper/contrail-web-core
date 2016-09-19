@@ -52,8 +52,9 @@
  */
 
 define([
-    'underscore'
-], function (_) {
+    'underscore',
+    'chart-utils'
+], function (_, chUtils) {
     var LineBarWithFocusChartModel = function(chartOptions) {
         "use strict";
 

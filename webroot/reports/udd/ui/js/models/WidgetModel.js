@@ -5,11 +5,11 @@
 define([
     "lodash",
     "backbone",
-    "core-basedir/js/common/qe.utils",
+    "core-basedir/reports/qe/ui/js/common/qe.utils",
     "core-constants",
     "contrail-model",
     "text!reports/udd/config/default.config.json"
-], function(_, Backbone, QEUtils, cowc, ContrailModel, defaultConfig) {
+], function(_, Backbone, qeUtils, cowc, ContrailModel, defaultConfig) {
     defaultConfig = JSON.parse(defaultConfig);
 
     var WidgetModel = Backbone.Model.extend({
@@ -20,7 +20,7 @@ define([
             self.ready = false;
             if (!_p || !_p.id) {
                 var p = _p || {};
-                self.id = QEUtils.generateQueryUUID().slice(0, 36);
+                self.id = qeUtils.generateQueryUUID().slice(0, 36);
                 attrs.config = p.config || {};
                 attrs.id = self.id;
                 attrs.config.title = self.id;

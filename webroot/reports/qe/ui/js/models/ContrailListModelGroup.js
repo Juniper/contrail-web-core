@@ -17,15 +17,15 @@ define([
             self.errorList = [];
             self.childModelObjs = [];
             self.onAllRequestsCompleteCB = [];
-      self.initDefObj = $.Deferred(); // eslint-disable-line
+            self.initDefObj = $.Deferred(); // eslint-disable-line
             self.primaryListModel = new ContrailListModel({ data: self.getItems() });
 
-      /* eslint-disable */
-      self.onAllRequestsComplete = new Slick.Event();
-      self.onDataUpdate = new Slick.Event();
-      /* eslint-enable */
+            /* eslint-disable */
+            self.onAllRequestsComplete = new Slick.Event();
+            self.onDataUpdate = new Slick.Event();
+            /* eslint-enable */
 
-      //Default subscription to update the dataView.
+            //Default subscription to update the dataView.
             self.onAllRequestsComplete.subscribe(function() {
                 self.primaryListModel.setData(self.getItems());
                 if (self.error) {
@@ -40,7 +40,7 @@ define([
                 self.primaryListModel.onDataUpdate.notify();
             });
 
-      //we should listen to primaryListModel data update
+            //we should listen to primaryListModel data update
             self.primaryListModel.onDataUpdate.subscribe(function() {
 
             });
@@ -121,8 +121,8 @@ define([
         },
 
         createChildModelObj: function(listModelConfig, updateDataCB, errorHandler) {
-      var status = $.Deferred(), // eslint-disable-line
-          model = new ContrailListModel(listModelConfig);
+            var status = $.Deferred(), // eslint-disable-line
+                model = new ContrailListModel(listModelConfig);
 
             model.onAllRequestsComplete.subscribe(function() {
                 status.resolve(listModelConfig.id);

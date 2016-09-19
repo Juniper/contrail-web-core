@@ -582,10 +582,12 @@ function ajaxDefErrorHandler(xhr) {
     }
 }
 
-function renderSparkLines(cellNode,row,dataContext,colDef) {
-    $(cellNode).find('.gridSparkline').each(function() {
+function renderSparkLines(cellNode, row, dataContext, colDef) {
+    require(["chart-utils"], function(chUtils) {
+        $(cellNode).find('.gridSparkline').each(function() {
             chUtils.drawSparkLine4Selector(this, 'blue-grid-sparkline', dataContext['histCpuArr']);
         });
+    });
 }
 
 function sort(object) {

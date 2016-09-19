@@ -4,8 +4,8 @@
 
 define([
     "query-form-view",
-    "core-basedir/js/common/qe.utils"
-], function(QueryFormView, queryEngineUtils) {
+    "core-basedir/reports/qe/ui/js/common/qe.utils"
+], function(QueryFormView, qeUtils) {
     var QueryTextView = QueryFormView.extend({
         render: function() {
             var self = this,
@@ -15,7 +15,7 @@ define([
 
             self.$el.append(queryPageTmpl);
 
-            self.$el.find(".queryText").append(queryEngineUtils.formatEngQuery(queryFormAttributes.engQueryStr));
+            self.$el.find(".queryText").append(qeUtils.formatEngQuery(queryFormAttributes.engQueryStr));
         }
     });
 

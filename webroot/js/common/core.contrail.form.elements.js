@@ -1050,6 +1050,7 @@ define([
                 </div>\
         	</div> ';
 
+            $('.modal-backdrop').remove();
             $('#' + options.id).remove();
             $('body').prepend(modalHTML);
 

@@ -2,7 +2,7 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 define([
-    "core-basedir/js/common/qe.utils"
+    "core-basedir/reports/qe/ui/js/common/qe.utils"
 ], function(qewu) {
     function infraMonitorClass() {
         var self = this;
@@ -163,38 +163,38 @@ define([
                 $.ajax({
                     url: monitorInfraUrls['QUERY'] + '?where=&filters=&level=4&fromTimeUTC=now-10m' +
                     '&toTimeUTC=now&table=MessageTable&limit=10'
-                }).done(function(result) {
-                    retArr = $.map(result['data'],function(obj,idx) {
-                        obj['message'] = qewu.formatXML2JSON(obj['Xmlmessage']);
-                        obj['timeStr'] = diffDates(new XDate(obj['MessageTS']/1000),new XDate());
-                        if(obj['Source'] == null)
-                            obj['moduleId'] = contrail.format('{0}',obj['ModuleId']);
-                        else
-                            obj['moduleId'] = contrail.format('{0} ({1})',obj['ModuleId'],obj['Source']);
-                        if($.inArray(obj['ModuleId'],[UVEModuleIds['DISCOVERY_SERVICE'],UVEModuleIds['SERVICE_MONITOR'],UVEModuleIds['SCHEMA'],UVEModuleIds['CONFIG_NODE']]) != -1)
-                            obj['link'] = {p:'mon_infra_config',q:{node:obj['Source'],tab:''}};
-                        else if($.inArray(obj['ModuleId'],[UVEModuleIds['COLLECTOR'],UVEModuleIds['OPSERVER'],UVEModuleIds['QUERYENGINE']],obj['ModuleId']) != -1)
-                            obj['link'] = {p:'mon_infra_analytics',q:{node:obj['Source'],tab:''}};
-                        else if($.inArray(obj['ModuleId'],[UVEModuleIds['VROUTER_AGENT']]) != -1)
-                            obj['link'] = {p:'mon_infra_vrouter',q:{node:obj['Source'],tab:''}};
-                        else if($.inArray(obj['ModuleId'],[UVEModuleIds['CONTROLNODE']]) != -1)
-                            obj['link'] = {p:'mon_infra_control',q:{node:obj['Source'],tab:''}};
-                        return obj;
-                    });
-                    deferredObj.resolve(retArr);
-                }).fail(function(result) {
-                    deferredObj.resolve(retArr);
+            }).done(function(result) {
+                retArr = $.map(result['data'],function(obj,idx) {
+                    obj['message'] = qeUtils.formatXML2JSON(obj['Xmlmessage']);
+                    obj['timeStr'] = diffDates(new XDate(obj['MessageTS']/1000),new XDate());
+                    if(obj['Source'] == null)
+                        obj['moduleId'] = contrail.format('{0}',obj['ModuleId']);
+                    else
+                        obj['moduleId'] = contrail.format('{0} ({1})',obj['ModuleId'],obj['Source']);
+                    if($.inArray(obj['ModuleId'],[UVEModuleIds['DISCOVERY_SERVICE'],UVEModuleIds['SERVICE_MONITOR'],UVEModuleIds['SCHEMA'],UVEModuleIds['CONFIG_NODE']]) != -1)
+                        obj['link'] = {p:'mon_infra_config',q:{node:obj['Source'],tab:''}};
+                    else if($.inArray(obj['ModuleId'],[UVEModuleIds['COLLECTOR'],UVEModuleIds['OPSERVER'],UVEModuleIds['QUERYENGINE']],obj['ModuleId']) != -1)
+                        obj['link'] = {p:'mon_infra_analytics',q:{node:obj['Source'],tab:''}};
+                    else if($.inArray(obj['ModuleId'],[UVEModuleIds['VROUTER_AGENT']]) != -1)
+                        obj['link'] = {p:'mon_infra_vrouter',q:{node:obj['Source'],tab:''}};
+                    else if($.inArray(obj['ModuleId'],[UVEModuleIds['CONTROLNODE']]) != -1)
+                        obj['link'] = {p:'mon_infra_control',q:{node:obj['Source'],tab:''}};
+                    return obj;
                 });
-            }
-            var logListTemplate = contrail.getTemplate4Id("logList-template");
-            var logDeferredObj = $.Deferred();
-            getLogs(logDeferredObj);
-            logDeferredObj.done(function(data) {
-                //Display only recent 3 log messages
-                $('#logs-box .widget-main').empty().html(logListTemplate(data.reverse().slice(0,3)));
-                endWidgetLoading('logs');
+                deferredObj.resolve(retArr);
+            }).fail(function(result) {
+                deferredObj.resolve(retArr);
             });
         }
+        var logListTemplate = contrail.getTemplate4Id("logList-template");
+        var logDeferredObj = $.Deferred();
+        getLogs(logDeferredObj);
+        logDeferredObj.done(function(data) {
+            //Display only recent 3 log messages
+        	$('#logs-box .widget-main').empty().html(logListTemplate(data.reverse().slice(0,3)));
+            endWidgetLoading('logs');
+        });
+    }
 
         function loadInfoBoxes() {
 

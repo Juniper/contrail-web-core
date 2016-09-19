@@ -6,9 +6,9 @@ define([
     "lodash",
     "knockout",
     "query-form-model",
-    "core-basedir/js/common/qe.model.config",
+    "core-basedir/reports/qe/ui/js/common/qe.model.config",
     "core-constants"
-], function (_, Knockout, QueryFormModel, queryEngineModelConfig, coreConstants) {
+], function (_, Knockout, QueryFormModel, qeModelConfig, coreConstants) {
     var SystemLogsFormModel = QueryFormModel.extend({
 
         defaultSelectFields: ["Type"],
@@ -18,7 +18,7 @@ define([
         disableWhereFields: ["Level", "Keyword"],
 
         constructor: function (modelConfig, _queryReqConfig) {
-            var defaultConfig = queryEngineModelConfig.getQueryModelConfig({
+            var defaultConfig = qeModelConfig.getQueryModelConfig({
                 table_name: coreConstants.MESSAGE_TABLE,
                 table_type: coreConstants.QE_LOG_TABLE_TYPE,
                 query_prefix: coreConstants.SYSTEM_LOGS_PREFIX,

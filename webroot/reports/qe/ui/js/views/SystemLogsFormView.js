@@ -8,8 +8,8 @@ define([
     "query-form-view",
     "layout-handler",
     "core-basedir/reports/qe/ui/js/models/SystemLogsFormModel",
-    "core-basedir/js/common/qe.utils"
-], function(kb, kbValidation, QueryFormView, LayoutHandler, SystemLogsFormModel, queryEngineUtils) {
+    "core-basedir/reports/qe/ui/js/common/qe.utils"
+], function(kb, kbValidation, QueryFormView, LayoutHandler, SystemLogsFormModel, qeUtils) {
     var layoutHandler = new LayoutHandler();
     var SystemLogsFormView = QueryFormView.extend({
         render: function() {
@@ -42,7 +42,7 @@ define([
                     }
                 });
 
-                queryEngineUtils.adjustHeight4FormTextarea(queryPrefix);
+                qeUtils.adjustHeight4FormTextarea(queryPrefix);
 
                 if (queryType === cowc.QUERY_TYPE_RERUN) {
                     self.renderQueryResult();
@@ -69,7 +69,7 @@ define([
             }
 
             queryFormModel.is_request_in_progress(true);
-            queryEngineUtils.fetchServerCurrentTime(function(serverCurrentTime) {
+            qeUtils.fetchServerCurrentTime(function(serverCurrentTime) {
                 var queryRequestPostData = queryFormModel.getQueryRequestPostData(serverCurrentTime);
 
                 queryRequestPostData.chunkSize = cowc.QE_RESULT_CHUNK_SIZE_10K;
@@ -109,7 +109,7 @@ define([
                                 path: "from_time",
                                 dataBindValue: "from_time",
                                 class: "col-xs-3",
-                                elementConfig: queryEngineUtils.getFromTimeElementConfig("from_time", "to_time"),
+                                elementConfig: qeUtils.getFromTimeElementConfig("from_time", "to_time"),
                                 visible: "isTimeRangeCustom()"
                             }
                         }, {
@@ -120,7 +120,7 @@ define([
                                 path: "to_time",
                                 dataBindValue: "to_time",
                                 class: "col-xs-3",
-                                elementConfig: queryEngineUtils.getToTimeElementConfig("from_time", "to_time"),
+                                elementConfig: qeUtils.getToTimeElementConfig("from_time", "to_time"),
                                 visible: "isTimeRangeCustom()"
                             }
                         }]
@@ -145,7 +145,7 @@ define([
                                 editPopupConfig: {
                                     renderEditFn: function() {
                                         var tableName = self.model.table_name();
-                                        self.renderSelect({ className: queryEngineUtils.getModalClass4Table(tableName) });
+                                        self.renderSelect({ className: qeUtils.getModalClass4Table(tableName) });
                                     }
                                 }
                             }

@@ -179,8 +179,6 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
 
             'infoboxes'                   : coreWebDir + '/js/views/InfoboxesView',
             'barchart-cf'                 : coreWebDir + '/js/views/BarChartView',
-
-            // 'core.app.utils'              : coreWebDir + "/js/common/core.app.utils",
             'storage-init'                : 'empty:'
 
         };
@@ -506,6 +504,22 @@ var coreBundles = {
             'xdate',
             'ipv6',
             'jsonpath'
+        ],
+        'qe-module': [
+            'core-basedir/reports/qe/ui/js/common/qe.utils',
+            'core-basedir/reports/qe/ui/js/common/qe.parsers',
+            'core-basedir/reports/qe/ui/js/common/qe.grid.config',
+            'core-basedir/reports/qe/ui/js/common/qe.model.config',
+            'core-basedir/reports/qe/ui/js/views/QueryEngineView',
+            'core-basedir/reports/qe/ui/js/views/QueryQueueView',
+            'core-basedir/reports/qe/ui/js/views/QueryTextView',
+            'core-basedir/reports/qe/ui/js/views/ObjectLogsFormView',
+            'core-basedir/reports/qe/ui/js/views/SystemLogsFormView',
+            'core-basedir/reports/qe/ui/js/views/StatQueryFormView',
+            'core-basedir/reports/qe/ui/js/models/ContrailListModelGroup',
+            'core-basedir/reports/qe/ui/js/models/ObjectLogsFormModel',
+            'core-basedir/reports/qe/ui/js/models/StatQueryFormModel',
+            'core-basedir/reports/qe/ui/js/models/SystemLogsFormModel'
         ]
     };
 

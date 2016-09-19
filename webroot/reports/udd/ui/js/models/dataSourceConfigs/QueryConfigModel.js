@@ -4,10 +4,10 @@
 
 define([
     "lodash",
-    "core-basedir/js/common/qe.model.config",
+    "core-basedir/reports/qe/ui/js/common/qe.model.config",
     "core-constants",
     "query-form-model"
-], function(_, queryEngineModelConfig, coreConstants, QueryFormModel) {
+], function(_, qeModelConfig, coreConstants, QueryFormModel) {
     var QueryConfigModel = QueryFormModel.extend({
         defaultSelectFields: [],
         constructor: function(modelConfig, queryReqConfig) {
@@ -44,7 +44,7 @@ define([
                 select: coreConstants.DEFAULT_FR_SELECT_FIELDS,
             };
 
-            var defaultConfig = queryEngineModelConfig.getQueryModelConfig({
+            var defaultConfig = qeModelConfig.getQueryModelConfig({
                 keywords: "",
                 log_level: "",
                 limit: "",

@@ -61,7 +61,6 @@ define([
     covdc = new CoreViewsDefaultConfig();
     contrail = new Contrail();
     cowch = new Cache();
-    chUtils = new ChartUtils();
     webServerInfoDefObj.done(function () {
         require(['nonamd-libs'], function () {
             cowc.DROPDOWN_VALUE_SEPARATOR = getValueByJsonPath(globalObj,

@@ -8,8 +8,8 @@ define([
     'knockout',
     'contrail-model',
     'query-and-model',
-    'core-basedir/js/common/qe.utils'
-], function (_, Backbone, Knockout, ContrailModel, QueryAndModel, qewu) {
+    'core-basedir/reports/qe/ui/js/common/qe.utils'
+], function (_, Backbone, Knockout, ContrailModel, QueryAndModel, qeUtils) {
     var QueryOrModel = ContrailModel.extend({
 
         defaultConfig: {
@@ -52,8 +52,8 @@ define([
                     value: orClauseJSON[i].value
                 };
 
-                if (qewu.getNameSuffixKey(orClauseJSON[i].name, whereDataObject['name_option_list']) !== -1 &&
-                    (i + 1) < orClauseLength && qewu.getNameSuffixKey(orClauseJSON[i+1].name, whereDataObject['name_option_list']) === -1) {
+                if (qeUtils.getNameSuffixKey(orClauseJSON[i].name, whereDataObject['name_option_list']) !== -1 &&
+                    (i + 1) < orClauseLength && qeUtils.getNameSuffixKey(orClauseJSON[i+1].name, whereDataObject['name_option_list']) === -1) {
                     i = i + 1;
                     andClauseObj.suffix_name = orClauseJSON[i].name;
                     andClauseObj.suffix_operator = cowc.OPERATOR_CODES[orClauseJSON[i].op];

@@ -6,15 +6,15 @@ define([
     "lodash",
     "knockout",
     "query-form-model",
-    "core-basedir/js/common/qe.model.config",
+    "core-basedir/reports/qe/ui/js/common/qe.model.config",
     "core-constants"
-], function (_, Knockout, QueryFormModel, queryEngineConfig, coreConstants) {
+], function (_, Knockout, QueryFormModel, qeModelConfig, coreConstants) {
     var ObjectLogsFormModel = QueryFormModel.extend({
 
         defaultSelectFields: [],
 
         constructor: function (modelConfig, queryReqConfig) {
-            var defaultConfig = queryEngineConfig.getQueryModelConfig({
+            var defaultConfig = qeModelConfig.getQueryModelConfig({
                 table_type: coreConstants.QE_OBJECT_TABLE_TYPE,
                 query_prefix: coreConstants.OBJECT_LOGS_PREFIX,
                 limit: coreConstants.QE_DEFAULT_LIMIT_50K,

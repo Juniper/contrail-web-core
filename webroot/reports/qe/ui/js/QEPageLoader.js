@@ -3,42 +3,42 @@
  */
 
 define([
-    "core-basedir/reports/qe/ui/js/views/QueryEngineView"
+    'core-basedir/reports/qe/ui/js/views/QueryEngineView'
 ], function(QueryEngineView) {
     var QEPageLoader = function() {
-        this.load = function(paramObject) {
-            var self = this,
-                hashParams = paramObject.hashParams,
-                renderFn = paramObject.function,
-                loadingStartedDefObj = paramObject.loadingStartedDefObj;
-
-            self.qeView = new QueryEngineView();
-            self.renderView(renderFn, hashParams);
-            if (contrail.checkIfExist(loadingStartedDefObj)) {
-                loadingStartedDefObj.resolve();
-            }
+        this.load = function (paramObject) {
+            var self = this, currMenuObj = globalObj.currMenuObj,
+                hashParams = paramObject['hashParams'],
+                renderFn = paramObject['function'],
+                loadingStartedDefObj = paramObject['loadingStartedDefObj'];
+            
+                self.qeView = new QueryEngineView();
+                self.renderView(renderFn, hashParams);
+                if(contrail.checkIfExist(loadingStartedDefObj)) {
+                    loadingStartedDefObj.resolve();
+                }
         };
-        this.renderView = function(renderFn, hashParams) {
-            $(window.contentContainer).empty();
+        this.renderView = function (renderFn, hashParams, view) {
+            $(contentContainer).empty();
             switch (renderFn) {
-                case "renderSystemLogs":
-                    this.qeView.renderSystemLogs({ hashParams: hashParams });
+                case 'renderSystemLogs':
+                    this.qeView.renderSystemLogs({hashParams: hashParams});
                     break;
 
-                case "renderObjectLogs":
-                    this.qeView.renderObjectLogs({ hashParams: hashParams });
+                case 'renderObjectLogs':
+                    this.qeView.renderObjectLogs({hashParams: hashParams});
                     break;
 
-                case "renderLogQueue":
-                    this.qeView.renderLogQueue({ hashParams: hashParams });
+                case 'renderLogQueue':
+                    this.qeView.renderLogQueue({hashParams: hashParams});
                     break;
 
-                case "renderStatQuery":
-                    this.qeView.renderStatQuery({ hashParams: hashParams });
+                case 'renderStatQuery':
+                    this.qeView.renderStatQuery({hashParams: hashParams});
                     break;
 
-                case "renderStatQueue":
-                    this.qeView.renderStatQueue({ hashParams: hashParams });
+                case 'renderStatQueue':
+                    this.qeView.renderStatQueue({hashParams: hashParams});
                     break;
             }
         };

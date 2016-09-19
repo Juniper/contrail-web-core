@@ -7,8 +7,8 @@ define([
     'backbone',
     'knockout',
     'contrail-model',
-    'core-basedir/js/common/qe.utils'
-], function (_, Backbone, Knockout, ContrailModel, qewu) {
+    'core-basedir/reports/qe/ui/js/common/qe.utils'
+], function (_, Backbone, Knockout, ContrailModel, qeUtils) {
     var QueryAndModel = ContrailModel.extend({
 
         defaultConfig: {
@@ -70,7 +70,7 @@ define([
 
         getFilterNameOptionList: function(viewModel) {
             var rootModel = viewModel.parentModel(),
-                validFilterFields = qewu.getCheckedFields(rootModel.select_data_object.checked_map()),
+                validFilterFields = qeUtils.getCheckedFields(rootModel.select_data_object.checked_map()),
                 resultFilterFieldsDataArr = [], invalidFilterFieldsArr = ["T=", "T", "UUID"];
 
             for (var i = 0; i < validFilterFields.length; i++) {

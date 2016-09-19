@@ -7,8 +7,9 @@ define([
     'contrail-view',
     'core-basedir/js/models/LineWithFocusChartModel',
     'contrail-list-model',
-    'nv.d3'
-], function (_, ContrailView, LineWithFocusChartModel, ContrailListModel,nv) {
+    'nv.d3',
+    'chart-utils'
+], function (_, ContrailView, LineWithFocusChartModel, ContrailListModel, nv, chUtils) {
     var LineWithFocusChartView = ContrailView.extend({
         render: function () {
             var viewConfig = this.attributes.viewConfig,
@@ -75,7 +76,7 @@ define([
             //     data.push(defData);
             // }
 
-            chartViewConfig = getChartViewConfig(data, viewConfig);
+            chartViewConfig = self.getChartViewConfig(data, viewConfig);
             chartOptions = chartViewConfig['chartOptions'];
             chartModel = new LineWithFocusChartModel(chartOptions);
 
@@ -153,6 +154,46 @@ define([
         resize: function() {
             var self = this;
             self.resizeFn()
+        },
+
+        getChartViewConfig: function(chartData, viewConfig) {
+            var chartViewConfig = {},
+                chartOptions = ifNull(viewConfig['chartOptions'], {}),
+                chartAxesOptionKey = contrail.checkIfExist(chartOptions.chartAxesOptionKey) ? chartOptions.chartAxesOptionKey : null,
+                chartAxesOption = (contrail.checkIfExist(chartOptions.chartAxesOptions) && chartAxesOptionKey !== null)? chartOptions.chartAxesOptions[chartAxesOptionKey] : {};
+
+            chartOptions = $.extend(true, {}, covdc.lineWithFocusChartConfig, chartOptions, chartAxesOption);
+
+            chartOptions['forceY'] = getForceYAxis(chartData, chartOptions);
+
+            if (chartData.length > 0) {
+                spliceBorderPoints(chartData);
+                var values = chartData[0].values,
+                    brushExtent = null,
+                    hideFocusChart = getValueByJsonPath(chartOptions,'hideFocusChart', false),
+                    start, end;
+                end = values[values.length - 1];
+                if (values.length >= 20) {
+                    start = values[values.length - 20];
+                    if(!hideFocusChart){
+                        chartOptions['brushExtent'] = [chUtils.getViewFinderPoint(start.x),
+                            chUtils.getViewFinderPoint(end.x)];
+                    }
+                } else if (chartOptions['defaultSelRange'] != null &&
+                    values.length >= parseInt(chartOptions['defaultSelRange'])) {
+                    var selectionRange = parseInt(chartOptions['defaultSelRange']);
+                    start = values[values.length - selectionRange];
+                    if(!hideFocusChart){
+                        chartOptions['brushExtent'] = [chUtils.getViewFinderPoint(start.x),
+                            chUtils.getViewFinderPoint(end.x)];
+                    }
+                }
+            }
+
+            chartViewConfig['chartData'] = chartData;
+            chartViewConfig['chartOptions'] = chartOptions;
+
+            return chartViewConfig;
         }
     });
 
@@ -179,49 +220,6 @@ define([
             self.removeMessage();
         }
     }
-
-    function getChartViewConfig(chartData, viewConfig) {
-        var chartViewConfig = {},
-            chartOptions = ifNull(viewConfig['chartOptions'], {}),
-            chartAxesOptionKey = contrail.checkIfExist(chartOptions.chartAxesOptionKey) ? chartOptions.chartAxesOptionKey : null,
-            chartAxesOption = (contrail.checkIfExist(chartOptions.chartAxesOptions) && chartAxesOptionKey !== null)? chartOptions.chartAxesOptions[chartAxesOptionKey] : {};
-
-        chartOptions = $.extend(true, {}, covdc.lineWithFocusChartConfig, chartOptions, chartAxesOption);
-
-        chartOptions['forceY'] = getForceYAxis(chartData, chartOptions);
-
-        if (chartData.length > 0) {
-            spliceBorderPoints(chartData);
-            var values = chartData[0].values,
-                brushExtent = null,
-                hideFocusChart = getValueByJsonPath(chartOptions,'hideFocusChart', false),
-                start, end;
-            end = values[values.length - 1];
-            if (values.length >= 20) {
-                start = values[values.length - 20];
-                if(!hideFocusChart){
-                    chartOptions['brushExtent'] = [chUtils.getViewFinderPoint(start.x),
-                        chUtils.getViewFinderPoint(end.x)];
-                }
-            } else if (chartOptions['defaultSelRange'] != null &&
-                  values.length >= parseInt(chartOptions['defaultSelRange'])) {
-                var selectionRange = parseInt(chartOptions['defaultSelRange']);
-                start = values[values.length - selectionRange];
-                if(!hideFocusChart){
-                    chartOptions['brushExtent'] = [chUtils.getViewFinderPoint(start.x),
-                        chUtils.getViewFinderPoint(end.x)];
-                }
-            }
-        }
-        _.each(chartData, function (series, i) {
-            if (chartOptions.colors) series.color = chartOptions.colors[i]
-        })
-
-        chartViewConfig['chartData'] = chartData;
-        chartViewConfig['chartOptions'] = chartOptions;
-
-        return chartViewConfig;
-    };
 
     function spliceBorderPoints(chartData) {
         var lineChart;

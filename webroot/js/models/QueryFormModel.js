@@ -9,9 +9,9 @@ define([
     'contrail-model',
     'query-or-model',
     'query-and-model',
-    'core-basedir/js/common/qe.utils',
+    'core-basedir/reports/qe/ui/js/common/qe.utils',
     'contrail-list-model',
-], function (_, Backbone, Knockout, ContrailModel, QueryOrModel, QueryAndModel, qewu, ContrailListModel) {
+], function (_, Backbone, Knockout, ContrailModel, QueryOrModel, QueryAndModel, qeUtils, ContrailListModel) {
     var QueryFormModel = ContrailModel.extend({
         defaultSelectFields: [],
         disableSelectFields: [],
@@ -136,7 +136,7 @@ define([
 
                 fetchTableValues(fromTimeUTC, toTimeUTC);
             } else {
-                qewu.fetchServerCurrentTime(function (serverCurrentTime) {
+                qeUtils.fetchServerCurrentTime(function (serverCurrentTime) {
                     var fromTimeUTC = serverCurrentTime - (timeRange * 1000),
                         toTimeUTC = serverCurrentTime;
 
@@ -150,7 +150,7 @@ define([
                 timeRange = contrailViewModel.attributes.time_range;
 
             if (contrail.checkIfExist(tableName)) {
-                qewu.fetchServerCurrentTime(function(serverCurrentTime) {
+                qeUtils.fetchServerCurrentTime(function(serverCurrentTime) {
                     var fromTimeUTC = serverCurrentTime - (timeRange * 1000),
                         toTimeUTC = serverCurrentTime
 
@@ -215,7 +215,7 @@ define([
                 disableFieldArray = [].concat(defaultSelectFields).concat(this.disableSelectFields),
                 disableSubstringArray = this.disableSubstringInSelectFields;
 
-            //qewu.adjustHeight4FormTextarea(model.attributes.query_prefix);
+            qeUtils.adjustHeight4FormTextarea(model.attributes.query_prefix);
             if(tableName != '') {
                 $.ajax(ajaxConfig).success(function(response) {
                     var selectFields = getSelectFields4Table(response, disableFieldArray, disableSubstringArray),
@@ -261,7 +261,7 @@ define([
 
         saveSelect: function (callbackObj) {
             try {
-                var checkedFields = qewu.getCheckedFields(this.select_data_object().checked_map());
+                var checkedFields = qeUtils.getCheckedFields(this.select_data_object().checked_map());
                 if (contrail.checkIfFunction(callbackObj.init)) {
                     callbackObj.init();
                 }
@@ -282,7 +282,7 @@ define([
                     callbackObj.init();
                 }
 
-                this.where(qewu.parseWhereCollection2String(this));
+                this.where(qeUtils.parseWhereCollection2String(this));
 
                 if (contrail.checkIfFunction(callbackObj.success)) {
                     callbackObj.success();
@@ -300,7 +300,7 @@ define([
                     callbackObj.init();
                 }
 
-                this.filters(qewu.parseFilterCollection2String(this));
+                this.filters(qeUtils.parseFilterCollection2String(this));
 
                 if (contrail.checkIfFunction(callbackObj.success)) {
                     callbackObj.success();
@@ -344,7 +344,7 @@ define([
         },
 
         getSortByOptionList: function(viewModel) {
-            var validSortFields = qewu.getCheckedFields(this.select_data_object().checked_map()),
+            var validSortFields = qeUtils.getCheckedFields(this.select_data_object().checked_map()),
                 invalidSortFieldsArr = ["T=" , "UUID"],
                 resultSortFieldsDataArr = [];
 
@@ -379,15 +379,15 @@ define([
                 queryReqObj = {};
 
             if(useOldTime != true) {
-                qewu.setUTCTimeObj(this.query_prefix(), formModelAttrs, serverCurrentTime);
+                qeUtils.setUTCTimeObj(this.query_prefix(), formModelAttrs, serverCurrentTime);
             }
 
             self.from_time_utc(formModelAttrs.from_time_utc);
             self.to_time_utc(formModelAttrs.to_time_utc);
 
             queryReqObj['formModelAttrs'] = formModelAttrs;
-            queryReqObj.queryId = qewu.generateQueryUUID();
-            queryReqObj.engQueryStr = qewu.getEngQueryStr(formModelAttrs);
+            queryReqObj.queryId = qeUtils.generateQueryUUID();
+            queryReqObj.engQueryStr = qeUtils.getEngQueryStr(formModelAttrs);
 
             queryReqObj = $.extend(true, self.defaultQueryReqConfig, queryReqObj, customQueryReqObj)
 
@@ -463,7 +463,7 @@ define([
         isSuffixVisible: function(name) {
             var whereDataObject = this.model().get('where_data_object');
             name = contrail.checkIfFunction(name) ? name() : name;
-            return (qewu.getNameSuffixKey(name, whereDataObject['name_option_list']) != -1);
+            return (qeUtils.getNameSuffixKey(name, whereDataObject['name_option_list']) != -1);
         },
 
         getTimeGranularityUnits: function() {

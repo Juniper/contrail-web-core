@@ -7,10 +7,10 @@ define([
     "validation",
     "core-constants",
     "core-labels",
-    "core-basedir/js/common/qe.utils",
+    "core-basedir/reports/qe/ui/js/common/qe.utils",
     "query-form-view"
 ], function(ko, kb, kbValidation, coreConstants, coreLabelProcessor,
-    queryEngineUtils, QueryFormView) {
+    qeUtils, QueryFormView) {
     var QueryConfigView = QueryFormView.extend({
         render: function() {
             var self = this;
@@ -138,7 +138,7 @@ define([
                                 editPopupConfig: {
                                     renderEditFn: function() {
                                         var tableName = self.model.table_name();
-                                        self.renderSelect({ className: queryEngineUtils.getModalClass4Table(tableName) });
+                                        self.renderSelect({ className: qeUtils.getModalClass4Table(tableName) });
                                     },
                                 },
                             },

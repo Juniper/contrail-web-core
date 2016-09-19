@@ -6,15 +6,15 @@ define([
     'underscore',
     'knockout',
     'query-form-model',
-    'core-basedir/js/common/qe.model.config'
-], function (_, Knockout, QueryFormModel,qewmc) {
+    'core-basedir/reports/qe/ui/js/common/qe.model.config'
+], function (_, Knockout, QueryFormModel, qeModelConfig) {
     var NodeConsoleLogsModel = QueryFormModel.extend({
 
         defaultSelectFields: [],
         disableSelectFields: ['Type', 'SequenceNum', 'Context', 'Keyword'],
 
         constructor: function (modelData, queryReqConfig) {
-            var defaultConfig = qewmc.getQueryModelConfig({
+            var defaultConfig = qeModelConfig.getQueryModelConfig({
                 time_range: 600,
                 select: "MessageTS,Messagetype,Level,Category,Xmlmessage",
                 hostname:"",

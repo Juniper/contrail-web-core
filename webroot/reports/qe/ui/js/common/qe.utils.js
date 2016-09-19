@@ -80,8 +80,8 @@ define([
 
     function getTimeRangeObj(formModelAttrs, serverCurrentTime) {
         var timeRange = formModelAttrs['time_range'],
-          fromDate, toDate, fromTimeUTC, toTimeUTC, serverDateObj,
-          fromTime, toTime, now
+            fromDate, toDate, fromTimeUTC, toTimeUTC, serverDateObj,
+            fromTime, toTime, now
 
 
         if (timeRange > 0) {
@@ -137,8 +137,8 @@ define([
 
     function getFromTimeShowOptions(toTimeId, cdt) {
         var d = new Date($('#' + toTimeId + '_datetimepicker').val()),
-          dateString = moment(d).format('MMM DD, YYYY'),
-          timeString = moment(d).format('hh:mm:ss A');
+            dateString = moment(d).format('MMM DD, YYYY'),
+            timeString = moment(d).format('hh:mm:ss A');
 
         return {
             maxDate: dateString ? dateString : false,
@@ -148,9 +148,9 @@ define([
 
     function getFromTimeSelectOptions(toTimeId, cdt) {
         var d = new Date($('#' + toTimeId + '_datetimepicker').val()),
-          toDateString = moment(d).format('MMM DD, YYYY'),
-          timeString = moment(d).format('hh:mm:ss A'),
-          fromDateString = moment(cdt).format('MMM DD, YYYY');
+            toDateString = moment(d).format('MMM DD, YYYY'),
+            timeString = moment(d).format('hh:mm:ss A'),
+            fromDateString = moment(cdt).format('MMM DD, YYYY');
 
         return {
             maxDate: toDateString ? toDateString : false,
@@ -160,8 +160,8 @@ define([
 
     function getToTimeShowOptions(fromTimeId, cdt) {
         var d = new Date($('#' + fromTimeId + '_datetimepicker').val()),
-          dateString = moment(d).format('MMM DD, YYYY'),
-          timeString = moment(d).format('hh:mm:ss A');
+            dateString = moment(d).format('MMM DD, YYYY'),
+            timeString = moment(d).format('hh:mm:ss A');
 
         return {
             minDate: dateString ? dateString : false,
@@ -171,9 +171,9 @@ define([
 
     function getToTimeSelectOptions(fromTimeId, cdt) {
         var d = new Date($('#' + fromTimeId + '_datetimepicker').val()),
-          fromDateString = moment(d).format('MMM dd, yyyy'),
-          timeString = moment(d).format('hh:mm:ss A'),
-          toDateString = moment(cdt).format('MMM DD, YYYY');
+            fromDateString = moment(d).format('MMM dd, yyyy'),
+            timeString = moment(d).format('hh:mm:ss A'),
+            toDateString = moment(cdt).format('MMM DD, YYYY');
 
         return {
             minDate: fromDateString ? fromDateString : false,
@@ -187,8 +187,8 @@ define([
             filters = "";
         }
         var filtersArray = cowu.splitString2Array(filters, "&"),
-          filter, filterBy, limitBy, sortFields, sortOrder,
-          filter_json_obj = {};
+            filter, filterBy, limitBy, sortFields, sortOrder,
+            filter_json_obj = {};
 
         for (var i = 0; i < filtersArray.length; i++) {
             filter = filtersArray[i];
@@ -274,7 +274,7 @@ define([
 
     function parseWhereANDClause(whereANDClause) {
         var whereANDArray = whereANDClause.replace('(', '').replace(')', '').split(' AND '),
-          whereANDLength = whereANDArray.length, i, whereANDClause, whereANDClauseArray, operator = '';
+            whereANDLength = whereANDArray.length, i, whereANDClause, whereANDClauseArray, operator = '';
         for (i = 0; i < whereANDLength; i += 1) {
             whereANDArray[i] = whereANDArray[i].trim();
             whereANDClause = whereANDArray[i];
@@ -291,7 +291,7 @@ define([
                 whereANDArray[i] = whereANDClause;
             } else {
                 var whereANDClauseWithSuffixArrray = whereANDClause.split('&'),
-                  whereANDTerm = '';
+                    whereANDTerm = '';
                 // Treat whereANDClauseWithSuffixArrray[0] as a normal AND term and
                 // whereANDClauseWithSuffixArrray[1] as a special suffix term
                 if (whereANDClauseWithSuffixArrray != null && whereANDClauseWithSuffixArrray.length != 0) {
@@ -321,8 +321,8 @@ define([
 
     function populateWhereANDClause(whereANDClause, fieldName, fieldValue, operator) {
         var validLikeOPRFields = ['sourcevn', 'destvn'],
-          validRangeOPRFields = ['protocol', 'sourceip', 'destip', 'sport', 'dport'],
-          splitFieldValues;
+            validRangeOPRFields = ['protocol', 'sourceip', 'destip', 'sport', 'dport'],
+            splitFieldValues;
         whereANDClause.name = fieldName;
         if (validLikeOPRFields.indexOf(fieldName) != -1 && fieldValue.indexOf('*') != -1) {
             whereANDClause.value = fieldValue.replace('*', '');
@@ -513,7 +513,7 @@ define([
             $.each(texareaNames, function(nameKey, nameValue) {
                 var scrollHeight = $(elId).find('[name="' + nameValue + '"]').get(0).scrollHeight;
                 $(elId).find('[name="' + nameValue + '"]')
-                .outerHeight(((scrollHeight < 36) ? 26 : (scrollHeight- 10)));
+                    .outerHeight(((scrollHeight < 36) ? 26 : (scrollHeight- 10)));
             });
         },
 

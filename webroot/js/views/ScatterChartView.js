@@ -6,8 +6,9 @@ define([
     'underscore',
     'contrail-view',
     'core-basedir/js/models/ScatterChartModel',
-    'contrail-list-model'
-], function (_, ContrailView, ScatterChartModel, ContrailListModel) {
+    'contrail-list-model',
+    'chart-utils'
+], function (_, ContrailView, ScatterChartModel, ContrailListModel, chUtils) {
     var ScatterChartView = ContrailView.extend({
         render: function () {
             var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),

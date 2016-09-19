@@ -9,6 +9,64 @@ define(
                 var self = this;
                 self.BUCKET_DURATION = 300000000;//5 MINS
 
+                self.getAlarmCounts = function (response) {
+                    var acked = 0, unacked = 0;
+                    if(response != null && _.keys(response).length > 0) {
+                         for(var currNodeType in response) {
+                             for(var i = 0; i < response[currNodeType].length; i++) {
+                                 var currItem = response[currNodeType][i];
+                                 if(currItem.value != null && currItem.value.UVEAlarms != null && currItem.value.UVEAlarms.alarms != null
+                                     && currItem.value.UVEAlarms.alarms.length > 0) {
+                                     for(var j=0; j < currItem.value.UVEAlarms.alarms.length; j++) {
+                                         var currObject = {};
+                                         var alarmInfo = currItem.value.UVEAlarms.alarms[j];
+                                         (alarmInfo.ack)? acked++ : unacked++;
+                                     }
+                                 }
+                             }
+                         }
+                    }
+                    return {acked:acked, unacked:unacked};
+                }
+
+                self.fetchAlarms = function (deferredObj) {
+                    $.ajax({
+                        url:'/api/tenant/monitoring/alarms',
+                        type:'GET'
+                    }).done(function(result) {
+                        deferredObj.resolve(self.getAlarmCounts(result));
+                    }).fail(function(err) {
+                        deferredObj.resolve({acked:0,unacked:0});
+                    });
+                };
+
+                self.fetchAndUpdateAlarmBell = function () {
+                    var alarmDeferredObj = $.Deferred();
+
+                    alarmDeferredObj.done( function(alarmCounts) {
+                        self.updateAlarmBell(alarmCounts);
+                        self.startUpdateBellTimer();
+                    });
+                    self.fetchAlarms(alarmDeferredObj);
+                };
+
+                self.updateAlarmBell = function (alarmCounts) {
+                    if (alarmCounts != null && alarmCounts.unacked > 0) {
+                        //update the icon
+//                        $('#pageHeader').find('.icon-bell-alt').addClass('red');
+                        $('#pageHeader').find('#alert_info').text('Alarms ('+ alarmCounts.unacked +')');
+                    } else {
+//                        $('#pageHeader').find('.icon-bell-alt').removeClass('red');
+                        $('#pageHeader').find('#alert_info').text('Alarms');
+                    }
+                };
+
+                self.startUpdateBellTimer = function () {
+                    setTimeout(self.fetchAndUpdateAlarmBell,cowc.ALARM_REFRESH_DURATION);
+                };
+                //Call the update alarm bell
+                self.fetchAndUpdateAlarmBell();
+
                 self.mapSeverityToColor = function (severity) {
                     if (severity != -1) {
                         if (severity >= 2) {

@@ -73,6 +73,10 @@ constants.coreModules  = [
         enabled: true,
         name: 'qe-module',
         include: [
+            'core-basedir/reports/qe/ui/js/common/qe.utils',
+            'core-basedir/reports/qe/ui/js/common/qe.parsers',
+            'core-basedir/reports/qe/ui/js/common/qe.grid.config',
+            'core-basedir/reports/qe/ui/js/common/qe.model.config',
             'core-basedir/reports/qe/ui/js/views/QueryEngineView',
             'core-basedir/reports/qe/ui/js/views/QueryQueueView',
             'core-basedir/reports/qe/ui/js/views/QueryTextView',
@@ -86,10 +90,12 @@ constants.coreModules  = [
         ],
         exclude: [
             'underscore',
+            'moment',
             'contrail-view',
             'contrail-model',
             'core-basedir/js/views/ZoomScatterChartView',
-            'core-basedir/js/views/LineWithFocusChartView'
+            'core-basedir/js/views/LineWithFocusChartView',
+            'text!core-basedir/reports/qe/ui/templates/qe.tmpl'
         ]
     }
 ];

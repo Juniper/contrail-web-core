@@ -5,8 +5,8 @@
 define([
     "lodash",
     "contrail-view",
-    "core-basedir/js/common/qe.utils"
-], function(_, ContrailView, queryEngineUtils) {
+    "core-basedir/reports/qe/ui/js/common/qe.utils"
+], function(_, ContrailView, qeUtils) {
     var UDDashboardView = ContrailView.extend({
         el: $(window.contentContainer),
 
@@ -16,7 +16,7 @@ define([
             // get dashboard and tab ids from url params / loaded widgets or generate default
             this.currentDashboard = urlParams.p.split("_").slice(-1).pop() || this.model.dashboardIds()[0] || ctwl.TITLE_UDD_DEFAULT_DASHBOARD;
 
-            this.currentTab = urlParams.tab || this.model.tabIds(this.currentDashboard)[0] || queryEngineUtils.generateQueryUUID().slice(0, 36);
+            this.currentTab = urlParams.tab || this.model.tabIds(this.currentDashboard)[0] || qeUtils.generateQueryUUID().slice(0, 36);
 
             // TODO render dashboards in menu
             this.renderView4Config(this.$el, null, this.getViewConfig());
@@ -48,7 +48,7 @@ define([
                                 active: currentTabNumber,
                                 tabs: tabs,
                                 onAdd: function(title) {
-                                    var tabViewConfigs = [self.getConfig4Tab(queryEngineUtils.generateQueryUUID().slice(0, 36), title)];
+                                    var tabViewConfigs = [self.getConfig4Tab(qeUtils.generateQueryUUID().slice(0, 36), title)];
                                     this.renderNewTab("widget-layout-tabs-view", tabViewConfigs, true);
                                 },
                                 extendable: true,

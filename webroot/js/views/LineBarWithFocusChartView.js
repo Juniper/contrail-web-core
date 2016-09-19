@@ -7,8 +7,9 @@ define([
     'contrail-view',
     'core-basedir/js/models/LineBarWithFocusChartModel',
     'contrail-list-model',
-    'nv.d3'
-], function (_, ContrailView, LineBarWithFocusChartModel, ContrailListModel) {
+    'nv.d3',
+    'chart-utils'
+], function (_, ContrailView, LineBarWithFocusChartModel, ContrailListModel, nv, chUtils) {
     var LineBarWithFocusChartView = ContrailView.extend({
         render: function () {
             var viewConfig = this.attributes.viewConfig,
@@ -45,17 +46,17 @@ define([
         },
 
         renderChart: function (selector, viewConfig, chartViewModel) {
-            var self = this
-            var data = chartViewModel.getItems()
-            var chartTemplate = contrail.getTemplate4Id(cowc.TMPL_CHART)
-            var widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null
-            var chartViewConfig, chartOptions, chartModel
+            var self = this,
+                data = chartViewModel.getItems(),
+                chartTemplate = contrail.getTemplate4Id(cowc.TMPL_CHART),
+                widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
+                chartViewConfig, chartOptions, chartModel;
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data);
             }
 
-            chartViewConfig = getChartViewConfig(data, viewConfig.chartOptions);
+            chartViewConfig = self.getChartViewConfig(data, viewConfig.chartOptions);
             chartOptions = chartViewConfig['chartOptions'];
             //viewConfig.chartOptions = chartOptions;
             chartModel = new LineBarWithFocusChartModel(chartOptions);
@@ -127,9 +128,35 @@ define([
             $(selector).find('.nv-requestState').remove();
         },
 
+
         resize: function () {
             var self = this;
             self.resizeFn();
+        },
+
+        getChartViewConfig: function(chartData, chartOptions) {
+            var chartViewConfig = {};
+
+            var chartOptions = $.extend(true, {}, covdc.lineBarWithFocusChartConfig, chartOptions);
+
+            chartOptions['forceY1'] = getForceY1Axis(chartData, chartOptions['forceY1']);
+            chartOptions['forceY2'] = getForceY2Axis(chartData, chartOptions['forceY2']);
+            if (chartData.length > 0 && chartOptions['focusEnable']) {
+                var values = chartData[0].values,
+                    brushExtent = null,
+                    start, end;
+
+                if (values.length >= 25) {
+                    start = values[values.length - 25];
+                    end = values[values.length - 1];
+                    chartOptions['brushExtent'] = [chUtils.getViewFinderPoint(start.x), chUtils.getViewFinderPoint(end.x)];
+                }
+            }
+
+            chartViewConfig['chartData'] = chartData;
+            chartViewConfig['chartOptions'] = chartOptions;
+
+            return chartViewConfig;
         }
     });
 
@@ -162,41 +189,6 @@ define([
             self.removeMessage();
         }
     }
-
-    function getChartViewConfig(chartData, chartOptions) {
-        var chartViewConfig = {};
-        if (chartOptions.yAxisLabels) {
-            chartOptions.y1AxisLabel = chartOptions.yAxisLabels[0]
-            chartOptions.y2AxisLabel = chartOptions.yAxisLabels[1]
-        }
-        chartOptions = $.extend(true, {}, covdc.lineBarWithFocusChartConfig, chartOptions);
-
-        chartOptions['forceY1'] = getForceY1Axis(chartData, chartOptions['forceY1']);
-        chartOptions['forceY2'] = getForceY2Axis(chartData, chartOptions['forceY2']);
-        if (chartData.length > 0 && chartOptions['focusEnable']) {
-            var values = chartData[0].values,
-                brushExtent = null,
-                start, end;
-
-            if (values.length >= 25) {
-                start = values[values.length - 25];
-                end = values[values.length - 1];
-                chartOptions['brushExtent'] = [chUtils.getViewFinderPoint(start.x), chUtils.getViewFinderPoint(end.x)];
-            }
-        }
-        _.each(chartData, function (series, i) {
-            // assume first series should be rendered as bars
-            if (i == 0) chartData[0].bar = true
-
-            if (chartOptions.colors) series.color = chartOptions.colors[i]
-            if (chartOptions.yAxisLabels) series.key = chartOptions.yAxisLabels[i]
-        })
-
-        chartViewConfig['chartData'] = chartData;
-        chartViewConfig['chartOptions'] = chartOptions;
-
-        return chartViewConfig;
-    };
 
     function getForceY1Axis(chartData, defaultForceY1) {
         var dataBars = chartData.filter(function (d) {

@@ -5,10 +5,10 @@
 define([
     "lodash",
     "core-constants",
-    "core-basedir/js/common/qe.utils",
-    "core-basedir/js/common/qe.grid.config",
+    "core-basedir/reports/qe/ui/js/common/qe.utils",
+    "core-basedir/reports/qe/ui/js/common/qe.grid.config",
     "reports/udd/ui/js/models/ContentConfigModel.js"
-], function(_, coreConstants, QEUtils, QEGridConfigBuilders, ContentConfigModel) {
+], function(_, coreConstants, qeUtils, qeGridConfig, ContentConfigModel) {
     var delimiter = ",";
 
     return ContentConfigModel.extend({
@@ -45,7 +45,7 @@ define([
             this.availableColumns(_.map(selectedFieldArray, function(field) {
                 return {
                     id: field,
-                    text: QEUtils.formatNameForGrid(field)
+                    text: qeUtils.formatNameForGrid(field)
                 };
             }));
 
@@ -108,8 +108,8 @@ define([
             }
 
             customGridConfig = _.merge(
-                QEGridConfigBuilders.getQueryGridConfig({},
-                    QEGridConfigBuilders.getColumnDisplay4Grid(this.tableName(), this.tableType(), this.fields()),
+                qeGridConfig.getQueryGridConfig({},
+                    qeGridConfig.getColumnDisplay4Grid(this.tableName(), this.tableType(), this.fields()),
                     {
                         titleText: this.gridTitle(),
                         fixedRowHeight: false,

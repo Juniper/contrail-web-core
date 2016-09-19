@@ -6,15 +6,15 @@ define([
     "lodash",
     "knockout",
     "query-form-model",
-    "core-basedir/js/common/qe.model.config",
+    "core-basedir/reports/qe/ui/js/common/qe.model.config",
     "core-constants"
-], function (_, Knockout, QueryFormModel, queryEngineModelConfig, coreConstants) {
+], function (_, Knockout, QueryFormModel, qeModelConfig, coreConstants) {
     var StatQueryFormModel = QueryFormModel.extend({
 
         defaultSelectFields: [],
 
         constructor: function (modelConfig, queryReqConfig) {
-            var defaultConfig = queryEngineModelConfig.getQueryModelConfig({
+            var defaultConfig = qeModelConfig.getQueryModelConfig({
                 table_type: coreConstants.QE_STAT_TABLE_TYPE,
                 query_prefix: coreConstants.STAT_QUERY_PREFIX,
             });
