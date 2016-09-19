@@ -63,7 +63,7 @@ function doNovaOpCb (reqUrl, apiProtoIP, tenantId, req, novaCallback, stopRetry,
             if (stopRetry) {
                 logutils.logger.debug("We are done retrying for tenantId:" +
                                       tenantId + " with err:" + err);
-                commonUtils.redirectToLogout(req, req.res);
+                commonUtils.handleAuthenToAuthorizeError(err, req, callback);
             } else {
                 /* Retry once again */
                 logutils.logger.debug("We are about to retry for tenantId:" +
@@ -308,7 +308,7 @@ function getVMStatsByProject (projUUID, req, callback)
         if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " +
                                   tenantStr);
-            commonUtils.redirectToLogout(req, req.res);
+            commonUtils.handleAuthenToAuthorizeError(err, req, callback);
             return;
         }
         var tenantId = data['tenant']['id'];
@@ -358,7 +358,7 @@ function getServiceInstanceVMStatus (req, vmRefs, callback)
         if ((null != err)  || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " +
                                   tenantStr);
-            commonUtils.redirectToLogout(req, req.res);
+            commonUtils.handleAuthenToAuthorizeError(err, req, callback);
             return;
         }
         var tenantId = data['tenant']['id'];
@@ -432,7 +432,7 @@ function launchVNC (request, callback)
                                   " With session: " + request.session.id);
         }
         if ((null != error) || (null == data) || (null == data.tenant)) {
-            commonUtils.redirectToLogout(request, request.res);
+            commonUtils.handleAuthenToAuthorizeError(error, request, callback);
             return;
         }
 
@@ -549,7 +549,7 @@ function getFlavors (req, callback)
                         function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
-            commonUtils.redirectToLogout(req, req.res);
+            commonUtils.handleAuthenToAuthorizeError(err, req, callback);
             return;
         }
         var tenantId = data['tenant']['id'];
@@ -587,7 +587,7 @@ function getOSHostList(req, callback)
                          true}, function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
-            commonUtils.redirectToLogout(req, req.res);
+            commonUtils.handleAuthenToAuthorizeError(err, req, callback);
             return;
         }
         var tenantId = data['tenant']['id'];
@@ -625,7 +625,7 @@ function getAvailabilityZoneList(req, callback)
                          true}, function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
-            commonUtils.redirectToLogout(req, req.res);
+            commonUtils.handleAuthenToAuthorizeError(err, req, callback);
             return;
         }
         var tenantId = data['tenant']['id'];
@@ -702,7 +702,7 @@ function portAttach (req, body, callback)
                          true}, function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
-            commonUtils.redirectToLogout(req, req.res);
+            commonUtils.handleAuthenToAuthorizeError(err, req, callback);
             return;
         }
         var tenantId = data['tenant']['id'];
@@ -754,7 +754,7 @@ function portDetach (req, portID, vmUUID, callback)
                          true}, function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
-            commonUtils.redirectToLogout(req, req.res);
+            commonUtils.handleAuthenToAuthorizeError(err, req, callback);
             return;
         }
         var tenantId = data['tenant']['id'];

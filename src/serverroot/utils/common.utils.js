@@ -1500,7 +1500,7 @@ function getUserRoleListPerTenant (req, res, callback)
             if ((null != error) || (null == tokenData)) {
                 logutils.logger.error("Roles not found.." +
                                       "Redirecting to login page");
-                redirectToLogout(req, res);
+                handleAuthenToAuthorizeError(error, req);
                 return;
             }
             roles = tokenData['roles'];
@@ -2204,6 +2204,28 @@ function filterJsonKeysWithNullValues(obj) {
     return obj;
 }
 
+function handleAuthenToAuthorizeError(err, req, callback)
+{
+    var error;
+    if (err.responseCode === global.HTTP_STATUS_AUTHORIZATION_FAILURE) {
+        error = new appErrors.RESTServerError("Permission Denied");
+        error.responseCode = global.HTTP_STATUS_FORBIDDEN;
+    } else {
+        error = err;
+    }
+
+    if(error.responseCode === global.HTTP_STATUS_FORBIDDEN) {
+        if(callback) {
+            callback(error, null);
+        } else {
+            handleJSONResponse(error, req.res, null);
+            return;
+        }
+    } else {
+        redirectToLogout(req, req.res);
+    }
+}
+
 exports.filterJsonKeysWithNullValues = filterJsonKeysWithNullValues;
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
@@ -2263,4 +2285,5 @@ exports.getIPRangeLen = getIPRangeLen;
 exports.findAllPathsInEdgeGraph = findAllPathsInEdgeGraph;
 exports.isSubArray = isSubArray;
 exports.getValueByJsonPath = getValueByJsonPath;
+exports.handleAuthenToAuthorizeError = handleAuthenToAuthorizeError;
 
