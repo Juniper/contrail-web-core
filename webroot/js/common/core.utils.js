@@ -100,6 +100,16 @@ define([
                     onKeyupEsc: true
                 });
             }
+            if ((contrail.checkIfExist(options['onReset'])) && (contrail.checkIfFunction(options['onReset']))) {
+                footer.push({
+                    id        : 'resetBtn',
+                    title     : 'Reset',
+                    onclick   : function () {
+                        options['onReset']();
+                    },
+                    onKeyupEsc: true
+                });
+            }
             if ((contrail.checkIfExist(options['onCancel'])) && (contrail.checkIfFunction(options['onCancel']))) {
                 footer.push({
                     id        : 'cancelBtn',
