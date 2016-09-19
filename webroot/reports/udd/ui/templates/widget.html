@@ -2,9 +2,15 @@
     <div class="panel panel-default">
         <div class="panel-heading" title="Drag widget with header">
             <div class="widget-control">
-                <div class="refresh fa fa-refresh hidden" title="Reload data"></div>
-                <div class="remove fa fa-trash" title="Remove widget"></div>
-                <div class="config fa fa-times" title="Discard changes"></div>
+                <button type="button" class="ctrl-btn refresh hidden" title="Reload data" data-bind="enable: ready">
+                    <span class="fa fa-refresh"></span>
+                </button>
+                <button type="button" class="ctrl-btn remove" title="Remove widget" data-bind="enable: ready">
+                    <span class="fa fa-trash"></span>
+                </button>
+                <button type="button" class="ctrl-btn config" title="Discard changes" data-bind="enable: ready">
+                    <span class="fa fa-times"></span>
+                </button>
             </div>
             <div class="title-group">
                 <span class="config-title"></span>

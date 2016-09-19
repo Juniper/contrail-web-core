@@ -22,9 +22,10 @@ define([
             dataConfigDropdown: "#dataConfigViewSelector",
             contentConfigDropdown: "#contentViewSelector",
             back: ".panel-footer .back",
-            config: ".widget-control .config",
+            config: ".widget-control .config .fa",
             refresh: ".widget-control .refresh",
-            confirmDeletionModal: "#confirm-to-delete"
+            confirmDeletionModal: "#confirm-to-delete",
+            contentView: ".content-view"
         },
 
         events: {
@@ -92,7 +93,9 @@ define([
             if (!model) {
                 element.html(ctwm.NO_COMPATIBLE_DATA_SOURCES);
             }
-            self.renderView4Config(element, model, config);
+            self.renderView4Config(element, model, config, null, null, null, function() {
+                self.model.get("configModel").ready(true);
+            });
         },
         // render content config view on the back
         _renderContentConfigView: function(p) {
@@ -241,7 +244,6 @@ define([
                 body: '<p>Are you sure to <strong>remove</strong> widget <span class="' + widgetToDeleteClass + '"></span> ?',
                 btnName: "Remove",
                 onCancel: function() {
-                    console.debug("Cancel");
                     $confirmationModal.modal("hide");
                 },
                 onSave: function() {
@@ -335,6 +337,11 @@ define([
                 self.$(self.selectors.contentConfigDropdown).showElement();
                 self.$(".submit button").html(ctwl.UDD_WIDGET_SUBMIT);
             }
+
+            if (self.currentStep === self.steps.DATA_CONFIG && self.$(self.selectors.contentView).find("svg").html() === "") {
+                self.refresh();
+            }
+
             self.$(self.selectors.configTitle).html(configTitle);
 
             self.currentStep = step;
@@ -369,7 +376,7 @@ define([
                 self.goStep(self.steps.CONTENT);
             } else {
                 self.goStep(self.steps.DATA_CONFIG);
-                self.model.get("dataConfigModel").onChangeTime()
+                self.model.get("dataConfigModel").onChangeTime();
             }
         },
 
