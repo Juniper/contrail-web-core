@@ -5,7 +5,7 @@
 var contentContainer = "#content-container";
 var slickGridSearchtimer = null;
 // Need to add a check and declare globalObj only if it doesn't exist and if exists need to extend with this map
-if(typeof(globalObj) == "undefined") 
+if(typeof(globalObj) == "undefined")
     globalObj = {};
 globalObj['env'] = "";
 globalObj['loadedScripts'] = [];
@@ -283,7 +283,7 @@ var coreAppShim =  {
     },
     'slick.rowselectionmodel': {
         deps: ['jquery']
-    },        
+    },
     'slick.checkboxselectcolumn': {
         deps: ['jquery']
     },
@@ -980,7 +980,7 @@ if (typeof document !== 'undefined' && document) {
     var loadFeatureApps = function (featurePackages) {
         var featureAppDefObjList= [],
             initAppDefObj, url;
-        
+
         for (var key in featurePackages) {
             if(globalObj['initFeatureAppDefObjMap'][key] == null) {
                 if(featurePackages[key] &&
@@ -1074,7 +1074,7 @@ if (typeof document !== 'undefined' && document) {
                     if($('#content-container').length == 0) {
                         $('#app-container').html($('#app-container-tmpl').text());
                         $('#app-container').removeClass('hide');
-                    } else 
+                    } else
                         $('#app-container').removeClass('hide');
                         //Reset content-container
                         $('#content-container').html('');

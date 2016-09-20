@@ -2,13 +2,9 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-define([
-    'underscore'
-], function (_) {
-    var QEParsers = function () {
-        var self = this;
-
-        self.fsQueryDataParser = function(response) {
+define([], function () {
+    return {
+        fsQueryDataParser: function(response) {
             var chartData = [];
 
             $.each(response, function(fcKey, fcValue) {
@@ -17,8 +13,6 @@ define([
             });
 
             return chartData;
-        };
+        }
     };
-
-    return new QEParsers();
 });

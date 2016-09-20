@@ -44,6 +44,7 @@ define([
 
             gridConfig = $.extend(true, {}, covdc.gridConfig, viewConfig.elementConfig);
             gridContainer = $(this.$el);
+            gridContainer.html("");
             // gridContainer = $(contentContainer);
             customGridConfig = $.extend(true, {}, gridConfig);
 
@@ -231,6 +232,7 @@ define([
                                     }
                                     e.stopPropagation();
                                     break;
+
                                 case 'multiselect':
                                     var linkMultiselectBox = $(this).parent().find('.link-multiselectbox'),
                                         inputMultiselectBox = $(this).parent().find('.input-multiselectbox');
@@ -242,12 +244,14 @@ define([
                                     }
                                     e.stopPropagation();
                                     break;
+
                                 case 'refresh':
                                     if (!contrailListModel.isRequestInProgress()) {
                                         gridContainer.find('.link-refreshable i').removeClass('fa-repeat').addClass('fa fa-spin fa-spinner');
                                         gridContainer.data('contrailGrid').refreshData();
                                     }
                                     break;
+
                                 case 'export':
                                     if (!contrailListModel.isRequestInProgress()) {
                                         var gridDSConfig = gridDataSource,
@@ -271,6 +275,61 @@ define([
                                         }
                                     }
                                     break;
+
+                                case 'group-delete':
+                                    if (!contrailListModel.isRequestInProgress()) {
+
+                                        var groupDeleteModalId = gridContainer.prop('id') + '-group-delete-modal',
+                                            gridCheckedRows = $(gridContainer).data('contrailGrid').getCheckedRows(),
+                                            groupDeleteModalBodyTemplate = contrail.getTemplate4Id(cowc.TMPL_GRID_GROUP_DELETE_MODAL_BODY),
+                                            rowDataFields = gridConfig.header.defaultControls.groupDeleteable.modalConfig.rowDataFields,
+                                            onSaveModal = gridConfig.header.defaultControls.groupDeleteable.modalConfig.onSave;
+
+                                        function getCheckedRowData(gridColumns, rowDataFields, gridCheckedRows) {
+                                            var columns = [], rows = [], columnIds = [];
+
+                                            _.each(gridColumns, function(columnValue, columnKey) {
+                                                var currentColumn = columnValue['id'];
+                                                if (rowDataFields.indexOf(currentColumn) !== -1) {
+                                                    columns.push(columnValue['name']);
+                                                    columnIds.push(currentColumn);
+
+                                                    _.each(gridCheckedRows, function(rowValue, rowKey) {
+                                                        if (!contrail.checkIfExist(rows[rowKey])) {
+                                                            rows[rowKey] = {};
+                                                        }
+
+                                                        if (contrail.checkIfFunction(columnValue.formatter)) {
+                                                            rows[rowKey][currentColumn] = columnValue.formatter(null, null, null, null, rowValue);
+                                                        } else {
+                                                            rows[rowKey][currentColumn] = rowValue[currentColumn];
+                                                        }
+                                                    });
+                                                }
+                                            });
+
+                                            return {columns: columns, rows: rows, columnIds: columnIds}
+                                        }
+
+                                        cowu.createModal({
+                                            modalId: groupDeleteModalId,
+                                            className: 'modal-700',
+                                            title: cowl.TITLE_DELETE_QUERY,
+                                            btnName: 'Confirm',
+                                            body: groupDeleteModalBodyTemplate(getCheckedRowData(gridColumns, rowDataFields, gridCheckedRows)),
+                                            onSave: function () {
+
+                                                if (contrail.checkIfFunction(onSaveModal)) {
+                                                    onSaveModal(gridCheckedRows);
+                                                }
+                                                $("#" + groupDeleteModalId).modal('hide');
+                                            }, onCancel: function () {
+                                                $("#" + groupDeleteModalId).modal('hide');
+                                            }
+                                        });
+                                    }
+                                    break;
+
                                 case 'collapse':
                                     gridHeader.find('i.collapse-icon').toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
 
@@ -368,7 +427,7 @@ define([
                                 }
                                 else {
                                     return '<input type="checkbox" class="ace-input rowCheckbox" value="' + r + '" disabled=true/> <span class="ace-lbl"></span>';
-                                  }
+                                }
                             },
                             name: '<input type="checkbox" class="ace-input headerRowCheckbox" disabled=true/> <span class="ace-lbl"></span>'
                         }));
@@ -587,9 +646,15 @@ define([
                     var selectedRowLength = args.rows.length;
 
                     if (selectedRowLength == 0) {
+                        if (gridConfig.header.defaultControls.groupDeleteable !== false) {
+                            gridContainer.find('.widget-toolbar-icon-group-delete').addClass('disabled-link')
+                        }
                         (contrail.checkIfExist(onNothingChecked) ? onNothingChecked(e) : '');
                     }
                     else {
+                        if (gridConfig.header.defaultControls.groupDeleteable !== false) {
+                            gridContainer.find('.widget-toolbar-icon-group-delete').removeClass('disabled-link')
+                        }
                         (contrail.checkIfExist(onSomethingChecked) ? onSomethingChecked(e) : '');
 
                         if (selectedRowLength == grid.getDataLength()) {
@@ -1233,10 +1298,19 @@ define([
                     </div>';
                 }
 
+                if (headerConfig.defaultControls.groupDeleteable !== false) {
+                    template += '\
+                    <div class="widget-toolbar pull-right"> \
+                        <a class="widget-toolbar-icon disabled-link widget-toolbar-icon-group-delete" title="Delete" data-action="group-delete"> \
+                            <i class="fa fa-trash"></i> \
+                        </a> \
+                    </div>';
+                }
+
                 if (headerConfig.defaultControls.columnPickable) {
                     var columnPickerConfig = {
                         type: 'checked-multiselect',
-                        //iconClass: 'icon-columns',
+                        title: "Show / Hide Columns",
                         placeholder: '',
                         elementConfig: {
                             elementId: 'columnPicker',
@@ -1406,9 +1480,10 @@ define([
 
             function addGridHeaderActionCheckedMultiselect(key, actionConfig, gridContainer) {
                 var actions = actionConfig.actions,
-                    actionId = (contrail.checkIfExist(actionConfig.actionId)) ? actionConfig.actionId : gridContainer.prop('id') + '-header-action-' + key;
+                    actionId = (contrail.checkIfExist(actionConfig.actionId)) ? actionConfig.actionId : gridContainer.prop('id') + '-header-action-' + key,
+                    actionTitle = (contrail.checkIfExist(actionConfig.title)) ? actionConfig.title : "";
                 var actionsTemplate = '<div id="' + actionId + '" class="widget-toolbar pull-right"> \
-		        <div class="input-multiselectbox width-15"> \
+		        <div class="input-multiselectbox width-15" title="' + actionTitle + '"> \
 		            <div class="input-icon"> \
 		            	<i class="widget-toolbar-icon ' + actionConfig.iconClass + (contrail.checkIfExist(actionConfig.disabledLink) ? ' disabled-link' : '') + '"></i> \
 		            </div> \

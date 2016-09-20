@@ -372,6 +372,15 @@ define(['underscore'], function (_) {
                     //window[currResourceObj['class']] = null;
                 });
             }
+                    
+            if (!_.isEmpty(currMenuObj['loader']) && currMenuObj.loader.class &&
+                _.isFunction(currMenuObj.loader.class.destroy)) {
+                try {
+                    currMenuObj.loader.class.destroy()
+                } catch (error) {
+                    console.log(error.stack);
+                }
+            }
         }
 
         /**

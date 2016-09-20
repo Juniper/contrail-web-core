@@ -3,25 +3,27 @@
  */
 
 define([
-    'underscore',
-    'backbone',
-    'contrail-list-model'
-], function (_, Backbone, ContrailListModel) {
+    "lodash",
+    "backbone",
+    "contrail-list-model"
+], function(_, Backbone, ContrailListModel) {
     var ContrailListModelGroup = Backbone.Model.extend({
 
         constructor: function(modelConfig) {
             var self = this;
-            $.extend(true, self.modelConfig, modelConfig, {childModelConfig: []});
+            $.extend(true, self.modelConfig, modelConfig, { childModelConfig: [] });
             self.data = [];
             self.error = false;
             self.errorList = [];
             self.childModelObjs = [];
             self.onAllRequestsCompleteCB = [];
-            self.initDefObj = $.Deferred();
-            self.primaryListModel = new ContrailListModel({data: self.getItems()});
+            self.initDefObj = $.Deferred(); // eslint-disable-line
+            self.primaryListModel = new ContrailListModel({ data: self.getItems() });
 
+            /* eslint-disable */
             self.onAllRequestsComplete = new Slick.Event();
             self.onDataUpdate = new Slick.Event();
+            /* eslint-enable */
 
             //Default subscription to update the dataView.
             self.onAllRequestsComplete.subscribe(function() {
@@ -43,7 +45,7 @@ define([
 
             });
 
-            if (self.modelConfig.childModelConfig.length != 0) {
+            if (self.modelConfig.childModelConfig.length !== 0) {
                 self.initChildModels(self.modelConfig.childModelConfig);
             }
         },
@@ -66,7 +68,7 @@ define([
             var self = this,
                 inProgress = false;
             _.each(self.childModelObjs, function(childModel) {
-                if (childModel.status.state() == "pending" && !inProgress) {
+                if (childModel.status.state() === "pending" && !inProgress) {
                     inProgress = true;
                 }
             });
@@ -85,7 +87,7 @@ define([
                 });
             });
 
-            if (self.data.length == 0) {
+            if (self.data.length === 0) {
                 self.data = items;
             }
 
@@ -105,7 +107,7 @@ define([
         updateData: function(data) {
             var self = this;
             _.each(self.data, function(item) {
-                if(item.key == data.key) {
+                if (item.key === data.key) {
                     item.values = data.values;
                     self.onDataUpdate.notify();
                 }
@@ -119,14 +121,14 @@ define([
         },
 
         createChildModelObj: function(listModelConfig, updateDataCB, errorHandler) {
-            var status = $.Deferred(),
+            var status = $.Deferred(), // eslint-disable-line
                 model = new ContrailListModel(listModelConfig);
 
             model.onAllRequestsComplete.subscribe(function() {
                 status.resolve(listModelConfig.id);
 
                 if (model.error) {
-                    return errorHandler({
+                    errorHandler({
                         key: listModelConfig.id,
                         errorList: model.errorList
                     });
@@ -134,10 +136,10 @@ define([
             });
 
             model.onDataUpdate.subscribe(function() {
-               return updateDataCB({
-                   key: listModelConfig.id,
-                   values: model.getItems()
-               });
+                return updateDataCB({
+                    key: listModelConfig.id,
+                    values: model.getItems()
+                });
             });
 
             return {
@@ -152,7 +154,7 @@ define([
                 childModelCollection = [];
 
             _.each(listModelConfigArray, function(listModelConfig) {
-                childModelCollection.push(self.createChildModelObj(listModelConfig, updateDataFn, errorHandler))
+                childModelCollection.push(self.createChildModelObj(listModelConfig, updateDataFn, errorHandler));
             });
             self.childModelObjs = childModelCollection;
         }

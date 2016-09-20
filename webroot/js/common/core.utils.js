@@ -483,7 +483,7 @@ define([
                         chartControlPanelExpandedSelector.find('.control-panel-filter-close')
                             .off('click')
                             .on('click', function() {
-                                chartControlPanelExpandedSelector.hide();
+                                chartControlPanelExpandedSelector.hideElement();
                                 $(self).removeClass('active');
                                 $(self).removeClass('refreshing');
                                 $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
@@ -815,12 +815,12 @@ define([
                                         '<div class="list-view">' +
                                             self.generateBlockListTemplate(config.templateGeneratorConfig, app, config) +
                                         '</div>' +
-                                        '<div class="advanced-view hide">' +
+                                        '<div class="advanced-view hidden">' +
                                             '{{{formatGridJSON2HTML this.data' +
                                                 ((contrail.checkIfExist(config.templateGeneratorData) && config.templateGeneratorData !== '') ? '.' + config.templateGeneratorData : '') +
                                             '}}}' +
                                         '</div>' +
-                                        '<div class="contrail-status-view hide">' +
+                                        '<div class="contrail-status-view hidden">' +
                                         '</div>' +
                                     '</div>' +
                                 '</div>' +
@@ -1236,7 +1236,7 @@ define([
         this.deparamURLArgs = function (query) {
             var query_string = {},
                 query = contrail.handleIfNull(query,'');
-            
+
             if (query.indexOf('?') > -1) {
                 query = query.substr(query.indexOf('?') + 1);
                 var vars = query.split("&");
@@ -1362,6 +1362,32 @@ define([
                 return sign + intPart +" "+suffix;
         };
 
+        this.timeSeriesParser = function (config, data) {
+            if (_.isEmpty(data)) {
+                return [];
+            }
+
+            if (config && config.dataField) {
+                config.dataFields = [config.dataField];
+            }
+
+            var series = [];
+
+            for (var i = 0; i < data.length; i++) {
+                if (_.isUndefined(data[i]["T="])) {
+                    return [];
+                }
+                var timeStamp = Math.floor(data[i]["T="] / 1000);
+
+                _.each(config.dataFields, function (dataField, seriesIndex) {
+                    if (i === 0) {
+                        series[seriesIndex] = {values: []};
+                    }
+                    series[seriesIndex].values.push({x: timeStamp, y: data[i][dataField]});
+                });
+            }
+            return series;
+        };
     };
 
     function filterXML(xmlString, is4SystemLogs) {

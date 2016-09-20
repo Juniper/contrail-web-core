@@ -61,19 +61,20 @@ define([
             }
 
             //plot default line
-            if(data.length === 0 && defaultZeroLineDisplay){
-                var defData = {key:'', color:cowc.DEFAULT_COLOR, values:[]},
-                    start = Date.now() - (2 * 60 * 60 * 1000),
-                    end = Date.now();
+            /** This condition block seems to be unnecessary. */
+            // if(data.length === 0 && defaultZeroLineDisplay){
+            //     var defData = {key:'', color:cowc.DEFAULT_COLOR, values:[]},
+            //         start = Date.now() - (2 * 60 * 60 * 1000),
+            //         end = Date.now();
 
-                defData.values.push({x:start, y:0.01, tooltip:false});
-                defData.values.push({x:start, y:0.01, tooltip:false});
-                defData.values.push({x:end, y:0.01, tooltip:false});
-                viewConfig.chartOptions.forceY = [0, 1];
-                viewConfig.chartOptions.defaultDataStatusMessage = false;
-                legendFn = null;
-                data.push(defData);
-            }
+            //     defData.values.push({x:start, y:0.01, tooltip:false});
+            //     defData.values.push({x:start, y:0.01, tooltip:false});
+            //     defData.values.push({x:end, y:0.01, tooltip:false});
+            //     viewConfig.chartOptions.forceY = [0, 1];
+            //     viewConfig.chartOptions.defaultDataStatusMessage = false;
+            //     legendFn = null;
+            //     data.push(defData);
+            // }
 
             chartViewConfig = self.getChartViewConfig(data, viewConfig);
             chartOptions = chartViewConfig['chartOptions'];
@@ -100,9 +101,11 @@ define([
                 setData2Chart(self, chartViewConfig, chartViewModel, chartModel);
             }
 
-            nv.utils.windowResize(function () {
-                chUtils.updateChartOnResize(selector, chartModel);
-            });
+            self.resizeFn = _.debounce(function () {
+                chUtils.updateChartOnResize($(self.$el), self.chartModel);
+            }, 500);
+            nv.utils.windowResize(self.resizeFn);
+
             //Seems like in d3 chart renders with some delay so this deferred object helps in that situation,which resolves once the chart is rendered
             if (chartOptions['deferredObj'] != null)
                 chartOptions['deferredObj'].resolve();
@@ -146,6 +149,11 @@ define([
                 selector = contrail.handleIfNull(selector, $(self.$el));
 
             $(selector).find('.nv-requestState').remove();
+        },
+
+        resize: function() {
+            var self = this;
+            self.resizeFn()
         },
 
         getChartViewConfig: function(chartData, viewConfig) {

@@ -9,8 +9,9 @@ define([
     'contrail-model',
     'query-or-model',
     'query-and-model',
-    'core-basedir/reports/qe/ui/js/common/qe.utils'
-], function (_, Backbone, Knockout, ContrailModel, QueryOrModel, QueryAndModel, qeUtils) {
+    'core-basedir/reports/qe/ui/js/common/qe.utils',
+    'contrail-list-model',
+], function (_, Backbone, Knockout, ContrailModel, QueryOrModel, QueryAndModel, qeUtils, ContrailListModel) {
     var QueryFormModel = ContrailModel.extend({
         defaultSelectFields: [],
         disableSelectFields: [],
@@ -37,16 +38,24 @@ define([
 
             ContrailModel.prototype.constructor.call(this, modelData, modelRemoteDataConfig);
 
-            this.model().on( "change:table_name", this.onChangeTable, this);
+            this.model().on("change:table_name", this.onChangeTable, this);
+            this.model().on('change:select change:table_name change:time_range change:where change:filter change:time_granularity change:time_granularity_unit', function () {
+                // TODO ContrailListModel should have reload function instead of whole model recreation just to get new data
+                self.refresh()
+            })
 
             //TODO - Needs to be tested for Flow Pages
-            this.model().on("change:time_range change:from_time change:to_time", this.onChangeTime, this);
+            this.model().on("change:time_range change:from_time change:to_time change:table_type", this.onChangeTime, this);
 
             return this;
         },
 
         onChangeTime: function() {
-            if(this.table_type() === cowc.QE_STAT_TABLE_TYPE || this.table_type() === cowc.QE_OBJECT_TABLE_TYPE) {
+            var self = this,
+                table_type = self.model().get('table_type')
+            if (table_type === cowc.QE_STAT_TABLE_TYPE
+                || table_type === cowc.QE_OBJECT_TABLE_TYPE
+                || table_type === cowc.QE_FLOW_TABLE_TYPE) {
                 var setTableValuesCallbackFn = function (self, resultArr){
                     var currentSelectedTable = self.model().attributes.table_name;
                     if (currentSelectedTable != null)
@@ -59,9 +68,9 @@ define([
                         }
                     }
                 }
-                this.setTableValues(setTableValuesCallbackFn, this.table_type());
+                this.setTableValues(setTableValuesCallbackFn, table_type)
             }
-            this.setTableFieldValues();
+            else this.setTableFieldValues()
         },
 
         setTableValues: function(setTableValuesCallbackFn, tabletype) {
@@ -107,9 +116,21 @@ define([
                         data: []
                     });
                 });
-            };
+            }
 
-            if (timeRange == -1) {
+            if (tabletype === cowc.QE_FLOW_TABLE_TYPE) {
+                var resultArr = [
+                        cowc.FLOW_SERIES_TABLE,
+                        cowc.FLOW_RECORD_TABLE
+                    ];
+                self.table_name_data_object({
+                    status: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY,
+                    data: resultArr
+                });
+                if(setTableValuesCallbackFn !== null){
+                    setTableValuesCallbackFn(self, resultArr);
+                }
+            } else if (timeRange == -1) {
                 var fromTimeUTC = new Date(contrailViewModel.attributes.from_time).getTime(),
                     toTimeUTC = new Date(contrailViewModel.attributes.to_time).getTime();
 
@@ -177,7 +198,9 @@ define([
             var self = this,
                 model = self.model();
 
-            if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE || self.table_type() == cowc.QE_STAT_TABLE_TYPE) {
+            if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE
+                || self.table_type() == cowc.QE_STAT_TABLE_TYPE
+                || self.table_type() === cowc.QE_FLOW_TABLE_TYPE) {
                 self.reset(this, null, false, false);
             }
 
@@ -213,7 +236,9 @@ define([
 
                     contrailViewModel.attributes.where_data_object['name_option_list'] = whereFields;
 
-                    if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE || self.table_type() == cowc.QE_STAT_TABLE_TYPE) {
+                    if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE
+                        || self.table_type() == cowc.QE_STAT_TABLE_TYPE
+                        || self.table_type() === cowc.QE_FLOW_TABLE_TYPE) {
                         self.setTableFieldValues();
                     }
                 }).error(function(xhr) {
@@ -287,6 +312,14 @@ define([
             }
         },
 
+        isTimeRangeCustom: function() {
+            var self = this;
+            /*
+                TODO: time_range is somehow stored as string inside the dropdown, hence use ==
+             */
+            return self.time_range() == -1;
+        },
+
         isSelectTimeChecked: function() {
             var self = this,
                 selectString = self.select(),
@@ -323,15 +356,16 @@ define([
             return resultSortFieldsDataArr;
         },
 
-        getFormModelAttributes: function () {
-            var modelAttrs = this.model().attributes,
-                attrs4Server = {},
-                ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses', 'select_data_object', 'where_data_object',
-                                 'filter_data_object', 'filter_and_clauses', 'sort_by', 'sort_order', 'log_category', 'log_type', 'is_request_in_progress',
-                                 'show_advanced_options'];
+        toJSON: function () {
+            var modelAttrs = this.model().attributes
+            var attrs4Server = {}
+            var ignoreKeyList = ['elementConfigMap', 'errors', 'locks', 'ui_added_parameters', 'where_or_clauses',
+                    'select_data_object', 'where_data_object', 'filter_data_object', 'filter_and_clauses', 'sort_by',
+                    'sort_order', 'log_category', 'log_type', 'is_request_in_progress', 'show_advanced_options',
+                    'table_name_data_object']
 
             for (var key in modelAttrs) {
-                if(modelAttrs.hasOwnProperty(key) && ignoreKeyList.indexOf(key) == -1) {
+                if (modelAttrs.hasOwnProperty(key) && ignoreKeyList.indexOf(key) === -1) {
                     attrs4Server[key] = modelAttrs[key];
                 }
             }
@@ -341,7 +375,7 @@ define([
 
         getQueryRequestPostData: function (serverCurrentTime, customQueryReqObj, useOldTime) {
             var self = this,
-                formModelAttrs = this.getFormModelAttributes(),
+                formModelAttrs = this.toJSON(),
                 queryReqObj = {};
 
             if(useOldTime != true) {
@@ -371,9 +405,9 @@ define([
             this.time_granularity_unit('secs');
             this.select('');
             this.where('');
-            this.direction("1");
+            this.direction('1');
             this.filters('');
-            this.select_data_object().reset(data);
+            this.select_data_object().reset(this);
             this.model().get('where_or_clauses').reset();
             this.model().get('filter_and_clauses').reset();
         },
@@ -466,13 +500,17 @@ define([
 
         validations: {
             runQueryValidation: {
-                'table_name': {
+                table_type: {
                     required: true,
-                    msg: ctwm.getRequiredMessage('table name')
+                    msg: ctwm.getRequiredMessage('table type'),
                 },
-                'select': {
+                table_name: {
                     required: true,
-                    msg: ctwm.getRequiredMessage('select')
+                    msg: ctwm.getRequiredMessage('table name'),
+                },
+                select: {
+                    required: true,
+                    msg: ctwm.getRequiredMessage('select'),
                 },
                 from_time: function(value) {
                     var fromTime = new Date(value).getTime(),
@@ -493,6 +531,35 @@ define([
                     }
                 }
             }
+        },
+
+        getDataModel: function (p) {
+            var self = this,
+                currQuery = JSON.stringify(this.toJSON()); // TOOD: modify this to use hashcode based on this.toJSON()
+
+            // reset data model on query change
+            if (_.isUndefined(self.loader) || (currQuery !== self._lastQuery)) {
+                self.loader = new ContrailListModel({
+                    remote: {
+                        ajaxConfig: {
+                            url: "/api/qe/query",
+                            type: "POST",
+                            data: JSON.stringify(self.getQueryRequestPostData(+new Date)),
+                        },
+                        dataParser: function (response) {
+                            return response.data;
+                        },
+                    },
+                });
+
+                self._lastQuery = currQuery;
+            }
+            return self.loader;
+        },
+
+        refresh: function () {
+            var self = this;
+            self.loader = undefined;
         }
     });
 

@@ -348,7 +348,7 @@ $(document).on('click', '.pre-format-JSON2HTML .collapser', function(){
 
     /*
      * .hideElement()
-     * Hide the matched elements. 
+     * Hide the matched elements.
      */
     $.fn.hideElement = function(){
         $(this).addClass('hidden');
@@ -383,7 +383,7 @@ $(document).on('click', '.pre-format-JSON2HTML .collapser', function(){
 		});
 		return this;
 	};
-	
+
 	/*
 	 * .removeClassSVG(className)
 	 * Removes the specified class to each of the set of matched SVG elements.
@@ -395,7 +395,7 @@ $(document).on('click', '.pre-format-JSON2HTML .collapser', function(){
     	});
 		return this;
 	};
-	
+
 	/*
 	 * .hasClassSVG(className)
 	 * Determine whether any of the matched SVG elements are assigned the given class.
@@ -404,7 +404,7 @@ $(document).on('click', '.pre-format-JSON2HTML .collapser', function(){
 		var existingClassNames = $(this).attr('class').split(' ');
 		return (existingClassNames.indexOf(className) > -1 ? true : false);
 	};
-	
+
 	/*
 	 * .parentsSVG(className)
 	 * Get the ancestors of each element in the current set of matched elements or SVG elements, optionally filtered by a selector
@@ -445,5 +445,5 @@ $(document).on('click', '.pre-format-JSON2HTML .collapser', function(){
         var temp = this[0].offsetHeight;
         this.css('display', '');
     };
-	
+
 })(jQuery);

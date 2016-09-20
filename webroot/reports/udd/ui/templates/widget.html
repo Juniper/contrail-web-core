@@ -1,0 +1,29 @@
+<div id="{{ id }}" class="widget" data-bind="attr: {'data-gs-x': x, 'data-gs-y': y, 'data-gs-width': width, 'data-gs-height': height}">
+    <div class="panel panel-default">
+        <div class="panel-heading" title="Drag widget with header">
+            <div class="widget-control">
+                <button type="button" class="ctrl-btn refresh hidden" title="Reload data">
+                    <span class="fa fa-refresh"></span>
+                </button>
+                <button type="button" class="ctrl-btn remove" title="Remove widget">
+                    <span class="fa fa-trash"></span>
+                </button>
+                <button type="button" class="ctrl-btn config" title="Discard changes">
+                    <span class="fa fa-times"></span>
+                </button>
+            </div>
+            <div class="title-group">
+                <span class="config-title"></span>
+                <div class="title" title="Click to edit title" data-bind="html:title"></div>
+                <input class="edit-title" type="text" data-bind="value:title" />
+            </div>
+        </div>
+        <div class="panel-body">
+            <div id="{{ id }}-config-selectors" class="config-selectors"></div>
+            <div id="{{ id }}-dataConfigView" class="data-config step"></div>
+            <div id="{{ id }}-contentConfigView" class="content-config step"></div>
+            <div id="{{ id }}-contentView" class="content-view step"></div>
+        </div>
+        <div class="panel-footer"></div>
+    </div>
+</div>

@@ -3,6 +3,7 @@
  */
 define([
     'jquery.xml2json',
+    // 'jquery.ba-bbq',
     'jquery.json',
     'bootstrap',
     'select2',
@@ -17,7 +18,9 @@ define([
     'jquery.multiselect.filter',
     'jquery.steps.min',
     'jquery.panzoom',
+    // 'jquery-contextmenu',
     'jquery.event.drag',
+    // 'jquery.droppick',
     'jquery.datetimepicker'
 ], function() {
     // console.info("loaded jquery.dep.libs");
