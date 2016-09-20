@@ -220,9 +220,9 @@ define([
                             },
                         } ],
                     }, {
-                       viewConfig: {
-                           visible: 'show_advanced_options() && table_type() === "' + coreConstants.QE_FLOW_TABLE_TYPE + '"'
-                       },
+                        viewConfig: {
+                            visible: 'show_advanced_options() && table_type() === "' + coreConstants.QE_FLOW_TABLE_TYPE + '"'
+                        },
                         columns: [{
                             elementId: "direction",
                             view: "FormDropdownView",

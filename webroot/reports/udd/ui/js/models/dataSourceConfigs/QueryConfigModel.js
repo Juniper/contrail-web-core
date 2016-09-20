@@ -61,8 +61,8 @@ define([
                 var tableType = model.get("table_type");
                 if (tableType === coreConstants.QE_FLOW_TABLE_TYPE) {
                     model.set(_.merge({
-                            table_name: tableName
-                        },
+                        table_name: tableName
+                    },
                         flowTableDefaults[tableName])
                     );
                 }

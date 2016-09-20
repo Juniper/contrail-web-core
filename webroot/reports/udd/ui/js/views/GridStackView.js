@@ -168,10 +168,14 @@ define([
         onChange: function(event, items) {
             var self = this;
             _.each(items, function(item) {
-                if (!item.id) return;
-                    
+                if (!item.id) {
+                    return;
+                }
+
                 var widgetView = self.childViewMap[item.id];
-                if (!widgetView) return;
+                if (!widgetView) {
+                    return;
+                }
 
                 var config = widgetView.model.get("configModel").model();
                 config.set({

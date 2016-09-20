@@ -275,7 +275,7 @@ function executeQuery(res, queryOptions, appData) {
 
 function initPollingConfig(options, fromTime, toTime) {
     var timeRange = null;
-    if (true === isNaN(fromTime)) {
+    if (isNaN(fromTime) === true) {
         var str = "now-";
     /* Check if we have keyword now in that */
         var pos = fromTime.indexOf(str);
@@ -527,7 +527,7 @@ function sortJSON(resultArray, sortParams, callback) {
         sortField = sortParams[0].field,
         sortBy = [{}];
 
-    sortField = sortField.replace(/([\"\[\]])/g, "");
+    sortField = sortField.replace(/(["\[\]])/g, "");
     sortBy[0].field = sortField;
     sortBy[0].dir = sortParams[0].dir;
     quickSort(resultArray, 0, resultArray.length, sortBy, qsStatus);
@@ -698,12 +698,12 @@ function getGroupRecord4Chart(row, groupFieldName) {
 }
 
 function setMicroTimeRange(query, fromTime, toTime) {
-    if (true === isNaN(fromTime)) {
+    if (isNaN(fromTime) === true) {
         query.start_time = fromTime;
     } else {
         query.start_time = fromTime * 1000;
     }
-    if (true === isNaN(toTime)) {
+    if (isNaN(toTime) === true) {
         query.end_time = toTime;
     } else {
         query.end_time = toTime * 1000;

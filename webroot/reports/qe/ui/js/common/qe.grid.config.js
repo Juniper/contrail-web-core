@@ -3,29 +3,19 @@
  */
 
 define([
-    'underscore',
-    'core-basedir/reports/qe/ui/js/common/qe.utils'
+    "lodash",
+    "core-basedir/reports/qe/ui/js/common/qe.utils"
 ], function (_, qeUtils) {
-    function getColumnDisplay4Query(tableName, tableType) {
-        if(tableType == cowc.QE_STAT_TABLE_TYPE) {
-            return columnDisplayMap["defaultStatColumns"].concat(contrail.checkIfExist(columnDisplayMap[tableName]) ? columnDisplayMap[tableName] : []);
-        } else if (tableType == cowc.QE_OBJECT_TABLE_TYPE) {
-            return columnDisplayMap["defaultObjectColumns"].concat(contrail.checkIfExist(columnDisplayMap[tableName]) ? columnDisplayMap[tableName] : []);
-        } else {
-            return contrail.checkIfExist(columnDisplayMap[tableName]) ? columnDisplayMap[tableName] : []
-        }
-    };
-
     function _getColumnDisplay4Grid(tableName, tableType, selectArray) {
         var columnDisplay = [], defaultColumnDisplayMap = [];
 
-        if(tableType == cowc.QE_STAT_TABLE_TYPE){
-            $.each(columnDisplayMap["defaultStatColumns"], function(key, value) {
-                defaultColumnDisplayMap[value.select] = value.display
+        if(tableType === cowc.QE_STAT_TABLE_TYPE){
+            $.each(columnDisplayMap.defaultStatColumns, function(key, value) {
+                defaultColumnDisplayMap[value.select] = value.display;
             });
-        } else if (tableType == cowc.QE_OBJECT_TABLE_TYPE) {
-            $.each(columnDisplayMap["defaultObjectColumns"], function(key, value) {
-                defaultColumnDisplayMap[value.select] = value.display
+        } else if (tableType === cowc.QE_OBJECT_TABLE_TYPE) {
+            $.each(columnDisplayMap.defaultObjectColumns, function(key, value) {
+                defaultColumnDisplayMap[value.select] = value.display;
             });
         }
 
@@ -40,15 +30,15 @@ define([
                     }
                 };
 
-            if(tableType == cowc.QE_STAT_TABLE_TYPE || tableType == cowc.QE_OBJECT_TABLE_TYPE){
-                if (contrail.checkIfExist(defaultColumnDisplayMap[selectValue])) {
+            if(tableType === cowc.QE_STAT_TABLE_TYPE || tableType === cowc.QE_OBJECT_TABLE_TYPE){
+                if (!_.isNil(defaultColumnDisplayMap[selectValue])) {
                     $.extend(columnConfig, defaultColumnDisplayMap[selectValue]);
                 }
             }
 
-            if (contrail.checkIfExist(columnDisplayMap[tableName])) {
+            if (!_.isNil(columnDisplayMap[tableName])) {
                 $.each(columnDisplayMap[tableName], function (fieldIndex, fieldValue) {
-                    if (fieldValue.select == selectValue) {
+                    if (fieldValue.select === selectValue) {
                         $.extend(columnConfig, fieldValue.display);
                     }
 
@@ -64,7 +54,7 @@ define([
     var columnDisplayMap  = {
         "FlowSeriesTable": [
             {select:"T", display:{width:210, filterable:false}},
-            {select:"T=", display:{id: 'T', field: 'T', width:210, filterable:false}}, // Data received has key : 'T'
+            {select:"T=", display:{id: "T", field: "T", width:210, filterable:false}}, // Data received has key : 'T'
             {select:"vrouter", display:{width:100}},
             {select:"sourcevn", display:{width:240}},
             {select:"destvn", display:{width:240}},
@@ -1724,8 +1714,8 @@ define([
                     width:300, searchable:true,
                     formatter: {
                         format: [
-                            {format: 'xml2json', options: {jsonValuePath: 'ObjectLogJSON'}},
-                            {format: 'json2html', options: {jsonValuePath: 'ObjectLogJSON', htmlValuePath: 'ObjectLogHTML', expandLevel: 0}}
+                            {format: "xml2json", options: {jsonValuePath: "ObjectLogJSON"}},
+                            {format: "json2html", options: {jsonValuePath: "ObjectLogJSON", htmlValuePath: "ObjectLogHTML", expandLevel: 0}}
                         ]
                     },
                     exportConfig: {
@@ -1740,8 +1730,8 @@ define([
                     width:300, searchable:true,
                     formatter: {
                         format: [
-                            {format: 'xml2json', options: {jsonValuePath: 'SystemLogJSON'}},
-                            {format: 'json2html', options: {jsonValuePath: 'SystemLogJSON', htmlValuePath: 'SystemLogHTML', expandLevel: 0}}
+                            {format: "xml2json", options: {jsonValuePath: "SystemLogJSON"}},
+                            {format: "json2html", options: {jsonValuePath: "SystemLogJSON", htmlValuePath: "SystemLogHTML", expandLevel: 0}}
                         ]
                     },
                     exportConfig: {allow: true, stdFormatter: false}
@@ -1764,18 +1754,18 @@ define([
                     width:500, searchable:true,
                     formatter: function(r, c, v, cd, dc) {
                         var xmlMessage = [];
-                        if (contrail.checkIfExist(dc.Xmlmessage)) {
+                        if (!_.isNil(dc.Xmlmessage)) {
                             if (!$.isPlainObject(dc.Xmlmessage)) {
                                 dc.XmlmessageJSON = cowu.formatXML2JSON(dc.Xmlmessage);
 
-                                xmlMessage = $.map(dc.XmlmessageJSON, function(messageValue, messageKey) {
+                                xmlMessage = $.map(dc.XmlmessageJSON, function(messageValue) {
                                     return messageValue;
                                 });
-                                dc.formattedXmlMessage = xmlMessage.join(' ');
+                                dc.formattedXmlMessage = xmlMessage.join(" ");
                             }
                         }
 
-                        return dc.formattedXmlMessage
+                        return dc.formattedXmlMessage;
                     },
                     exportConfig: {allow: true, stdFormatter: false}
                 }
@@ -1793,11 +1783,15 @@ define([
         getColumnDisplay4Grid: _getColumnDisplay4Grid,
 
         getColumnDisplay4ChartGroupGrid: function(tableName, tableType, selectArray) {
-            var newColumnDisplay = [], columnDisplaySelect,
+            var newColumnDisplay = [],
                 columnDisplay = _getColumnDisplay4Grid(tableName, tableType, selectArray);
 
             $.each(columnDisplay, function(columnKey, columnValue){
-                if (!qeUtils.isAggregateField(columnValue.id) && columnValue.id !== 'T' && columnValue.id !== 'T=' && columnValue.id !== 'UUID' && columnValue['id'].indexOf("PERCENTILES(") == -1) {
+                if (!qeUtils.isAggregateField(columnValue.id)
+                    && columnValue.id !== "T"
+                    && columnValue.id !== "T="
+                    && columnValue.id !== "UUID"
+                    && columnValue.id.indexOf("PERCENTILES(") === -1) {
                     newColumnDisplay.push(columnValue);
                 }
             });
@@ -1808,21 +1802,29 @@ define([
         getQueueColumnDisplay: function(viewQueryResultCB) {
             return [
                 {
-                    id: 'fqq-badge', field: "", name: "", resizable: false, sortable: false,
-                    width: 30, width: 30, searchable: false, exportConfig: {allow: false},
+                    id: "fqq-badge",
+                    field: "",
+                    name: "",
+                    resizable: false,
+                    sortable: false,
+                    width: 30,
+                    searchable: false,
+                    exportConfig: {allow: false},
                     allowColumnPickable: false,
-                    cssClass: 'center',
+                    cssClass: "center",
                     formatter: function (r, c, v, cd, dc) {
-                        if(dc.status === 'completed') {
+                        if (dc.status === "completed") {
                             var queryId = dc.queryReqObj.queryId,
-                                tabLinkId = cowl.QE_QUERY_QUEUE_RESULT_GRID_TAB_ID + '-' + queryId + '-tab-link',
-                                labelIconBadgeClass = '';
+                                tabLinkId = cowl.QE_QUERY_QUEUE_RESULT_GRID_TAB_ID + "-" + queryId + "-tab-link",
+                                labelIconBadgeClass = "";
 
-                            if ($('#' + tabLinkId).length > 0) {
-                                labelIconBadgeClass = 'icon-queue-badge-color-' + $('#' + tabLinkId).data('badge_color_key');
+                            if ($("#" + tabLinkId).length > 0) {
+                                labelIconBadgeClass = "icon-queue-badge-color-" + $("#" + tabLinkId).data("badge_color_key");
                             }
 
                             return '<span id="label-icon-badge-' + queryId + '" class="label-icon-badge label-icon-badge-queue ' + labelIconBadgeClass + '"><i class="fa fa-square"></i></span>';
+                        } else {
+                            return "";
                         }
                     },
                     events: {
@@ -1834,8 +1836,8 @@ define([
                 {
                     id:"startTime", field:"startTime", name:"Time Issued", width: 140,
                     formatter: {
-                        format: 'date',
-                        options: {formatSpecifier: 'llll'}
+                        format: "date",
+                        options: {formatSpecifier: "llll"}
                     }
                 },
                 {
@@ -1847,41 +1849,46 @@ define([
                 {
                     id:"time_range", field:"time_range", name:"Time Range", width: 100, sortable:false,
                     formatter: {
-                        format: 'query-time-range',
-                        path: 'queryReqObj.formModelAttrs.time_range'
+                        format: "query-time-range",
+                        path: "queryReqObj.formModelAttrs.time_range"
                     }
                 },
                 {
                     id:"fromTime", field:"fromTime", name:"From Time", width: 140,
                     formatter: {
-                        format: 'date',
-                        path: 'queryReqObj.formModelAttrs.from_time_utc',
+                        format: "date",
+                        path: "queryReqObj.formModelAttrs.from_time_utc",
                         options: {
-                            formatSpecifier: 'lll'
+                            formatSpecifier: "lll"
                         }
                     }
                 },
                 {
                     id:"toTime", field:"toTime", name:"To Time", width: 140,
                     formatter: {
-                        format: 'date',
-                        path: 'queryReqObj.formModelAttrs.to_time_utc',
+                        format: "date",
+                        path: "queryReqObj.formModelAttrs.to_time_utc",
                         options: {
-                            formatSpecifier: 'lll'
+                            formatSpecifier: "lll"
                         }
                     }
                 },
-                { id:"progress", field:"progress", name:"Progress", width:75, formatter: function(r, c, v, cd, dc) { return (dc.status != 'error' && dc.progress != '' && parseInt(dc.progress) > 0) ? (dc.progress + '%') : '-'; } },
-                {   id:"count", field:"count", name:"Records", width:75,
+                {
+                    id:"progress", field:"progress", name:"Progress", width:75,
+                    formatter: function(r, c, v, cd, dc) {
+                        return (dc.status !== "error" && dc.progress !== "" && parseInt(dc.progress) > 0) ? (dc.progress + "%") : "-";
+                    }
+                },
+                { id:"count", field:"count", name:"Records", width:75,
                     formatter: {
-                        format: 'number'
+                        format: "number"
                     }
                 },
                 { id:"status", field:"status", name:"Status", width:90 },
                 {
                     id:"timeTaken", field:"timeTaken", name:"Time Taken", width:100, sortable:true,
                     formatter: {
-                        format:'time-period'
+                        format:"time-period"
                     }
                 }
             ];
@@ -1896,7 +1903,7 @@ define([
                         viewPathPrefix: "reports/qe/ui/js/views/",
                         app: cowc.APP_CONTRAIL_CONTROLLER,
                         viewConfig: {
-                            className: 'modal-980',
+                            className: "modal-980",
                             queryFormAttributes: queryFormAttributes,
                             selectedFlowRecord: selRowDataItem
                         }
@@ -1906,14 +1913,14 @@ define([
             };
         },
 
-        getOnClickSessionAnalyzer: function(clickOutView, queryId, queryFormAttributes, elementId) {
+        getOnClickSessionAnalyzer: function(clickOutView, queryId, queryFormAttributes) {
             return function (e, targetElement, selRowDataItem) {
                 var elementId = $(elementId),
-                    saElementId = cowl.QE_SESSION_ANALYZER_VIEW_ID + '-' + queryId + '-' + selRowDataItem.cgrid,
+                    saElementId = cowl.QE_SESSION_ANALYZER_VIEW_ID + "-" + queryId + "-" + selRowDataItem.cgrid,
                     sessionAnalyzerConfig = {
                         elementId: saElementId,
                         title: cowl.TITLE_SESSION_ANALYZER,
-                        iconClass: 'fa fa-bar-chart-o',
+                        iconClass: "fa fa-bar-chart-o",
                         app: cowc.APP_CONTRAIL_CONTROLLER,
                         viewPathPrefix: "controller-basedir/reports/qe/ui/js/views/",
                         view: "SessionAnalyzerView",
@@ -1931,7 +1938,7 @@ define([
             };
         },
 
-        setAnalyzerIconFormatter: function(r, c, v, cd, dc) {
+        setAnalyzerIconFormatter: function() {
             return '<i class="fa fa-external-link-square" title="Analyze Session"></i>';
         },
 
@@ -1950,31 +1957,31 @@ define([
                 body: {
                     options: {
                         checkboxSelectable: false,
-                        fixedRowHeight: contrail.checkIfExist(gridOptions.fixedRowHeight) ? gridOptions.fixedRowHeight : 30,
+                        fixedRowHeight: !_.isNil(gridOptions.fixedRowHeight) ? gridOptions.fixedRowHeight : 30,
                         forceFitColumns: false,
                         defaultDataStatusMessage: false,
-                        actionCell: contrail.checkIfExist(gridOptions.actionCell) ? gridOptions.actionCell : false,
-                        actionCellPosition: contrail.checkIfExist(gridOptions.actionCellPosition) ? gridOptions.actionCellPosition : 'end'
+                        actionCell: !_.isNil(gridOptions.actionCell) ? gridOptions.actionCell : false,
+                        actionCellPosition: !_.isNil(gridOptions.actionCellPosition) ? gridOptions.actionCellPosition : "end"
                     },
                     dataSource: {
                         remote: {
                             ajaxConfig: remoteConfig,
                             dataParser: function (response) {
-                                return response['data'];
+                                return response.data;
                             }
                         }
                     },
                     statusMessages: {
                         queued: {
-                            type: 'status',
-                            iconClasses: '',
+                            type: "status",
+                            iconClasses: "",
                             text: cowm.getQueryQueuedMessage(gridOptions.queryQueueUrl, gridOptions.queryQueueTitle)
                         },
                         loading: {
-                            text: 'Loading Results..',
+                            text: "Loading Results..",
                         },
                         empty: {
-                            text: 'No Results Found.'
+                            text: "No Results Found."
                         }
                     }
                 },

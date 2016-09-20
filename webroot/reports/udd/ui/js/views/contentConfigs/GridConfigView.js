@@ -64,7 +64,7 @@ define([
                                 class: "col-xs-4"
                             },
                         }]
-                    },  {
+                    }, {
                         columns: [{
                             elementId: "visibleColumns",
                             view: "FormMultiselectView",
