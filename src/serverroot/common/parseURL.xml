@@ -35,6 +35,10 @@
         <define>authApi</define>
         <path>./auth.api.js</path>
     </require>
+    <require>
+        <define>uveStreamApi</define>
+        <path>./uvestream.api.js</path>
+    </require>
     <item>
         <url>/api/service/networking/device-status/:ip</url>
         <method>post</method>
@@ -92,7 +96,7 @@
         <feature>orchestration</feature>
         <callback>configServerUtils.getRoles</callback>
     </item>
-        <item>
+    <item>
         <url>/api/tenants/config/get-json-schema/:id</url>
         <method>get</method>
         <feature>configschema</feature>
@@ -110,6 +114,11 @@
         <feature>configschema</feature>
         <callback>configschemaapi.getPropertiesForObject</callback>
     </item>
-
+    <item>
+        <url>/api/get-uve-stream</url>
+        <method>get</method>
+        <feature>orchestration</feature>
+        <callback>uveStreamApi.getUVEStream</callback>
+    </item>
 </urlLists>
 
