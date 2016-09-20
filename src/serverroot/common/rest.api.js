@@ -337,6 +337,9 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
         } else {
             self.sendParsedDataToApp(data, xml2jsSettings, response, callback);
         }
+    }).on('streamData', function(data, response) {
+        var sseApi = require('./sse.api');
+        sseApi.serverSentEventHandler(data, response);
     });
 }
 
