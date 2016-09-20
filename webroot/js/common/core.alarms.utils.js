@@ -3,8 +3,9 @@
  */
 
 define(
-       [ 'underscore' ],
-       function(_) {
+       [ 'underscore',
+         'core-constants'],
+       function(_,cowc) {
             var CoreAlarmUtils = function() {
                 var self = this;
                 self.BUCKET_DURATION = 300000000;//5 MINS
