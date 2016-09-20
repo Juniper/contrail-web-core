@@ -132,8 +132,7 @@ define([
                                     dataSource: {
                                         type: "remote",
                                         url:
-                                         "/api/tenants/config/projects/" +
-                                         contrail.getCookie(cowc.COOKIE_DOMAIN),
+                                         "/api/tenants/config/all-projects/",
                                         requestType: "GET",
                                         parse: function(result){
                                             var dataSource = [],
