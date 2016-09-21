@@ -19,11 +19,7 @@
             <head>
                 <link href="/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
                 <link href="common/ui/css/style.css" rel="stylesheet" type="text/css"/>
-                <script src="/assets/jquery/js/jquery-1.8.3.min.js"></script>
-                <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
-                <script src="/assets/jquery/js/jquery.dataTables.min.js"></script>
-                <script src="/dtbootstrap/js/DT_bootstrap.js"></script>
-                <script src="js/introspect-util.js"></script>
+
                 <script type="text/javascript">
 			    	<![CDATA[
 			    		function getProxyURL(){
@@ -63,129 +59,113 @@
                 <title>HTTP Introspect</title>
             </head>
             <body>
-                <div id="page-content">
-                    <div class="navbar navbar-inverse navbar-fixed-top">
-                        <div class="navbar-inner">
-                            <div class="container-fluid">
-                                <a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                                    <span class="icon-bar"></span>
-                                </a>
-                                <a class="brand" href="#">
-                                    Contrail
-                                </a>
-                                <div class="nav-collapse collapse navbar-responsive-collapse">
-                                    <ul class="nav pull-right">
-                                        <li class="divider-vertical"></li>
-                                        <li>
-                                            <a href="javascript:collapseAll();">Collapse</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:expandAll();">Expand</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:wrap();">Wrap</a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:noWrap();">NoWrap</a>
-                                        </li>
-                                        <!--
-                                        <li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actions
-                                                <b class="caret"></b>
-                                            </a>
-                                            <ul class="dropdown-menu">
-                                            </ul>
-                                        </li>
-                                        -->
-                                    </ul>
-                                </div>
-                                <!-- /.nav-collapse -->
-                            </div>
-                        </div>
-                        <!-- /navbar-inner -->
-                    </div>
-                    <!-- /navbar -->
+                <nav class="navbar navbar-inverse navbar-fixed-top">
                     <div class="container-fluid">
-                        <div class="row-fluid">
-                            <xsl:choose>
-                                <xsl:when test="$snhreq = 'rlist'">
-                                    <h3>
+                        <div class="navbar-header">
+                            <a class="navbar-brand" href="#">Contrail</a>
+                        </div>
+                        <div id="navbar" class="collapse navbar-collapse pull-right">
+                            <ul class="nav navbar-nav">
+                                <li>
+                                    <a href="javascript:collapseAll();">Collapse</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:expandAll();">Expand</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:wrap();">Wrap</a>
+                                </li>
+                                <li>
+                                    <a href="javascript:noWrap();">NoWrap</a>
+                                </li>
+                            </ul>
+                        </div><!--/.nav-collapse -->
+                    </div>
+                </nav>
+                <div class="page-content container-fluid">
+                        <xsl:choose>
+                            <xsl:when test="$snhreq = 'rlist'">
+                                <div class="row">
+                                    <h3 class="col-xs-12 center">
                                         <xsl:for-each select="*">
-                                            <div class="row-fluid">
-                                                    <span class="first-cap offset6">
-                                                        <xsl:value-of select="name()"/> Introspect
-                                                    </span>
-                                            </div>
+                                            <span class="first-cap offset6 center">
+                                                <xsl:value-of select="name()"/> Introspect
+                                            </span>
                                         </xsl:for-each>
                                     </h3>
-                                    <div class="row-fluid">
-                                        <div class="span3 sidenav">
-                                            <ul class="nav nav-list sidenav span12">
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <ul class="nav nav-list sidenav col-xs-12">
+                                            <xsl:for-each select="*">
                                                 <xsl:for-each select="*">
-                                                    <xsl:for-each select="*">
-                                                        <xsl:variable name="reqname" select="name()"/>
-                                                        <li>
-                                                            <a href="#Snh_{$reqname}">
-                                                                <xsl:value-of select="$reqname"/>
-                                                            </a>
-                                                        </li>
-                                                    </xsl:for-each>
+                                                    <xsl:variable name="reqname" select="name()"/>
+                                                    <li>
+                                                        <a href="#Snh_{$reqname}" title="{$reqname}">
+                                                            <xsl:value-of select="$reqname"/>
+                                                        </a>
+                                                    </li>
                                                 </xsl:for-each>
-                                            </ul>
-                                        </div>    
-                                        <div class="span8 pull-left">
-                                            <xsl:variable name="reqname" select="name()"/>
-                                            <section id="Snh_{$reqname}">
-                                                <xsl:for-each select="*">
-                                                    <xsl:choose>
-                                                        <xsl:when test="attribute::type[.='rlist']">
-                                                            <xsl:apply-templates select="attribute::type[.='rlist']"/>
-                                                        </xsl:when>
-                                                    </xsl:choose>
-                                                </xsl:for-each>
-                                            </section>
-                                        </div>
+                                            </xsl:for-each>
+                                        </ul>
                                     </div>
+                                    <div class="col-xs-9">
+                                        <xsl:variable name="reqname" select="name()"/>
+                                        <section id="Snh_{$reqname}">
+                                            <xsl:for-each select="*">
+                                                <xsl:choose>
+                                                    <xsl:when test="attribute::type[.='rlist']">
+                                                        <xsl:apply-templates select="attribute::type[.='rlist']"/>
+                                                    </xsl:when>
+                                                </xsl:choose>
+                                            </xsl:for-each>
+                                        </section>
+                                    </div>
+                                </div>
+                            </xsl:when>
+                        </xsl:choose>
+
+                        <xsl:for-each select="*">
+                            <xsl:choose>
+                                <xsl:when test="attribute::type[.='sandesh']">
+                                    <h4>
+                                        <xsl:value-of select="name()"/>
+                                    </h4>
+                                    <table class="table table-bordered table-condensed" border="1">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <xsl:apply-templates select="attribute::type[.='sandesh']"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
                                 </xsl:when>
+                                <xsl:when test="attribute::type[.='rlist']">
+
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <table class="table table-bordered table-condensed" border="1">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <xsl:apply-templates select="attribute::type[.='slist']"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </xsl:otherwise>
                             </xsl:choose>
-    
-                            <xsl:for-each select="*">
-                                <xsl:choose>
-                                    <xsl:when test="attribute::type[.='sandesh']">
-                                        <h4>
-                                            <xsl:value-of select="name()"/>
-                                        </h4>
-                                        <table class="table table-bordered table-condensed" border="1">
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <xsl:apply-templates select="attribute::type[.='sandesh']"/>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-    
-                                    </xsl:when>
-                                    <xsl:when test="attribute::type[.='rlist']">
-    
-                                    </xsl:when>
-                                    <xsl:otherwise>
-                                        <table class="table table-bordered table-condensed" border="1">
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <xsl:apply-templates select="attribute::type[.='slist']"/>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </xsl:otherwise>
-                                </xsl:choose>
-                            </xsl:for-each>
-    
-                        </div>
-                    </div>
+                        </xsl:for-each>
+
                 </div>
+
+                <script src="/assets/jquery/js/jquery.min.js"></script>
+                <script src="/assets/bootstrap/js/bootstrap.js"></script>
+                <script src="/assets/jquery/js/jquery.dataTables.min.js"></script>
+                <script src="js/introspect-util.js"></script>
+
             </body>
         </html>
     </xsl:template>
@@ -196,24 +176,19 @@
             <xsl:choose>
                 <xsl:when test="@type = 'sandesh'">
                     <xsl:variable name="reqx" select="name(.)"/>
-                    <div id="Snh_{$reqx}">
-                        <br/><br/>
-                        <h4>
-                            <xsl:value-of select="name()"/>
-                        </h4>
-                        <hr/>
-                        <form class="form-vertical"  action="proxy" method="get">
-                            <xsl:apply-templates select="@type[.='sandesh']"/>
-                            <input id="proxyURL_{$reqx}" type="hidden" value="" name="proxyURL"></input>
-                            <div class="control-group">
-                                <div class="controls">
-                                    <button type="submit" class="btn btn-small btn-primary" 
-                                    		onclick="setURL('{$reqx}');">
-													Send
-									</button>
-                                </div>
+                    <div id="Snh_{$reqx}" style="padding-top: 50px;">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <xsl:value-of select="name()"/>
                             </div>
-                        </form>
+                            <div class="panel-body">
+                                <form class="form-vertical" action="proxy" method="get">
+                                    <xsl:apply-templates select="@type[.='sandesh']"/>
+                                    <input id="proxyURL_{$reqx}" type="hidden" value="" name="proxyURL"></input>
+                                    <button type="submit" class="btn btn-sm btn-primary" onclick="setURL('{$reqx}');">Send</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </xsl:when>
             </xsl:choose>
@@ -244,14 +219,13 @@
         </table>
     </xsl:template>
 
-
     <xsl:template match="element">
         <xsl:choose>
             <xsl:when test="$snhreq = 'rlist'">
                 <xsl:variable name="vary" select="name(..)"/>
                 <tr>
                     <td style="color:blue">
-                        <input type="text" class="span3" name="{$vary}"/>
+                        <input type="text" class="col-xs-3" name="{$vary}"/>
                     </td>
                 </tr>
             </xsl:when>
@@ -470,15 +444,15 @@
 
                         </xsl:when>
                         <xsl:otherwise>
-                            <tr>
-                                <td>
-                                    <xsl:value-of select="name()"/>
-                                    <xsl:if test="$snhreq = 'rlist'">(<xsl:value-of select="@type"/>)
-                                    </xsl:if>
-                                </td>
+                            <xsl:if test="$snhreq = 'rlist'">
+                                <div class="form-group">
+                                    <xsl:variable name="varx" select="name(..)"/>
+                                    <label for="{$varx}">
+                                        <xsl:value-of select="$varx"/> (<xsl:value-of select="@type"/>)
+                                    </label>
                                 <xsl:apply-templates select="@type"/>
-                                <br/>
-                            </tr>
+                                </div>
+                            </xsl:if>
                         </xsl:otherwise>
                     </xsl:choose>
                 </xsl:for-each>
@@ -516,7 +490,7 @@
                 <xsl:choose>
                     <xsl:when test="$snhreq = 'rlist'">
                         <xsl:variable name="varx" select="name(..)"/>
-                        <input type="text" class="span3" name="{$varx}"/>
+                        <input type="text" class="form-control" name="{$varx}"/>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:variable name="fieldValue" select=".."/>
