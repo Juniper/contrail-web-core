@@ -165,7 +165,9 @@ define([
                     key = contrail.checkIfExist(options) ? options.key : null;
 
                 switch (formatterKey) {
-
+                    case 'underlay-link':
+                        return '<a class="blue">' + value + '</a>';
+                        break;
                     case 'throughput' :
                         return formatThroughput(value);
                         break;
