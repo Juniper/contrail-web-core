@@ -324,7 +324,7 @@ function testAppInit(testAppConfig) {
                         require(['underscore'], function (_) {
                             _.noConflict();
                         });
-                        require(['layout-handler', 'content-handler', 'help-handler', 'contrail-load', 'lodash'], function (LayoutHandler, ContentHandler, HelpHandler, ChartUtils, _) {
+                        require(['layout-handler', 'content-handler', 'help-handler', 'contrail-load', 'lodash'], function (LayoutHandler, ContentHandler, helpHandler, ChartUtils, _) {
                             window._ = _;
                             contentHandler = new ContentHandler();
                             initBackboneValidation();
@@ -339,8 +339,6 @@ function testAppInit(testAppConfig) {
                             layoutHandler = new LayoutHandler();
                             layoutHandlerLoadDefObj.resolve();
                             layoutHandler.load(menuXML);
-
-                            helpHandler = new HelpHandler();
 
                             var cssList = cotu.getCSSList();
 

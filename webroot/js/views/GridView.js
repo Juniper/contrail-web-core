@@ -368,7 +368,7 @@ define([
                                 }
                                 else {
                                     return '<input type="checkbox" class="ace-input rowCheckbox" value="' + r + '" disabled=true/> <span class="ace-lbl"></span>';
-                                  }
+                                }
                             },
                             name: '<input type="checkbox" class="ace-input headerRowCheckbox" disabled=true/> <span class="ace-lbl"></span>'
                         }));
@@ -685,13 +685,13 @@ define([
                                 jsonObj = JSON.parse(selfParent.children('ul.node').text());
                                 selfParent.empty().append(cowu.constructJsonHtmlViewer(jsonObj, 2, parseInt(selfParent.children('.node').data('depth')) + 1));
                             }
-                            selfParent.children('.node').show();
-                            selfParent.children('.collapsed').hide();
+                            selfParent.children('.node').showElement();
+                            selfParent.children('.collapsed').hideElement();
                             selfParent.children('i').removeClass('fa-plus').removeClass('expander').addClass('fa fa-minus').addClass('collapser');
                         } else if ($(e.target).hasClass("collapser")) {
                             var selfParent = $(e.target).parent();
-                            selfParent.children('.collapsed').show();
-                            selfParent.children('.node').hide();
+                            selfParent.children('.collapsed').showElement();
+                            selfParent.children('.node').hideElement();
                             selfParent.children('i').removeClass('fa-minus').removeClass('collapser').addClass('fa fa-plus').addClass('expander');
                         }
 
@@ -1236,7 +1236,7 @@ define([
                 if (headerConfig.defaultControls.columnPickable) {
                     var columnPickerConfig = {
                         type: 'checked-multiselect',
-                        //iconClass: 'icon-columns',
+                        title: "Show / Hide Columns",
                         placeholder: '',
                         elementConfig: {
                             elementId: 'columnPicker',
@@ -1406,9 +1406,10 @@ define([
 
             function addGridHeaderActionCheckedMultiselect(key, actionConfig, gridContainer) {
                 var actions = actionConfig.actions,
-                    actionId = (contrail.checkIfExist(actionConfig.actionId)) ? actionConfig.actionId : gridContainer.prop('id') + '-header-action-' + key;
+                    actionId = (contrail.checkIfExist(actionConfig.actionId)) ? actionConfig.actionId : gridContainer.prop('id') + '-header-action-' + key,
+                    actionTitle = (contrail.checkIfExist(actionConfig.title)) ? actionConfig.title : "";
                 var actionsTemplate = '<div id="' + actionId + '" class="widget-toolbar pull-right"> \
-		        <div class="input-multiselectbox width-15"> \
+		        <div class="input-multiselectbox width-15" title="' + actionTitle + '"> \
 		            <div class="input-icon"> \
 		            	<i class="widget-toolbar-icon ' + actionConfig.iconClass + (contrail.checkIfExist(actionConfig.disabledLink) ? ' disabled-link' : '') + '"></i> \
 		            </div> \

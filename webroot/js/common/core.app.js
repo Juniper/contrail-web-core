@@ -1346,9 +1346,7 @@ if (typeof document !== 'undefined' && document) {
                         require(['underscore'],function(_) {
                             _.noConflict();
                         });
-                        require(['layout-handler', 'content-handler', 'help-handler', 'contrail-load','lodash'], function(LayoutHandler, ContentHandler, HelpHandler, ChartUtils,_) {
-                            var helpHandler = new HelpHandler();
-
+                        require(['layout-handler', 'content-handler', 'help-handler', 'contrail-load','lodash'], function(LayoutHandler, ContentHandler, helpHandler, ChartUtils,_) {
                             window._ = _;
                             contentHandler = new ContentHandler();
                             initBackboneValidation();

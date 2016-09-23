@@ -822,6 +822,7 @@
 .control-panel-items .control-panel-item {
     padding: 5px 10px;
     margin: 5px 0 0;
+    cursor: pointer;
     background-color: #f9f9f9;
     border: 1px solid #efefef;
 }

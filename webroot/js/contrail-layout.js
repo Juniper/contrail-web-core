@@ -330,6 +330,7 @@ function check2ReloadMenu(lastPageHash, currentMenu) {
 
 // JSON Highlighter + Expand & Collapse
 function syntaxHighlight(json) {
+    console.warn('Contrail WebUI Warning: syntaxHighlight is depracated. Use cowu.constructJsonHtmlViewer instead.');
     if (json == null)
         return;
     json = JSON.stringify(json, undefined, 2)

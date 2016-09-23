@@ -3,57 +3,118 @@
  * All rights reserved.
  */
 
-define(['underscore'], function (_) {
+define(["lodash"], function (_) {
     var HelpHandler = function() {
         var $ = window.jQuery || null;
-        if($ == null) return;
+        if($ === null) return;
 
         var self = this;
 
-        var defaults = {
-            include_all: true,
-            icon_1: 'fa fa-question',
-            base: '',
-            code_highlight: (!!window.Rainbow ? 'rainbow' : (!!window.Prism ? 'prism' : null)),
-
-            add_panels: true,
-            panel_content_selector: '.info-section',
-            panel_content_title: '.info-title',
-
-            section_url: getSectionUrl,
-            before_enable: beforeEnableHelp,
-            after_disable: afterDisableHelp
+        self.settings = {
+            icon: "fa fa-question",
+            section_url: getSectionUrl
         };
-
-        this.settings = $.extend({}, defaults);
 
         var ie_fix = document.all && !window.atob;//ie9 and below need a little fix
 
-        var section_start = {};
-        var section_end = {};
-        var section_rect = {};
-        var section_count = 0;
+        var section_start = {}, section_rect = {},
+            section_count = 0;
 
-        var created = false;
-        var active = false;
+        var created = false, active = false;
 
-        var self = this, _ = this;
-        var ovfx = '';
-        var help_container = null;
-        var helpAvailable = false;
+        var ovfx = "";
+        var help_container = null,
+            helpAvailable = false,
+            helpHashMap = ["query_flow_series"];
 
-        var body_h, body_w;
+        var mbody = null;
+        var maxh = 0;
+        var help_modal = null;
 
-        var captureFocus = function() {
+        this.toggle = function() {
+            if(active) {
+                self.disable();
+            } else {
+                self.enable();
+            }
+        };
+
+        this.enable = function() {
+            if (active) {
+                return;
+            }
+
+            if (enableHelpSections()) {
+                $(".page-help-backdrop, .page-help-section").removeClass("hidden");
+                ovfx = document.body.style.overflowX;
+                document.body.style.overflowX = 'hidden';//hide body:overflow-x
+                captureFocus();
+                $("#page-help-toggle-btn").parent().addClass('active');
+            }
+        };
+
+        this.disable = function() {
+            if (!active) {
+                return;
+            }
+
+            active = false;
+            $(".page-help-backdrop, .page-help-section").addClass("hidden");
+            $("#page-help-toggle-btn").parent().removeClass("active");
+            document.body.style.overflowX = ovfx;//restore body:overflow-x
+            releaseFocus();
+        };
+
+        this.init = function() {
+            if( created ) {
+                return;
+            }
+
+            displayPageHelpLink();
+
+            help_container =
+                $('<div id="page-help-container" class="page-help-container" tabindex="-1" />')
+                    .appendTo("body");
+
+            help_container.append('<div class="page-help-backdrop hidden" />');
+
+            // update to correct position and size
+            $(window).on("resize.onpage_help", function() {
+                if(!active) return;
+
+                if (enableHelpSections()) {
+                    if (!_.isNull(help_modal) && help_modal.hasClass("in")) {
+                        setBodyHeight();
+                        disableBodyScroll();
+                    }
+                }
+            });
+
+            created = true;
+
+            $(document).on('click', "#page-help-toggle-btn", function (event) {
+                event.preventDefault();
+                self.toggle();
+            });
+
+            $(document).on('click', '.page-help-backdrop', function(e) {
+                if (this.hidden == false) {
+                    self.disable();
+                }
+            });
+
+            $(window).on("hashchange", function () {
+                displayPageHelpLink();
+            });
+        };
+
+        function captureFocus() {
             if(!help_container) return;
             var scroll = -1;
             //like bootstrap modal
             $(document)
                 .off('focusin.ace.help') //remove any previously attached handler
                 .on('focusin.ace.help', function (e) {
-                    // if (!( help_container[0] == e.target || $.contains(help_container[0], e.target) )) {
-                    //     help_container.focus();
-                    // }
 
                     if(e.target == document && scroll > -1) {
                         //when window regains focus and container is focused, it scrolls to bottom
@@ -66,134 +127,44 @@ define(['underscore'], function (_) {
             $(window).on('blur.ace.help', function(){
                 scroll = $(window).scrollTop();
             });
-        };
+        }
 
-        var releaseFocus = function() {
+        function releaseFocus() {
             $(document).off('focusin.ace.help');
             $(window).off('blur.ace.help');
-        };
-
-        this.toggle = function() {
-            if(active) {
-                self.disable();
-            }
-            else {
-                self.enable();
-            }
-        };
-
-        this.enable = function() {
-            if (active) {
-                return;
-            }
-
-            if (typeof _.settings.before_enable === 'function' && _.settings.before_enable.call(self) === false) {
-                return;
-            }
-
-            if (enableHelpSections()) {
-                $('.page-help-backdrop, .page-help-section').removeClass('hidden');
-                ovfx = document.body.style.overflowX;
-                document.body.style.overflowX = 'hidden';//hide body:overflow-x
-                captureFocus();
-                if (typeof _.settings.after_enable === 'function') _.settings.after_enable.call(self);
-                $('#page-help-toggle-btn').parent().addClass('active');
-            }
-        };
-
-        this.disable = function() {
-            if (!active) {
-                return;
-            }
-
-            if (typeof _.settings.before_disable === 'function' && _.settings.before_disable.call(self)) {
-                return;
-            }
-
-            active = false;
-            $('.page-help-backdrop, .page-help-section').addClass('hidden');
-            $('#page-help-toggle-btn').parent().removeClass('active');
-            document.body.style.overflowX = ovfx;//restore body:overflow-x
-            releaseFocus();
-            if(typeof _.settings.after_disable === 'function') _.settings.after_disable.call(self);
-        };
-
-        this.init = function() {
-            if( created ) return;
-
-            help_container =
-                $('<div id="page-help-container" class="page-help-container" tabindex="-1" />')
-                    .appendTo('body');
-
-            help_container.append('<div class="page-help-backdrop hidden" />');
-
-            // update to correct position and size
-            $(window).on('resize.onpage_help', function() {
-                if(!active) return;
-
-                if (enableHelpSections()) {
-                    if (help_modal != null && help_modal.hasClass('in')) {
-                        setBodyHeight();
-                        disableBodyScroll();
-                    }
-                }
-            });
-
-            created = true;
-
-            $(document).on('click', '#page-help-toggle-btn', function (event) {
-                event.preventDefault();
-                self.toggle();
-            });
-
-            $(document).on('click', '.page-help-backdrop', function(e) {
-                if (this.hidden == false) {
-                    self.disable();
-                }
-            });
-        };
+        }
 
         function enableHelpSections() {
-            save_sections();
+            saveSections();
 
             if (helpAvailable === true) {
                 active = true;
-                display_help_sections();
+                displayHelpSections();
                 return true;
             } else {
-                showInfoWindow('Help has not been configured for this page.', 'Help Not Found');
                 return false;
             }
         }
 
-        function display_help_sections() {
+        function displayHelpSections() {
             if (!active) {
                 return;
             }
 
-            body_h = document.body.scrollHeight - 2;
-            body_w = document.body.scrollWidth - 2;
-
-            //we first calculate all positions
-            //because if we calculate one position and then make changes to DOM,
-            //next position calculation will become slow on Webkit, because it tries to re-calculate layout changes and things
-            //i.e. we batch call all and save offsets and scrollWidth, etc and then use them later in highlight_section
-            //Firefox doesn't have such issue
             for (var name in section_start) {
                 if (section_start.hasOwnProperty(name)) {
-                    save_section_offset(name);
+                    saveSectionOffset(name);
                 }
             }
             for (var name in section_start) {
                 if (section_start.hasOwnProperty(name)) {
-                    highlight_section(name);
+                    highlightSection(name);
                 }
             }
 
         }
 
-        //finds comments and relevant help sections
-        function save_sections(reset) {
+        function saveSections(reset) {
             if( !(reset === true || section_count == 0) ) {
                 return;
             }
@@ -202,7 +173,6 @@ define(['underscore'], function (_) {
             }
 
             section_start = {};
-            section_end = {};
             section_count = 0;
 
             //find all relevant elements
@@ -219,7 +189,17 @@ define(['underscore'], function (_) {
             });
         }
 
-        function save_section_offset(name) {
+        function displayPageHelpLink() {
+            var currentHash = cowhu.getState();
+
+            if (_.indexOf(helpHashMap, currentHash.p) >= 0) {
+                $("#page-help").showElement();
+            } else {
+                $("#page-help").hideElement();
+            }
+        }
+
+        function saveSectionOffset(name) {
             if( !(name in section_start) ) return;
 
             var x1, y1, width, height;
@@ -240,7 +220,7 @@ define(['underscore'], function (_) {
             }
         }
 
-        function highlight_section(name) {
+        function highlightSection(name) {
             if( !(name in section_rect) || !help_container ) return;
 
             //div is the highlighted box above each section
@@ -249,13 +229,13 @@ define(['underscore'], function (_) {
                 div = $('<a class="page-help-section" href="#" />').appendTo(help_container);
                 if(ie_fix) div.append('<span class="ie-hover-fix" />');
 
-                if(_.settings.icon_1) div.append('<i class="help-icon-1 '+_.settings.icon_1+'"></i>');
+                if(self.settings.icon) div.append('<i class="help-icon-1 '+self.settings.icon+'"></i>');
 
                 div.attr('data-section', name);
 
                 div.on('click', function(e) {
                     e.preventDefault();
-                    launch_help_modal(name);
+                    launchHelpModal(name);
                 });
             }
 
@@ -283,13 +263,6 @@ define(['underscore'], function (_) {
             }
         }
 
-        var nav_list = [];
-        var nav_pos = -1;
-        var mbody = null;
-        var maxh = 0;
-        var help_modal = null;
-
-        //disable body scroll, when modal content has no scrollbars or reached end of scrolling
         function disableBodyScroll() {
             if (!mbody) return;
 
@@ -322,23 +295,22 @@ define(['underscore'], function (_) {
             mbody.css({'max-height': maxh});
         }
 
-        function launch_help_modal(section_name, save_to_list) {
+        function launchHelpModal(section_name) {
+            var url;
 
             //check if it is an external url
             if (section_name.match(/www/)) {
                 window.open(section_name);
-            }
+            } else {
 
-            else {
-
-                if (typeof _.settings.section_url === 'function') url = _.settings.section_url.call(self, section_name);
+                if (typeof self.settings.section_url === 'function') {
+                    url = self.settings.section_url.call(self, section_name);
+                }
 
                 $.ajax({url: url, dataType: 'text'})
                     .done(function (result) {
                         //find the title for this dialog by looking for a tag that has data-id attribute
-                        var title = '', excerpt = '';
-
-                        title = $(result)[3].innerHTML;
+                        var title = $(result)[3].innerHTML;
 
                         cowu.createModal({
                             'modalId': 'helpModal', 'className': 'modal modal-840', 'title': title, 'body': result
@@ -348,33 +320,13 @@ define(['underscore'], function (_) {
                     .fail(function () {
                         help_modal.find('.modal-title').find('.fa-spin').remove().end().find('.hidden').children().unwrap();
                     });
-            }//end of else - means it is internal link and modal is needed
-        }//launch_help_modal
+            }
+        }
 
-        $(document).on('click', '.help-more', function(e) {
-            e.preventDefault();
-            var href = $(this).attr('href');
-            launch_help_modal(href);
-        });
-    };
-
-    function beforeEnableHelp() {
-        $('#btn-scroll-up').css('z-index', 1000000);//bring btn-scroll-up  higher , to be over our help area
-
-        //now disable fixed navbar, which automatically disabled fixes sidebar and breadcrumbs
-        try {
-            ace.settingFunction.navbar_fixed(null, false, false);
-        } catch (ex) {
+        function getSectionUrl(section_name) {
+            return '/docs/' + section_name + '.html';
         }
     };
 
-    function afterDisableHelp() {
-        $('#btn-scroll-up').css('z-index', '');
-    };
-
-    function getSectionUrl(section_name) {
-        return '/docs/' + section_name + '.html';
-    };
-
-    return HelpHandler;
+    return new HelpHandler();
 });
