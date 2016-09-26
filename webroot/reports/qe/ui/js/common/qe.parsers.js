@@ -3,22 +3,20 @@
  */
 
 define([
-    'underscore'
+    "lodash"
 ], function (_) {
-    var QEParsers = function () {
-        var self = this;
-
-        self.fsQueryDataParser = function(response) {
+    return {
+        fsQueryDataParser: function(response) {
             var chartData = [];
 
-            $.each(response, function(fcKey, fcValue) {
-                chartData.push({chart_group_id: fcKey, values: fcValue});
-
+            _.forEach(response, function(fcValue, fcKey) {
+                chartData.push({
+                    chart_group_id: fcKey,
+                    values: fcValue
+                });
             });
 
             return chartData;
-        };
+        }
     };
-
-    return new QEParsers();
 });
