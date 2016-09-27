@@ -147,7 +147,7 @@ define([
                                   hide:true
                               },
                               {
-                                  field: 'timestamp',
+                                  field: 'T',
                                   name: 'Time',
                                   minWidth: 130,
                                   formatter : function (r,c,v,cd,dc) {
@@ -403,7 +403,7 @@ define([
                                                     }
                                                 },
                                                 {
-                                                    key: 'timestamp',
+                                                    key: 'T',
                                                     templateGenerator: 'TextGenerator',
                                                     templateGeneratorConfig: {
                                                         formatter: 'timestampFormatter'
