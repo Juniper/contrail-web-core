@@ -119,8 +119,13 @@ define([
                         attr.share_list.toJSON() : [],
                 actShare = [];
             _.each(share, function(r){
+                var tenantId,
+                    tenantIdArry = r.tenant() ?
+                        r.tenant().toString().split(" (") : [];
+                tenantId = tenantIdArry.length === 2 ?
+                    tenantIdArry[1].toString().replace(")","") : r.tenant();
                 actShare.push({
-                    tenant: r.tenant(),
+                    tenant: tenantId,
                     tenant_access: self.getConsolidatedNumber(r.tenant_access())
                 });
             });
