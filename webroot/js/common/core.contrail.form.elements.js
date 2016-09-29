@@ -233,26 +233,37 @@ define([
             option.dataTextField = {dsVar: option.dataTextField, apiVar: 'value'};
             option.dataValueField = {dsVar: option.dataValueField, apiVar: 'id'};
             if(!$.isEmptyObject(option) && typeof option.dataSource !== 'undefined') {
-                if(option.dataSource.type == "remote"){
-
-                    contrail.ajaxHandler({
-                        url: option.dataSource.url,
-                        dataType: "json"
-                    }, function(){
+                var dataSourceOption = option.dataSource;
+                if(dataSourceOption.type == "remote"){
+                    var ajaxConfig = {
+                            url: dataSourceOption.url,
+                            dataType: contrail.checkIfExist(dataSourceOption.dataType) ? dataSourceOption.dataType : 'json'
+                    };
+                    if(dataSourceOption.contentType) {
+                        ajaxConfig['contentType'] = dataSourceOption.contentType;
+                    }
+                    if(dataSourceOption.timeout) {
+                        ajaxConfig['timeout'] = dataSourceOption.timeout;
+                    }
+                    if(dataSourceOption.requestType && (dataSourceOption.requestType).toLowerCase() == 'post') {
+                        ajaxConfig['type'] = 'POST';
+                        ajaxConfig['data'] = dataSourceOption.postData;
+                    }
+                    contrail.ajaxHandler(ajaxConfig,
+                    function(){
                         dataObject.isRequestInProgress = true
                     }, function(data) {
                         dataObject.isRequestInProgress = false;
 
                         var parsedData = data;
-                        if(typeof option.dataSource.parse !== "undefined"){
-                            parsedData = option.dataSource.parse(data);
+                        if(typeof dataSourceOption.parse !== "undefined"){
+                            parsedData = dataSourceOption.parse(data);
                         }
                         self.data('contrailCombobox').setData(parsedData);
                         self.data('contrailCombobox').value(dataObject.cachedValue);
                     });
-
-                } else if(option.dataSource.type == "local"){
-                    formattedData = cowu.formatFormData(option.dataSource.data, option);
+               } else if(dataSourceOption.type == "local"){
+                    formattedData = cowu.formatFormData(dataSourceOption.data, option);
                 }
             } else if (self.is('select')) {
                 self.children("option").each(function (key, val) {
