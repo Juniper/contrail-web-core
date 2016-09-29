@@ -1418,7 +1418,7 @@ function getUIUserRoleByTenant (userObj, callback)
     getExtUserRoleByTenant(userObj, function(err, data) {
         if ((null != err) || (null == data) ||
             (null == data['roles'])) {
-            callback(null, null);
+            callback(err, null);
             return;
         }
         roles = getUIRolesByExtRoles(data['roles']);
@@ -1442,7 +1442,9 @@ function getExtUserRoleByTenant (userObj, callback)
             }
             callback(null, userTokenObj);
         } else {
-            callback(null, null);
+            var err = new appErrors.RESTServerError("Permission Denied");
+            err.responseCode = global.HTTP_STATUS_AUTHORIZATION_FAILURE;
+            callback(err, null);
         }
     });
 }

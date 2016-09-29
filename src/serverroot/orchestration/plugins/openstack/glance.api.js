@@ -51,7 +51,7 @@ function doGlanceOpCb (reqUrl, apiProtoIP, tenantId, req, glanceCallback,
             if (stopRetry) {
                 logutils.logger.debug("We are done retrying for tenantId:" +
                                       tenantId + " with err:" + err);
-                commonUtils.redirectToLogout(req, req.res);
+                commonUtils.handleAuthToAuthorizeError(err, req, callback);
             } else {
                 /* Retry once again */
                 logutils.logger.debug("We are about to retry for tenantId:" +

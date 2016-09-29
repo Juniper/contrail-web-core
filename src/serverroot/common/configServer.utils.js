@@ -246,10 +246,9 @@ function getProjectTokenRole (userObj, callback)
     }
     authApi.getUIUserRoleByTenant(userObj, function(err, roles) {
         if ((null != err) || (null == roles)) {
-            logutils.logger.error('Did not find the roles for project ' +
-                                  projName);
-            callback(err, {redirectToLogout: true, userObj: userObj});
-            return;
+            logutils.logger.debug('Failed to get token for project ' +
+                                  projName + ", using last token");
+            req.session.tokenObjs[projName] = req.session.last_token_obj_used;
         }
         callback(null, {data: roles, userObj: userObj});
     });
