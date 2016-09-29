@@ -18,29 +18,33 @@ define([
 
             var editLayout = editJSONTemplate({prefixId: prefixId}),
                 disableId, modelAttr, self = this;
-            self.model.model().attributes = options['checkedRows'][0];
+
+            self.model.model().attributes = options['checkedRows'];
+
+            var defaultSaveFn = function () {
+                var callbackObj = {
+                    init: function () {
+                        cowu.enableModalLoading(modalId);
+                    },
+                    success: function () {
+                        options['callback']();
+                        $("#" + modalId).modal('hide');
+                    },
+                    error: function (error) {
+                        cowu.disableModalLoading(modalId, function () {
+                            showError(error.responseText);
+                        });
+                    }
+                };
+                self.model.configure(options['checkedRows'], callbackObj, options['type']);
+            };
+
             cowu.createModal({
                 modalId: modalId,
                 className: 'modal-980',
                 title: options['title'],
                 body: editLayout,
-                onSave: function () {
-                    var callbackObj = {
-                        init: function () {
-                            cowu.enableModalLoading(modalId);
-                        },
-                        success: function () {
-                            options['callback']();
-                            $("#" + modalId).modal('hide');
-                        },
-                        error: function (error) {
-                            cowu.disableModalLoading(modalId, function () {
-                                showError(error.responseText);
-                            });
-                        }
-                    };
-                    self.model.configure(options['checkedRows'], callbackObj, options['type']);
-                },
+                onSave: contrail.checkIfExist(options['onSave']) ? options['onSave'] : defaultSaveFn,
                 onCancel: function () {
                     Knockback.release(self.model, document.getElementById(modalId));
                     kbValidation.unbind(self);

@@ -1339,10 +1339,11 @@ define([
         };
 
         this.getAttributes4Schema = function(attributes, schema) {
-            var json = $.extend(true, {}, attributes);
+            var json = $.extend(true, {}, attributes),
+                schema = contrail.checkIfExist(schema['items']) ? schema['items']['properties'] : schema['properties'];
 
-            for(var key in json){
-                if(!contrail.checkIfExist(schema['properties'][key])) {
+            for(var key in json) {
+                if(!contrail.checkIfExist(schema[key])) {
                     delete json[key];
                 }
             }

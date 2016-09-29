@@ -12,11 +12,17 @@ define([
 
         defaultConfig: smwmc.getJSONModel(),
 
-        configure: function (checkedRows, callbackObj, type) {
-            var ajaxConfig = {};
-            var putData = {},
+        configure: function (checkedRows, callbackObj, type, configureData) {
+            var ajaxConfig = {},
+                putData = {};
+
+            if (contrail.checkIfExist(checkedRows)) {
                 attributes = this.model().attributes;
-            putData[type] = [attributes];
+            } else if (contrail.checkIfExist(configureData)) {
+                attributes = configureData;
+            }
+
+            putData[type] = attributes;
 
             ajaxConfig.type = "PUT";
             ajaxConfig.data = JSON.stringify(putData);
@@ -27,7 +33,6 @@ define([
                     callbackObj.init();
                 }
             }, function (response) {
-                callbackObj.success();
                 if (contrail.checkIfFunction(callbackObj.success)) {
                     callbackObj.success();
                 }

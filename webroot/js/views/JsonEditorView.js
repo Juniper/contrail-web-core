@@ -18,14 +18,14 @@ define([
 
             var editorTempl = contrail.getTemplate4Id(cowc.TMPL_JSON_EDITOR_VIEW),
                 viewConfig = this.attributes.viewConfig,
-                elId = this.attributes.elementId;
+                elId = this.attributes.elementId,
+                jsonData = {};
 
             this.$el.html(editorTempl({viewConfig: viewConfig, elementId: elId}));
             var jsonContainer = document.getElementById(cowc.ID_JSON_EDITOR);
             var jsonOptions = {
                 schema : self.model.schema(),
                 ajv : ajv,
-                modes: [ cowc.JSON_EDITOR_MODE_TREE,cowc.JSON_EDITOR_MODE_CODE,cowc.JSON_EDITOR_MODE_TEXT,cowc.JSON_EDITOR_MODE_FORM ],
                 onChange: function () {
                     try{
                         var valid = validate(jsonEditor.get());
@@ -34,17 +34,21 @@ define([
                         //if error button on UI is on, disable save button
                         var isValidJSON = validate(jsonEditor.get());
                         toggleSaveButton(isValidJSON);
-                        toggleModesButton(true);
-                    }catch(e){
+                    } catch(e) {
                         toggleSaveButton(false);
-                        toggleModesButton(false);
                     }
                 }
             };
             var jsonEditor = new JSONEditor(jsonContainer, jsonOptions);
 
             jsonEditor.setMode(cowc.JSON_EDITOR_MODE_CODE);
-            jsonEditor.set(self.model.model()._originalAttributes.json);
+
+            if (contrail.checkIfExist(self.model.model()._originalAttributes.customJSON) && (self.model.model()._originalAttributes.customJSON !== {})) {
+                jsonData = self.model.model()._originalAttributes.customJSON;
+            } else {
+                jsonData = self.model.model()._originalAttributes.json;
+            }
+            jsonEditor.set(jsonData);
 
             var isValidJSON = validate(jsonEditor.get());
             toggleSaveButton(isValidJSON);
@@ -60,18 +64,6 @@ define([
             $(".btnSave").prop('disabled', true);
         } else {
             $(".btnSave").removeAttr('disabled');
-        }
-    };
-
-    /*
-     * @Params
-     *   isValidJSON : Boolean
-     * */
-    function toggleModesButton(isValidJSON){
-        if(!isValidJSON) {
-            $(".jsoneditor-modes").prop('disabled', true);
-        } else {
-            $(".jsoneditor-modes").removeAttr('disabled');
         }
     };
 
