@@ -47,7 +47,7 @@ define(
                     if(getValueByJsonPath(options, 'detailed', false)) {
                         n = 1;
                     }
-                    var alarmTxt = getValueByJsonPath(alarmTypesMap, nodeType + ';' + alarmType,'');
+                    var alarmTxt = getValueByJsonPath(alarmTypesMap, nodeType + ';' + alarmType + ';description','');
                     if(alarmTxt != null && alarmTxt != '' && alarmTxt.split('.').length > 1){
                         return alarmTxt.split('.')[n];
                     }
