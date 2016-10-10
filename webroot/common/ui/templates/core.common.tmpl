@@ -1319,6 +1319,29 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-grid-group-delete-modal-body-template"> 
+    <div class="row-fluid"> 
+        <p>Are you sure you want to delete the following rows?</p> 
+        <table class="table table-bordered table-condensed"> 
+            <thead> 
+                <tr> 
+                    {{#each columns}} 
+                        <th>{{this}}</th> 
+                    {{/each}} 
+                </tr> 
+            </thead> 
+            <tbody> 
+                {{#each rows}} 
+                    <tr> 
+                        {{#each ../columnIds}} 
+                            <td>{{#getValueFromObject this ../this}}{{/getValueFromObject}}</td> 
+                        {{/each}} 
+                    </tr> 
+                {{/each}} 
+            </tbody> 
+        </table> 
+    </div> 
+  </script> 
 
 <script type="text/x-handlebars-template" id="core-editable-grid-view-template">
     {{#IfCompare label null operator='!='}}

@@ -210,6 +210,56 @@ define([
                 gridContainer.data('contrailGrid').showGridMessage('loading');
             };
 
+            function getCheckedRowData(gridColumns, rowDataFields, gridCheckedRows) {
+                var columns = [], rows = [], columnIds = [];
+
+                _.each(gridColumns, function(columnValue, columnKey) {
+                    var currentColumn = columnValue['id'];
+                    if (rowDataFields.indexOf(currentColumn) !== -1) {
+                        columns.push(columnValue['name']);
+                        columnIds.push(currentColumn);
+
+                        _.each(gridCheckedRows, function(rowValue, rowKey) {
+                            if (!contrail.checkIfExist(rows[rowKey])) {
+                                rows[rowKey] = {};
+                            }
+
+                            if (contrail.checkIfFunction(columnValue.formatter)) {
+                                rows[rowKey][currentColumn] = columnValue.formatter(null, null, null, null, rowValue);
+                            } else {
+                                rows[rowKey][currentColumn] = rowValue[currentColumn];
+                            }
+                        });
+                    }
+                });
+
+                return {columns: columns, rows: rows, columnIds: columnIds}
+            }
+
+            function showDeleteModal(gridCheckedRows) {
+                var groupDeleteModalId = gridContainer.prop('id') + '-group-delete-modal',
+                    groupDeleteModalBodyTemplate = contrail.getTemplate4Id(cowc.TMPL_GRID_GROUP_DELETE_MODAL_BODY),
+                    rowDataFields = gridConfig.body.options.deleteActionConfig.modalConfig.rowDataFields,
+                    onSaveModal = gridConfig.body.options.deleteActionConfig.modalConfig.onSave;
+
+                cowu.createModal({
+                    modalId: groupDeleteModalId,
+                    className: 'modal-700',
+                    title: cowl.TITLE_DELETE_QUERY,
+                    btnName: 'Confirm',
+                    body: groupDeleteModalBodyTemplate(getCheckedRowData(gridColumns, rowDataFields, gridCheckedRows)),
+                    onSave: function () {
+
+                        if (contrail.checkIfFunction(onSaveModal)) {
+                            onSaveModal(gridCheckedRows);
+                        }
+                        $("#" + groupDeleteModalId).modal('hide');
+                    }, onCancel: function () {
+                        $("#" + groupDeleteModalId).modal('hide');
+                    }
+                });
+            }
+
             function initGridHeader() {
                 // Grid Header - Title + Other Actions like Expand/Collapse, Search and Custom actions
                 if (gridConfig.header) {
@@ -231,6 +281,7 @@ define([
                                     }
                                     e.stopPropagation();
                                     break;
+
                                 case 'multiselect':
                                     var linkMultiselectBox = $(this).parent().find('.link-multiselectbox'),
                                         inputMultiselectBox = $(this).parent().find('.input-multiselectbox');
@@ -242,12 +293,14 @@ define([
                                     }
                                     e.stopPropagation();
                                     break;
+
                                 case 'refresh':
                                     if (!contrailListModel.isRequestInProgress()) {
                                         gridContainer.find('.link-refreshable i').removeClass('fa-repeat').addClass('fa fa-spin fa-spinner');
                                         gridContainer.data('contrailGrid').refreshData();
                                     }
                                     break;
+
                                 case 'export':
                                     if (!contrailListModel.isRequestInProgress()) {
                                         var gridDSConfig = gridDataSource,
@@ -271,6 +324,14 @@ define([
                                         }
                                     }
                                     break;
+
+                                case 'group-delete':
+                                    if (!contrailListModel.isRequestInProgress()) {
+                                        var gridCheckedRows = $(gridContainer).data('contrailGrid').getCheckedRows();
+                                        showDeleteModal(gridCheckedRows);
+                                    }
+                                    break;
+
                                 case 'collapse':
                                     gridHeader.find('i.collapse-icon').toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
 
@@ -587,9 +648,15 @@ define([
                     var selectedRowLength = args.rows.length;
 
                     if (selectedRowLength == 0) {
+                        if (gridConfig.header.defaultControls.groupDeleteable) {
+                            gridContainer.find('.widget-toolbar-icon-group-delete').addClass('disabled-link')
+                        }
                         (contrail.checkIfExist(onNothingChecked) ? onNothingChecked(e) : '');
                     }
                     else {
+                        if (gridConfig.header.defaultControls.groupDeleteable) {
+                            gridContainer.find('.widget-toolbar-icon-group-delete').removeClass('disabled-link')
+                        }
                         (contrail.checkIfExist(onSomethingChecked) ? onSomethingChecked(e) : '');
 
                         if (selectedRowLength == grid.getDataLength()) {
@@ -705,6 +772,16 @@ define([
                                     actionCellArray = gridOptions.actionCell.optionList(rowData);
                                 } else {
                                     actionCellArray = gridOptions.actionCell.optionList;
+                                }
+
+                                if (gridOptions.rowDelete !== false) {
+                                    actionCellArray.push($.extend(true, {}, gridOptions.rowDelete, {
+                                        title: cowl.TITLE_DELETE_QUERY,
+                                        iconClass: "fa fa-trash",
+                                        onClick: function(rowIndex, targetElement, rowData) {
+                                            showDeleteModal([rowData]);
+                                        }
+                                    }));
                                 }
 
                                 //$('#' + gridContainer.prop('id') + '-action-menu').remove();
@@ -1229,6 +1306,15 @@ define([
                     <div class="widget-toolbar pull-right"> \
                         <a class="widget-toolbar-icon" title="Export as CSV" data-action="export"> \
                             <i class="fa fa-download"></i> \
+                        </a> \
+                    </div>';
+                }
+
+                if (headerConfig.defaultControls.groupDeleteable) {
+                    template += '\
+                    <div class="widget-toolbar pull-right"> \
+                        <a class="widget-toolbar-icon disabled-link widget-toolbar-icon-group-delete" title="Delete" data-action="group-delete"> \
+                            <i class="fa fa-trash"></i> \
                         </a> \
                     </div>';
                 }

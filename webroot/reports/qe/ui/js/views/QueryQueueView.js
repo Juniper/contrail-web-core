@@ -141,23 +141,8 @@
                      exportable: true,
                      refreshable: true,
                      searchable: true,
-                     //columnPickable: true
-                 },
-                 advanceControls: [{
-                     type: "link",
-                     linkElementId: cowl.QE_DELETE_MULTIPLE_QUERY_QUEUE_CONTROL_ID,
-                     disabledLink: true,
-                     title: cowl.TITLE_DELETE_ALL_QUERY_QUEUE,
-                     iconClass: "fa fa-trash",
-                     onClick: function(event, gridContainer) {
-                         var gridCheckedRows = $(gridContainer).data("contrailGrid").getCheckedRows(),
-                             queryIds = $.map(gridCheckedRows, function(rowValue) {
-                                 return rowValue.queryReqObj.queryId;
-                             });
-
-                         showDeleteQueueModal(queryQueueView, queryQueueType, queryIds, queueColorMap);
-                     }
-                 }]
+                     groupDeleteable: true,
+                 }
              },
              body: {
                  options: {
@@ -169,17 +154,12 @@
                      detail: {
                          template: cowu.generateDetailTemplateHTML(getDetailsTemplate(), cowc.APP_CONTRAIL_CONTROLLER)
                      },
-                     checkboxSelectable: {
-                         onNothingChecked: function() {
-                             $("#" + cowl.QE_DELETE_MULTIPLE_QUERY_QUEUE_CONTROL_ID).addClass("disabled-link");
-                         },
-                         onSomethingChecked: function() {
-                             $("#" + cowl.QE_DELETE_MULTIPLE_QUERY_QUEUE_CONTROL_ID).removeClass("disabled-link");
-                         }
-                     },
                      actionCell: function(dc) {
                          return getQueueActionColumn(queryQueueView, queryQueueType, dc, queueColorMap);
-                     }
+                     },
+                     rowDelete: true,
+                     deleteActionConfig: getDeleteModalConfig(queryQueueView, queryQueueType, queueColorMap)
+
                  },
                  dataSource: {
                      remote: queueRemoteConfig
@@ -192,6 +172,51 @@
              },
              footer: {
                  pager: contrail.handleIfNull(pagerOptions, { options: { pageSize: 25, pageSizeSelect: [25, 50, 100] } })
+             }
+         };
+     }
+
+     function getDeleteModalConfig(queryQueueView, queryQueueType, queueColorMap) {
+         return {
+             modalConfig: {
+                 title: cowl.TITLE_DELETE_QUERY,
+                 rowDataFields: ["startTime", "time_range", "table_name", "count"],
+                 onSave: function (gridCheckedRows) {
+                     var queryIds = $.map(gridCheckedRows, function (rowValue) {
+                             return rowValue.queryReqObj.queryId;
+                         }),
+                         postDataJSON = {queryQueue: queryQueueType, queryIds: queryIds},
+                         ajaxConfig = {
+                             url: "/api/qe/query",
+                             type: "DELETE",
+                             data: JSON.stringify(postDataJSON)
+                         };
+                     contrail.ajaxHandler(ajaxConfig, null, function () {
+                         var queryQueueGridId = cowc.QE_HASH_ELEMENT_PREFIX + queryQueueType + cowc.QE_QUEUE_GRID_SUFFIX,
+                             gridTabIndex = null, chartTabIndex = null,
+                             childViewMap = queryQueueView.childViewMap,
+                             queryQueueResultTabView = contrail.checkIfExist(childViewMap[cowl.QE_QUERY_QUEUE_TABS_ID]) ? childViewMap[cowl.QE_QUERY_QUEUE_TABS_ID] : null;
+
+                         $(queryQueueGridId).data("contrailGrid").refreshData();
+
+                         if (queryQueueResultTabView !== null) {
+                             $.each(queryIds, function (queryIdKey, queryIdValue) {
+                                 removeBadgeColorFromQueryQueue(queueColorMap, queryIdValue);
+
+                                 gridTabIndex = queryQueueResultTabView.tabsIdMap[cowl.QE_QUERY_QUEUE_RESULT_GRID_TAB_ID + "-" + queryIdValue + "-tab"];
+                                 if (contrail.checkIfExist(gridTabIndex)) {
+                                     queryQueueResultTabView.removeTab(gridTabIndex);
+                                 }
+
+                                 chartTabIndex = queryQueueResultTabView.tabsIdMap[cowl.QE_QUERY_QUEUE_RESULT_CHART_TAB_ID + "-" + queryIdValue + "-tab"];
+                                 if (contrail.checkIfExist(chartTabIndex)) {
+                                     queryQueueResultTabView.removeTab(chartTabIndex);
+                                 }
+
+                             });
+                         }
+                     });
+                 }
              }
          };
      }

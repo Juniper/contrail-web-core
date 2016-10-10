@@ -20,7 +20,8 @@ define([
                     exportable: true,
                     refreshable: true,
                     searchable: true,
-                    columnPickable: false
+                    columnPickable: false,
+                    groupDeleteable: false
                 },
                 customControls: false
             },

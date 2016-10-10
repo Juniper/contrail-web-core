@@ -112,6 +112,7 @@ define([
         this.TMPL_ELEMENT_NAME = 'core-element-name-template';
 
         this.TMPL_GRID_VIEW = "core-grid-view-template";
+        this.TMPL_GRID_GROUP_DELETE_MODAL_BODY = "core-grid-group-delete-modal-body-template";
 
         this.TMPL_COLLECTION_VIEW = "core-collection-view-template";
         this.TMPL_GEN_COLLECTION_VIEW = "core-generic-collection-view-template";

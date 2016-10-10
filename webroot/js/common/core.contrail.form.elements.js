@@ -964,6 +964,8 @@ define([
                 .off('scroll', closeFn)
                 .on('scroll', closeFn);
 
+
+
             self.data('contrailCheckedMultiselect', $.extend(true, getDefaultMultiselectMethods(), {
                 getPreChecked: function () {
                     return preChecked;
@@ -1061,6 +1063,7 @@ define([
                 </div>\
         	</div> ';
 
+            $('.modal-backdrop').remove();
             $('#' + options.id).remove();
             $('body').prepend(modalHTML);
 
