@@ -184,6 +184,8 @@ define([
 
         this.BREADCRUMB_ID = "breadcrumb";
 
+        this.TITLE_DELETE = "Delete";
+
         // Query Engine labels
         this.QE_QUERY_RESULT_GRID_ID = 'qe-query-result-grid';
         this.QE_QUERY_RESULT_TEXT_ID = 'qe-query-result-text';

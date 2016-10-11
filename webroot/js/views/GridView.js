@@ -245,7 +245,7 @@ define([
                 cowu.createModal({
                     modalId: groupDeleteModalId,
                     className: 'modal-700',
-                    title: cowl.TITLE_DELETE_QUERY,
+                    title: cowl.TITLE_DELETE,
                     btnName: 'Confirm',
                     body: groupDeleteModalBodyTemplate(getCheckedRowData(gridColumns, rowDataFields, gridCheckedRows)),
                     onSave: function () {
@@ -775,13 +775,13 @@ define([
                                 }
 
                                 if (gridOptions.rowDelete !== false) {
-                                    actionCellArray.push($.extend(true, {}, gridOptions.rowDelete, {
-                                        title: cowl.TITLE_DELETE_QUERY,
+                                    actionCellArray.push($.extend(true, {}, {
+                                        title: cowl.TITLE_DELETE,
                                         iconClass: "fa fa-trash",
                                         onClick: function(rowIndex, targetElement, rowData) {
                                             showDeleteModal([rowData]);
                                         }
-                                    }));
+                                    }, gridOptions.rowDelete));
                                 }
 
                                 //$('#' + gridContainer.prop('id') + '-action-menu').remove();
