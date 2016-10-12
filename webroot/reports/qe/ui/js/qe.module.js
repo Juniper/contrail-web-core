@@ -7,7 +7,7 @@
  * concatenated to this file. build config is located in the core repo webroot/build/
  */
 define([
-    "text!reports/qe/ui/templates/qe.tmpl",
+    "text!core-basedir/reports/qe/ui/templates/qe.tmpl",
     "core-basedir/reports/qe/ui/js/QEPageLoader"
 ], function (QETemplates, QEPageLoader) {
     $("body").append(QETemplates);

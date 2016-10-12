@@ -668,7 +668,6 @@
                          elementId: queryResultTextId,
                          view: "QueryTextView",
                          viewPathPrefix: "reports/qe/ui/js/views/",
-                         app: cowc.APP_CONTRAIL_CONTROLLER,
                          viewConfig: {
                              queryFormAttributes: queryFormAttributes
                          }
