@@ -156,7 +156,7 @@ APIServer.prototype.retryMakeCall = function(err, restApi, params,
      * may be down, so discovery server should send the Up Servers now
      */
     if ((true == process.mainModule.exports['discServEnable']) &&
-        (('ECONNREFUSED' == err.code) || ('ETIMEOUT' == err.code))) {
+        (null != err) && (('ECONNREFUSED' == err.code) || ('ETIMEOUT' == err.code))) {
         if (false == isRetry) {
             /* Only one time send a retry */
             discClient.sendDiscSubMessageOnDemand(self.name);
@@ -173,7 +173,7 @@ APIServer.prototype.retryMakeCall = function(err, restApi, params,
                              (null != response.statusCode)) ?
                              response.statusCode :
                              global.HTTP_STATUS_INTERNAL_ERROR;
-    error['code'] = err.code;
+    error['code'] = err != null ? err.code : '';
     callback(error, '', response);
 }
 
@@ -254,7 +254,7 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
             delete options['body'];
         }
         self.makeHttpsRestCall(options, function(err, data, response) {
-            if (null != err) {
+            if (null != err || parseInt(response.statusCode) >= 400) {
                 try {
                     logutils.logger.error('URL [' + reqUrl + ']' + 
                                           ' returned error [' + 
