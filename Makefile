@@ -78,9 +78,6 @@ dev-env:
 	# For test files, we will setting the env file with current environment.
 	./unit-test.sh set-env "dev"
 
-test-env:
-	./unit-test.sh init $(REPO)
-
 ui-schemas:
 	node webroot/js/common/transformer.js
 
@@ -112,15 +109,14 @@ clear-cache-prod:
 	./prod-dev.sh webroot/html/login-error.html prod_env dev_env false
 	make make-ln
 
-test-node:
-	./unit-test.sh node
-	
+test-env:
+	./unit-test.sh init $(REPO)
+
 test-ui:
-	./unit-test.sh ui
-test: 
-	make test-node
-	make test-ui
-             
+	./unit-test.sh ui $(REPO) $(ENV)
+
+test: test-env test-ui
+
 clean:
 	rm -f src/serverroot/jobs/core/jobsCb.api.js
 	rm -f src/serverroot/web/core/feature.list.js
