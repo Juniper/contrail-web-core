@@ -265,6 +265,14 @@ mkdir -p webroot/assets/jdorn-jsoneditor/js
 cp -af ./$THIRD_PARTY/jdorn-jsoneditor.js webroot/assets/jdorn-jsoneditor/js/jdorn-jsoneditor.js
 #End - Copy jdorn-jsoneditor.js from $THIRD_PARTY
 
+#Start - Copy jquery-linedtextarea from $THIRD_PARTY
+rm -rf webroot/assets/jquery-linedtextarea
+mkdir -p webroot/assets/jquery-linedtextarea/js
+mkdir -p webroot/assets/jquery-linedtextarea/css
+cp -af ./$THIRD_PARTY/jquery-linedtextarea.js webroot/assets/jquery-linedtextarea/js/jquery-linedtextarea.js
+cp -af ./$THIRD_PARTY/jquery-linedtextarea.css webroot/assets/jquery-linedtextarea/css/jquery-linedtextarea.css
+#End - Copy jquery-linedtextarea from $THIRD_PARTY
+
 #Start - Merging All CSS files
 rm -f webroot/css/contrail.unified.css
 
