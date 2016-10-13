@@ -1096,3 +1096,10 @@ button#close-error-popup{
 .custom-chart-legend{
  padding: 10px 0px 0px 0px;
 }
+
+.grid-stack-item-content  {
+    border : 1px solid lightblue;
+}
+.grid-stack-item header {
+    background-color:lightblue;
+}
