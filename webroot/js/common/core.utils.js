@@ -1519,7 +1519,7 @@ define([
                     for (var j = 0; j < groupByMapLen; j++) {
                         var groupByObj = groupByMap[j],
                             groupByObjKey = groupByObj['key'],
-                            groupByObjVal = parseInt(groupByObj['value']);
+                            groupByObjVal = parseFloat(groupByObj['value']);
                         total += groupByObjVal;
                         if (failureCheckFn) {
                             var failureDim = groupDim.group().reduceSum(failureCheckFn),
