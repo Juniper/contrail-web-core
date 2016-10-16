@@ -550,14 +550,14 @@
 
 }
 .popover.popover-tooltip .popover-title .heading {
-    margin: 0 0 2px;
+    margin: 0 20px 2px 0;
     color: #3182bd;
+    line-height: 18px;
     font-size: 14px;
     font-weight: 400;
     -ms-text-overflow: ellipsis;
     text-overflow: ellipsis;
     overflow: hidden;
-    margin-right: 20px;
     white-space: nowrap;
 }
 

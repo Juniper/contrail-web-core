@@ -343,7 +343,7 @@ rect.bordered {
 .sparklines-box{
 	border: 1px solid #dedede;
 	padding: 5px;
-    width: 31.8%;
+    width: 31.5%;
 }
 
 #vrouterAgent-sparklines {
@@ -355,7 +355,7 @@ rect.bordered {
 	color: #3182bd;
 	margin-bottom: 0;
 }
-.sparklines-box [class*="span"]{
+.sparklines-box [class*="col-xs-"]{
 	min-height: 18px;
 }
 
