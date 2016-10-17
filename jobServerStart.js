@@ -66,7 +66,7 @@ var axon = require('axon')
     , redisPub = require('./src/serverroot/jobs/core/redisPub')
     , kue = require('kue')
     , logutils = require('./src/serverroot/utils/log.utils')
-    , discServ = require('./src/serverroot/jobs/core/discoveryservice.api')
+    , contrailServ = require('./src/serverroot/jobs/core/contrailservice.api')
     , fs = require('fs')
     , jobsApi = require('./src/serverroot/jobs/core/jobs.api')
     , jsonPath = require('JSONPath').eval;
@@ -204,10 +204,8 @@ function startServers ()
     kueJobListen();
     registerTojobListenerEvent();
     jobsApi.doCheckJobsProcess();
-    if (true == discServEnable) {
-        discServ.createRedisClientAndStartSubscribeToDiscoveryService(global.service.MIDDLEWARE);
-        discServ.startWatchDiscServiceRetryList();
-    }
+    contrailServ.getContrailServices();
+    contrailServ.startWatchContrailServiceRetryList();
     redisPub.createRedisPubClient(function() {
         connectToMainServer();
         createJobsAtInit();
