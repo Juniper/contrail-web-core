@@ -2382,3 +2382,31 @@
     {{/if}}
     </div>
 </script>
+<script type="text/x-handlebars-template" id="carousal-view-template">
+    <div class="carousel slide" data-ride="carousel">
+        <!--<ol class="carousel-indicators">
+            {{#each pages}}
+                <li id={{@index}}></li>
+            {{/each}}
+        </ol>-->
+        <div class="carousel-inner">
+            <div class="carousel-content">
+            </div>
+        </div>
+        <!-- Controls -->
+        <a class="custom-carousel-control-left custom-carousel-control" role="button">
+            <!--<i id="prev" class="fa fa-chevron-circle-left" aria-hidden="true"></i>-->
+            <div id="prev" class="carousel-control-cover carousel-control-cover-left">
+                <i  id="prev" class="fa fa-angle-left" aria-hidden="true"></i>
+            </div>
+            <div  id="prev" class="carousel-control-cover-story carousel-control-cover-left-story"></div>
+        </a>
+        <a class="custom-carousel-control-right custom-carousel-control"role="button">
+            <!--<i id="next" class="fa fa-chevron-circle-right" aria-hidden="true"></i>-->
+            <div id="next" class="carousel-control-cover carousel-control-cover-right">
+                <i id="next" class="fa fa-angle-right" aria-hidden="true"></i>
+            </div>
+            <div  id="next" class="carousel-control-cover-story carousel-control-cover-right-story"></div>
+        </a>
+    </div>
+</script>
