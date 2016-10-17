@@ -1103,3 +1103,57 @@ button#close-error-popup{
 .grid-stack-item header {
     background-color:lightblue;
 }
+.custom-carousel-control-left{
+ left: 0;
+ right: auto;
+}
+.custom-carousel-control-right{
+ right: 0;
+ left: auto;
+}
+.custom-carousel-control{
+ position: absolute;
+ top: 221px;
+ bottom: 0;
+ font-size: 25px;
+ color: #666;
+}
+.carousel-inner{
+ padding: 10px 15px 0px 15px;
+}
+.carousel-control-cover{
+ border-radius: 50%;
+ display: inline-block;
+ background-color: transparent;
+ color: #888;
+ width: 40px;
+ height: 40px;
+ font-size: 26px;
+ text-align: center;
+ vertical-align: bottom;
+ transition: opacity .25s ease-in-out;
+ -moz-transition: opacity .25s ease-in-out;
+ -webkit-transition: opacity .25s ease-in-out;
+ text-align: center;
+ vertical-align: bottom;
+ opacity: 0.6;
+ border: 1px #eee solid;
+}
+.carousel-control-cover:hover{
+ color: #888;
+ opacity: 1;
+ border: 1px #c5d0dc solid;
+}
+.carousel-control-cover .fa-angle-right:before{
+  display:inline-block;
+}
+.carousel .carousel-indicators {
+    top: 580px;
+}
+.carousel-indicators li{
+    border: 1px solid #aaaaaa;
+}
+
+.carousel .carousel-indicators .active{
+    background-color: #aaaaaa;
+}

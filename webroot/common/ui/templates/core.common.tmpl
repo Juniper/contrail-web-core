@@ -2359,3 +2359,25 @@
     {{/if}}
     </div>
 </script>
+<script type="text/x-handlebars-template" id="carousal-view-template">
+    <div class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+            {{#each pages}}
+                <li id={{@index}}></li>
+            {{/each}}
+        </ol>
+        <div class="carousel-inner">
+            <div class="carousel-content"> 
+            </div>
+        </div>
+        <!-- Controls -->
+        <a class="custom-carousel-control-left custom-carousel-control" role="button">
+            <i id="prev" class="fa fa-chevron-circle-left" aria-hidden="true"></i>
+            <!--<span class="carousel-control-cover"><i class="fa fa-angle-left" aria-hidden="true"></i></span>-->
+        </a>
+        <a class="custom-carousel-control-right custom-carousel-control"role="button">
+            <i id="next" class="fa fa-chevron-circle-right" aria-hidden="true"></i>
+            <!--<span class="carousel-control-cover"><i class="fa fa-angle-right" aria-hidden="true"></i></span>-->
+        </a>
+    </div>
+</script>
