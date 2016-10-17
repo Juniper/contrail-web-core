@@ -34,7 +34,7 @@
         <write-access>member</write-access>
     </item>
     <item>
-        <feature>discoveryclient</feature>
+        <feature>contrailservice</feature>
     </item>
     <item>
         <feature>configschema</feature>
