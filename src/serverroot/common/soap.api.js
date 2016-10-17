@@ -14,8 +14,7 @@ var http = require('http'),
     fs = require('fs'),
     global = require('./global'),
     httpsOp = require('./httpsoptions.api'),
-    request = require('request'),
-    discClient = require('./discoveryclient.api');
+    request = require('request');
 
 if (!module.parent) {
     logutils.logger.warn(util.format(messages.warn.invalid_mod_call, 

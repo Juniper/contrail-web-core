@@ -169,27 +169,30 @@ config.storageManager.ca = '';
 
 // VNConfig API server and port.
 config.cnfg = {};
-config.cnfg.server_ip = '127.0.0.1';
+config.cnfg.server_ip = ['127.0.0.1'];
 config.cnfg.server_port = '8082';
 config.cnfg.authProtocol = 'http';
 config.cnfg.strictSSL = false;
 config.cnfg.ca = '';
+config.cnfg.statusURL = "/global-system-configs";
 
 // Analytics API server and port.
 config.analytics = {};
-config.analytics.server_ip = '127.0.0.1';
+config.analytics.server_ip = ['127.0.0.1'];
 config.analytics.server_port = '8081';
 config.analytics.authProtocol = 'http';
 config.analytics.strictSSL = false;
 config.analytics.ca = '';
+config.analytics.statusURL = "/analytics/uves/bgp-peers";
 
-/* Discovery Service */
-config.discoveryService = {};
-config.discoveryService.server_port = '5998';
-/* Specifiy true if subscription to discovery server should be enabled, else
- * specify false. Other than true/false value here is treated as true
- */
-config.discoveryService.enable = true;
+//DNS API Server and port.
+config.dns = {};
+config.dns.server_ip = ['nodeg2', 'nodeg3', 'nodeg4'];
+config.dns.server_port = '8092';
+config.dns.authProtocol = 'http';
+config.dns.strictSSL = false;
+config.dns.ca = '';
+config.dns.statusURL = "/Snh_PageReq?x=AllEntries%20VdnsServersReq";
 
 /* Job Server */
 config.jobServer = {};
@@ -438,7 +441,6 @@ config.proxy.analytics_node_ports = [
     '8104', /* HttpPortAnalyticsNodemgr */
 ];
 config.proxy.config_node_ports = [
-    '5998', /* DiscoveryServerPort */
     '8082', /* ApiServerPort */
     '8084', /* HttpPortApiServer */
     '8087', /* HttpPortSchemaTransformer */

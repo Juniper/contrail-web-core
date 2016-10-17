@@ -34,6 +34,6 @@
         <write-access>member</write-access>
     </item>
     <item>
-        <feature>discoveryclient</feature>
+        <feature>contrailservice</feature>
     </item>
 </featureLists>
