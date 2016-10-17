@@ -24,8 +24,8 @@
         <path>./configServer.utils.js</path>
     </require>
     <require>
-        <define>discoveryClientApi</define>
-        <path>./discoveryclient.api.js</path>
+        <define>contrailService</define>
+        <path>../jobs/core/contrailservice.api</path>
     </require>
     <require>
         <define>authApi</define>
@@ -71,10 +71,10 @@
         <callback>configServerUtils.getProjectRole</callback>
     </item>
     <item>
-        <url>/api/tenant/monitoring/discovery-service-list</url>
+        <url>/api/tenant/monitoring/contrail-service-list</url>
         <method>get</method>
-        <feature>discoveryclient</feature>
-        <callback>discoveryClientApi.getDiscServiceRespDataList</callback>
+        <feature>contrailservice</feature>
+        <callback>contrailService.getContrailServiceRespDataList</callback>
     </item>
     <item>
         <url>/api/tenant/get-region-list</url>

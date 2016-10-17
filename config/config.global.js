@@ -168,19 +168,30 @@ config.storageManager.ca = '';
 
 // VNConfig API server and port.
 config.cnfg = {};
-config.cnfg.server_ip = '127.0.0.1';
+config.cnfg.server_ip = ['127.0.0.1'];
 config.cnfg.server_port = '8082';
 config.cnfg.authProtocol = 'http';
 config.cnfg.strictSSL = false;
 config.cnfg.ca = '';
+config.cnfg.statusURL = "/global-system-configs";
 
 // Analytics API server and port.
 config.analytics = {};
-config.analytics.server_ip = '127.0.0.1';
+config.analytics.server_ip = ['127.0.0.1'];
 config.analytics.server_port = '8081';
 config.analytics.authProtocol = 'http';
 config.analytics.strictSSL = false;
 config.analytics.ca = '';
+config.analytics.statusURL = "/analytics/uves/bgp-peers";
+
+//DNS API Server and port.
+config.dns = {};
+config.dns.server_ip = ['127.0.0.1'];
+config.dns.server_port = '8092';
+config.dns.authProtocol = 'http';
+config.dns.strictSSL = false;
+config.dns.ca = '';
+config.dns.statusURL = "/Snh_PageReq?x=AllEntries%20VdnsServersReq";
 
 // vcenter related parameters
 config.vcenter = {};
@@ -192,14 +203,6 @@ config.vcenter.dvsswitch = 'vswitch';           //dvsswitch name
 config.vcenter.strictSSL = false;               //Validate the certificate or ignore
 config.vcenter.ca = '';                         //specify the certificate key file
 config.vcenter.wsdl = '/usr/src/contrail/contrail-web-core/webroot/js/vim.wsdl';
-
-/* Discovery Service */
-config.discoveryService = {};
-config.discoveryService.server_port = '5998';
-/* Specifiy true if subscription to discovery server should be enabled, else
- * specify false. Other than true/false value here is treated as true
- */
-config.discoveryService.enable = true;
 
 /* Job Server */
 config.jobServer = {};
@@ -247,6 +250,9 @@ config.maxActiveJobs = 10;
 
 /* Redis DB index for Web-UI */
 config.redisDBIndex = 3;
+
+/* Retry time for reading servers list recursively */
+config.CONTRAIL_SERVICE_RETRY_TIME = 300000; //5 minutes
 
 /* WebUI Redis Server */
 config.redis_server_port = '6379';

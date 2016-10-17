@@ -46,16 +46,10 @@ global.SM_DFLT_REDIS_DB = 5;
 /* Generic Caching related global variables */
 global.STR_JOB_TYPE_CACHE = 'cache';
 global.STR_SEND_TO_JOB_SERVER = 'sendToJobServer';
-global.STR_DISCOVERY_SERVICE_RESPONSE = 'discoveryServiceResponse';
-global.DISC_SERVICE_TYPE_OP_SERVER = 'OpServer';
-global.DISC_SERVICE_MIN_INST_COUNT_OP_SERVER = 1;
-global.DISC_SERVICE_TYPE_API_SERVER = 'ApiServer';
-global.DISC_SERVICE_MIN_INST_COUNT_API_SERVER = 1;
-global.DISC_SERVICE_TYPE_DNS_SERVER = 'dns-server';
-global.DISC_SERVICE_MIN_INST_COUNT_DNS_SERVER = 1;
-global.DISC_SERVER_SUB_CLINET = 'discoveryServiceSubscribeClient';
-global.DISC_SERVER_SUB_CLIENT_RESPONSE = 'discoveryServiceSubscribeClientResp';
-global.DISC_SERVICE_MIN_INST_COUNT = 1;
+global.CONTRAIL_SERVICE_TYPE_OP_SERVER = 'OpServer';
+global.CONTRAIL_SERVICE_TYPE_API_SERVER = 'ApiServer';
+global.CONTRAIL_SERVICE_TYPE_DNS_SERVER = 'dns-server';
+global.CONTRAIL_SERVER_SUB_CLINET = 'contrailServiceSubscribeClient';
 
 /* Topology tree caching */
 global.STR_GET_PROJECTS_TREE = 'getProjectsTree';
@@ -244,7 +238,6 @@ global.VROUTER_COUNT_IN_JOB = 100;
 global.VROUTER_SUMM_JOB_REFRESH_TIME = 5 * 60 * 1000;
 global.VROUTER_GENR_JOB_REFRESH_TIME = 4 * 60 * 1000;
 global.MAX_INT_VALUE = 429496729;
-
 global.RUN_QUERY_URL = '/analytics/query';
 global.GET_TABLES_URL = '/analytics/tables';
 global.GET_TABLE_INFO_URL = '/analytics/table';

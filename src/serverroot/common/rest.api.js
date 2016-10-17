@@ -15,7 +15,7 @@ var http = require('http'),
     global = require('./global'),
     httpsOp = require('./httpsoptions.api'),
     request = require('request'),
-    discClient = require('./discoveryclient.api');
+    contrailService = require('../jobs/core/contrailservice.api');
 
 if (!module.parent) {
 	logutils.logger.warn(util.format(messages.warn.invalid_mod_call, module.filename));
@@ -100,15 +100,15 @@ APIServer.prototype.cb = function (cb)
 };
 
 /**
- * Update the host/port from discovery server response
+ * Update the host/port from contrail service
  * @param {params} {object} Parameters
  */
-APIServer.prototype.updateDiscoveryServiceParams = function (params)
+APIServer.prototype.updateContrailServiceParams = function (params)
 {
     var server = null;
     var self = this;
     var apiServerType = self.name;
-    var discService = null;
+    var contrailServ = null;
 
     if (false == config.serviceEndPointFromConfig) {
         /* Do not update through Discovery */
@@ -122,14 +122,15 @@ APIServer.prototype.updateDiscoveryServiceParams = function (params)
             break;
         }
     }
-    discService = discClient.getDiscServiceByApiServerType(apiServerType);
-    if (discService) {
+    contrailServ =
+        contrailService.getContrailServiceByApiServerType(apiServerType);
+    if (contrailServ) {
         /* We are sending only the first IP */
-        if (discService['ip-address'] != null) {
-            params.url = discService['ip-address'];
+        if (contrailServ['ip-address'] != null) {
+            params.url = contrailServ['ip-address'];
         }
-        if (discService['port'] != null) {
-            params.port = discService['port'];
+        if (contrailService['port'] != null) {
+            params.port = contrailServ['port'];
         }
     }
     return params;
@@ -188,14 +189,14 @@ APIServer.prototype.retryMakeCall = function(err, restApi, params,
      * issue once again discovery subscribe request, the remote server
      * may be down, so discovery server should send the Up Servers now
      */
-    if ((true == process.mainModule.exports['discServEnable']) &&
-        (('ECONNREFUSED' == err.code) || ('ETIMEDOUT' == err.code))) {
+    if (('ECONNREFUSED' == err.code) || ('ETIMEDOUT' == err.code)) {
         if (false == isRetry) {
-            /* Only one time send a retry */
-            discClient.sendDiscSubMessageOnDemand(self.name);
+            // Only one time send a retry
+            contrailService.subscribeContrailServiceOnDemand(self.name);
         }
         var reqParams = null;
-        reqParams = discClient.resetServicesByParams(params, self.name);
+        reqParams =
+            contrailService.resetServicesByParams(params, self.name);
         if (null != reqParams) {
             return self.makeCall(restApi, reqParams, callback, true);
         }
@@ -274,7 +275,7 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
         options['data'] = data || {};
         options['headers']['Content-Type'] = 'application/json';
     }
-    params = self.updateDiscoveryServiceParams(params);
+    params = self.updateContrailServiceParams(params);
     options = httpsOp.updateHttpsSecureOptions(self.name, options);
     if ((null != options['headers']) &&
         (null != options['headers']['protocol']) &&
@@ -291,11 +292,6 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
         options['path'] = params.path;
 
         self.makeHttpsRestCall(options, function(err, data, response) {
-            var localIp =
-                commonUtils.getValueByJsonPath(response,
-                                               'connection;localAddress',
-                                               null, false);
-            discClient.setWebUINodeIP(localIp);
             if (null != err) {
                 try {
                     logutils.logger.error('URL [' + reqUrl + ']' + 
@@ -319,11 +315,6 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
         delete options['headers']['noRedirectToLogout'];
     }
     restApi(reqUrl, options).on('complete', function(data, response) {
-        var localIp =
-            commonUtils.getValueByJsonPath(response,
-                                           'connection;localAddress',
-                                           null, false);
-        discClient.setWebUINodeIP(localIp);
         if (data instanceof Error ||
             parseInt(response.statusCode) >= 400) {
             try {
