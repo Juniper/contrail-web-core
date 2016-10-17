@@ -14,7 +14,6 @@ var redis = require('redis')
   , messages = require('../../common/messages')
   , longPolling = require('./longPolling.api')
   , commonUtils = require('../../utils/common.utils')
-  , discClient = require('../../common/discoveryclient.api')
   , redisUtils = require('../../utils/redis.utils')
   ;
 
@@ -29,7 +28,6 @@ function createRedisClientAndSubscribeMsg (callback)
     redisSub.redisMsgClient = redisUtils.createRedisClient();
     addRedisSubMsgListener(redisSub.redisSubClient);
     subsToRedis(global.MSG_REDIRECT_TO_LOGOUT);
-    subsToRedis(global.DISC_SERVER_SUB_CLINET);
     callback();
 }
 
@@ -97,10 +95,6 @@ function processRedisSubMessage (channel, msg)
         longPolling.redirectToLogoutByChannel(msg);
         break;
 
-    case global.DISC_SERVER_SUB_CLINET:
-        discClient.processDiscoveryServiceResponseMsg(msg);
-        break;
-
     default:
         if (null == msg) {
             logutils.logger.error("In processRedisSubMessage(): We got " +
@@ -122,9 +116,9 @@ function processRedisSubMessage (channel, msg)
 function addRedisSubMsgListener (redisClient)
 {
   redisClient.on('message', function(channel, msg) {
-    if (global.DISC_SERVER_SUB_CLINET != channel) {
-        /* As in system there will be a lot of disc-server-sub message, we are
-         * not logging it
+    if (global.CONTRAIL_SERVER_SUB_CLINET != channel) {
+        /* As in system there will be a lot of contrail-service-sub message,
+         * we are not logging it
          */
         logutils.logger.debug("We got the channel:" + channel + " by process:" +
                               process.pid);
