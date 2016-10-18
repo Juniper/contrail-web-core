@@ -30,16 +30,19 @@ define([
 
             if (self.model !== null) {
                 if(self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
-                    self.renderChart(selector, viewConfig, self.model);
+                    //self.renderChart(selector, viewConfig, self.model);
+                    self.updateChart(selector, viewConfig, self.model);
                 }
 
                 self.model.onAllRequestsComplete.subscribe(function() {
-                    self.renderChart(selector, viewConfig, self.model);
+                    // self.renderChart(selector, viewConfig, self.model);
+                    self.updateChart(selector, viewConfig, self.model);
                 });
 
                 if(viewConfig.loadChartInChunks) {
                     self.model.onDataUpdate.subscribe(function() {
-                        self.renderChart(selector, viewConfig, self.model);
+                        // self.renderChart(selector, viewConfig, self.model);
+                        self.updateChart(selector, viewConfig, self.model);
                     });
                 }
             }
@@ -119,9 +122,11 @@ define([
                 setData2Chart(self, chartViewConfig, chartViewModel, chartModel);
             }
 
-            nv.utils.windowResize(function () {
-                chUtils.updateChartOnResize(selector, chartModel);
-            });
+            self.resizeFn = _.debounce(function () {
+                chUtils.updateChartOnResize($(self.$el), self.chartModel);
+            }, 500);
+            nv.utils.windowResize(self.resizeFn);
+
             //Seems like in d3 chart renders with some delay so this deferred object helps in that situation,which resolves once the chart is rendered
             if (chartOptions['deferredObj'] != null)
                 chartOptions['deferredObj'].resolve();
@@ -164,6 +169,11 @@ define([
             $(selector).find('.nv-requestState').remove();
         },
 
+        resize: function() {
+            var self = this;
+            self.resizeFn()
+        },
+
         getChartViewConfig: function(chartData, viewConfig) {
             var chartViewConfig = {},
                 chartOptions = ifNull(viewConfig['chartOptions'], {}),
@@ -202,6 +212,21 @@ define([
             chartViewConfig['chartOptions'] = chartOptions;
 
             return chartViewConfig;
+        },
+
+        updateChart: function(selector, viewConfig, dataModel) {
+            var self = this,
+                dataModel = dataModel ? dataModel : self.model(),
+                data = dataModel.getItems();
+
+            if (_.isFunction(viewConfig.parseFn)) {
+                data = viewConfig['parseFn'](data);
+            }
+            //Todo remove the dependency to calculate the chartData and chartOptions via below function.
+            var chartViewConfig = self.getChartViewConfig(data, viewConfig.chartOptions);
+
+            setData2Chart(self, chartViewConfig, dataModel, self.chartModel);
+
         }
     });
 

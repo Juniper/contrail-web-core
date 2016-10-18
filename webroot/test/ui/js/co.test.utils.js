@@ -117,6 +117,7 @@ define([
     this.getCSSList = function () {
         var cssList = [];
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/bootstrap/css/bootstrap.min.css"/>');
+        //cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/assets/bootstrap/css/bootstrap-responsive.min.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/test/ui/css/jquery-ui.test.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/common/ui/css/contrail.jquery.ui.css"/>');
         cssList.push('<link rel="stylesheet" href="/base/contrail-web-core/webroot/test/ui/css/font-awesome.test.css"/>');
@@ -158,8 +159,8 @@ define([
 
     this.getViewConfigObj = function (viewObj) {
         if ((viewObj != null) &&
-            contrail.checkIfExist(viewObj.attributes) &&
-            contrail.checkIfExist(viewObj.attributes.viewConfig)) {
+          contrail.checkIfExist(viewObj.attributes) &&
+          contrail.checkIfExist(viewObj.attributes.viewConfig)) {
             return viewObj.attributes.viewConfig;
         }
     };
@@ -177,9 +178,9 @@ define([
 
         _.each(testConfig.tests, function(modelTestConfig) {
             var modelName = modelTestConfig.model,
-                modelPathPrefix = contrail.checkIfExist(modelTestConfig['modelPathPrefix']) ? modelTestConfig['modelPathPrefix'] : 'core-basedir/js/models/',
-                modelObj,
-                deferredObj = $.Deferred();
+              modelPathPrefix = contrail.checkIfExist(modelTestConfig['modelPathPrefix']) ? modelTestConfig['modelPathPrefix'] : 'core-basedir/js/models/',
+              modelObj,
+              deferredObj = $.Deferred();
 
             deferredList.push(deferredObj);
 
@@ -204,8 +205,8 @@ define([
 
         _.each(testConfig.tests, function (unitTestConfig) {
             var deferredObj = $.Deferred(),
-                loadModule = false,
-                module, moduleObj;
+              loadModule = false,
+              module, moduleObj;
 
             unitTestConfig.moduleObj = null;
 
@@ -214,7 +215,7 @@ define([
                 loadModule = true;
             } else {
                 var moduleName = contrail.checkIfExist(unitTestConfig.moduleName) ? unitTestConfig.moduleName : '',
-                    modulePathPrefix = contrail.checkIfExist(unitTestConfig.modulePathPrefix) ? unitTestConfig.modulePathPrefix : 'core-basedir/js/common/';
+                  modulePathPrefix = contrail.checkIfExist(unitTestConfig.modulePathPrefix) ? unitTestConfig.modulePathPrefix : 'core-basedir/js/common/';
                 module = modulePathPrefix + moduleName;
                 loadModule = true;
             }
@@ -293,7 +294,7 @@ define([
         var deferredList = [];
         _.each(testConfigObj, function (testConfig) {
             var defMockDataConfig = {dataGenerator: function(){return;},dataParsers:{}},
-                primaryMockDataConfig;
+              primaryMockDataConfig;
 
             if (contrail.checkIfExist(testConfig.modelConfig)) {
                 primaryMockDataConfig = $.extend(true, defMockDataConfig, testConfig.modelConfig);

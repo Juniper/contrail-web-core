@@ -20,5 +20,5 @@ webroot/test/ui/js/co.test.init.js
 node_modules
 dump.rdb
 
-
+.DS_Store
 

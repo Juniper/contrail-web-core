@@ -435,7 +435,7 @@ function testLibApiAppInit(testAppConfig) {
 
         require(depArray, function ($, _, validation, CoreConstants, CoreUtils, CoreFormatters, CoreMessages,
                                     CoreViewsDefaultConfig, CoreLabels, Knockout, Cache, CoreCommonTmpl,
-                                    QEUtils, QEModelConfig, QEGridConfig, QEParsers, ChartUtils,
+                                    qewu, qewmc, qewgc, qewp, ChartUtils,
                                     CoreTestUtils, CoreTestConstants, LayoutHandler) {
             cowc = new CoreConstants();
             cowu = new CoreUtils();

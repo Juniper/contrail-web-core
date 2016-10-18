@@ -72,7 +72,8 @@ define([
                         if (qeUtils.isAggregateField(key)) {
                             isCheckedMap[key](false);
                             nonAggKey = key.substring(key.indexOf("(") + 1, key.indexOf(")"));
-                            if(contrail.checkIfFunction(isEnableMap[nonAggKey]) && tableType === cowc.QE_FLOW_TABLE_TYPE) {
+                            if (contrail.checkIfFunction(isEnableMap[nonAggKey])
+                                && tableType === cowc.QE_FLOW_TABLE_TYPE) {
                                 isEnableMap[nonAggKey](true);
                             }
                         }
@@ -111,8 +112,7 @@ define([
                                 isCheckedMap[nonAggKey](false);
                             }
                         }
-                    } else if (key.indexOf("PERCENTILES(") > -1
-                            && tableType === cowc.QE_STAT_TABLE_TYPE) {
+                    } else if ((key.indexOf("PERCENTILES(") > -1) && (tableType === cowc.QE_STAT_TABLE_TYPE)) {
                         // don't select percentiles, uuid, T and source (only for stats) when we do a select all
                         isCheckedMap[key](false);
                     } else if (key === "Source" && tableType !== cowc.QE_STAT_TABLE_TYPE) {
@@ -171,8 +171,8 @@ define([
                     if (enableMapKey.indexOf(aggregateType.toUpperCase()) > -1) {
                         isCheckedMap[enableMapKey](false);
                     } else if (tableType === cowc.QE_FLOW_TABLE_TYPE
-                            && enableMapKey.indexOf(aggregateType.toLowerCase()) > -1
-                            && aggregateType === "Sum") {
+                        && enableMapKey.indexOf(aggregateType.toLowerCase()) > -1
+                        && aggregateType === "Sum") {
                         isCheckedMap[enableMapKey](false);
                     }
                 });
@@ -207,8 +207,8 @@ define([
                             }
                         });
                     } else if (aggregateType === "Sum"
-                                && tableType === cowc.QE_FLOW_TABLE_TYPE
-                                && checkedValue.indexOf(aggregateType.toLowerCase()) > -1) {
+                            && tableType === cowc.QE_FLOW_TABLE_TYPE
+                            && checkedValue.indexOf(aggregateType.toLowerCase()) > -1) {
                         selectAggregateChecked = true;
                     } else if (checkedValue.indexOf(aggregateType.toUpperCase()) > -1) {
                         selectAggregateChecked = true;

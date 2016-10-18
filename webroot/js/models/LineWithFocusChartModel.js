@@ -325,7 +325,6 @@ define([
                         .attr('height', availableHeight2);
                     gBrush.selectAll('.resize').append('path').attr('d', resizePath);
                 }
-                onBrush();
 
                 // Setup Secondary (Context) Axes
                 x2Axis
@@ -508,13 +507,17 @@ define([
                     );
                     focusLinesWrap.transition().duration(transitionDuration).call(lines);
 
-
+                    //Update xAxis domain
+                    xAxis.domain([Math.ceil(extent[0]), Math.floor(extent[1])]);
+                    
                     // Update Main (Focus) Axes
                     g.select('.nv-focus .nv-x.nv-axis').transition().duration(transitionDuration)
                         .call(xAxis);
                     g.select('.nv-focus .nv-y.nv-axis').transition().duration(transitionDuration)
                         .call(yAxis);
                 }
+
+                onBrush();
             });
 
             return chartModel;

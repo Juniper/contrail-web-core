@@ -28,14 +28,14 @@
 
         <div id="sidebar">
             <div id="sidebar-shortcuts">
-            </div>  
+            </div>
             <ul id="menu" class="nav nav-list"></ul>
-        </div> 
+        </div>
 
         <div id="main-content" class="clearfix">
             <div id="breadcrumbs" class="fixed">
                 <ul id="breadcrumb" class="breadcrumb">
-                </ul> 
+                </ul>
                 <div class="hardrefresh breadcrumb" style="display:none">
                     <span> <i class="icon-time" style="cursor:default"></i></span><span data-bind="text:timeObj.timeStr"></span>
                     <span class="loading"><i class="icon-spinner icon-spin"></i></span>
@@ -45,7 +45,7 @@
             <div id="page-content" class="clearfix">
                 <div id='content-container'></div>
             </div>
-        </div> 
+        </div>
 </script>
 <script type="text/x-handlebars-template" id="iframe-template">
     <iframe class="iframe-view" src={{this.url}}></iframe>
@@ -340,6 +340,7 @@
         {{/each}}
     </ul>
 </script>
+
 <script type="text/x-handlebars-template" id="logList-template">
     <ul class="item-list">
         {{#each this}}
@@ -347,19 +348,21 @@
                 <div class="body">
                     <div class="row">
                         <div class="name col-xs-9 word-break-all">
-                            <span {{#if link}}class="hyperlink" onclick=javascript:layoutHandler.setURLHashObj({{#jsonStringify link}}{{/jsonStringify}}){{else}}class="hyperlink-inactive"{{/if}}> {{moduleId}} </span></div>
-                            <div class="time col-xs-3">
-                                <i class="fa fa-clock-o" style="cursor:default"></i>
-                                <span class="green"> {{timeStr}} </span>
-                            </div>
+                            <span {{#if link}}class="hyperlink" onclick=javascript:layoutHandler.setURLHashObj({{#jsonStringify link}}{{/jsonStringify}}){{else}}class="hyperlink-inactive"{{/if}}> {{moduleId}} </span>
                         </div>
-                        <div class="text col-xs-12"> {{#truncate message 200}} {{/truncate}}</div>
+                        <div class="time col-xs-3">
+                            <i class="fa fa-clock-o" style="cursor:default"></i>
+                            <span class="green"> {{timeStr}} </span>
+                        </div>
                     </div>
+                    <div class="text col-xs-12"> {{#truncate message 200}} {{/truncate}}</div>
                 </div>
-        {{else}}
-            <p>No Logs found.</p>
+            </div>
         {{/each}}
     </ul>
+    {{#typeof this "string"}}
+        <p>{{this}}</p>
+    {{/typeof}}
 </script>
 
 <script type="text/x-handlebars-template" id="alerts-template">
@@ -1050,10 +1053,10 @@
     <div data-bind="
         {{#if viewConfig.visible}} visible: {{viewConfig.visible}}, {{/if}}
         style:
-        { 
+        {
             {{#if viewConfig.width}}
-                width: '{{viewConfig.width}}px' 
-            {{/if}} 
+                width: '{{viewConfig.width}}px'
+            {{/if}}
         }
         ">
         <div class="col-xs-2 form-label margin-0-0-5">
@@ -1116,7 +1119,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-editable-grid-label-left-multiselect-view-template">
-   <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} 
+   <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}}
                    {{/if}}">
         <div class="row">
             <div class="col-xs-2 form-label margin-0-0-5">
@@ -1126,21 +1129,21 @@
                 <input id="{{id}}" name="{{name}}" class="{{class}}"
                     data-bind="
                         {{#if viewConfig.disabled}}
-                            disable: {{viewConfig.disabled}}, 
+                            disable: {{viewConfig.disabled}},
                         {{/if}}
                         {{#if lockAttr}}
-                            disable: locks().{{name}}_locked, 
+                            disable: locks().{{name}}_locked,
                         {{/if}}
                         value: {{viewConfig.dataBindValue}},
                         optionList: {{viewConfig.dataBindOptionList}},
-                        event: { 
+                        event: {
                             change: function() {
                             validateAttr()('{{viewConfig.path}}', '{{validation}}', $data);
-                            } 
+                            }
                         },
                         contrailMultiselect: {}"
                 />
-                <span class="help-block red" 
+                <span class="help-block red"
                     data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error">
                 </span>
             </div>
@@ -1531,7 +1534,7 @@
                 {{#IfCompare viewConfig.colSpan null operator='!='}}
                     colspan="{{viewConfig.colSpan}}"
                 {{/IfCompare}}>
-                <span class="help-block red" 
+                <span class="help-block red"
                     data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error">
                 </span>
             </td>
@@ -1798,28 +1801,74 @@
     <div id="{{elementId}}" class="contrail-tabs">
         <ul class="contrail-tab-link-list">
             {{#each tabs}}
-                <li>
-                    <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}{{title}}{{#IfCompare tabConfig.removable true operator='==='}}<i class="contrail-tab-link-icon-remove fa fa-remove"></i>{{/IfCompare}}</a>
-                </li>
+            <li>
+                <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">
+                    {{#if iconClass}}
+                    <i class="contrail-tab-link-icon {{iconClass}}"></i>
+                    {{/if}}
+                    {{title}}
+                    {{#if tabConfig.removable}}
+                    <i class="contrail-tab-link-icon-remove fa fa-remove"></i>
+                    {{/if}}
+                </a>
+                {{#if tabConfig.editable}}
+                <button type="button" class="tab-edit-btn" data-toggle="popover">
+                    <i class="fa fa-ellipsis-v" title="Edit tab"></i>
+                </button>
+                {{/if}}
+            </li>
             {{/each}}
             {{#each extraLinks}}
-                <li class="pull-right hide">
-                    <a id="{{elementId}}-tab-extra-link" class="contrail-tab-extra-link ">{{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}{{title}}</a>
-                </li>
+            <li class="pull-right">
+                <a id="{{elementId}}-tab-extra-link" class="contrail-tab-extra-link ">
+                    {{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}
+                    {{title}}
+                </a>
+            </li>
             {{/each}}
+            {{#if extendable }}
+            <li class="tab-add">
+                <span class="title-edit pull-right">
+                    <input type="text"/>
+                </span>
+                <a class="link" title="Add new tab">
+                    <i class="fa fa-plus"></i>
+                </a>
+            </li>
+            {{/if}}
         </ul>
         {{#each tabs}}
-            <div id="{{elementId}}-tab">
-                <div id="{{elementId}}" class="contrail-tab-content {{viewConfig.class}}"></div>
-            </div>
+        <div id="{{elementId}}-tab">
+            <div id="{{elementId}}" class="contrail-tab-content {{viewConfig.class}}"></div>
+        </div>
         {{/each}}
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="core-tabs-menu-template">
+    <div class="tab-menu">
+        <input type="text" class="title-updated" value="{{this}}"/>
+        <button class="title-save btn btn-primary btn-mini" title="Update tab title">Save</button>
     </div>
 </script>
 
 <script type="text/x-handlebars-template" id="core-tabs-link-template">
     {{#each this}}
         <li>
-            <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">{{#if iconClass}}<i class="contrail-tab-link-icon {{iconClass}}"></i>{{/if}}{{title}}{{#IfCompare tabConfig.removable true operator='==='}}<i class="contrail-tab-link-icon-remove fa fa-remove"></i>{{/IfCompare}}</a>
+        <a id="{{elementId}}-tab-link" class="contrail-tab-link" href="#{{elementId}}-tab">
+            {{#if iconClass}}
+                <i class="contrail-tab-link-icon {{iconClass}}"></i>
+            {{/if}}
+            {{title}}
+            {{#if tabConfig.removable}}
+                <i class="contrail-tab-link-icon-remove fa fa-remove" title="Remove tab"></i>
+            {{/if}}
+        </a>
+        {{#if tabConfig.editable}}
+        <button type="button" class="tab-edit-btn" data-toggle="popover">
+            <i class="fa fa-ellipsis-v" title="Edit tab"></i>
+        </button>
+        {{/if}}
         </li>
     {{/each}}
 </script>
@@ -2207,7 +2256,7 @@
         </div>
     </div>
 </script>
- 
+
 <script type="text/x-handlebars-template" id="core-modal-template">
     <div id="{{prefixId}}_modal"></div>
 </script>

@@ -400,34 +400,60 @@ function handleQueryResponse(res, options) {
         sort = options.sort;
 
     if (_.isNil(chunk) || toSort) {
-        logutils.logger.error("QE received a query without any chunk information. Returning data for first chunk if available.");
-        redisClient.exists(queryId + ":chunk1", function (err, exists) {
+        redisClient.exists(queryId, function(err, exists) {
             if (exists) {
-                chunk = 1;
+                var stream = redisReadStream(redisClient, queryId),
+                    chunkedData, accumulatedData = [],
+                    dataBuffer, resultJSON;
+                stream.on("error", function(err) {
+                    logutils.logger.error(err.stack);
+                    commonUtils.handleJSONResponse(err, res, null);
+                }).on("readable", function() {
+                    while ((chunkedData = stream.read()) !== null) {
+                        accumulatedData.push(chunkedData);
+                    }
+                }).on("end", function() {
+                    dataBuffer = Buffer.concat(accumulatedData);
+                    resultJSON = JSON.parse(dataBuffer);
+                    if (toSort) {
+                        sortJSON(resultJSON.data, sort, function() {
+                            var startIndex, endIndex, total, responseJSON;
+                            total = resultJSON.total;
+                            startIndex = (chunk - 1) * chunkSize;
+                            endIndex = (total < (startIndex + chunkSize)) ? total : (startIndex + chunkSize);
+                            responseJSON = resultJSON.data.slice(startIndex, endIndex);
+                            commonUtils.handleJSONResponse(null, res, { data: responseJSON, total: total, queryJSON: resultJSON.queryJSON });
+                            saveQueryResult2Redis(resultJSON.data, total, queryId, chunkSize, sort, resultJSON.queryJSON);
+                        });
+                    } else {
+                        commonUtils.handleJSONResponse(null, res, resultJSON);
+                    }
+                });
             } else {
-                commonUtils.handleJSONResponse(null, res, {data: [], total: 0});
+                commonUtils.handleJSONResponse(null, res, { data: [], total: 0 });
+            }
+        });
+    } else {
+        redisClient.get(queryId + ":chunk" + chunk, function(error, result) {
+            var resultJSON = result ? JSON.parse(result) : { data: [], total: 0 };
+            if (error) {
+                logutils.logger.error(error.stack);
+                commonUtils.handleJSONResponse(error, res, null);
+            } else if (toSort) {
+                sortJSON(resultJSON.data, sort, function() {
+                    var startIndex, endIndex, total, responseJSON;
+                    total = resultJSON.total;
+                    startIndex = (chunk - 1) * chunkSize;
+                    endIndex = (total < (startIndex + chunkSize)) ? total : (startIndex + chunkSize);
+                    responseJSON = resultJSON.data.slice(startIndex, endIndex);
+                    commonUtils.handleJSONResponse(null, res, { data: responseJSON, total: total, queryJSON: resultJSON.queryJSON });
+                    saveQueryResult2Redis(resultJSON.data, total, queryId, chunkSize, sort, resultJSON.queryJSON);
+                });
+            } else {
+                commonUtils.handleJSONResponse(null, res, resultJSON);
             }
         });
     }
-    redisClient.get(queryId + ":chunk" + chunk, function (error, result) {
-        var resultJSON = result ? JSON.parse(result) : {data: [], total: 0};
-        if (error) {
-            logutils.logger.error(error.stack);
-            commonUtils.handleJSONResponse(error, res, null);
-        } else if (toSort) {
-            sortJSON(resultJSON.data, sort, function () {
-                var startIndex, endIndex, total, responseJSON;
-                total = resultJSON.total;
-                startIndex = (chunk - 1) * chunkSize;
-                endIndex = (total < (startIndex + chunkSize)) ? total : (startIndex + chunkSize);
-                responseJSON = resultJSON.data.slice(startIndex, endIndex);
-                commonUtils.handleJSONResponse(null, res, {data: responseJSON, total: total, queryJSON: resultJSON.queryJSON});
-                saveQueryResult2Redis(resultJSON.data, total, queryId, chunkSize, sort, resultJSON.queryJSON);
-            });
-        } else {
-            commonUtils.handleJSONResponse(null, res, resultJSON);
-        }
-    });
 }
 
 function exportQueryResult(req, res) {
@@ -1031,7 +1057,7 @@ function parseSLWhere(query, where, keywords) {
             whereORArray[i] = whereORArray[i].trim();
             newWhereOR = whereORArray[i].substr(0, whereORArray[i].length - 1);
             where[i] = parseWhereANDClause(newWhereOR);
-            // append keyword array to individual where OR clause
+      // append keyword array to individual where OR clause
             where[i] = where[i].concat(keywordAndClause);
         }
 
@@ -1207,7 +1233,7 @@ function parseWhereANDClause(whereANDClause) {
                         operator = "=";
                         whereANDTerm = whereANDClauseWithSuffixArrray[j].split(operator);
                     }
-                    whereANDClause = { name: "", value: "", op: "" };
+                    whereANDClause = {"name": "", value: "", op: ""};
                     populateWhereANDClause(whereANDClause, whereANDTerm[0].trim(), whereANDTerm[1].trim(), operator);
                     if (j === 0) {
                         tempWhereANDClauseWithSuffix = whereANDClause;
@@ -1329,4 +1355,3 @@ exports.exportQueryResult = exportQueryResult;
 exports.getQueryJSON4Table = getQueryJSON4Table;
 exports.getCurrentTime = getCurrentTime;
 exports.getQueryData = getQueryData;
-
