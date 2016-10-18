@@ -18,6 +18,7 @@ define([
         render: function () {
             var self = this,
                 viewConfig = self.attributes.viewConfig,
+                colorsFn = viewConfig.colors,
                 listModelConfig = $.extend(true, {}, viewConfig.elementConfig['body']['dataSource']),
                 modelMap = contrail.handleIfNull(self.modelMap, {}),
                 contrailListModel, gridConfig, gridContainer,
@@ -75,6 +76,13 @@ define([
             if (contrail.checkIfExist(gridDataSource.dataView)) {
                 dataView = gridDataSource.dataView;
                 var dataViewData = dataView.getItems();
+                if (colorsFn != null) {
+                    if (typeof colorsFn == 'function') {
+                        self.colors = colorsFn(_.pluck(dataViewData, 'name'));
+                    } else if (typeof colorsFn == 'object') {
+                        self.colors = colorsFn;
+                    }
+                }
                 //TODO: We should not need to set data with empty array.
                 dataView.setData([]);
                 initContrailGrid(dataView);
@@ -104,7 +112,26 @@ define([
                 if (contrail.checkIfExist(gridContainer.data('contrailGrid'))) {
                     gridContainer.data('contrailGrid').removeGridLoading();
                     handleGridMessage();
-
+                    if (colorsFn != null) {
+                        if (typeof colorsFn == 'function') {
+                            self.colors = colorsFn(_.pluck(dataViewData, 'name'));
+                        } else if (typeof colorsFn == 'object') {
+                            self.colors = colorsFn;
+                        }
+                    }
+                    if(self.colors != null){
+                        var gridConObj = gridContainer.find('span .badge'),
+                            currCnt = 0,
+                            colorCnt = Object.keys(self.colors).length;
+                        for(key in gridConObj){
+                            if(gridConObj[key].innerHTML){
+                                currCnt++;
+                                $(gridConObj[key]).css("background-color", self.colors[gridConObj[key].innerHTML]);
+                                if(colorCnt === currCnt)
+                                    break;
+                            }
+                        }
+                    }
                     performSort(gridSortColumns);
                     //TODO: Execute only in refresh case.
                     if (gridConfig.header.defaultControls.refreshable) {
@@ -338,7 +365,7 @@ define([
                             return cowf.getFormattedValue(formatterObj.format, fieldValue, options);
                         };
                     }
-
+                    columnValue.colorMap = self.colors;
                     if (!contrail.checkIfExist(gridColumns[columnKey].id)) {
                         gridColumns[columnKey].id = columnValue.field + '_' + columnKey;
                     }
