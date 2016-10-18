@@ -557,7 +557,9 @@ function cellTemplateLinks(options) {
 //      statusBubble = getNodeStatusForSummaryPages(rowData,'summary');
         statusBubble = statusTemplate({color:rowData['color'], colorSevMap:cowc.COLOR_SEVERITY_MAP});
     }
-
+    if(ifNull(options['isBadge'], false)){
+        cellText = contrail.format("<span class='badge' style='background-color:{0}'>{1}</span>", options.colorMap[cellText], cellText);
+    }
     return contrail.format("{5}<span class='{1}' {0} {2} {4}>{3}</span>", nameStr, tooltipCls, titleStr, cellText, onclickAction, statusBubble);
 }
 
