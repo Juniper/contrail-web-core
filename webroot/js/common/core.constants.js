@@ -1042,7 +1042,9 @@ define([
         this.THREE_NODE_COLOR = ['#a8c0d1', '#6f97ae', '#617683'];
         this.FIVE_NODE_COLOR = ['#819eb5', '#6b8295', '#876f8a', '#b2a198', '#eccc9b'];
         this.FAILURE_COLOR = '#d95436';
+        this.OTHERS_COLORS = '#a3b8a0';
 
+        this.OTHERS = 'Others';
         this.FAILURE_LABEL = 'Failures';
     };
     //Export to global scope

@@ -84,6 +84,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'schema-model'               : coreWebDir + '/js/models/SchemaModel',
         'view-config-generator'      : coreWebDir + '/js/common/view.config.generator',
         'jquery-ui'                 : coreWebDir + '/assets/jquery-ui/js/jquery-ui',
+        'legend-view'                 : coreWebDir + '/js/views/LegendView',
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
