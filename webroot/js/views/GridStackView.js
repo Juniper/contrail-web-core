@@ -2,8 +2,9 @@ define([
     'underscore',
     'backbone',
     'contrail-view',
-    'gridstack'
-], function (_, Backbone,ContrailView,gridstack) {
+    'gridstack',
+    'contrail-list-model'
+], function (_, Backbone,ContrailView,gridstack, ContrailListModel) {
     var GridStackView = ContrailView.extend({
         initialize: function(options) {
             var self = this;
