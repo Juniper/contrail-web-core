@@ -1477,9 +1477,16 @@ define([
                 yField = getValueByJsonPath(options, 'yField'),
                 yFieldOperation = getValueByJsonPath(options, 'yFieldOperation'),
                 failureLabel = getValueByJsonPath(options, 'failureLabel', cowc.FAILURE_LABEL),
-                yAxisLabel = getValueByJsonPath(options, 'yAxisLabel');
+                yAxisLabel = getValueByJsonPath(options, 'yAxisLabel'),
+                defaultZeroLineDisplay = getValueByJsonPath(options,'defaultZeroLineDisplay', false),
+                // limit is for requirements like top 5 records etc;
+                limit = getValueByJsonPath(options, 'limit'),
+                groupDim;
             if (response != null && getValueByJsonPath(response, '0;T') == null) {
                 timeStampField = 'T=';
+            }
+            if (groupBy != null) {
+                groupDim = cf.dimension(function(d) { return d[groupBy]});
             }
             //bucket size is in mins need to convert in to milli secs
             var buckets = cowu.bucketizeStats(response,{
@@ -1488,15 +1495,43 @@ define([
                 insertEmptyBuckets: getValueByJsonPath(options, 'insertEmptyBuckets', true)
             });
             var tsDim = cf.dimension(function(d) { return d[timeStampField]});
-            if (failureCheckFn != null && typeof failureCheckFn == 'function') {
+            if (failureCheckFn != null && typeof failureCheckFn == 'function' 
+                && response.length > 0) {
                 parsedData.push({
                    key: failureLabel,
                    color: cowc.FAILURE_COLOR,
                    values: []
                 });
             }
-            if (groupBy != null) {
-                var groupDim = cf.dimension(function(d) { return d[groupBy]});
+            if(response.length === 0 && defaultZeroLineDisplay && groupBy!=null){
+                parsedData.push({
+                    key: 'DEFAULT',
+                    color: cowc.DEFAULT_COLOR,
+                    values: []
+                });
+            }
+            if (limit != null) {
+                limit = parseInt(limit);
+                if (groupBy != null) {
+                    var grpMap = groupDim.group().all(),
+                        grpMapLen = grpMap.length;
+                    if (grpMapLen < limit) {
+                        limit = grpMapLen;
+                    }
+                }
+                parsedData.push({
+                    key: cowc.OTHERS,
+                    color: cowc.OTHERS_COLORS,
+                    values: []
+                });
+                for (var i = 0; i < limit; i++) {
+                    parsedData.push({
+                        key: i,
+                        color: colors[i],
+                        values: []
+                    });
+                }
+            } else if (groupBy != null) {
                 var groupByMap = groupDim.group().all(),
                     groupByMapLen = groupByMap.length,
                     groupByKeys = _.pluck(groupByMap, 'key');
@@ -1550,6 +1585,18 @@ define([
                             groupByMap = groupByDimSum.top(Infinity);
                         }
                     }
+                    if (limit != null) {
+                        groupByMap = _.sortBy(groupByMap, 'value');
+                        groupByMap = groupByMap.reverse();
+                        var othersSum = _.pluck(groupByMap.slice(limit, groupByMap.length - 1), 'value').reduce(function (a, b) {
+                            return a + b;
+                        }, 0);
+                        groupByMap = groupByMap.slice(0, limit);
+                        groupByMap.push({
+                            key: cowc.OTHERS,
+                            value: othersSum
+                        });
+                    }
                     /*var missingKeys = _.difference(_.without(groupByKeys, failureLabel), _.pluck(groupByMap, 'key'));
                     $.each(missingKeys, function(idx, obj){
                         groupByMap.push({
@@ -1558,11 +1605,15 @@ define([
                         });
                     });*/
                     groupByMapLen = groupByMap.length;
+                    total = _.pluck(groupByMap, 'value').reduce(function (a, b) {
+                        return a + b;
+                    }, 0);
                     for (var j = 0; j < groupByMapLen; j++) {
                         var groupByObj = groupByMap[j],
                             groupByObjKey = groupByObj['key'],
-                            groupByObjVal = parseFloat(groupByObj['value']);
-                        total += groupByObjVal;
+                            groupByObjVal = parseFloat(groupByObj['value']),
+                            parseDataKey = groupByObjKey;
+                        //total += groupByObjVal;
                         if (failureCheckFn) {
                             var failureDim = groupDim.group().reduceSum(failureCheckFn),
                                 failureArr = failureDim.top(Infinity);
@@ -1577,21 +1628,33 @@ define([
                                 groupByObjVal -= parseInt(failedSliceCnt);
                             }
                         }
-                        parsedData[groupByObjKey].values.push({
+                        if (limit != null && groupByObjKey != cowc.OTHERS) {
+                            parseDataKey = j;
+                        }
+                        parsedData[parseDataKey].values.push({
                             date: new Date(ifNull(i, 0)/1000), //converting to milli secs
                             name: groupByObjKey,
                             timestampExtent: timestampExtent,
                             x: ifNull(i, 0)/1000,
                             y: groupByObjVal,
+                            failedSliceCnt:failedSliceCnt,
                             total: total
                         });
                     }
-                    if (failureCheckFn) {
+                    if (failureCheckFn && parsedData[failureLabel]) {
                         //Failure at bar level
                           parsedData[failureLabel].values.push({
                               date: new Date(i/1000),
+                              x: ifNull(i, 0)/1000,
                               y: failedBarCnt,
                               name: failureLabel,
+                              total: total,
+                          });
+                      } else if(response.length === 0 && defaultZeroLineDisplay && groupBy!=null){
+                          parsedData['DEFAULT'].values.push({
+                              date: new Date(i/1000),
+                              y: failedBarCnt,
+                              name: '',
                               total: total,
                           });
                       }
@@ -1612,8 +1675,95 @@ define([
                      });
                 }
             }
-            return _.values(parsedData);;
-        }
+            return _.values(parsedData);
+        };
+
+        this.parseLineBarChartWithFocus = function (data, options) {
+            var cf = crossfilter(data);
+            var buckets = cowu.bucketizeStats(data, {
+                bucketSize: 4});
+            var groupBy = getValueByJsonPath(options, 'groupBy', 'Source');
+            var y1Field = getValueByJsonPath(options, 'y1Field');
+            var y2Field = getValueByJsonPath(options, 'y2Field');
+            var y2FieldOperation = getValueByJsonPath(options, 'y2FieldOperation');
+            var y1FieldOperation = getValueByJsonPath(options, 'y1FieldOperation');
+            var y2AxisLabel = getValueByJsonPath(options, 'y2AxisLabel');
+            var y2AxisColor = getValueByJsonPath(options, 'y2AxisColor');
+            var colors = getValueByJsonPath(options, 'colors');
+            var tsDim = cf.dimension(function (d) {return d.T});
+            var groupDim = cf.dimension(function (d) {return d[groupBy]});
+            var groupDimData = groupDim.group().all();
+            var groupDimKeys = _.pluck(groupDimData, 'key');
+            if (typeof colors == 'function') {
+               colors = colors(_.sortBy(groupDimKeys));
+            }
+            var nodeMap = {}, chartData = [];
+            $.each(groupDimData, function (idx, obj) {
+                nodeMap[obj['key']] = {
+                    key: obj['key'],
+                    values: [],
+                    bar: true,
+                    color: colors[obj['key']] != null ? colors[obj['key']] : cowc.D3_COLOR_CATEGORY5[1]
+                };
+                chartData.push(nodeMap[obj['key']]);
+            });
+            var lineChartData = {
+                key: y2AxisLabel,
+                values: [],
+                color: y2AxisColor
+            }
+            for (var i in buckets) {
+                var timestampExtent = buckets[i]['timestampExtent'],
+                    y1Value = 0,
+                    y2Value = 0,
+                    groupCnt = {};
+                tsDim.filter(timestampExtent);
+                var sampleCnt = tsDim.top(Infinity).length;
+                groupDimData = groupDim.group().all();
+                groupDimData = _.sortBy(groupDimData, 'key');
+                $.each(groupDimData, function(idx, obj) {
+                    groupCnt[obj['key']] = obj['value'];
+                });
+                var y1FieldData = groupDim.group().reduceSum(function (d) {
+                    return d[y1Field];
+                });
+                var y2FieldData = groupDim.group().reduceSum(function (d) {
+                    return d[y2Field];
+                });
+                var y1DataArr = y1FieldData.top(Infinity);
+                var y2DataArr = y2FieldData.top(Infinity);
+                var y1DataArrLen = y1DataArr.length;
+                var y2DataArrLen = y2DataArr.length;
+
+                for (var j = 0; j < y1DataArrLen; j++) {
+                    var y1DataObj = y1DataArr[j];
+                    if (nodeMap[y1DataObj['key']] != null ) {
+                        y1Value = y1DataObj['value'];
+                        if (y1FieldOperation == 'average') {
+                            y1Value = y1DataObj['value']/groupCnt[y1DataObj['key']];
+                        }
+                        //avgResTime = avgResTime/1000; // converting to milli secs
+                        nodeMap[y1DataObj['key']]['values'].push({
+                            x: Math.round(i/1000),
+                            y: y1Value
+                        });
+                    }
+                }
+
+                for (var j = 0; j < y2DataArrLen; j++) {
+                    y2Value += y2DataArr[j]['value'];
+                }
+                if (y2FieldOperation == 'average') {
+                    y2Value = y2Value/sampleCnt;
+                }
+                lineChartData['values'].push({
+                    x: Math.round(i/1000),
+                    y: y2Value
+                });
+            }
+            chartData.push(lineChartData);
+            return chartData;
+        };
     };
 
     function filterXML(xmlString, is4SystemLogs) {
