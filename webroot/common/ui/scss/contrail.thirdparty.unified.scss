@@ -12,9 +12,3 @@
 @import 'webroot/assets/jsoneditor/css/jsoneditor.min';
 @import 'webroot/assets/gridstack/css/gridstack';
 @import 'webroot/assets/gridstack/css/gridstack-extra';
-
-#content-container {
-    @import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables';
-    @import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_mixins';
-    @import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_panels';
-}

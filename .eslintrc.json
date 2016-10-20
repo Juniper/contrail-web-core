@@ -74,12 +74,6 @@
     }],
     "no-lone-blocks": "error",
     "no-loop-func": "warn",
-    // To encourage constant variables for better maintainability and readability
-    "no-magic-numbers": ["warn", {
-      "ignoreArrayIndexes": true,
-      // TODO: turn on when starting to use ES6/ES2015 syntax
-      "enforceConst": false
-    }],
     "no-multi-spaces": ["error", {
       "exceptions": {
         "Property": true,

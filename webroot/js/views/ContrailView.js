@@ -27,7 +27,9 @@ define([
 
                 if (contrail.checkIfFunction(onAllViewsRenderCompleteCB)) {
                     self.onAllViewsRenderComplete.subscribe(function() {
-                        onAllViewsRenderCompleteCB();
+                        if(!self.isAnyViewRenderInProgress()) {
+                            onAllViewsRenderCompleteCB();
+                        }
                     });
                 } else if (contrail.checkIfFunction(onAllRenderCompleteCB)) {
                     self.onAllRenderComplete.subscribe(function() {

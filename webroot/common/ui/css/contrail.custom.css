@@ -23,267 +23,267 @@
  * TODO Cleanup required to remove unused styles
  */
 .folder {
-  background-position: 0 -16px;
+    background-position: 0 -16px;
 }
 .pdf {
-  background-position: 0 -32px;
+    background-position: 0 -32px;
 }
 .html {
-  background-position: 0 -48px;
+    background-position: 0 -48px;
 }
 .image {
-  background-position: 0 -64px;
+    background-position: 0 -64px;
 }
 .align-bottom {
-  vertical-align: bottom;
+    vertical-align: bottom;
 }
 .no-height {
-  height: auto !important;
+    height: auto !important;
 }
 .sub-title.main {
-  padding-bottom: 16px;
+    padding-bottom: 16px;
 }
 .example-subtitle {
-  margin-bottom: 0;
-  text-align: center;
+    margin-bottom: 0;
+    text-align: center;
 }
 .no-data {
-  padding-top: 10px;
-  padding-bottom: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 .no-data .no-data-text {
-  text-align: center;
+    text-align: center;
 }
 .big-title {
-  width: 200px;
+    width: 200px;
 }
 .separator {
-  width: 100%;
-  height: 1px;
-  background: #b3bbc5;
-  opacity: .45;
+    width: 100%;
+    height: 1px;
+    background: #b3bbc5;
+    opacity: .45;
 }
 .stack-div {
-  display: inline-block;
-  vertical-align: top;
+    display: inline-block;
+    vertical-align: top;
 }
 .navbar a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 .header-info {
-  position: relative;
-  top: -20px;
+    position: relative;
+    top: -20px;
 }
 .table {
-  display: table;
-  table-layout: fixed;
-  width: 100%;
+    display: table;
+    table-layout: fixed;
+    width: 100%;
 }
 .table-row {
-  display: table-row;
+    display: table-row;
 }
 .table-cell {
-  display: table-cell;
+    display: table-cell;
 }
 .project-stats {
-  margin-top: 10px;
-  margin-bottom: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 .height-32 {
-  height: 32px;
+    height: 32px;
 }
 .height-40 {
-  height: 40px;
+    height: 40px;
 }
 .height-15 {
-  height: 15px;
+    height: 15px;
 }
 .height-130 {
-  height: 130px;
+    height: 130px;
 }
 .height-120 {
-  height: 120px;
+    height: 120px;
 }
 .pull-down-30 {
-  margin-top: 30px;
+    margin-top: 30px;
 }
 .pull-down-10 {
-  margin-top: 10px;
+    margin-top: 10px;
 }
 .div-column {
-  display: inline-block;
+    display: inline-block;
 }
 .close-icon {
-  width: 14px;
-  height: 13px;
+    width: 14px;
+    height: 13px;
 }
 .config-links {
-  display: none;
+    display: none;
 }
 .stack-chart + .example-title {
-  padding-bottom: 10px;
+    padding-bottom: 10px;
 }
 .display-inline {
-  display: inline-block;
+    display: inline-block;
 }
 pre.prettyprint {
-  border: 0px;
-  white-space: pre-wrap;
+    border: 0px;
+    white-space: pre-wrap;
 }
 div.t-grid td {
-  vertical-align: top;
+    vertical-align: top;
 }
 .no-padding {
-  padding: 0px;
+    padding: 0px;
 }
 #formRoutes #btnRouteReset {
-  width: 50px;
+    width: 50px;
 }
 #formConsoleMessages #btnResetLogs {
-  width: 60px;
+    width: 60px;
 }
 #contCtrlNodes .table-row:nth-child(1) .table-cell:nth-child(1) {
-  height: 30px;
+    height: 30px;
 }
 #contCtrlRoutes .table-row:nth-child(1) .table-cell:nth-child(1) {
-  height: 85px;
+    height: 85px;
 }
 .hyperlink-active {
-  color: #62839a;
-  cursor: pointer;
+    color: #62839a;
+    cursor: pointer;
 }
 .hyperlink-inactive {
-  color: #62839a;
-  cursor: initial;
+    color: #62839a;
+    cursor: initial;
 }
 .cell-menu {
-  overflow: visible;
+    overflow: visible;
 }
 .ajax-error {
-  text-align: center;
+    text-align: center;
 }
 .chart-hyperlink {
-  color: #62839a;
-  cursor: pointer;
-  text-align: center;
+    color: #62839a;
+    cursor: pointer;
+    text-align: center;
 }
 .chart-title-link {
-  cursor: pointer;
+    cursor: pointer;
 }
 .inst-template .z-dropdown {
-  display: table;
-  margin: auto;
-  margin-bottom: 10px;
+    display: table;
+    margin: auto;
+    margin-bottom: 10px;
 }
 .inst-template .summary-stats {
-  vertical-align: top;
+    vertical-align: top;
 }
 .network-template .grid-cont {
-  padding-bottom: 10px;
+    padding-bottom: 10px;
 }
 .network-template .detail-grid-width {
-  width: 250px;
+    width: 250px;
 }
 .network-template .example-title.main {
-  padding-top: 15px;
+    padding-top: 15px;
 }
 .network-template .sub-title {
-  margin-top: -13px;
+    margin-top: -13px;
 }
 .tenant-mon-backup .example-title {
-  margin-top: 10px;
-  margin-bottom: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 .port-detail-template .grid-title {
-  color: #4DA3D5;
-  text-align: center;
-  padding-top: 30px;
-  padding-bottom: 5px;
+    color: #4DA3D5;
+    text-align: center;
+    padding-top: 30px;
+    padding-bottom: 5px;
 }
 .port-detail-template .grid-title.main {
-  padding-bottom: 16px;
+    padding-bottom: 16px;
 }
 .port-detail-template .z-grid {
-  height: 250px;
+    height: 250px;
 }
 .flow-count {
-  margin-bottom: 10px;
-  display: inline-block;
-  padding-right: 5px;
-  text-align: right;
-  width: 100%;
+    margin-bottom: 10px;
+    display: inline-block;
+    padding-right: 5px;
+    text-align: right;
+    width: 100%;
 }
 .flow-count #flowCnt {
-  padding-right: 5px;
+    padding-right: 5px;
 }
 .infra-chart {
-  margin-top: 50px;
+    margin-top: 50px;
 }
 .infra-detail {
-  margin-top: 20px;
+    margin-top: 20px;
 }
 .gridSparkline {
-  width: 70%;
-  margin-right:4px;
+    width: 70%;
+    margin-right:4px;
 }
 /* End - Cross filter CSS */
 .vSlider input {
-  display:none;
+    display:none;
 }
 /* End vcon-web.css*/
 
 /* Sidebar*/
 #sidebar li.head > a > i{
-	display:none;
+    display:none;
 }
 #sidebar.menu-min li.head i{
-	display: inline-block;
+    display: inline-block;
 }
 .menu-min .nav-list > li > a > span#sidebar-collapse {
-	display:block;
-	position: absolute;
-	left: 10px;
-	width: 10px;
-	height: 50px;
-	line-height: 38px;
-	background: transparent;
-	z-index: 120;
-	box-shadow: none;
-	border: none;
-	padding-left: 2px;
+    display:block;
+    position: absolute;
+    left: 10px;
+    width: 10px;
+    height: 50px;
+    line-height: 38px;
+    background: transparent;
+    z-index: 120;
+    box-shadow: none;
+    border: none;
+    padding-left: 2px;
 }
 .menu-min #sidebar-collapse > [class*="icon-"] {
-	font-size: 22px;
+    font-size: 22px;
 }
 .menu-min .nav-list > li.item:hover > a > span {
-	display: block;
+    display: block;
 }
 #sidebar-collapse {
-	position: absolute;
-	right: -2px;
-	margin: 1px 0;
+    position: absolute;
+    right: -2px;
+    margin: 1px 0;
 }
 
 .infobox > .stat{
-	font-size:11px;
+    font-size:11px;
 }
 .infobox > .stat-success {
-	right:5px;
+    right:5px;
 }
 .infobox > .stat-important {
-	bottom:5px;
+    bottom:5px;
 }
 .infobox > .stat-success:after {
-	top:-5px;
+    top:-5px;
 }
 .infobox > .stat-important:after {
-	bottom:-5px;
+    bottom:-5px;
 }
 .infobox-grey{
-	color: #565656;
+    color: #565656;
 }
 .infobox > .infobox-content{
-	margin: 0 0 0 5px;
+    margin: 0 0 0 5px;
     margin-top: 5px;
 }
 .infobox-details > .infobox-content {
@@ -299,7 +299,7 @@ div.t-grid td {
 
 /* aligning heights of all input types */
 .row-fluid input[class*="span"], .row-fluid select[class*="span"]{
-	min-height: 26px;
+    min-height: 26px;
 }
 
 /* Topology */
@@ -309,18 +309,18 @@ div.t-grid td {
     overflow: scroll;
 }
 .topology_breadthfirst{
-	height:inherit;
-	width:auto;	
-	font-size:10px;
+    height:inherit;
+    width:auto;
+    font-size:10px;
 }
 
 .topology_grid{
-	height:inherit;
-	width:auto;	
-	font-size:12px;
+    height:inherit;
+    width:auto;
+    font-size:12px;
 }
 #toolTip {
-	z-index: 100;
+    z-index: 100;
 }
 
 /* Port Map Styles */
@@ -335,7 +335,7 @@ rect.bordered {
 
 /* Dashboard Sparkline */
 #sparkLineStats{
-	width:135px;
+    width:135px;
 }
 
 /* Sparkline boxes on details page*/
@@ -351,9 +351,9 @@ rect.bordered {
 }
 
 .sparklines-box p.sparkline-title{
-	padding: 0 5px 2px;
-	color: #3182bd;
-	margin-bottom: 0;
+    padding: 0 5px 2px;
+    color: #3182bd;
+    margin-bottom: 0;
 }
 .sparklines-box [class*="col-xs-"]{
 	min-height: 18px;
@@ -361,7 +361,7 @@ rect.bordered {
 
 /* Last Updated Time & Hard Refresh */
 #breadcrumbs > .hardrefresh {
-	display: inline-block;
+    display: inline-block;
     position: absolute;
     right: 200px;
     top: 9px;
@@ -371,26 +371,26 @@ rect.bordered {
 .infra-node-chart g.nv-scatterChart g.nv-group .nv-point.hover,
 .infra-node-chart g.nv-scatterChart g.nv-single-point g.nv-group .nv-point,
 .infra-node-chart g.nv-scatterChart g.nv-single-point g.nv-group .nv-point.hover {
-	fill-opacity: 1 !important;
+    fill-opacity: 1 !important;
 }
 
 /* css to enable to text to wrap by breaking the text if it does not fit in the element */
 .break-and-wrap-word{
-	word-wrap: break-word;
+    word-wrap: break-word;
 }
 .word-break-all {
-	word-break: break-all;
+    word-break: break-all;
 }
 
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
-	border: none;
-	background: none;
+    border: none;
+    background: none;
 }
 
 /* a Links */
 a.disabled-link, a.disabled-link:hover, i.disabled-link, i.disabled-link:hover{
-	color: #ccc !important;
-	cursor: initial !important;
+    color: #ccc !important;
+    cursor: initial !important;
 }
 a.disabled-link i {
     cursor: default;
@@ -407,8 +407,8 @@ a.disabled-link i {
 }
 
 .separator-top {
-  /*  border-top : 1px solid #ddd;*/
-  background-color:#f6f9fa;
+    /*  border-top : 1px solid #ddd;*/
+    background-color:#f6f9fa;
 }
 p.error, p.error-text {
     color: #b94a48;
@@ -480,7 +480,7 @@ p.error, p.error-text {
     opacity: 1 !important;
 }
 .topology-visualization .elementHighlighted.VirtualNetwork i {
-	color: #498AB9;
+    color: #498AB9;
 }
 .topology-visualization svg g.ZoomedElement,
 .topology-visualization svg g.ZoomedElement:hover {
@@ -488,41 +488,41 @@ p.error, p.error-text {
 }
 .topology-visualization svg .link-tools .tool-remove,
 .topology-visualization svg .link-tools .tool-options {
-	display: none
+    display: none
 }
 .visualization-empty p {
-  font-size: 14px;
-  margin: 30px auto;
-  text-align: center;
+    font-size: 14px;
+    margin: 30px auto;
+    text-align: center;
 }
 .topology-visualization.colmask {
-	position:relative;		
+    position:relative;
     clear:both;
     float:left;
-    width:100%;				
-	overflow:hidden;		
+    width:100%;
+    overflow:hidden;
 }
 .topology-visualization.holygrail .colmid {
     float:left;
     width:200%;
-    margin-left:-200px; 	
+    margin-left:-200px;
     position:relative;
     right:100%;
-    background:#fff;    	
+    background:#fff;
 }
 .topology-visualization.holygrail .colleft {
     float:left;
     width:100%;
     margin-left:-50%;
     position:relative;
-    left:400px;         	
+    left:400px;
 }
 .topology-visualization.holygrail .col1wrap {
-	float:left;
+    float:left;
     width:50%;
     position:relative;
-    right:200px;        	
- 	padding-bottom:1em; 	
+    right:200px;
+    padding-bottom:1em;
 }
 .topology-visualization.holygrail .col1 {
     margin:0 100px 0 170px;
@@ -532,14 +532,14 @@ p.error, p.error-text {
 }
 .topology-visualization.holygrail .col2 {
     float:left;
-    float:right;			
+    float:right;
     width:150px;
     position:relative;
-    right:40px;         	
+    right:40px;
 }
 .topology-visualization.holygrail .col3 {
     float:left;
-    float:right;			
+    float:right;
     width:50px;
     margin-right:50px;
     position:relative;
@@ -567,7 +567,7 @@ p.error, p.error-text {
 .topology-visualization .breadcrumbs .breadcrumb-item .breadcrumb-item-text {
     font-size:10px;
     margin: 0 auto;
-	width: 40px;
+    width: 40px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -580,27 +580,27 @@ p.error, p.error-text {
     font-size:30px;
 }
 .topology-visualization .topology-controls {
-	font-size: 15px;
+    font-size: 15px;
     width: 35px;
     background-color: #eee;
 }
 .topology-visualization .topology-controls i {
-	color: #777;
+    color: #777;
 }
 .topology-visualization .topology-controls .topology-control-item {
     padding: 5px 10px;
     width: 25px;
 }
 .topology-visualization .topology-controls .dropdown-menu {
-	right: 2px;
+    right: 2px;
 }
 .topology-visualization .topology-controls .dropdown-menu i {
-	margin-right: 5px;
+    margin-right: 5px;
 }
 
 .topology-visualization-tabs .select2-container .select2-choice {
-	border: none;
-	padding-right: 3px;
+    border: none;
+    padding-right: 3px;
 }
 
 /* Underlay overlay*/
@@ -623,18 +623,18 @@ p.error, p.error-text {
     background-color: #c6dbef;
 }
 .context-menu-item {
-	padding: 2px 5px;
+    padding: 2px 5px;
 }
 
 /* Chart styles */
 .chart-container text {
-  stroke: none;
-  fill: #777;
-  font-weight: normal;
+    stroke: none;
+    fill: #777;
+    font-weight: normal;
 }
 .chart-container text.nv-requestState {
-  font-size: 16px;
-  fill: #777;
+    font-size: 16px;
+    fill: #777;
 }
 /* Chart Control styles */
 
@@ -696,8 +696,8 @@ p.error, p.error-text {
     height: 282px;
 }
 .image-Security:before {
-  content : url(../img/policy.png);
-  vertical-align : middle;
+    content : url(../img/policy.png);
+    vertical-align : middle;
 }
 
 /* Section View Styles */
@@ -715,56 +715,56 @@ p.error, p.error-text {
     margin-bottom: 0;
 }
 .textarea-input-append.input-append.inset .input-group-addon {
-   padding-right: 0;
+    padding-right: 0;
 }
 .chart-settings-label {
-	margin-bottom:0px;
-	display:inline-block;
-	font-size:11px;
+    margin-bottom:0px;
+    display:inline-block;
+    font-size:11px;
 }
 
 .chart-sub-settings{
-	margin-left:10px;
+    margin-left:10px;
 }
 
 .chart-settings-close{
-	display: inline-block;
-	width: 12px;
-	height: 13px;
-	position: inherit;
-	right: 3px;
-	top: 4px;
-	font-size: 1px;
-	outline: none;
-	background: url('select2.png') right top no-repeat;
+    display: inline-block;
+    width: 12px;
+    height: 13px;
+    position: inherit;
+    right: 3px;
+    top: 4px;
+    font-size: 1px;
+    outline: none;
+    background: url('select2.png') right top no-repeat;
 }
 
 .chart-settings-header {
-	position:relative;
+    position:relative;
 }
 
 .chart-settings .icon-chevron-up{
-	right:0px;
-	position:absolute;
+    right:0px;
+    position:absolute;
 }
 
 .chart-settings-reset{
-	display:inline;
-	background:none;
+    display:inline;
+    background:none;
 }
 
 .chart-settings-reset label{
-	border-color: #dadada;
-	/* border: 1px solid #aaaaaa;
-	border-radius: 1px; */
-	box-shadow: none;
-	background: none;
-	padding: 3px 3px 3px 5px;
-	line-height: 12px;
+    border-color: #dadada;
+    /* border: 1px solid #aaaaaa;
+    border-radius: 1px; */
+    box-shadow: none;
+    background: none;
+    padding: 3px 3px 3px 5px;
+    line-height: 12px;
 }
 
 .position-right{
-	right:30px;
+    right:30px;
     position:absolute;
     margin-bottom:8px;
     margin-top:8px;
@@ -864,20 +864,20 @@ p.error, p.error-text {
 
 /*Joint JS - Parellel connection-wrap*/
 .connection-wrap-up {
-  fill: none;
-  stroke:#85b9dd!important;
-  stroke-width:3;
+    fill: none;
+    stroke:#85b9dd!important;
+    stroke-width:3;
 }
 .connection-wrap-down {
-  fill: none;
-  stroke:#85b9dd!important;
-  stroke-width:3;
+    fill: none;
+    stroke:#85b9dd!important;
+    stroke-width:3;
 }
 .display-nonodes{
-  margin:15%;
-  font-weight:bold;
-  color:#666666;
-  text-align:center;
+    margin:15%;
+    font-weight:bold;
+    color:#666666;
+    text-align:center;
 }
 
 .noselect {
@@ -1037,17 +1037,17 @@ p.error, p.error-text {
   text-align: center;
 }
 #msg-container{
-   width:90%;
-   float:left;
-   padding-top: 8px;padding-left: 14px;padding-bottom: 9px;
+    width:90%;
+    float:left;
+    padding-top: 8px;padding-left: 14px;padding-bottom: 9px;
 }
 #success-text-container{
-   width:100%;
-   float:left;
-   padding-top: 9px;
+    width:100%;
+    float:left;
+    padding-top: 9px;
 }
 #error-close-icon{
-   width:5%;float:right;
+    width:5%;float:right;
 }
 #close-error-popup{
        background: transparent !important;

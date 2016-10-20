@@ -14,15 +14,7 @@ define([
         disableWhereFields: ["Level", "Keyword"],
 
         constructor: function (modelConfig, _queryReqConfig) {
-            var defaultConfig = qeModelConfig.getQueryModelConfig({
-                table_name: coreConstants.MESSAGE_TABLE,
-                table_type: coreConstants.QE_LOG_TABLE_TYPE,
-                query_prefix: coreConstants.SYSTEM_LOGS_PREFIX,
-                keywords: "",
-                log_level: "7",
-                limit: coreConstants.QE_DEFAULT_LIMIT_50K,
-                select: coreConstants.DEFAULT_SL_SELECT_FIELDS,
-            });
+            var defaultConfig = qeModelConfig.getQueryModelConfig(coreConstants.QE_SL_DEFAULT_MODEL_CONFIG);
             var queryReqConfig = {chunkSize: coreConstants.QE_RESULT_CHUNK_SIZE_10K};
 
             var modelData = _.merge(defaultConfig, modelConfig);
