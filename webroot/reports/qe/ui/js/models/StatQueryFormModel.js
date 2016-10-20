@@ -13,10 +13,7 @@ define([
         defaultSelectFields: [],
 
         constructor: function (modelConfig, queryReqConfig) {
-            var defaultConfig = qeModelConfig.getQueryModelConfig({
-                table_type: coreConstants.QE_STAT_TABLE_TYPE,
-                query_prefix: coreConstants.STAT_QUERY_PREFIX,
-            });
+            var defaultConfig = qeModelConfig.getQueryModelConfig(coreConstants.QE_STAT_DEFAULT_MODEL_CONFIG);
 
             var modelData = _.merge(defaultConfig, modelConfig);
             QueryFormModel.prototype.constructor.call(this, modelData, queryReqConfig);

@@ -493,7 +493,7 @@ define([
                         chartControlPanelExpandedSelector.find('.control-panel-filter-close')
                             .off('click')
                             .on('click', function() {
-                                chartControlPanelExpandedSelector.hide();
+                                chartControlPanelExpandedSelector.hideElement();
                                 $(self).removeClass('active');
                                 $(self).removeClass('refreshing');
                                 $(controlPanelSelector).find('.control-panel-item').removeClass('disabled');
@@ -1246,7 +1246,7 @@ define([
         this.deparamURLArgs = function (query) {
             var query_string = {},
                 query = contrail.handleIfNull(query,'');
-            
+
             if (query.indexOf('?') > -1) {
                 query = query.substr(query.indexOf('?') + 1);
                 var vars = query.split("&");
@@ -1373,6 +1373,35 @@ define([
                 return sign + intPart +" "+suffix;
         };
 
+        this.timeSeriesParser = function (config, data) {
+            if (_.isEmpty(data)) {
+                return [];
+            }
+
+            //Config may have only one dataField.
+            if (config && config.dataField) {
+                config.dataFields = [config.dataField];
+            }
+
+            var series = [];
+
+            //Todo when data has "T=", we should group series by using respective CLASS field.
+            for (var i = 0; i < data.length; i++) {
+                if (_.isUndefined(data[i]["T="]) && _.isUndefined(data[i]["T"])) {
+                    //Record has empty timestamp; return whatever is on series now.
+                    return series;
+                }
+                var timeStamp = Math.floor(data[i]["T="] || data[i]["T"] / 1000);
+
+                _.each(config.dataFields, function (dataField, seriesIndex) {
+                    if (i === 0) {
+                        series[seriesIndex] = {values: []};
+                    }
+                    series[seriesIndex].values.push({x: timeStamp, y: data[i][dataField]});
+                });
+            }
+            return series;
+        };
         /**
          * This function bucketize the given data as per the
          * bucket duration parameter

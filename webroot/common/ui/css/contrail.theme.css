@@ -2136,7 +2136,7 @@ no_such_element:-o-prefocus,
 
 .nav-list > li > .submenu > li:first-child > a {
     /*border-top-width: 0;*/
-         border-top: 1px solid #FAFAFA;}
+    border-top: 1px solid #FAFAFA;}
 
 .nav-list > li > .submenu li > .submenu > li {
     line-height: 18px; }
@@ -5260,8 +5260,8 @@ button.btn:active {
 /*.btn-default:focus,*/
 /*.btn.focus,*/
 /*.btn-default.focus {*/
-    /*background-color: #ABBAC3 !important;*/
-    /*border-color: #ABBAC3; }*/
+/*background-color: #ABBAC3 !important;*/
+/*border-color: #ABBAC3; }*/
 
 /*.btn:hover,*/
 /*.btn-default:hover,*/
@@ -5283,8 +5283,8 @@ button.btn:active {
 /*.open > .btn-default.dropdown-toggle.focus,*/
 /*.open > .btn.dropdown-toggle:active,*/
 /*.open > .btn-default.dropdown-toggle:active {*/
-    /*background-color: #8B9AA3 !important;*/
-    /*border-color: #ABBAC3; }*/
+/*background-color: #8B9AA3 !important;*/
+/*border-color: #ABBAC3; }*/
 
 .btn.no-border:hover,
 .btn-default.no-border:hover,

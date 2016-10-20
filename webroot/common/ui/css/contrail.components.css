@@ -281,21 +281,44 @@
  * Contrail Tabs
  * Extends Jquery UI Tabs
  */
+.contrail-tab-link {
+    max-width: 640px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 .contrail-tabs.ui-tabs .ui-state-default a i.contrail-tab-link-icon {
     margin-right: 10px;
     font-weight: normal;
     font-size: 110%;
     display: inline-block;
 }
-.contrail-tabs.ui-tabs .ui-state-default a i.contrail-tab-link-icon-remove {
-    margin-left: 10px;
-    font-weight: normal;
-    font-size: 90%;
+.contrail-tabs.ui-tabs .ui-state-default i.fa-ellipsis-v {
+    display: none;
+    font-size: 1.5em;
+    padding: 9px 4px 5px 4px;
+}
+.contrail-tabs.ui-tabs li.ui-tabs-active i.fa-ellipsis-v {
     display: inline-block;
 }
+.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .link {
+    position: absolute;
+    padding: 8px;
+}
+.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .title-edit {
+    display: none;
+    padding-top: 4px;
+}
+.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .title-edit > input {
+}
 .contrail-tabs.ui-tabs .ui-tabs-nav li.pull-right {
-    float:right;
+    float: right;
     margin-top: 5px;
+}
+.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-menu {
+    padding: 8px;
+}
+.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-menu .title-save {
+    margin-left: 16px;
 }
 .contrail-tabs.ui-tabs .ui-tabs-nav li a.contrail-tab-extra-link {
     font-weight: normal;
@@ -329,9 +352,26 @@
 .contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
 .ui-tabs .ui-tabs-nav li.ui-tabs-active a,
 .contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-state-hover a,
-.ui-tabs .ui-tabs-nav li.ui-state-hover a {
+.ui-tabs .ui-tabs-nav li.ui-state-hover a,
+.contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-tabs-active .tab-edit-btn,
+.ui-tabs .ui-tabs-nav li.ui-tabs-active .tab-edit-btn,
+.contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-state-hover .tab-edit-btn,
+.ui-tabs .ui-tabs-nav li.ui-state-hover .tab-edit-btn {
     color: #3182bd;
 }
+
+.contrail-tab-link-list .tab-edit-btn {
+    border: none;
+    padding: 0;
+    background: transparent;
+    color: #3182bd;
+    display: none;
+}
+
+.contrail-tab-link-list .ui-tabs-active .tab-edit-btn {
+  display: inline-block;
+}
+
 .contrail-tabs-overcast.ui-tabs .ui-state-default a,
 .ui-tabs .ui-state-default a,
 .contrail-tabs-overcast.ui-tabs .ui-state-default a:link,
@@ -476,7 +516,7 @@
  * Extends Jquery UI Accordion
  */
 .ui-state-default.ui-accordion-header {
-    border-bottom: 1px solid #eee !important;
+    border-bottom: 1px solid #eee;
     outline: none;
 }
 .ui-accordion-content.ui-widget-content {
@@ -496,9 +536,7 @@
 /* Bootstrap popovers */
 .popover {
     width: 800px;
-}
-.popover .arrow {
-    display: none;
+    outline: none;
 }
 .popover .popover-title {
     background-color: #fff;
@@ -1055,7 +1093,6 @@ div.jsoneditor-value.jsoneditor-string { color: #2ca02c; }
 div.jsoneditor-value.jsoneditor-number { color: #ff7f0e; }
 div.jsoneditor-value.jsoneditor-boolean { color: #3182bd; }
 div.jsoneditor-value.jsoneditor-null { color: #9467bd; }
-
 /*
  * jQuery Validation
  */

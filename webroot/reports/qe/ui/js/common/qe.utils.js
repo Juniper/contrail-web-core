@@ -810,9 +810,8 @@ define([
         enableSessionAnalyzer: function(selectedFlowRecord, formModelAttr) {
             var enable = true, disable = !enable,
                 keys = ["vrouter", "sourcevn", "sourceip", "destvn", "destip", "sport", "dport"];
-
             if (contrail.checkIfExist(selectedFlowRecord)) {
-                for (i = 0; i < keys.length; i++) {
+                for (var i = 0; i < keys.length; i++) {
                     if (!selectedFlowRecord.hasOwnProperty(keys[i]) || !contrail.checkIfExist(selectedFlowRecord[keys[i]])) {
                         return disable;
                     }
