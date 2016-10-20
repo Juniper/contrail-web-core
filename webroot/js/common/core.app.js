@@ -1355,7 +1355,7 @@ if (typeof document !== 'undefined' && document) {
                             layoutHandler = new LayoutHandler();
                             layoutHandlerLoadDefObj.resolve();
 
-                            helpHandler.init();
+                            // helpHandler.init();
                         });
                     });
                 });
