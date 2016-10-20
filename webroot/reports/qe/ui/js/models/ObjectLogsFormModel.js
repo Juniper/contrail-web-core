@@ -13,11 +13,7 @@ define([
         defaultSelectFields: [],
 
         constructor: function (modelConfig, queryReqConfig) {
-            var defaultConfig = qeModelConfig.getQueryModelConfig({
-                table_type: coreConstants.QE_OBJECT_TABLE_TYPE,
-                query_prefix: coreConstants.OBJECT_LOGS_PREFIX,
-                limit: coreConstants.QE_DEFAULT_LIMIT_50K,
-            });
+            var defaultConfig = qeModelConfig.getQueryModelConfig(coreConstants.QE_OL_DEFAULT_MODEL_CONFIG);
 
             var modelData = _.merge(defaultConfig, modelConfig);
 
