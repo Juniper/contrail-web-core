@@ -42,6 +42,17 @@ define([
                         self.updateChart(selector, viewConfig, self.model);
                     });
                 }
+                var prevDimensions = chUtils.getDimensionsObj(self.$el);
+                self.resizeFunction = _.debounce(function (e) {
+                    if(!chUtils.isReRenderRequired({
+                        prevDimensions:prevDimensions,
+                        elem:self.$el})) {
+                        return;
+                    }
+                     self.renderChart($(self.$el), viewConfig, self.model);
+                 },cowc.THROTTLE_RESIZE_EVENT_TIME);
+
+                $(self.$el).parents('.custom-grid-stack-item').on('resize',self.resizeFunction);
             }
         },
 
@@ -72,8 +83,8 @@ define([
                 viewConfig.chartOptions.defaultDataStatusMessage = false;
                 data.push(defData);
             }
-            if (cowu.isGridStackWidget($(selector)) && $(selector).parents('.gridstack-item').height() != 0) {
-                viewConfig['chartOptions']['height'] = $(selector).parents('.gridstack-item').height() - 40;
+            if ($(selector).parents('.custom-grid-stack-item').length != 0) {
+                viewConfig['chartOptions']['height'] = $(selector).parents('.custom-grid-stack-item').height() - 40;
             }
             chartViewConfig = self.getChartViewConfig(data, viewConfig);
             chartOptions = chartViewConfig['chartOptions'];

@@ -7,8 +7,10 @@ define([
     'underscore',
     'contrail-view',
     'contrail-list-model',
-    'legend-view'
-], function (_, ContrailView,  ContrailListModel, LegendView) {
+    'legend-view',
+    'core-constants',
+    'chart-utils'
+], function (_, ContrailView,  ContrailListModel, LegendView, cowc, chUtils) {
     var cfDataSource;
     var stackedBarChartWithFocusChartView = ContrailView.extend({
 
@@ -19,6 +21,10 @@ define([
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
                 resizeId;
 
+
+            self.tooltipDiv = d3.select("body").append("div")
+                            .attr("class", "stack-bar-chart-tooltip")
+                            .style("opacity", 0);
             cfDataSource = viewConfig.cfDataSource;
             if (self.model === null && viewConfig['modelConfig'] != null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
@@ -50,29 +56,28 @@ define([
                 $($(self.$el)).bind("refresh", function () {
                     self.renderChart($(self.$el), viewConfig, self.model);
                 });
+                var prevDimensions = chUtils.getDimensionsObj(self.$el);
 
-                var resizeFunction = function (e) {
+                self.resizeFunction = _.debounce(function (e) {
+                   $('.stack-bar-chart-tooltip').remove();
+                    if(!chUtils.isReRenderRequired({
+                        prevDimensions:prevDimensions,
+                        elem:self.$el})) {
+                        return;
+                    }
+                    prevDimensions = chUtils.getDimensionsObj(self.$el);
                     self.renderChart($(self.$el), viewConfig, self.model);
-                };
+                },cowc.THROTTLE_RESIZE_EVENT_TIME);
 
-                $(window)
-                .off('resize', resizeFunction)
-                .on('resize', resizeFunction);
-                if ($(self.$el).closest('.gs-container').length > 0 ) {
-               $(self.$el).closest('.gs-container').on("resize",function(){
-                   clearTimeout(resizeId);
-                   resizeId = setTimeout(doneResizing, 500);
-                   //self.renderChart($(self.$el), viewConfig, self.model);
-               });
-           }
-           function doneResizing(){
-               self.renderChart($(self.$el), viewConfig, self.model);
-           }
-
+                window.addEventListener('resize',self.resizeFunction);
+                $(self.$el).parents('.custom-grid-stack-item').on('resize',self.resizeFunction);
             }
         },
 
         renderChart: function (selector, viewConfig, chartViewModel) {
+            if (!($(selector).is(':visible'))) {
+                return;
+            }
             var self = this;
             var data = chartViewModel.getFilteredItems();
             var chartTemplate = contrail.getTemplate4Id('core-stacked-bar-chart-template');
@@ -88,8 +93,8 @@ define([
             var yAxisLabel = getValueByJsonPath(chartOptions,'yAxisLabel',"Count");
             var limit = getValueByJsonPath(chartOptions,'limit');
             var yField = getValueByJsonPath(chartOptions,'yField');
-            var totalHeight = ($(selector).closest('.gridstack-item').length > 0 )? 
-                    $(selector).closest('.gridstack-item').height() - 50:
+            var totalHeight = ($(selector).closest('.custom-grid-stack-item').length > 0 )? 
+                    $(selector).closest('.custom-grid-stack-item').height() - 50:
                         chartOptions['height'];
             var customMargin = getValueByJsonPath(chartOptions,'margin',{});
             var xAxisOffset = getValueByJsonPath(chartOptions,'xAxisOffset',0); // in minutes
@@ -240,9 +245,7 @@ define([
                                 .attr("dx", ".75em")
                                 .attr("transform", "rotate(-90)")
                                 .text(yAxisLabel);
-            var tooltipDiv = d3.select("body").append("div")
-                            .attr("class", "stack-bar-chart-tooltip")
-                            .style("opacity", 0);
+            var tooltipDiv = self.tooltipDiv;
             var formatTime = d3.time.format("%e %b %X");
             if(brush && addOverviewChart) {
                 overview = svg.append("g")
@@ -387,7 +390,7 @@ define([
                 }
                 var legendView = new LegendView({
                     el: $(selector),
-                    legendConfig: {
+                    viewConfig: {
                         showControls: showControls,
                         controlsData: [{label: 'Stacked', cssClass: 'stacked filled'},
                             {label: 'Grouped', cssClass: 'grouped'}],
@@ -395,6 +398,7 @@ define([
                         legendData: legendData
                     }
                 });
+                legendView.render();
                 //Bind the click handlers to legend
                 $(selector).find('.custom-chart-legend')
                     .find('div.square, div.circle')

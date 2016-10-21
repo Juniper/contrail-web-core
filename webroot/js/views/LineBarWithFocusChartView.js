@@ -8,8 +8,9 @@ define([
     'core-basedir/js/models/LineBarWithFocusChartModel',
     'contrail-list-model',
     'nv.d3',
-    'chart-utils'
-], function (_, ContrailView, LineBarWithFocusChartModel, ContrailListModel, nv, chUtils) {
+    'chart-utils',
+    'core-constants'
+], function (_, ContrailView, LineBarWithFocusChartModel, ContrailListModel, nv, chUtils, cowc) {
     var LineBarWithFocusChartView = ContrailView.extend({
         render: function () {
             var viewConfig = this.attributes.viewConfig,
@@ -42,10 +43,27 @@ define([
                         self.updateChart(selector, viewConfig, self.model);
                     });
                 }
+                var prevDimensions = chUtils.getDimensionsObj(self.$el);
+                self.resizeFunction = _.debounce(function (e) {
+                    $('.stack-bar-chart-tooltip').remove();
+                    if(!chUtils.isReRenderRequired({
+                        prevDimensions:prevDimensions,
+                        elem:self.$el})) {
+                        return;
+                    }
+                    prevDimensions = chUtils.getDimensionsObj(self.$el);
+                     self.renderChart($(self.$el), viewConfig, self.model);
+                 },cowc.THROTTLE_RESIZE_EVENT_TIME);
+
+                $(self.$el).parents('.custom-grid-stack-item').on('resize',self.resizeFunction);
+
             }
         },
 
         renderChart: function (selector, viewConfig, chartViewModel) {
+            if (!($(selector).is(':visible'))) {
+                return;
+            }
             var self = this,
                 data = chartViewModel.getItems(),
                 chartTemplate = contrail.getTemplate4Id(cowc.TMPL_CHART),
@@ -55,8 +73,8 @@ define([
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data, viewConfig['chartOptions']);
             }
-            if (cowu.isGridStackWidget($(selector)) && $(selector).parents('.gridstack-item').height() != 0) {
-                viewConfig['chartOptions']['height'] = $(selector).parents('.gridstack-item').height() - 20;
+            if ($(selector).parents('.custom-grid-stack-item').length != 0) {
+                viewConfig['chartOptions']['height'] = $(selector).parents('.custom-grid-stack-item').height() - 20;
             }
             chartViewConfig = self.getChartViewConfig(data, viewConfig.chartOptions);
             chartOptions = chartViewConfig['chartOptions'];

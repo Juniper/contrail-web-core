@@ -17,10 +17,13 @@ define([
             if(self.gridAttr['defaultWidth'] != null)
                 self.COLUMN_CNT = 12/self.gridAttr['defaultWidth'];
 
-            self.$el.addClass('grid-stack grid-stack-12');
+            self.$el.addClass('grid-stack grid-stack-12 custom-grid-stack');
             self.gridStack = $(self.$el).gridstack({
                 float:false,
-                handle:'header',
+                handle:'.item-content',
+                resizable: {
+                    handles:'sw,se',
+                },
                 verticalMargin:8,
                 cellHeight: 20,
                 animate:false,
@@ -28,6 +31,9 @@ define([
             }).data('gridstack');
             
             //Trigger resize on widgets on resizestop
+            self.$el.on('resizestop',function(event,ui) {
+                $(ui.element[0]).trigger('resize');
+            });
         },
         render: function() {
             var self = this;
@@ -59,6 +65,7 @@ define([
                 ifNull(itemAttr['width'],defaultWidth),ifNull(itemAttr['height'],defaultHeight),true);
             self.widgets.push(currElem);
             var modelCfg = cfg['modelCfg'];
+            //Maintain a mapping of cacheId vs contrailListModel and if found,return that
             if(cowu.getValueByJsonPath(cfg,'modelCfg;_type') != 'contrailListModel' && modelCfg != null)
                 modelCfg = new ContrailListModel(modelCfg);
             self.renderView4Config($(currElem).find('.item-content'), modelCfg, cfg['viewCfg']);
