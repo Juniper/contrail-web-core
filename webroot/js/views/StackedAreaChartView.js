@@ -6,12 +6,14 @@ define([
     'underscore',
     'contrail-view',
     'contrail-list-model',
-    'legend-view'
-], function (_, ContrailView,  ContrailListModel, LegendView) {
+    'legend-view',
+    'core-constants',
+    'chart-utils'
+], function (_, ContrailView,  ContrailListModel, LegendView, cowc,chUtils) {
     var cfDataSource;
     var stackedAreaChartView = ContrailView.extend({
         render: function () {
-            var viewConfig = this.attributes.viewConfig,
+            var viewConfig = this.attributes.viewConfig,tooltipElementObj,
                 ajaxConfig = viewConfig['ajaxConfig'],
                 self = this, deferredObj = $.Deferred(),
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ?
@@ -49,23 +51,25 @@ define([
                 $($(self.$el)).bind("refresh", function () {
                     self.renderChart($(self.$el), viewConfig, self.model);
                 });
-/* window resize may not be require since the nvd3 also provides a smoother refresh*/
-                var resizeFunction = function (e) {
-                    clearTimeout(resizeId);
-                    resizeId = setTimeout(function(){
-                        self.renderChart($(self.$el), viewConfig, self.model);
-                    }, 500);
-                };
-
-                $(window)
-                    .off('resize', resizeFunction)
-                    .on('resize', resizeFunction);
-                if ($(self.$el).closest('.gs-container').length > 0 ) {
-                    $(self.$el).closest('.gs-container').on("resize",resizeFunction);
-                }
+                var prevDimensions = chUtils.getDimensionsObj(self.$el);
+                /* window resize may not be require since the nvd3 also provides a smoother refresh*/
+                self.resizeFunction = _.debounce(function (e) {
+                    if(!chUtils.isReRenderRequired({
+                        prevDimensions:prevDimensions,
+                        elem:self.$el})) {
+                        return;
+                    }
+                    prevDimensions = chUtils.getDimensionsObj(self.$el);
+                    self.renderChart($(self.$el), viewConfig, self.model);
+                },cowc.THROTTLE_RESIZE_EVENT_TIME);
+                window.addEventListener('resize',self.resizeFunction);
+                $(self.$el).parents('.custom-grid-stack-item').on('resize',self.resizeFunction);
             }
         },
         renderChart: function (selector, viewConfig, chartViewModel) {
+            if (!($(selector).is(':visible'))) {
+                return;
+            }
             var self = this;
             var data = chartViewModel.getFilteredItems();
             var chartTemplate = contrail.getTemplate4Id('core-stacked-area-chart-template');
@@ -73,8 +77,8 @@ define([
                     viewConfig.widgetConfig : null;
             var chartOptions = getValueByJsonPath(viewConfig, 'chartOptions', {});
             var totalHeight = getValueByJsonPath(chartOptions,'height',300);
-            totalHeight = ($(selector).closest('.gridstack-item').length > 0 )?
-                    $(selector).closest('.gridstack-item').height() - 50:
+            totalHeight = ($(selector).closest('.custom-grid-stack-item').length > 0 )?
+                    $(selector).closest('.custom-grid-stack-item').height() - 20:
                         totalHeight;
 
             chartOptions['timeRange'] =  getValueByJsonPath(self, 'model;queryJSON');
@@ -214,7 +218,7 @@ define([
                   }
                   var legendView = new LegendView({
                       el: $(selector),
-                      legendConfig: {
+                      viewConfig: {
                           showControls: showControls,
                           controlsData: [{label: 'Stacked', cssClass: 'stacked filled'},
                               {label: 'Grouped', cssClass: 'grouped'}],
@@ -222,6 +226,7 @@ define([
                           legendData: legendData
                       }
                   });
+                  legendView.render();
                   //Bind the click handlers to legend
                   $(selector).find('.custom-chart-legend')
                       .find('div.square, div.circle')
@@ -279,7 +284,7 @@ define([
                 var tooltipElementTemplate = contrail.getTemplate4Id(cowc.TMPL_ELEMENT_TOOLTIP),
                 tooltipElementTitleTemplate = contrail.getTemplate4Id(cowc.TMPL_ELEMENT_TOOLTIP_TITLE),
                 tooltipElementContentTemplate = contrail.getTemplate4Id(cowc.TMPL_ELEMENT_TOOLTIP_CONTENT),
-                tooltipElementObj, tooltipElementTitleObj, tooltipElementContentObj;
+                tooltipElementTitleObj, tooltipElementContentObj;
                 tooltipConfig = $.extend(true, {}, cowc.DEFAULT_CONFIG_ELEMENT_TOOLTIP, tooltipConfig);
                 tooltipElementObj = $(tooltipElementTemplate(tooltipConfig));
                 tooltipElementTitleObj = $(tooltipElementTitleTemplate(tooltipConfig.title));

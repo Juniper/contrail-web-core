@@ -1217,3 +1217,16 @@ button#close-error-popup{
 .carousel-control-cover-story:hover{
   text-decoration: underline;
 }
+.custom-grid-stack .custom-grid-stack-item .item-content {
+    height: 100%;
+}
+.custom-grid-stack .custom-grid-stack-item .item-content .nv-axislabel,
+.custom-grid-stack .custom-grid-stack-item .item-content .axis-label,
+.custom-grid-stack .custom-grid-stack-item .item-content .contrail-chart-title text {
+    text-anchor: middle;
+    font-weight: 600;
+    font-size: 11px !important;
+}
+.custom-grid-stack .custom-grid-stack-item:hover {
+    border: 0px solid #f2f2f2;
+}
