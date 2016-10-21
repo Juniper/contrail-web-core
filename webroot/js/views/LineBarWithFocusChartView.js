@@ -30,16 +30,16 @@ define([
 
             if (self.model !== null) {
                 if (self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
-                    self.renderChart(selector, viewConfig, self.model);
+                    self.updateChart(selector, viewConfig, self.model);
                 }
 
                 self.model.onAllRequestsComplete.subscribe(function () {
-                    self.renderChart(selector, viewConfig, self.model);
+                    self.updateChart(selector, viewConfig, self.model);
                 });
 
                 if (viewConfig.loadChartInChunks) {
                     self.model.onDataUpdate.subscribe(function () {
-                        self.renderChart(selector, viewConfig, self.model);
+                        self.updateChart(selector, viewConfig, self.model);
                     });
                 }
             }
@@ -110,16 +110,11 @@ define([
                 } else {
                     setData2Chart(self, chartViewConfig, chartViewModel, chartModel);
                 }
-                var resizeFunction = function (e) {
-                    if ($(selector).is(':visible')) {
-                        setData2Chart(self, chartViewConfig, chartViewModel, chartModel);
-                    }
-                };
-                $(window)
-                    .off('resize', resizeFunction)
-                    .on('resize', resizeFunction);
 
-                nv.utils.windowResize(chartModel.update);
+                self.resizeFn = _.debounce(function () {
+                    chUtils.updateChartOnResize($(self.$el), self.chartModel);
+                }, 500);
+                nv.utils.windowResize(self.resizeFn);
 
                 chartModel.dispatch.on('stateChange', function (e) {
                     nv.log('New State:', JSON.stringify(e));
@@ -161,6 +156,12 @@ define([
             $(selector).find('.nv-requestState').remove();
         },
 
+
+        resize: function () {
+            var self = this;
+            _.isFunction(self.resizeFn) && self.resizeFn();
+        },
+
         getChartViewConfig: function(chartData, chartOptions) {
             var chartViewConfig = {};
 
@@ -184,6 +185,21 @@ define([
             chartViewConfig['chartOptions'] = chartOptions;
 
             return chartViewConfig;
+        },
+
+        updateChart: function(selector, viewConfig, dataModel) {
+            var self = this,
+                dataModel = dataModel ? dataModel : self.model(),
+                data = dataModel.getItems();
+
+            if (_.isFunction(viewConfig.parseFn)) {
+                data = viewConfig['parseFn'](data);
+            }
+            //Todo remove the dependency to calculate the chartData and chartOptions via below function.
+            var chartViewConfig = self.getChartViewConfig(data, viewConfig.chartOptions);
+
+            setData2Chart(self, chartViewConfig, dataModel, self.chartModel);
+
         }
     });
 
