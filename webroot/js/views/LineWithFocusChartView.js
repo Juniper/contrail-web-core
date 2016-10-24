@@ -91,24 +91,13 @@ define([
 
             //Store the chart object as a data attribute so that the chart can be updated dynamically
             $(selector).data('chart', chartModel);
+
             if (chartOptions['showLegend'] && chartOptions['legendView'] != null) {
-                var lineData = [];
-                $.each(data, function(idx, obj) {
-                    lineData.push({
-                        name: obj['key'],
-                        color: obj['color']
-                    });
-                });
-                new chartOptions['legendView']({
+                self.legendView = new chartOptions['legendView']({
                     el: $(selector),
-                    legendConfig: {
-                        showLegend: chartOptions['showLegend'],
-                        legendData: [{
-                            label: getValueByJsonPath(chartOptions, 'title'),
-                            legend: lineData
-                        }]
-                    }
+                    viewConfig: getLegendViewConfig(chartOptions, data)
                 });
+                self.legendView.render();
             }
 
             if (!($(selector).is(':visible'))) {
@@ -224,9 +213,10 @@ define([
             }
             //Todo remove the dependency to calculate the chartData and chartOptions via below function.
             var chartViewConfig = self.getChartViewConfig(data, viewConfig);
+            //If legendView exist, update with new config built from new data.
+            if (self.legendView) self.legendView.update(getLegendViewConfig(chartViewConfig.chartOptions, data));
 
             setData2Chart(self, chartViewConfig, dataModel, self.chartModel);
-
         }
     });
 
@@ -287,6 +277,27 @@ define([
         forceY = cowu.getForceAxis4Chart(dataAllLines, yAxisDataField, defaultForceY);
         return forceY;
     };
+
+    function formatLegendData(data) {
+        var lineData = [];
+        _.each(data, function(obj) {
+            lineData.push({
+                name: obj['key'],
+                color: obj['color']
+            });
+        });
+        return {line: lineData};
+    };
+
+    function getLegendViewConfig(chartOptions, data) {
+        return {
+            showLegend: chartOptions['showLegend'],
+            legendData: [{
+                label: getValueByJsonPath(chartOptions, 'title'),
+                legend: formatLegendData(data).line
+            }]
+        };
+    }
 
     return LineWithFocusChartView;
 });
