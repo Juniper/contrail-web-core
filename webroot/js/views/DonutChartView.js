@@ -55,7 +55,9 @@ define([
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data);
             }
-
+            if (cowu.isGridStackWidget($(selector)) && $(selector).parents('.gridstack-item').height() != 0) {
+                viewConfig['chartOptions']['height'] = $(selector).parents('.gridstack-item').height() - 20;
+            }
             chartViewConfig = getChartViewConfig(data, viewConfig);
             chartOptions = chartViewConfig['chartOptions'];
             chartModel = new DonutChartModel(chartOptions);

@@ -74,7 +74,9 @@ define([
                 viewConfig.chartOptions.defaultDataStatusMessage = false;
                 data.push(defData);
             }
-
+            if (cowu.isGridStackWidget($(selector)) && $(selector).parents('.gridstack-item').height() != 0) {
+                viewConfig['chartOptions']['height'] = $(selector).parents('.gridstack-item').height() - 40;
+            }
             chartViewConfig = self.getChartViewConfig(data, viewConfig);
             chartOptions = chartViewConfig['chartOptions'];
             chartModel = new LineWithFocusChartModel(chartOptions);

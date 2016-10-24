@@ -1764,6 +1764,12 @@ define([
             chartData.push(lineChartData);
             return chartData;
         };
+        this.isGridStackWidget = function (selector) {
+            if ($(selector).parents('.grid-stack-item-content').length) {
+                return true;
+            }
+            return false;
+        }
     };
 
     function filterXML(xmlString, is4SystemLogs) {
