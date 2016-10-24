@@ -55,7 +55,9 @@ define([
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data, viewConfig['chartOptions']);
             }
-
+            if (cowu.isGridStackWidget($(selector)) && $(selector).parents('.gridstack-item').height() != 0) {
+                viewConfig['chartOptions']['height'] = $(selector).parents('.gridstack-item').height() - 20;
+            }
             chartViewConfig = self.getChartViewConfig(data, viewConfig.chartOptions);
             chartOptions = chartViewConfig['chartOptions'];
             //viewConfig.chartOptions = chartOptions;

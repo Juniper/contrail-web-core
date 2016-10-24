@@ -90,6 +90,7 @@ define([
             var failureLabel = getValueByJsonPath(chartOptions,'failureLabel', cowc.FAILURE_LABEL);
             var tooltipFn = getValueByJsonPath(chartOptions,'tooltipFn', defaultTooltipFn);
             var colors = getValueByJsonPath(chartOptions,'colors', {yAxisLabel: cowc.DEFAULT_COLOR});
+            var yAxisOffset = getValueByJsonPath(chartOptions,'yAxisOffset',0);
             var yAxisFormatter = getValueByJsonPath(chartOptions,'yAxisFormatter',cowu.numberFormatter);
             var customTimeFormat = d3.time.format.multi([
                     //[".%L", function(d) { return d.getMilliseconds(); }],
@@ -149,7 +150,16 @@ define([
               //y-axis tickformatter
               chart.yAxis
                   .tickFormat(yAxisFormatter);
-
+              if (yAxisOffset != 0) {
+                  var domain = chart.yAxis.domain();
+                  var stackedData = _.pluck(data, 'values');
+                  var allObjs = _.reduce(stackedData, function (result, value) {
+                      return result.concat(value);
+                  }, []);
+                  var yAxisMaxValue = d3.max(allObjs, function(d) { return d.total; });
+                  domain[1] = yAxisMaxValue + (yAxisOffset/100) * yAxisMaxValue;
+                  chart.yDomain(domain);
+              }
               //initialize the chart in the svg element
               chart.interpolate("monotone");
               svg.datum(data)
