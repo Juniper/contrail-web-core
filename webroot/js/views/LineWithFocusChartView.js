@@ -56,9 +56,7 @@ define([
                 defaultZeroLineDisplay = getValueByJsonPath(viewConfig,'chartOptions;defaultZeroLineDisplay', false);
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                data = viewConfig['parseFn'](data);
-            } else if (data != null && data.length > 0) {
-                data = cowu.chartDataFormatter(data, viewConfig['chartOptions']);
+                data = viewConfig['parseFn'](data, viewConfig['chartOptions']);
             }
 
             //plot default line
@@ -207,9 +205,7 @@ define([
 
             //Todo 'parseFn' may not be defined always. May need to make chartDataFormatter with a config.
             if (_.isFunction(viewConfig.parseFn)) {
-                data = viewConfig['parseFn'](data);
-            } else if (data != null && data.length > 0) {
-                data = cowu.chartDataFormatter(data, viewConfig['chartOptions']);
+                data = viewConfig['parseFn'](data, viewConfig['chartOptions']);
             }
             //Todo remove the dependency to calculate the chartData and chartOptions via below function.
             var chartViewConfig = self.getChartViewConfig(data, viewConfig);
