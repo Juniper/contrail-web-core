@@ -104,7 +104,9 @@ define([
                                                     viewConfig: {
                                                         width: 40,
                                                         value: "AND",
-                                                        class: "and-clause-text"
+                                                        elementConfig: {
+                                                            class: "and-clause-text"
+                                                        }
                                                     }
                                                 },
                                                 {
@@ -167,7 +169,9 @@ define([
                                                     viewConfig: {
                                                         width: 40,
                                                         value: "",
-                                                        class: 'suffix-and-clause-text'
+                                                        elementConfig: {
+                                                            class: 'suffix-and-clause-text'
+                                                        }
                                                     }
                                                 }, {
                                                     elementId: 'suffix-name',
