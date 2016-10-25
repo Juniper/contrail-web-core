@@ -1217,3 +1217,76 @@ button#close-error-popup{
 .carousel-control-cover-story:hover{
   text-decoration: underline;
 }
+
+/*
+color settings styles - begin
+*/
+#settings-color .modal-footer {
+  border: none;
+  padding: 10px 0px 0px 0px;
+}
+#settings-color .modal-header {
+  padding: 0px 0px 0px 10px;
+  border-bottom:none;
+}
+#settings-color h6.modal-header-title{
+  margin:0px;
+  font-size:12px;
+  color:#3182bd
+}
+#settings-color .modal-content {
+  width:238px;
+}
+#setting-color .modal-header i {
+  font-size:20px;
+}
+#settings-color i.fa.fa-close {
+  color: #CECECE
+}
+#setting-color .modal-content {
+  width:238px;
+}
+#scheme span {
+  padding: 5px;
+  color:#3182bd;
+}
+#scheme span, #palettes {
+  display: inline-block;
+}
+#palettes {
+  overflow: hidden;
+  height: 170px;
+}
+#palettes.more {
+  height:332px;
+  transition-property: all;
+  transition-duration: .5s;
+  transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+}
+#more_btn span.fa.fa-caret-down {
+    font-size: 16px;
+    vertical-align: text-bottom;
+    padding: 0px 3px;
+}
+.palette {
+  float: left;
+  padding: 5px 5px 0 5px;
+  cursor: pointer;
+}
+.palette:hover {
+  background-color: #ccc;
+}
+.palette.selected {
+  background-color: #999;
+}
+.palette rect {
+  stroke: #333;
+  stroke-width: .5px;
+}
+.swatch {
+  width: 15px;
+  height: 75px;
+}
+/*
+color settings styles - end
+*/

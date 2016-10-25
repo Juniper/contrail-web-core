@@ -55,6 +55,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'vis-edge-model'              : coreWebDir + '/js/models/VisEdgeModel',
         'vis-tooltip-model'           : coreWebDir + '/js/models/VisTooltipModel',
         'gs-view'                     : coreWebDir + '/js/views/GridStackView',
+        'colorbrewer-scheme'          : coreWebDir + '/js/colorbrewer_schemes',
+        'cmyk'                        : coreWebDir + '/js/cmyk',
         'graph-view'                  : coreWebDir + '/js/views/GraphView',
         'contrail-graph-model'        : coreWebDir + '/js/models/ContrailGraphModel',
         'dagre'                       : coreWebDir + '/assets/joint/js/dagre',

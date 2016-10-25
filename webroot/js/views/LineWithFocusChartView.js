@@ -11,6 +11,15 @@ define([
     'chart-utils'
 ], function (_, ContrailView, LineWithFocusChartModel, ContrailListModel, nv, chUtils) {
     var LineWithFocusChartView = ContrailView.extend({
+        settingsChanged: function(colorModel) {
+            var self = this,
+                vc = self.attributes.viewConfig;
+            if(vc.hasOwnProperty("chartOptions")) {
+                vc.chartOptions["resetColor"] = true;
+            }
+            self.renderChart($(self.$el), vc, self.model);
+        },
+
         render: function () {
             var viewConfig = this.attributes.viewConfig,
                 ajaxConfig = viewConfig['ajaxConfig'],
