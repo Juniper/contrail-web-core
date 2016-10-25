@@ -150,7 +150,9 @@ define([
                                 viewConfig: {
                                     width: 50,
                                     value: "AND",
-                                    class: "and-clause-text"
+                                    elementConfig: {
+                                        class: "and-clause-text"
+                                    }
                                 }
                             },
                             {
