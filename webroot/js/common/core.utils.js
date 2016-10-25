@@ -75,6 +75,41 @@ define([
                 }
             });
         };
+        this.createPopoverModal = function (options) {
+            var modalId = options['modalId'],
+                actions = [];
+            if ((contrail.checkIfExist(options['onCancel'])) && (contrail.checkIfFunction(options['onCancel']))) {
+                actions.push({
+                    id        : 'cancel',
+                    onclick   : function () {
+                        options['onCancel']();
+                    },
+                    onKeyupEsc: true
+                });
+            }
+            if ((contrail.checkIfExist(options['onSave'])) && (contrail.checkIfFunction(options['onSave']))) {
+                actions.push({
+                    id       : 'save',
+                    onclick: function () {
+                        options['onSave']();
+                        if ($('#' + modalId).find('.generic-delete-form').length > 0) {
+                            $('#' + modalId).find('.btn-primary.btnSave').hide();
+                        }
+                    },
+                    onKeyupEnter: true
+                });
+            }
+
+            $.contrailBootstrapPopover({
+                id: modalId,
+                className: options['className'],
+                title: options['title'],
+                body: options['body'],
+                actions: actions,
+                isBackdropReq: options['isBackdropReq'],
+                targetId: options['targetId']
+            });
+        };
         this.createModal = function (options) {
             var modalId = options['modalId'],
                 footer = [];
@@ -1083,6 +1118,78 @@ define([
             return $.map(arr, function (val) {
                 return val;
             });
+        };
+        this.notifySettingsChange = function(colorModel) {
+            var p = layoutHandler.getURLHashObj().p,
+            resources =
+                menuHandler.getMenuObjByHash(p).resources.resource;
+            for(var i=0; i<resources.length; i++ ) {
+                var className = resources[i].class;
+                if(className == undefined)
+                    continue;
+                var classIns = window[className];
+                if(classIns == undefined)
+                    continue
+                for(var tag in classIns) {
+                    if(classIns[tag].hasOwnProperty("viewMap")) {
+                        var viewMap = classIns[tag]["viewMap"]
+                        for(var view in viewMap) {
+                            if(typeof viewMap[view].settingsChanged ==
+                                "function") {
+                                viewMap[view].settingsChanged(colorModel);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        this.showColorView = function (cfgObj) {
+            var modalId = cowc.SETTINGS_COLOR_MODAL_ID,
+                prefixId = cowc.SETTINGS_COLOR_PREFIX_ID,
+                cfgObj = ifNull(cfgObj,{}),
+                modalTemplate =
+                    contrail.getTemplate4Id('core-modal-template'),
+                modalLayout = modalTemplate({
+                    prefixId: prefixId, modalId: modalId}),
+                formId = prefixId + '_modal',
+                modalConfig = {
+                    'modalId': modalId,
+                    'body': modalLayout,
+                    'className': 'modal-280',
+                    'title': 'Dashboard Color Palette',
+                    'isBackdropReq': false,
+                    'targetId': 'settings-popup-link',
+                    'cfgObj': cfgObj,
+                    'onSave': function() {
+                        cfgObj.model.onSave();
+                        $("#" + modalId).modal('hide');
+                    },
+                    'onCancel': function() {
+                        cfgObj.model.onCancel();
+                        $("#" + modalId).modal('hide');
+                    }
+                };
+            cowu.createPopoverModal(modalConfig);
+            if(cfgObj.model == undefined) {
+                require(['js/models/SettingsColorModel'],
+                    function(SettingsColorModel) {
+                        var csModel = new SettingsColorModel();
+                        cfgObj.model = csModel;
+                        require(['js/views/SettingsColorView'],
+                            function(SettingsColorView) {
+                            var modalId = cowc.SETTINGS_COLOR_MODAL_ID;
+                            var settingsColorView = new SettingsColorView({
+                                el:$("#" + modalId).find('#' + formId),
+                                viewConfig:{}
+                            });
+                            settingsColorView.model = cfgObj.model;
+                            settingsColorView.render({
+                                modalId: modalId
+                            });
+                        });
+                    });
+            }
         };
 
         this.loadAlertsPopup = function(cfgObj) {

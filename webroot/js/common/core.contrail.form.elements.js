@@ -1040,6 +1040,123 @@ define([
         }
     };
 
+    $.extend({contrailBootstrapPopover:function (options) {
+            var keyupAction = $.extend(true, {}, {
+                onKeyupEnter: null,
+                onKeyupEsc: null
+            }, options.keyupAction);
+
+            options.id = options.id != undefined ? options.id : '';
+            var className = (options.className == null) ? '' : options.className,
+                    isBackdropReq;
+
+            var modalHTML = '<div id="' + options.id + '" class="modal fade contrail-modal ' + className + '" tabindex="-1" role="dialog" aria-hidden="true"> \
+                <div class="modal-dialog" role="document">\
+                    <div class="modal-content">\
+                        <div class="modal-header"> \
+                            <div class="modal-footer"></div> \
+                            <h6 class="modal-header-title"></h6> \
+                        </div> \
+                        <div class="modal-body"></div> \
+                    </div> \
+                </div>\
+            </div> ';
+
+            $('.modal-backdrop').remove();
+            $('#' + options.id).remove();
+            $('body').prepend(modalHTML);
+
+            if(options.closeClickAction != null) {
+                $('#modal-header-close').on('click', function() {
+                    if(typeof options.closeClickAction === 'function'){
+                        options.closeClickAction(options.closeClickParams);
+                    }
+                    else if(typeof options.closeClickAction === 'string'){
+                        window[options.closeClickAction](options.closeClickParams);
+                    }
+                });
+            } else {
+                $('#modal-header-close').attr('data-dismiss', 'modal');
+                $('#modal-header-close').attr('aria-hidden', 'true');
+            }
+            var modalId = $('#' + options.id);
+
+            modalId.find('.modal-header-title').empty().append(options.title != undefined ? options.title : '&nbsp;');
+            modalId.find('.modal-body').empty().append(options.body);
+
+            if(options.actions != false) {
+                $.each(options.actions, function (key, action) {
+                    function performFooterBtnClick(action) {
+                        if (typeof action.onclick === 'function') {
+                            action.onclick();
+                        }
+                    }
+
+                    var iconId = (action.id != undefined && action.id != '') ? action.id : options.id + 'icon' + key,
+                        icon = '<a id="' + iconId + '" class="margin-right-10"><i class="' +
+                        (action.id == 'save' ? 'fa fa-check' : 'fa fa-close') + '"></i></a>';
+
+                    modalId.find('.modal-footer').append(icon);
+                    $('#' + iconId).on('click', function () {
+                        performFooterBtnClick(action);
+                    });
+
+                    if (!contrail.checkIfFunction(keyupAction.onKeyupEnter) && action.onKeyupEnter) {
+                        keyupAction.onKeyupEnter = function () { performFooterBtnClick(action); };
+                    } else if (!contrail.checkIfFunction(keyupAction.onKeyupEsc) && action.onKeyupEsc) {
+                        keyupAction.onKeyupEsc = function () { performFooterBtnClick(action); };
+                    }
+                });
+            }
+            else {
+                modalId.find('.modal-footer').remove();
+            }
+            isBackdropReq = getValueByJsonPath(options, "isBackdropReq", true);
+            if(isBackdropReq) {
+                modalId.modal({backdrop:'static', keyboard: false});
+                modalId.offset({left: ($(document).width() - modalId.width()) / 2, top: $(document).scrollTop() + 50});
+            } else {
+                var targetOffset = $("#" + options['targetId']).offset(),
+                    calTop, calLeft;
+
+                if(targetOffset) {
+                    calTop = targetOffset.top;
+                    calLeft = targetOffset.left - 780;
+                }
+
+
+                modalId.modal({backdrop: isBackdropReq, keyboard: false});
+                modalId.offset({left: calLeft, top: calTop});
+            }
+
+            modalId.find('.modal-content')
+                .draggable({
+                    handle: ".modal-header",
+                    containment: modalId,
+                    cursor: 'move'
+                });
+
+            if (contrail.checkIfFunction(keyupAction.onKeyupEnter) || contrail.checkIfFunction(keyupAction.onKeyupEsc)) {
+                modalId
+                    .off('keyup')
+                    .on('keyup', function(event) {
+                        var code = event.which; // recommended to use e.which, it's normalized across browsers
+                        if (code == 13) {
+                            event.preventDefault();
+                        }
+
+                        if (modalId.prop('id') === $(event.target).prop('id')) {
+                            if (contrail.checkIfFunction(keyupAction.onKeyupEnter) && code == 13) {
+                                keyupAction.onKeyupEnter();
+                            } else if (contrail.checkIfFunction(keyupAction.onKeyupEsc) && code == 27) {
+                                keyupAction.onKeyupEsc();
+                            }
+                        }
+                    });
+            }
+        }
+    });
+
     $.extend({
         contrailBootstrapModal:function (options) {
             var keyupAction = $.extend(true, {}, {

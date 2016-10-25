@@ -13,6 +13,14 @@ define([
 ], function (_, ContrailView,  ContrailListModel, LegendView, cowc, chUtils) {
     var cfDataSource;
     var stackedBarChartWithFocusChartView = ContrailView.extend({
+        settingsChanged: function(colorModel) {
+            var self = this,
+                vc = self.attributes.viewConfig;
+            if(vc.hasOwnProperty("chartOptions")) {
+                vc.chartOptions["resetColor"] = true;
+            }
+            self.renderChart($(self.$el), vc, self.model);
+        },
 
         render: function () {
             var viewConfig = this.attributes.viewConfig,
@@ -113,6 +121,7 @@ define([
             var onClickBar = getValueByJsonPath(chartOptions,'onClickBar',false);
             var defaultZeroLineDisplay = getValueByJsonPath(chartOptions,'defaultZeroLineDisplay', false);
             var groupBy = chartOptions['groupBy'], groups = [], yAxisMaxValue;
+            var resetColor = getValueByJsonPath(chartOptions,'resetColor',false);
             chartOptions['timeRange'] =  getValueByJsonPath(self, 'model;queryJSON');
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data, chartViewModel);
@@ -134,7 +143,7 @@ define([
             self.parsedData = _.indexBy(data, 'key');
             if (colors != null && colorNodes[0] != 'DEFAULT') {
                 if (typeof colors == 'function') {
-                    self.colors = colors(colorNodes);
+                    self.colors = colors(_.without(_.pluck(data, 'key'), failureLabel), resetColor);
                 } else if (typeof colors == 'object') {
                     self.colors = colors;
                 }

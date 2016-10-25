@@ -151,6 +151,13 @@ define([
         this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
         this.TMPL_NOT_FOUND_MESSAGE = "core-not-found-message-template";
         this.TMPL_INFOBOXES_VIEW = "core-infobox-template";
+        /* Color Settings - Begin */
+        this.TMPL_SETTINGS_COLOR_VIEW = "core-settings-color-template";
+        this.TMPL_SETTINGS_COLOR_MORE = "core-settings-color-more-template";
+        this.SETTINGS_COLOR_MODAL_ID = 'settings-color';
+        this.SETTINGS_COLOR_PREFIX_ID = 'cs';
+        this.COOKIE_COLOR_SCHEME = "color_scheme";
+        /* Color Settings - End */
 
         //stacked bar chart
         this.TMPL_CUSTOM_CHART_LEGEND = 'custom-chart-legend';
