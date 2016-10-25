@@ -88,6 +88,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'view-config-generator'       : coreWebDir + '/js/common/view.config.generator',
         'iframe-view'                 : coreWebDir + '/js/views/IframeView',
         'jdorn-jsoneditor'            : coreWebDir + '/assets/jdorn-jsoneditor/js/jdorn-jsoneditor',
+        'jquery-linedtextarea'        : coreWebDir + '/assets/jquery-linedtextarea/js/jquery-linedtextarea',
         'qe-module'                   : coreWebDir + '/reports/qe/ui/js/qe.module',
         'legend-view'                 : coreWebDir + '/js/views/LegendView',
     };
