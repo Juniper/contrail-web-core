@@ -7,7 +7,7 @@
     </require>
     <require>
         <define>uddapi</define>
-        <path>process.mainModule.exports["corePath"] + '/webroot/reports/udd/ui/api/udd.api'</path>
+        <path>process.mainModule.exports["corePath"] + '/webroot/reports/udd/api/udd.api'</path>
     </require>
     <item>
         <url>/api/udd/widget/:id</url>
