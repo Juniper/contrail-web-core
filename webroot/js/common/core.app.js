@@ -45,6 +45,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         //Files not in bundles
         'underscore'                  : coreWebDir + '/assets/underscore/underscore-min',
         'slickgrid-utils'             : coreWebDir + "/js/slickgrid-utils",
+        'gridstack'                   : coreWebDir + '/assets/gridstack/js/gridstack',
         //'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
         //'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.9.1.min',
         'jquery'                      : coreWebDir + '/assets/jquery/js/jquery.min',

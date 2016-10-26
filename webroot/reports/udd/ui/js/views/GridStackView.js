@@ -8,7 +8,7 @@
 define([
     "lodash",
     "handlebars",
-    "/assets/gridstack/js/gridstack.js",
+    "gridstack",
     "contrail-view"
 ], function(_, Handlebars, GridStack, ContrailView) {
 

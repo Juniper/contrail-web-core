@@ -265,6 +265,15 @@ mkdir -p webroot/assets/jdorn-jsoneditor/js
 cp -af ./$THIRD_PARTY/jdorn-jsoneditor.js webroot/assets/jdorn-jsoneditor/js/jdorn-jsoneditor.js
 #End - Copy jdorn-jsoneditor.js from $THIRD_PARTY
 
+#Start - Copy Gridstack from $THIRD_PARTY
+rm -rf webroot/assets/gridstack
+mkdir -p webroot/assets/gridstack/js
+mkdir -p webroot/assets/gridstack/css
+cp -af ./$THIRD_PARTY/gridstack-v0.2.5/dist/gridstack.js webroot/assets/gridstack/js/gridstack.js
+cp -af ./$THIRD_PARTY/gridstack-v0.2.5/dist/gridstack.css webroot/assets/gridstack/css/gridstack.css
+cp -af ./$THIRD_PARTY/gridstack-v0.2.5/dist/gridstack-extra.css webroot/assets/gridstack/css/gridstack-extra.css
+#End - Copy Gridstack from $THIRD_PARTY
+
 #Start - Merging All CSS files
 rm -f webroot/css/contrail.unified.css
 
