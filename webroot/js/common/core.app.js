@@ -43,6 +43,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'jquery-dep-libs'             : coreWebDir + '/js/common/jquery.dep.libs',
         'nonamd-libs'                 : coreWebDir + '/js/common/nonamd.libs',
         //Files not in bundles
+        'gridstack'                   : coreWebDir + '/assets/gridstack/js/gridstack',
         'underscore'                  : coreWebDir + '/assets/underscore/underscore-min',
         'slickgrid-utils'             : coreWebDir + "/js/slickgrid-utils",
         //'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
@@ -53,6 +54,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'vis-node-model'              : coreWebDir + '/js/models/VisNodeModel',
         'vis-edge-model'              : coreWebDir + '/js/models/VisEdgeModel',
         'vis-tooltip-model'           : coreWebDir + '/js/models/VisTooltipModel',
+        'gs-view'                     : coreWebDir + '/js/views/GridStackView',
         'graph-view'                  : coreWebDir + '/js/views/GraphView',
         'contrail-graph-model'        : coreWebDir + '/js/models/ContrailGraphModel',
         'dagre'                       : coreWebDir + '/assets/joint/js/dagre',
@@ -214,6 +216,9 @@ var coreAppShim =  {
     },
     'jquery' : {
         exports: 'jQuery'
+    },
+    'gridstack' :{
+        deps:['jquery-ui']
     },
     'jquery.multiselect' : {
         deps: ['jquery-ui'],
