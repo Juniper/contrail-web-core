@@ -8,7 +8,7 @@
     </require>
     <require>
         <define>qeapi</define>
-        <path>process.mainModule.exports["corePath"] + '/webroot/reports/qe/ui/api/query.api'</path>
+        <path>process.mainModule.exports["corePath"] + '/webroot/reports/qe/api/query.api'</path>
     </require>
 
     <item>
