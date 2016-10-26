@@ -14,10 +14,14 @@ define([
 
         configure: function (checkedRows, callbackObj, type, configureData) {
             var ajaxConfig = {},
-                putData = {};
+                putData = {}, attributes = null;
 
             if (contrail.checkIfExist(checkedRows)) {
-                attributes = this.model().attributes;
+                if(Array.isArray(this.model().attributes)) {
+                    attributes = this.model().attributes;
+                } else {
+                    attributes = [this.model().attributes];
+                }
             } else if (contrail.checkIfExist(configureData)) {
                 attributes = configureData;
             }
