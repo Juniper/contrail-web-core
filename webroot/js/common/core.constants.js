@@ -1507,6 +1507,12 @@ define([
 
         this.OTHERS = 'Others';
         this.FAILURE_LABEL = 'Failures';
+
+        // Query Engine constants
+        this.TMPL_QUERY_PAGE = "query-page-template";
+        this.TMPL_QUERY_QUEUE_PAGE = "query-queue-page-template";
+        this.TMPL_QUERY_TEXT = "query-text-template";
+        this.TMPL_QUERY_SELECT = "query-select-popup-template";
     };
     //Export to global scope
     cowc = new CoreConstants();

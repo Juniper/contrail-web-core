@@ -5,11 +5,12 @@
 define([
     "knockback",
     "validation",
+    "core-constants",
     "layout-handler",
     "query-form-view",
     "core-basedir/reports/qe/ui/js/models/SystemLogsFormModel",
     "core-basedir/reports/qe/ui/js/common/qe.utils"
-], function(kb, kbValidation, LayoutHandler, QueryFormView, SystemLogsFormModel, qeUtils) {
+], function(kb, kbValidation, coreConstants, LayoutHandler, QueryFormView, SystemLogsFormModel, qeUtils) {
     var layoutHandler = new LayoutHandler();
 
     var SystemLogsFormView = QueryFormView.extend({
@@ -19,7 +20,7 @@ define([
                 modelMap = contrail.handleIfNull(self.modelMap, {}),
                 hashParams = layoutHandler.getURLHashParams(),
                 queryPrefix = cowc.SYSTEM_LOGS_PREFIX,
-                queryPageTmpl = contrail.getTemplate4Id(ctwc.TMPL_QUERY_PAGE),
+                queryPageTmpl = contrail.getTemplate4Id(coreConstants.TMPL_QUERY_PAGE),
                 queryType = contrail.checkIfExist(hashParams.queryType) ? hashParams.queryType : null,
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
                 queryFormId = cowc.QE_HASH_ELEMENT_PREFIX + cowc.SYSTEM_LOGS_PREFIX + cowc.QE_FORM_SUFFIX,
@@ -58,11 +59,10 @@ define([
         },
 
         renderQueryResult: function() {
-            var self = this,
-                viewConfig = self.attributes.viewConfig,
+            var viewConfig = this.attributes.viewConfig,
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
-                modelMap = contrail.handleIfNull(self.modelMap, {}),
-                queryFormModel = self.model,
+                modelMap = contrail.handleIfNull(this.modelMap, {}),
+                queryFormModel = this.model,
                 queryFormId = cowc.QE_HASH_ELEMENT_PREFIX + cowc.SYSTEM_LOGS_PREFIX + cowc.QE_FORM_SUFFIX,
                 queryResultId = cowc.QE_HASH_ELEMENT_PREFIX + cowc.SYSTEM_LOGS_PREFIX + cowc.QE_RESULTS_SUFFIX,
                 queryResultTabId = cowl.QE_SYSTEM_LOGS_TAB_ID;
@@ -76,7 +76,7 @@ define([
                 var queryRequestPostData = queryFormModel.getQueryRequestPostData(serverCurrentTime);
 
                 queryRequestPostData.chunkSize = cowc.QE_RESULT_CHUNK_SIZE_10K;
-                self.renderView4Config($(queryResultId), self.model,
+                this.renderView4Config($(queryResultId), this.model,
                     getQueryResultTabViewConfig(queryRequestPostData, queryResultTabId), null, null, modelMap,
                     function() {
                         var queryResultListModel = modelMap[cowc.UMID_QUERY_RESULT_LIST_MODEL];
@@ -85,7 +85,7 @@ define([
                             queryFormModel.is_request_in_progress(false);
                         });
                     });
-            });
+            }.bind(this));
         },
 
         getViewConfig: function() {

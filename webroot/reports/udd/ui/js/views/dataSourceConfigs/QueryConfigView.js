@@ -13,37 +13,26 @@ define([
     qeUtils, QueryFormView) {
     var QueryConfigView = QueryFormView.extend({
         render: function() {
-            var self = this;
-
-            self.renderView4Config(self.$el, self.model, self.getViewConfig(),
+            this.renderView4Config(this.$el, this.model, this.getViewConfig(),
                 coreConstants.KEY_RUN_QUERY_VALIDATION, null, null,
                 function() {
-                    kb.applyBindings(self.model, self.$el[0]);
-                    kbValidation.bind(self);
-                });
+                    kb.applyBindings(this.model, this.$el[0]);
+                    kbValidation.bind(this, {
+                        valid: function(view, attr, selector) {
+                            view.$("[" + selector + "~='" + attr + "']").removeClass("invalid").trigger("change");
+                            // Trigger the "change" event to force ContrailModel to update the errors observable.
+                            // For example, check FormDropDown's template, it has a change event binding whose handler
+                            // is defined by ContrailModel and updates the errors observable.
+                        }
+                    });
+                }.bind(this));
         },
 
         getViewConfig: function() {
-            var self = this;
             return {
                 view: "SectionView",
                 viewConfig: {
                     rows: [{
-                        columns: [{
-                            elementId: "time_range",
-                            view: "FormDropdownView",
-                            viewConfig: {
-                                path: "time_range",
-                                dataBindValue: "time_range",
-                                class: "col-xs-6",
-                                elementConfig: {
-                                    dataTextField: "text",
-                                    dataValueField: "id",
-                                    data: coreConstants.TIMERANGE_DROPDOWN_VALUES_WO_CUSTOM,
-                                },
-                            },
-                        }],
-                    }, {
                         columns: [{
                             elementId: "table_type",
                             view: "FormDropdownView",
@@ -55,6 +44,19 @@ define([
                                     dataTextField: "text",
                                     dataValueField: "id",
                                     data: coreConstants.TABLE_TYPES,
+                                },
+                            },
+                        }, {
+                            elementId: "time_range",
+                            view: "FormDropdownView",
+                            viewConfig: {
+                                path: "time_range",
+                                dataBindValue: "time_range",
+                                class: "col-xs-6",
+                                elementConfig: {
+                                    dataTextField: "text",
+                                    dataValueField: "id",
+                                    data: coreConstants.TIMERANGE_DROPDOWN_VALUES_WO_CUSTOM,
                                 },
                             },
                         }],
@@ -80,11 +82,11 @@ define([
                                 disabled: "table_name_data_object().data.length === 0",
                                 dataState: {
                                     fetching: {
-                                        visible: "table_name_data_object().status === '" + cowc.DATA_REQUEST_STATE_FETCHING + "'",
+                                        visible: "table_name_data_object().status === '" + coreConstants.DATA_REQUEST_STATE_FETCHING + "'",
                                         text: "Fetching Data"
                                     },
                                     error: {
-                                        visible: "table_name_data_object().status === '" + cowc.DATA_REQUEST_STATE_ERROR + "'",
+                                        visible: "table_name_data_object().status === '" + coreConstants.DATA_REQUEST_STATE_ERROR + "'",
                                         text: "Error in Fetching Data"
                                     }
                                 },
@@ -137,9 +139,9 @@ define([
                                 class: "col-xs-12",
                                 editPopupConfig: {
                                     renderEditFn: function() {
-                                        var tableName = self.model.table_name();
-                                        self.renderSelect({ className: qeUtils.getModalClass4Table(tableName) });
-                                    },
+                                        var tableName = this.model.table_name();
+                                        this.renderSelect({ className: qeUtils.getModalClass4Table(tableName) });
+                                    }.bind(this),
                                 },
                             },
                         }, {
@@ -195,8 +197,8 @@ define([
                                 placeHolder: "*",
                                 editPopupConfig: {
                                     renderEditFn: function() {
-                                        self.renderWhere({ className: coreConstants.QE_MODAL_CLASS_700 });
-                                    },
+                                        this.renderWhere({ className: coreConstants.QE_MODAL_CLASS_700 });
+                                    }.bind(this),
                                 },
                             },
                         } ],
@@ -214,8 +216,8 @@ define([
                                 label: coreLabelProcessor.TITLE_QE_FILTER,
                                 editPopupConfig: {
                                     renderEditFn: function() {
-                                        self.renderFilters({ className: coreConstants.QE_MODAL_CLASS_700 });
-                                    },
+                                        this.renderFilters({ className: coreConstants.QE_MODAL_CLASS_700 });
+                                    }.bind(this),
                                 },
                             },
                         } ],
@@ -259,13 +261,17 @@ define([
         },
 
         remove: function() {
-            var self = this;
-            kb.release(self.model, self.$el[0]);
-            kbValidation.unbind(self);
-            self.$el.empty().off(); // off to unbind the events
-            ko.cleanNode(self.$el[0]);
-            self.stopListening();
-            return self;
+            kb.release(this.model, this.$el[0]);
+            
+            kbValidation.unbind(this);
+            
+            this.$el.empty().off(); // off to unbind the events
+            
+            ko.cleanNode(this.$el[0]);
+            
+            this.stopListening();
+            
+            return this;
         },
     });
 

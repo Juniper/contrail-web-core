@@ -5,61 +5,199 @@
 define([
     "lodash",
     "backbone",
+    "knockout",
     "core-basedir/reports/qe/ui/js/common/qe.utils",
     "core-constants",
     "contrail-model",
+    "/reports/udd/ui/js/udd.constants.js",
     "text!reports/udd/config/default.config.json"
-], function(_, Backbone, qeUtils, cowc, ContrailModel, defaultConfig) {
+], function(_, Backbone, ko, qeUtils, cowc, ContrailModel, uddConstants, defaultConfig) {
+    var oldConfigState = null, // a private property remembering the oldConfigState of this widget
+        dataModelChangeHandler = _.noop, // a private property holding visualization meta config
+                                         // model's handlers to data config model change event
+        defaultConfigKeys = {
+            VISUALIZATION_TYPES: "contentViews",
+            DATA_SOURCE_TYPES: "dataSources",
+            VIEW_LOADING_PATH: "viewPathPrefix",
+            VIEW_NAME: "view",
+            MODEL_LOADING_PATH: "modelPathPrefix",
+            MODEL_NAME: "model"
+        },
+        cacheKeys = {
+            DATA_SOURCE_TYPES: "dst",
+            VISUALIZATION_TYPES: "vt",
+            DEFAULT_SUBVIEW_CONFIGS: "dsc"
+        },
+        staticCache = {}; // a map that caches static asset
+
     defaultConfig = JSON.parse(defaultConfig);
 
-    var WidgetModel = Backbone.Model.extend({
-        initialize: function(_p) {
-            var self = this;
+    /**
+     * compose a subview's JSON object to save on backend
+     *
+     * @param      {Object}  viewMeta   the view's basic meta info
+     * @param      {Object}  modelMeta  the model's basic meta info
+     * @param      {Object}  modelData  the model's actual state/data
+     * @return     {Object}             an object that represents the composed JSON
+     */
+    function configSubViewToJSON(viewMeta, modelMeta, modelData) {
+        return _.merge(
+            _.pick(viewMeta, [defaultConfigKeys.VIEW_NAME, defaultConfigKeys.VIEW_LOADING_PATH]),
+            _.pick(modelMeta, [defaultConfigKeys.MODEL_NAME, defaultConfigKeys.MODEL_LOADING_PATH]),
+            _.zipObject([uddConstants.raw.SUBVIEW_MODEL_DATA], [modelData])
+        );
+    }
 
-            self.ready = false;
+    /**
+     * Take a snapshot of states fo the chosen config models.
+     *
+     * @return     {Object}  an object containing serialized config model states
+     */
+    function _snapshotState() {
+        var modelToFreeze = _.pick(this.attributes, [
+            uddConstants.modelIDs.DATA_SOURCE,
+            uddConstants.modelIDs.VISUAL_META,
+            uddConstants.modelIDs.VIEWS_MODEL_COLLECTION
+        ]);
+        
+        // serialize state snapshot strings
+        return _.mapValues(modelToFreeze, JSON.stringify);
+    }
+
+    /**
+     * Restore the model's state
+     *
+     * @param      {Object}  stateSnapshot  The state snapshot for restoration
+     */
+    function _restoreState(stateSnapshot) {
+        // deserialize state snapshot strings
+        stateSnapshot = _.mapValues(stateSnapshot, JSON.parse);
+
+        _.forEach(stateSnapshot, function(oldState, modelID) {
+            _restore(this.attributes[modelID], oldState);
+        }, this);
+    }
+
+    /**
+     * A resolver that applies old attribute values to the Backbone model
+     *
+     * @param      {Object}  kbModel      A map of the Knockback model's attributes
+     * @param      {Object}  oldStateObj  The old state object
+     */
+    function _restore(kbModel, oldStateObj) {
+        _.forEach(oldStateObj, function(val, attrName) {
+            var currAttr = kbModel[attrName];
+
+            if (currAttr instanceof Backbone.Model) {
+                currAttr.set(val);
+            } else if (ko.isObservable(currAttr)) {
+                currAttr(val);
+            } else {
+                kbModel[attrName] = val;
+            }
+        });
+    }
+
+    /**
+     * A utility factory provides a handler to pass new view type (a string)
+     *     to Data Config Model's receiver observable.
+     *
+     * @param      {String}  reciever  The reciever's attr name
+     * @return     {Function}    The view change handler for data config model.
+     */
+    function getViewChangeHandlerForDataConfig(reciever) {
+        return function(model, newViewType) {
+            var dataConfigModel = this.get(uddConstants.modelIDs.DATA_SOURCE);
+
+            dataConfigModel[reciever](newViewType);
+            dataConfigModel.model().isValid(true, cowc.KEY_RUN_QUERY_VALIDATION);
+        };
+    }
+
+    return Backbone.Model.extend({
+        initialize: function(_p) {
+            var _widgetConfig = {};
+
+            this.ready = false;
 
             if (!_p || !_p.id) {
                 var p = _p || {},
-                    uuid = qeUtils.generateQueryUUID().slice(0, 36),
-                    _widgetConfig = p.config || {
-                        isReady: false
-                    };
+                    uuid = qeUtils.generateQueryUUID().slice(0, 36);
+
+                _widgetConfig = p[uddConstants.raw.WIDGET_META] || {
+                    isReady: false
+                };
 
                 _.merge(_widgetConfig, {
-                    title: uuid
+                    title: _widgetConfig.title || uuid
                 });
 
-                self.set("id", uuid);
-                self.set("config", _widgetConfig);
-                self.set("contentConfig", self.getDefaultConfig());
+                this.set("id", uuid);
+                this.set(uddConstants.raw.WIDGET_META, _widgetConfig);
+                this.set(uddConstants.raw.SUBVIEWS_CONFIG,
+                    this.get(uddConstants.raw.SUBVIEWS_CONFIG) || this.getDefaultConfig());
             }
 
-            var views = {
-                    dataConfigView: self.get("contentConfig").dataConfigView.view,
-                    contentView: self.get("contentConfig").contentView.view,
-                },
-                _viewsModel = new ContrailModel(views),
-                _configModel = new ContrailModel(self.get("config"));
+            var _contentConfig = this.get(uddConstants.raw.SUBVIEWS_CONFIG),
+                modelConfig = _.zipObject(
+                    [
+                        uddConstants.subviewIDs.DATA_SOURCE,
+                        uddConstants.subviewIDs.VISUALIZATION,
+                        "currentStep"
+                    ],[
+                        _.get(_contentConfig, [uddConstants.subviewIDs.DATA_SOURCE, defaultConfigKeys.VIEW_NAME]),
+                        _.get(_contentConfig, [uddConstants.subviewIDs.VISUALIZATION, defaultConfigKeys.VIEW_NAME]),
+                        _widgetConfig.step || ""
+                    ]),
+                _viewsModel = new ContrailModel(modelConfig),
+                _configModel = new ContrailModel(this.get(uddConstants.raw.WIDGET_META));
 
-            self.set("viewsModel", _viewsModel);
-            _viewsModel.model().on("change", self.changeConfigModel.bind(self));
-
-            self.set("configModel", _configModel);
-            // autosave widget gui config
-            _configModel.model().on("change", function() {
-                self.save();
+            _.merge(_configModel, {
+                steps: uddConstants.steps // for KO bindings
             });
 
-            require([self.getConfigModelObj(views.dataConfigView).path,
-                    self.getConfigModelObj(views.contentView).path
-                ],
-                self._onConfigModelsLoaded.bind(self)
-            );
+            this.set(uddConstants.modelIDs.VIEWS_MODEL_COLLECTION, _viewsModel);
+            _viewsModel.model().on("change", this.changeConfigModel, this);
 
-            self._parseViewLabels();
+            _viewsModel.model().on("change:" + uddConstants.subviewIDs.VISUALIZATION,
+                getViewChangeHandlerForDataConfig("visualType"), this);
+            _viewsModel.model().on("change:" + uddConstants.subviewIDs.DATA_SOURCE,
+                getViewChangeHandlerForDataConfig("dataSrcType"), this);
+
+            this.set(uddConstants.modelIDs.WIDGET_META, _configModel);
+            // autosave widget gui config
+            _configModel.model().on("change:x change:y change:width change:height change:title",
+                function() {
+                    if (this.ready) { // this condition will fail, when GridStackView.onAdd
+                                      // updates Pos meta of cloned widget. In this case,
+                                      // try to save the change once the model is ready.
+                        this.save();
+                    } else {
+                        this.once("ready", this.save, this);
+                    }
+                }, this);
+
+            require([
+                this.getConfigModelObj(modelConfig[uddConstants.subviewIDs.DATA_SOURCE]).path,
+                this.getConfigModelObj(modelConfig[uddConstants.subviewIDs.VISUALIZATION]).path
+            ], this._onConfigModelsLoaded.bind(this));
+
+            this._parseViewLabels();
         },
 
         parse: function(data) {
+            var propPaths = [
+                [
+                    uddConstants.raw.SUBVIEWS_CONFIG,
+                    uddConstants.subviewIDs.VISUAL_META,
+                    uddConstants.raw.SUBVIEW_MODEL_DATA
+                ], [
+                    uddConstants.raw.SUBVIEWS_CONFIG,
+                    uddConstants.subviewIDs.DATA_SOURCE,
+                    uddConstants.raw.SUBVIEW_MODEL_DATA
+                ]
+            ];
+
             // on successful model save
             if (data.result) {
                 return data;
@@ -70,40 +208,63 @@ define([
                 return [];
             }
 
-            // Why these two lines here????
-            data.contentConfig.contentConfigView.modelConfig = JSON.parse(data.contentConfig.contentConfigView.modelConfig);
-            data.contentConfig.dataConfigView.modelConfig = JSON.parse(data.contentConfig.dataConfigView.modelConfig);
+            // objectify some model configuration strings of the JSON object
+            _.forEach(propPaths, function(propPath) {
+                _.set(data, propPath, JSON.parse(_.get(data, propPath)));
+            });
+
             return data;
         },
 
-        validate: function() {
-            var attrs = this.attributes,
-                validConfig = !!attrs.configModel.title(),
-                validContentConfig = attrs.contentConfigModel ? attrs.contentConfigModel.model().isValid(true, "validation") : true,
-                validDataConfig = attrs.dataConfigModel.model().isValid(true, cowc.KEY_RUN_QUERY_VALIDATION);
+        validate: function(attrs) {
+            var validConfig = !!attrs[uddConstants.modelIDs.WIDGET_META].title(),
+                validContentConfig = attrs[uddConstants.modelIDs.VISUAL_META] ?
+                    attrs[uddConstants.modelIDs.VISUAL_META].model().isValid(true, "validation") : true,
+                validDataConfig = attrs[uddConstants.modelIDs.DATA_SOURCE]
+                    .model().isValid(true, cowc.KEY_RUN_QUERY_VALIDATION);
 
             return !(validConfig && validContentConfig && validDataConfig);
         },
 
         getDataSourceList: function() {
-            return _.keys(defaultConfig.dataSources);
+            if (!staticCache[cacheKeys.DATA_SOURCE_TYPES]) {
+                staticCache[cacheKeys.DATA_SOURCE_TYPES] = _.keys(defaultConfig[defaultConfigKeys.DATA_SOURCE_TYPES]);
+            }
+
+            return staticCache[cacheKeys.DATA_SOURCE_TYPES];
         },
 
         getContentViewList: function() {
-            return _.keys(defaultConfig.contentViews);
+            if (!staticCache[cacheKeys.VISUALIZATION_TYPES]) {
+                staticCache[cacheKeys.VISUALIZATION_TYPES] = _.keys(defaultConfig[defaultConfigKeys.VISUALIZATION_TYPES]);
+            }
+
+            return staticCache[cacheKeys.VISUALIZATION_TYPES];
         },
 
         getDefaultConfig: function() {
-            var defaultDSViewId = this.getDataSourceList()[0],
-                defaultDSViewConfig = defaultConfig.dataSources[defaultDSViewId],
-                defaultContentViewId = this.getContentViewList()[0],
-                defaultContentViewConfig = defaultConfig.contentViews[defaultContentViewId];
+            if (!staticCache[cacheKeys.DEFAULT_SUBVIEW_CONFIGS]) {
+                var defaultDSViewId = this.getDataSourceList()[0],
+                    defaultDSViewConfig = _.get(defaultConfig, [
+                        defaultConfigKeys.DATA_SOURCE_TYPES,
+                        defaultDSViewId
+                    ]),
+                    defaultContentViewId = this.getContentViewList()[0],
+                    defaultContentViewConfig = _.get(defaultConfig, [
+                        defaultConfigKeys.VISUALIZATION_TYPES,
+                        defaultContentViewId
+                    ]);
 
-            return {
-                dataConfigView: _.extend({}, defaultDSViewConfig),
-                contentView: _.extend({}, defaultContentViewConfig.contentView),
-                contentConfigView: _.extend({}, defaultContentViewConfig.contentConfigView)
-            };
+                staticCache[cacheKeys.DEFAULT_SUBVIEW_CONFIGS] = _.merge(
+                    _.zipObject([uddConstants.subviewIDs.DATA_SOURCE], [_.assign({}, defaultDSViewConfig)]),
+                    _.pick(defaultContentViewConfig, [
+                        uddConstants.subviewIDs.VISUAL_META,
+                        uddConstants.subviewIDs.VISUALIZATION
+                    ])
+                );
+            }
+
+            return staticCache[cacheKeys.DEFAULT_SUBVIEW_CONFIGS];
         },
 
         /**
@@ -112,23 +273,43 @@ define([
          * @return {object}          an object describing how to load the view
          */
         getViewConfig: function(viewType) {
-            var viewsModel = this.get("viewsModel").model(),
+            var viewsModel = this.get(uddConstants.modelIDs.VIEWS_MODEL_COLLECTION).model(),
                 viewId, viewPathPrefix, viewConfig = {};
 
             switch (viewType) {
-                case "dataConfigView":
+                case uddConstants.subviewIDs.DATA_SOURCE:
                     viewId = viewsModel.get(viewType);
-                    viewPathPrefix = _.get(defaultConfig, ["dataSources", viewId, "viewPathPrefix"]);
+                    viewPathPrefix = _.get(defaultConfig, [
+                        defaultConfigKeys.DATA_SOURCE_TYPES,
+                        viewId,
+                        defaultConfigKeys.VIEW_LOADING_PATH
+                    ]);
                     break;
-                case "contentView":
+                case uddConstants.subviewIDs.VISUALIZATION:
                     viewId = viewsModel.get(viewType);
-                    viewPathPrefix = _.get(defaultConfig, ["contentViews", viewId, viewType, "viewPathPrefix"]);
-                    viewConfig = this.get("contentConfigModel") ? this.get("contentConfigModel").getContentViewOptions() : {};
+                    viewPathPrefix = _.get(defaultConfig, [
+                        defaultConfigKeys.VISUALIZATION_TYPES,
+                        viewId,
+                        viewType,
+                        defaultConfigKeys.VIEW_LOADING_PATH
+                    ]);
+                    viewConfig = this.get(uddConstants.modelIDs.VISUAL_META) ?
+                        this.get(uddConstants.modelIDs.VISUAL_META).getContentViewOptions() : {};
                     break;
-                case "contentConfigView":
-                    var contentView = viewsModel.get("contentView");
-                    viewId = _.get(defaultConfig, ["contentViews", contentView, viewType, "view"]);
-                    viewPathPrefix = _.get(defaultConfig, ["contentViews", contentView, viewType, "viewPathPrefix"]);
+                case uddConstants.subviewIDs.VISUAL_META:
+                    var contentView = viewsModel.get(uddConstants.subviewIDs.VISUALIZATION);
+                    viewId = _.get(defaultConfig, [
+                        defaultConfigKeys.VISUALIZATION_TYPES,
+                        contentView,
+                        viewType,
+                        defaultConfigKeys.VIEW_NAME
+                    ]);
+                    viewPathPrefix = _.get(defaultConfig, [
+                        defaultConfigKeys.VISUALIZATION_TYPES,
+                        contentView,
+                        viewType,
+                        defaultConfigKeys.VIEW_LOADING_PATH
+                    ]);
                     break;
                 default:
             }
@@ -136,8 +317,8 @@ define([
             return {
                 view: viewId,
                 viewPathPrefix: viewPathPrefix,
-                elementId: this.get("id") + "-" + viewType,
                 viewConfig: viewConfig,
+                elementId: this.get("id") + "-" + viewType,
             };
         },
 
@@ -152,15 +333,22 @@ define([
             }
 
             var modelId = "", pathPrefix = "",
-                baseObjPath = _.has(defaultConfig.contentViews, viewId) ? ["contentViews", viewId, "contentConfigView"] : ["dataSources", viewId];
+                baseObjPath = _.has(defaultConfig[defaultConfigKeys.VISUALIZATION_TYPES], viewId) ? [
+                    defaultConfigKeys.VISUALIZATION_TYPES,
+                    viewId,
+                    uddConstants.subviewIDs.VISUAL_META
+                ] : [
+                    defaultConfigKeys.DATA_SOURCE_TYPES,
+                    viewId
+                ];
 
-            modelId = _.get(defaultConfig, baseObjPath.concat("model"));
-            pathPrefix = _.get(defaultConfig, baseObjPath.concat("modelPathPrefix"));
+            modelId = _.get(defaultConfig, baseObjPath.concat(defaultConfigKeys.MODEL_NAME));
+            pathPrefix = _.get(defaultConfig, baseObjPath.concat(defaultConfigKeys.MODEL_LOADING_PATH));
 
             return {
-                id: modelId,
-                path: pathPrefix + modelId,
-                pathPrefix: pathPrefix,
+                model: modelId,
+                modelPathPrefix: pathPrefix,
+                path: pathPrefix + modelId
             };
         },
 
@@ -169,15 +357,18 @@ define([
                 contentConfigModel = {},
                 dataConfigModel = {};
 
-            if (changed.dataConfigView) {
-                console.debug("changed data config view");
-                dataConfigModel = this.getConfigModelObj(changed.dataConfigView);
+            if (changed[uddConstants.modelIDs.DATA_SOURCE]) {
+                dataConfigModel = this.getConfigModelObj(changed[uddConstants.modelIDs.DATA_SOURCE]);
                 // What does this retrieve????
-                var changeContentView = defaultConfig.dataSources[changed.dataConfigView].contentViews[0];
+                var changeContentView = _.get(defaultConfig,
+                    [
+                        defaultConfigKeys.DATA_SOURCE_TYPES,
+                        changed[uddConstants.modelIDs.DATA_SOURCE],
+                        defaultConfigKeys.VISUALIZATION_TYPES
+                    ])[0];
                 contentConfigModel = this.getConfigModelObj(changeContentView);
-            } else if (changed.contentView) {
-                console.log("changed content config view");
-                contentConfigModel = this.getConfigModelObj(changed.contentView);
+            } else if (changed[uddConstants.subviewIDs.VISUALIZATION]) {
+                contentConfigModel = this.getConfigModelObj(changed[uddConstants.subviewIDs.VISUALIZATION]);
             } else {
                 return;
             }
@@ -187,84 +378,156 @@ define([
 
         toJSON: function() {
             var attrs = this.attributes,
-                widgetConfigModel = attrs.configModel;
+                widgetConfigModel = attrs[uddConstants.modelIDs.WIDGET_META].model().attributes,
+                dataSrcView = _.get(attrs, [
+                    uddConstants.modelIDs.VIEWS_MODEL_COLLECTION,
+                    uddConstants.subviewIDs.DATA_SOURCE
+                ]),
+                visualizationView = _.get(attrs, [
+                    uddConstants.modelIDs.VIEWS_MODEL_COLLECTION,
+                    uddConstants.subviewIDs.VISUALIZATION
+                ]),
+                dataSrcModel = attrs[uddConstants.modelIDs.DATA_SOURCE],
+                visualMetaModel = attrs[uddConstants.modelIDs.VISUAL_META];
 
-            var result = {
-                dashboardId: attrs.dashboardId,
-                tabId: attrs.tabId,
-                tabName: attrs.tabName,
-                config: {
-                    title: widgetConfigModel.title(),
-                    x: widgetConfigModel.x(),
-                    y: widgetConfigModel.y(),
-                    width: widgetConfigModel.width(),
-                    height: widgetConfigModel.height(),
-                },
-                contentConfig: {
-                    dataConfigView: {
-                        view: this.getViewConfig("dataConfigView").view,
-                        viewPathPrefix: this.getViewConfig("dataConfigView").viewPathPrefix,
-                        model: this.getConfigModelObj(attrs.viewsModel.dataConfigView()).id,
-                        modelPathPrefix: this.getConfigModelObj(attrs.viewsModel.dataConfigView()).pathPrefix,
-                        modelConfig: JSON.stringify(attrs.dataConfigModel.toJSON()),
-                    },
-                    contentView: {
-                        view: this.getViewConfig("contentView").view,
-                        viewPathPrefix: this.getViewConfig("contentView").viewPathPrefix,
-                    },
-                    contentConfigView: {
-                        view: this.getViewConfig("contentConfigView").view,
-                        viewPathPrefix: this.getViewConfig("contentConfigView").viewPathPrefix,
-                        model: this.getConfigModelObj(attrs.viewsModel.contentView()).id,
-                        modelPathPrefix: this.getConfigModelObj(attrs.viewsModel.contentView()).pathPrefix,
-                        modelConfig: attrs.contentConfigModel ? JSON.stringify(attrs.contentConfigModel.toJSON()) : undefined,
-                    },
-                },
-            };
-            return result;
+            return _.merge(
+                    _.pick(attrs, [
+                        "dashboardId",
+                        "tabId",
+                        "tabName",
+                        "tabCreationTime"
+                    ]),
+                    _.zipObject(
+                        [
+                            uddConstants.raw.WIDGET_META,
+                            uddConstants.raw.SUBVIEWS_CONFIG
+                        ], [
+                            _.pick(widgetConfigModel, [
+                                "title",
+                                "x",
+                                "y",
+                                "width",
+                                "height"
+                            ]),
+                            _.zipObject(
+                                [
+                                    uddConstants.subviewIDs.DATA_SOURCE,
+                                    uddConstants.subviewIDs.VISUAL_META,
+                                    uddConstants.subviewIDs.VISUALIZATION
+                                ], [
+                                    configSubViewToJSON(
+                                        this.getViewConfig(uddConstants.subviewIDs.DATA_SOURCE),
+                                        this.getConfigModelObj(dataSrcView()),
+                                        JSON.stringify(dataSrcModel.toJSON())
+                                    ),
+                                    configSubViewToJSON(
+                                        this.getViewConfig(uddConstants.subviewIDs.VISUAL_META),
+                                        this.getConfigModelObj(visualizationView()),
+                                        visualMetaModel ? JSON.stringify(visualMetaModel.toJSON()) : undefined
+                                    ),
+                                    _.pick(this.getViewConfig(uddConstants.subviewIDs.VISUALIZATION), [
+                                        defaultConfigKeys.VIEW_NAME,
+                                        defaultConfigKeys.VIEW_LOADING_PATH
+                                    ])
+                                ]
+                            )
+                        ]
+                    )
+                );
         },
 
         _onConfigModelsLoaded: function(DataConfigModel, ContentConfigModel) {
-            var contentConfigModel,
-                dataConfigModel = this.get("dataConfigModel"),
+            var visualMetaConfigModel = this.get(uddConstants.modelIDs.VISUAL_META),
+                dataConfigModel = this.get(uddConstants.modelIDs.DATA_SOURCE),
                 attrs = this.attributes;
 
-            if (attrs.dataConfigModel) {
-                // Why remove custom and Backbone event handlers???
-                attrs.dataConfigModel.model().off("change");
+            if (dataConfigModel) {
+                // A new visualization meta config model is gonna take place,
+                // so unregister the current visualization meta config model's
+                // data model change event handler.
+                dataConfigModel.model().off("change", dataModelChangeHandler);
             }
 
             if (DataConfigModel) {
-                dataConfigModel = new DataConfigModel(attrs.contentConfig.dataConfigView.modelConfig);
-                this.set("dataConfigModel", dataConfigModel);
+                var currDataSrcConfig = _.get(attrs, [
+                        uddConstants.raw.SUBVIEWS_CONFIG,
+                        uddConstants.subviewIDs.DATA_SOURCE,
+                        uddConstants.raw.SUBVIEW_MODEL_DATA
+                    ]),
+                    currVisualType = _.get(attrs, [
+                        uddConstants.modelIDs.VIEWS_MODEL_COLLECTION,
+                        uddConstants.subviewIDs.VISUALIZATION
+                    ]),
+                    currDataSrcType = _.get(attrs, [
+                        uddConstants.modelIDs.VIEWS_MODEL_COLLECTION,
+                        uddConstants.subviewIDs.DATA_SOURCE
+                    ]),
+                    newDataSrcConfigState = _.merge(
+                        currDataSrcConfig,
+                        {
+                            visualType: currVisualType() || "",
+                            dataSrcType: currDataSrcType() || "",
+                        });
+
+                dataConfigModel = new DataConfigModel(newDataSrcConfigState);
+                this.set(uddConstants.modelIDs.DATA_SOURCE, dataConfigModel);
             }
 
             if (ContentConfigModel) {
-                // TODO set dataModel in modelConfig
-                contentConfigModel = new ContentConfigModel(attrs.contentConfig.contentConfigView.modelConfig);
+                var currVisualMetaConfig = _.get(attrs, [
+                    uddConstants.raw.SUBVIEWS_CONFIG,
+                    uddConstants.subviewIDs.VISUAL_META,
+                    uddConstants.raw.SUBVIEW_MODEL_DATA
+                ]);
+
+                // Instantiate the new visulization meta config model
+                // and connect it to other models
+                visualMetaConfigModel = new ContentConfigModel(currVisualMetaConfig);
+                dataModelChangeHandler = function(model) {
+                    visualMetaConfigModel.onDataModelChange(model);
+                };
 
                 // ALERT: Since the onDataModelChange event hanlder listens to Backbone's change event,
                 //        we should pass in the underlying Backbone model rather than the KnockBack model.
                 //        This will avoid an data update timing issue (the Backbone model is updated,
                 //        but the Knockback observables are not updated till next CPU tick.)
-                contentConfigModel.onDataModelChange(dataConfigModel.model());
-                dataConfigModel.model().on("change", contentConfigModel.onDataModelChange.bind(contentConfigModel, dataConfigModel.model()));
+                dataModelChangeHandler(dataConfigModel.model());
+                dataConfigModel.model().on("change", dataModelChangeHandler);
             }
 
-            // for some content views config may be missing <=== What?!!!!
-            this.set("contentConfigModel", contentConfigModel);
+            // for some content views config may be missing <=== What?
+            this.set(uddConstants.modelIDs.VISUAL_META, visualMetaConfigModel);
 
             this.ready = true;
             this.trigger("ready");
         },
 
         _parseViewLabels: function() {
-            var self = this;
-            self.viewLabels = {};
-            _.each(_.extend({}, defaultConfig.contentViews, defaultConfig.dataSources), function(config, id) {
-                self.viewLabels[id] = config.label;
-            });
+            var definedSubviewTypes = _.assign(
+                    {},
+                    defaultConfig[defaultConfigKeys.VISUALIZATION_TYPES],
+                    defaultConfig[defaultConfigKeys.DATA_SOURCE_TYPES]
+                );
+
+            this.viewLabels = {};
+            
+            _.forEach(definedSubviewTypes, function(config, subviewType) {
+                this.viewLabels[subviewType] = config.label;
+            }, this);
         },
+
+        snapshotConfigState: function() {
+            if (_.isNull(oldConfigState)) {
+                oldConfigState = _snapshotState.call(this);
+            }
+        },
+
+        restoreConfigState: function() {
+            _restoreState.call(this, oldConfigState);
+        },
+
+        dropOldConfigSnapshot: function() {
+            oldConfigState = null;
+        }
     });
-    return WidgetModel;
 });

@@ -7,12 +7,12 @@ define([
 ], function(QueryEngineView) {
     var QEPageLoader = function() {
         this.load = function (paramObject) {
-            var self = this, hashParams = paramObject.hashParams,
+            var hashParams = paramObject.hashParams,
                 renderFn = paramObject.function,
                 loadingStartedDefObj = paramObject.loadingStartedDefObj;
 
-            self.qeView = new QueryEngineView();
-            self.renderView(renderFn, hashParams);
+            this.qeView = new QueryEngineView();
+            this.renderView(renderFn, hashParams);
             if(contrail.checkIfExist(loadingStartedDefObj)) {
                 loadingStartedDefObj.resolve();
             }

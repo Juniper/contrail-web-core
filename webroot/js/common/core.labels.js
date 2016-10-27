@@ -346,6 +346,19 @@ define([
         this.GRID_VISIBLE_COLUMNS = "Columns to Show";
         this.GRID_PAGE_SIZE = "Records Per Grid";
         this.GRID_ENTRY_WITH_DETAILS = "With Collapsible Details";
+
+        /* UDD Labels */
+        this.TMPL_LOG_LIST = 'logList-template';
+        this.TITLE_UDD_DEFAULT_DASHBOARD = 'udd0';
+        this.TITLE_UDD_DATA_SOURCE = 'Data Source';
+        this.TITLE_UDD_VISUAL_META_VIEW = 'Content View';
+        this.TITLE_UDD_DATA_CONFIG = 'Data Config: ';
+        this.TITLE_UDD_VISUAL_META_CONFIG = 'Content View Config: ';
+        this.UDD_WIDGET_NEXT = 'Next';
+        this.UDD_WIDGET_BACK = 'Back';
+        this.UDD_WIDGET_SUBMIT = 'Submit';
+        this.UDD_WIDGET_RESET = 'Reset';
+        this.UDD_WIDGET_URL = '/api/udd/widget/';
     };
 
     function capitalizeSentence(sentence) {

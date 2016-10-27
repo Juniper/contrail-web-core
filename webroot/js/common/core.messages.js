@@ -35,7 +35,8 @@ define([
         this.DATA_ERROR = "Error in getting data.";
         this.DATA_SUCCESS_EMPTY = "No data available.";
         this.DATA_COMPATIBILITY_ERROR = 'Incompatible data';
-
+        this.NO_COMPATIBLE_DATA_SOURCES = 'No compatible data sources selected';
+        
         this.DATA_ERROR_REQUIRED = "Required";
         this.DATA_ERROR_INVALID = "Invalid";
 

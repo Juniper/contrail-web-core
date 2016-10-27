@@ -4,19 +4,19 @@
 
  define([
      "lodash",
+     "core-constants",
      "contrail-view",
      "contrail-list-model",
      "core-basedir/reports/qe/ui/js/common/qe.grid.config"
- ], function(_, ContrailView, ContrailListModel, qeGridConfig) {
+ ], function(_, coreConstants, ContrailView, ContrailListModel, qeGridConfig) {
      var QueryQueueView = ContrailView.extend({
          render: function() {
-             var self = this,
-                 viewConfig = self.attributes.viewConfig,
-                 queryQueuePageTmpl = contrail.getTemplate4Id(ctwc.TMPL_QUERY_QUEUE_PAGE),
+             var viewConfig = this.attributes.viewConfig,
+                 queryQueuePageTmpl = contrail.getTemplate4Id(coreConstants.TMPL_QUERY_QUEUE_PAGE),
                  queryQueueType = viewConfig.queueType,
                  queryQueueGridId = cowc.QE_HASH_ELEMENT_PREFIX + queryQueueType + cowc.QE_QUEUE_GRID_SUFFIX;
 
-             self.$el.append(queryQueuePageTmpl({ queryQueueType: queryQueueType }));
+             this.$el.append(queryQueuePageTmpl({ queryQueueType: queryQueueType }));
 
              var queueRemoteConfig = {
                  ajaxConfig: {
@@ -32,13 +32,12 @@
                  remote: queueRemoteConfig
              };
 
-             self.model = new ContrailListModel(listModelConfig);
-             self.renderView4Config($(queryQueueGridId), self.model, self.getQueryQueueViewConfig(queueRemoteConfig));
+             this.model = new ContrailListModel(listModelConfig);
+             this.renderView4Config($(queryQueueGridId), this.model, this.getQueryQueueViewConfig(queueRemoteConfig));
          },
 
          getQueryQueueViewConfig: function(queueRemoteConfig) {
-             var self = this,
-                 viewConfig = self.attributes.viewConfig,
+             var viewConfig = this.attributes.viewConfig,
                  queryQueueType = viewConfig.queueType,
                  pagerOptions = viewConfig.pagerOptions,
                  queueColorMap = [null, null, null, null, null];
@@ -48,7 +47,7 @@
                  title: cowl.TITLE_QUERY_QUEUE,
                  view: "GridView",
                  viewConfig: {
-                     elementConfig: getQueryQueueGridConfig(self, queryQueueType, queueRemoteConfig, pagerOptions, queueColorMap)
+                     elementConfig: getQueryQueueGridConfig(this, queryQueueType, queueRemoteConfig, pagerOptions, queueColorMap)
                  }
              };
 
@@ -112,9 +111,8 @@
          },
 
          renderSessionAnalyzer: function(elementId, sessionAnalyzerViewConfig) {
-             var self = this,
-                 childViewMap = self.childViewMap,
-                 modelMap = contrail.handleIfNull(self.modelMap, {}),
+             var childViewMap = this.childViewMap,
+                 modelMap = contrail.handleIfNull(this.modelMap, {}),
                  queryQueueTabId = cowl.QE_QUERY_QUEUE_TABS_ID,
                  queryQueueTabsView = contrail.checkIfExist(childViewMap[queryQueueTabId]) ? childViewMap[queryQueueTabId] : null;
 

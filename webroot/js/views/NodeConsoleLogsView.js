@@ -7,9 +7,10 @@ define([
     'moment',
     'query-form-view',
     'knockback',
+    "core-constants",
     'core-basedir/js/models/NodeConsoleLogsModel',
     'core-basedir/reports/qe/ui/js/common/qe.utils'
-], function (_, moment, QueryFormView, Knockback, NodeConsoleLogsModel, qeUtils) {
+], function (_, moment, QueryFormView, Knockback, coreConstants, NodeConsoleLogsModel, qeUtils) {
     var nodeType,hostname;
     var NodeConsoleLogsView = QueryFormView.extend({
         render: function () {
@@ -17,7 +18,7 @@ define([
                 viewConfig = self.attributes.viewConfig,
                 modelMap = contrail.handleIfNull(self.modelMap, {}),
                 elementId = self.attributes.elementId,
-                queryPageTmpl = contrail.getTemplate4Id(ctwc.TMPL_QUERY_PAGE),
+                queryPageTmpl = contrail.getTemplate4Id(coreConstants.TMPL_QUERY_PAGE),
                 consoleLogsModel = new NodeConsoleLogsModel(),
                 queryFormId = cowc.QE_HASH_ELEMENT_PREFIX + cowc.CONSOLE_LOGS_PREFIX + cowc.QE_FORM_SUFFIX;
 
@@ -195,7 +196,7 @@ define([
                                         style: 'display: none;',
                                         path: 'from_time', dataBindValue: 'from_time', class: "col-xs-4",
                                         elementConfig: qeUtils.getFromTimeElementConfig('from_time', 'to_time'),
-                                        visible: "time_range() == -1"
+                                        visible: "isTimeRangeCustom()"
                                     }
                                 },
                                 {
@@ -204,7 +205,7 @@ define([
                                         style: 'display: none;',
                                         path: 'to_time', dataBindValue: 'to_time', class: "col-xs-4",
                                         elementConfig: qeUtils.getToTimeElementConfig('from_time', 'to_time'),
-                                        visible: "time_range() == -1"
+                                        visible: "isTimeRangeCustom()"
                                     }
                                 }
                             ]

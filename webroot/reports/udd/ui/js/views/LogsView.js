@@ -10,6 +10,7 @@ define([
 
         initialize: function() {
             var self = this;
+            
             self.model.onDataUpdate.subscribe(function() {
                 // TODO remove timeout
                 // self.model.isRequestInProgress should return false here
@@ -17,17 +18,17 @@ define([
                     self.render();
                 });
             });
-            self.template = window.contrail.getTemplate4Id(ctwl.TMPL_LOG_LIST);
+            self.template = window.contrail.getTemplate4Id(window.cowl.TMPL_LOG_LIST);
         },
 
         render: function() {
-            var self = this;
-            var data;
-            var list = self.model.getItems();
-            if (self.model.isRequestInProgress()) {
+            var data,
+                list = this.model.getItems();
+
+            if (this.model.isRequestInProgress()) {
                 data = window.cowm.DATA_FETCHING;
             } else {
-                data = self._format(list.slice(0, self.attributes.viewConfig.totalRecords));
+                data = this._format(list.slice(0, this.attributes.viewConfig.totalRecords));
                 if (_.isEmpty(data)) {
                     if (!_.isEmpty(list)) {
                         data = window.cowm.DATA_COMPATIBILITY_ERROR;
@@ -36,7 +37,7 @@ define([
                     }
                 }
             }
-            self.$el.html(self.template(data));
+            this.$el.html(this.template(data));
         },
 
         _format: function(data) {
