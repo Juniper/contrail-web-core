@@ -4,15 +4,16 @@
 
 define([
     'underscore',
+    "core-constants",
     'contrail-view',
     'knockback'
-], function (_, ContrailView, Knockback) {
+], function (_, coreConstants, ContrailView, Knockback) {
 
     var QuerySelectView = ContrailView.extend({
         render: function (renderConfig) {
             var self = this,
                 viewConfig = self.attributes.viewConfig,
-                selectTemplate = contrail.getTemplate4Id(ctwc.TMPL_QUERY_SELECT),
+                selectTemplate = contrail.getTemplate4Id(coreConstants.TMPL_QUERY_SELECT),
                 selectDataObject = self.model.select_data_object(),
                 selectFields = $.makeArray(selectDataObject.select_fields()),
                 queryPrefix = self.model.query_prefix(),

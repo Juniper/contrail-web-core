@@ -53,18 +53,18 @@
 .grid-stack-item.widget .panel .panel-heading .title-group .title {
   display: inline-block;
   min-width: 48px;
-  min-height: 18px;
+  min-height: 1.5em;
   overflow: hidden;
   text-overflow: ellipsis;
+  border: solid 1px transparent;
 }
 .grid-stack-item.widget .panel .panel-heading .title-group .title:hover {
   border: dashed 1px #ccc;
 }
 
 .grid-stack-item.widget .panel .panel-heading .title-group .edit-title {
-  display: none;
   padding: 0;
-  height: 1.4em;
+  height: 1.5em;
   width: 21em;
 }
 
@@ -95,19 +95,21 @@
 }
 
 .grid-stack-item.widget .panel .panel-heading .widget-control > .remove:hover {
-  color: red;
+  color: #f41616;
+}
+
+.grid-stack-item.widget .panel .panel-heading .widget-control > .refresh:hover {
+    color: #07b23e;
+}
+
+.grid-stack-item.widget .panel .panel-heading .widget-control > .clone:hover {
+    color: #f6a047;
 }
 
 .grid-stack-item.widget .panel .panel-body {
   flex: 1;
   padding: 8px;
   overflow: auto;
-}
-
-.grid-stack-item.widget .panel .panel-body .data-config,
-.grid-stack-item.widget .panel .panel-body .content-config,
-.grid-stack-item.widget .panel .panel-body .content-view {
-    display: none;
 }
 
 .grid-stack-item.widget .panel .panel-footer {

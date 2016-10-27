@@ -502,15 +502,15 @@ define([
             runQueryValidation: {
                 table_type: {
                     required: true,
-                    msg: ctwm.getRequiredMessage('table type'),
+                    msg: window.cowm.getRequiredMessage('table type'),
                 },
                 table_name: {
                     required: true,
-                    msg: ctwm.getRequiredMessage('table name'),
+                    msg: window.cowm.getRequiredMessage('table name'),
                 },
                 select: {
                     required: true,
-                    msg: ctwm.getRequiredMessage('select'),
+                    msg: window.cowm.getRequiredMessage('select'),
                 },
                 from_time: function(value) {
                     var fromTime = new Date(value).getTime(),
@@ -518,7 +518,7 @@ define([
                         timeRange = this.attributes.time_range;
 
                     if(fromTime > toTime && timeRange == -1) {
-                        return cowm.FROM_TIME_SMALLER_THAN_TO_TIME;
+                        return window.cowm.FROM_TIME_SMALLER_THAN_TO_TIME;
                     }
                 },
                 to_time: function(value) {
@@ -527,7 +527,7 @@ define([
                         timeRange = this.attributes.time_range;
 
                     if (toTime < fromTime && timeRange == -1) {
-                        return cowm.TO_TIME_GREATER_THAN_FROM_TIME;
+                        return window.cowm.TO_TIME_GREATER_THAN_FROM_TIME;
                     }
                 }
             }

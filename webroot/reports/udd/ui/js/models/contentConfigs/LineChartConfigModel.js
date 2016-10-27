@@ -41,38 +41,37 @@ define(function(require) {
         },
 
         getParserOptions: function() {
-            var self = this;
             return {
-                dataFields: [self.yAxisValue()],
+                dataFields: [this.yAxisValue()],
             };
         },
 
         chartDataParser: function(data) {
-            var self = this;
-            var dataSeries = cowu.timeSeriesParser({dataFields: [self.yAxisValue()]}, data);
+            var dataSeries = cowu.timeSeriesParser({dataFields: [this.yAxisValue()]}, data);
+
             if (dataSeries.length === 0) {
                 dataSeries[0] = {};
                 dataSeries[0].values = [];
             }
-            dataSeries[0].key = self.yAxisLabel();
-            dataSeries[0].color = self.color();
+            dataSeries[0].key = this.yAxisLabel();
+            dataSeries[0].color = this.color();
+
             return dataSeries;
         },
 
         getContentViewOptions: function() {
-            var self = this;
             return {
-                parseFn: self.chartDataParser.bind(self),
+                parseFn: this.chartDataParser.bind(this),
                 chartOptions: {
                     axisLabelDistance: 5,
                     height: 300,
-                    yAxisLabel: self.yAxisLabel(),
-                    colors: [self.color()],
+                    yAxisLabel: this.yAxisLabel(),
+                    colors: [this.color()],
                     forceY: [0, 10],
                     yFormatter: cowf.getFormattedValue.bind(cowf, [{
-                        format: cowc.QUERY_COLUMN_FORMATTER[self.yAxisValue()],
+                        format: cowc.QUERY_COLUMN_FORMATTER[this.yAxisValue()],
                         options: {
-                            unit: self.yAxisValueUnit()
+                            unit: this.yAxisValueUnit()
                         }
                     }]),
                 },

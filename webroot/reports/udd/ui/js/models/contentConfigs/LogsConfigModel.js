@@ -11,16 +11,14 @@ define([
         },
 
         toJSON: function() {
-            var self = this;
             return {
-                records: self.records(),
+                records: this.records(),
             };
         },
 
         getContentViewOptions: function() {
-            var self = this;
             return {
-                totalRecords: self.records(),
+                totalRecords: this.records(),
             };
         },
     });

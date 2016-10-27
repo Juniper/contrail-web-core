@@ -61,12 +61,11 @@ define([
         },
 
         toJSON: function() {
-            var self = this;
             return {
-                gridTitle: self.gridTitle(),
-                detailedEntry: self.detailedEntry(),
-                visibleColumns: self.visibleColumns(),
-                pageSize: self.pageSize()
+                gridTitle: this.gridTitle(),
+                detailedEntry: this.detailedEntry(),
+                visibleColumns: this.visibleColumns(),
+                pageSize: this.pageSize()
             };
         },
 

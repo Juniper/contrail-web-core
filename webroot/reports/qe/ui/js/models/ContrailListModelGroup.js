@@ -66,21 +66,21 @@ define([
         },
 
         isRequestInProgress: function() {
-            var self = this,
-                inProgress = false;
-            _.forEach(self.childModelObjs, function(childModel) {
+            var inProgress = false;
+
+            _.forEach(this.childModelObjs, function(childModel) {
                 if (childModel.status.state() === "pending" && !inProgress) {
                     inProgress = true;
                 }
             });
+
             return inProgress;
         },
 
         getItems: function() {
-            var self = this,
-                items = [];
+            var items = [];
 
-            _.forEach(self.childModelObjs, function(childModelObj, idx) {
+            _.forEach(this.childModelObjs, function(childModelObj, idx) {
                 items.push({
                     cgrid: "id_" + idx,
                     key: childModelObj.modelConfig.id,
@@ -88,37 +88,34 @@ define([
                 });
             });
 
-            if (self.data.length === 0) {
-                self.data = items;
+            if (this.data.length === 0) {
+                this.data = items;
             }
 
-            if (contrail.checkIfExist(self.modelConfig.parseFn)) {
-                return self.modelConfig.parseFn(items);
+            if (contrail.checkIfExist(this.modelConfig.parseFn)) {
+                return this.modelConfig.parseFn(items);
             }
 
             return items;
         },
 
         setData: function(data) {
-            var self = this;
-            self.data = data;
-            self.onDataUpdate.notify();
+            this.data = data;
+            this.onDataUpdate.notify();
         },
 
         updateData: function(data) {
-            var self = this;
-            _.forEach(self.data, function(item) {
+            _.forEach(this.data, function(item) {
                 if(item.key === data.key) {
                     item.values = data.values;
-                    self.onDataUpdate.notify();
+                    this.onDataUpdate.notify();
                 }
-            });
+            }, this);
         },
 
         errorHandler: function(errorObj) {
-            var self = this;
-            self.error = true;
-            self.errorList.concat(errorObj.errorList);
+            this.error = true;
+            this.errorList.concat(errorObj.errorList);
         },
 
         createChildModelObj: function(listModelConfig, updateDataCB, errorHandler) {
@@ -151,13 +148,12 @@ define([
         },
 
         createAllChildModels: function(listModelConfigArray, updateDataFn, errorHandler) {
-            var self = this,
-                childModelCollection = [];
+            var childModelCollection = [];
 
             _.forEach(listModelConfigArray, function(listModelConfig) {
-                childModelCollection.push(self.createChildModelObj(listModelConfig, updateDataFn, errorHandler));
-            });
-            self.childModelObjs = childModelCollection;
+                childModelCollection.push(this.createChildModelObj(listModelConfig, updateDataFn, errorHandler));
+            }, this);
+            this.childModelObjs = childModelCollection;
         }
     });
 

@@ -9,24 +9,22 @@ define([
     "knockback",
     "validation",
     "core-constants",
-    "contrail-view"
-], function(ko, kb, kbValidation, coreConstants, ContrailView) {
-    var LineChartConfigView = ContrailView.extend({
+    "/reports/udd/ui/js/views/BaseContentConfigView.js"
+], function(ko, kb, kbValidation, coreConstants, BaseContentConfigView) {
+    return BaseContentConfigView.extend({
         render: function() {
-            var self = this;
-
-            self.renderView4Config(self.$el, self.model, self.getViewConfig(), "validation",
+            this.renderView4Config(this.$el, this.model, this.getViewConfig(), "validation",
                 null, null,
                 function() {
                     var inferredFormatterKey = "inferred";
 
-                    kb.applyBindings(self.model, self.$el[0]);
-                    kbValidation.bind(self);
+                    kb.applyBindings(this.model, this.$el[0]);
+                    kbValidation.bind(this);
 
-                    self.model.yAxisValue.subscribe(function(newValue) {
-                        self.model.isInferredYAxisUnit(cowc.QUERY_COLUMN_FORMATTER[newValue] === inferredFormatterKey);
-                    });
-                });
+                    this.model.yAxisValue.subscribe(function(newValue) {
+                        this.model.isInferredYAxisUnit(coreConstants.QUERY_COLUMN_FORMATTER[newValue] === inferredFormatterKey);
+                    }, this);
+                }.bind(this));
         },
 
         getViewConfig: function() {
@@ -38,42 +36,42 @@ define([
                             elementId: "color",
                             view: "FormInputView",
                             viewConfig: {
-                                label: cowl.CHART_LINE_COLOR,
+                                label: window.cowl.CHART_LINE_COLOR,
                                 path: "color",
                                 dataBindValue: "color",
-                                class: "col-xs-6",
-                            },
+                                class: "col-xs-6"
+                            }
                         }, {
                             elementId: "yAxisLabel",
                             view: "FormInputView",
                             viewConfig: {
-                                label: cowl.CHART_Y_AXIS_LABEL,
+                                label: window.cowl.CHART_Y_AXIS_LABEL,
                                 path: "yAxisLabel",
                                 dataBindValue: "yAxisLabel",
-                                class: "col-xs-6",
-                            },
-                        }],
+                                class: "col-xs-6"
+                            }
+                        }]
                     }, {
                         columns: [{
                             elementId: "yAxisValue",
                             view: "FormDropdownView",
                             viewConfig: {
-                                label: cowl.CHART_Y_AXIS_VALUE,
+                                label: window.cowl.CHART_Y_AXIS_VALUE,
                                 path: "yAxisValue",
                                 dataBindValue: "yAxisValue",
                                 dataBindOptionList: "yAxisValues",
                                 class: "col-xs-6",
                                 elementConfig: {
-                                    placeholder: cowl.CHART_Y_AXIS_VALUE_PLACEHOLDER,
-                                    defaultValueId: 0,
-                                },
-                            },
+                                    placeholder: window.cowl.CHART_Y_AXIS_VALUE_PLACEHOLDER,
+                                    defaultValueId: 0
+                                }
+                            }
                         }, {
                             elementId: "yAxisValueUnit",
                             view: "FormDropdownView",
                             viewConfig: {
                                 visible: "isInferredYAxisUnit",
-                                label: cowl.CHART_Y_AXIS_VALUE_UNIT,
+                                label: window.cowl.CHART_Y_AXIS_VALUE_UNIT,
                                 path: "yAxisValueUnit",
                                 dataBindValue: "yAxisValueUnit",
                                 class: "col-xs-6",
@@ -81,25 +79,14 @@ define([
                                     dataTextField: "text",
                                     dataValueField: "id",
                                     data: coreConstants.INFERRED_UNIT_TYPES,
-                                    placeholder: cowl.CHART_Y_AXIS_VALUE_UNIT_PLACEHOLDER,
+                                    placeholder: window.cowl.CHART_Y_AXIS_VALUE_UNIT_PLACEHOLDER,
                                     defaultValueId: 1
                                 }
                             }
-                        }],
-                    }],
-                },
+                        }]
+                    }]
+                }
             };
-        },
-
-        remove: function() {
-            var self = this;
-            kb.release(self.model, self.$el[0]);
-            ko.cleanNode(self.$el[0]);
-            kbValidation.unbind(self);
-            self.$el.empty().off(); // off to unbind the events
-            self.stopListening();
-            return self;
-        },
+        }
     });
-    return LineChartConfigView;
 });

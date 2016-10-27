@@ -8,14 +8,14 @@
 define([
     "lodash",
     "handlebars",
+    "/reports/udd/ui/js/udd.constants.js",
     "/assets/gridstack/js/gridstack.js",
     "contrail-view"
-], function(_, Handlebars, GridStack, ContrailView) {
+], function(_, Handlebars, uddConstants, GridStack, ContrailView) {
 
     var GridStackView = ContrailView.extend({
         initialize: function() {
-            var self = this;
-            self.p = _.extend({
+            this.p = _.extend({
                 animate: false,
                 width: 2,
                 float: false,
@@ -26,60 +26,63 @@ define([
                 cellHeight: 60,
                 minWidth: 1,
                 minHeight: 6,
-            }, self.attributes.viewConfig);
+            }, this.attributes.viewConfig);
 
-            self.listenTo(self.model, "add", self.onAdd);
-            self.listenTo(self.model, "remove", self.onRemove);
-            // TODO self.listenTo(self.model, 'reset', self.clear)
+            this.listenTo(this.model, "add", this.onAdd);
+            this.listenTo(this.model, "remove", this.onRemove);
         },
 
         id: "widgets",
-        template: contrail.getTemplate4Id('udd-layout-template'),
-        widgetTemplate: contrail.getTemplate4Id('udd-widget-template'),
+        template: window.contrail.getTemplate4Id("udd-layout-template"),
+        widgetTemplate: window.contrail.getTemplate4Id("udd-widget-template"),
         events: {
             "change .grid-stack": "onChange",
             "resizestop .grid-stack": "onResize",
             "click .add-widget": "add",
         },
-        placeholderHTML: contrail.getTemplate4Id('udd-layout-placeholder-template'),
+        placeholderHTML: window.contrail.getTemplate4Id("udd-layout-placeholder-template"),
 
         render: function() {
-            var self = this;
-            self.$el.html(self.template({ width: self.p.width }));
-            self.initLayout();
-            _.each(self.model.models, function(model) {
-                self.onAdd(model);
-            });
-            return self;
+            this.$el.html(this.template({ width: this.p.width }));
+            
+            this.initLayout();
+            
+            _.forEach(this.model.models, function(model) {
+                this.onAdd(model);
+            }, this);
+
+            return this;
         },
 
         initLayout: function() {
-            var self = this;
-            var $grid = self.$(".grid-stack");
+            var $grid = this.$(".grid-stack");
 
-            $grid.gridstack(self.p);
-            self.grid = $grid.data("gridstack");
-            self.placeHolder = self.$el.append(self.placeholderHTML);
+            $grid.gridstack(this.p);
+            this.grid = $grid.data("gridstack");
+            this.placeHolder = this.$el.append(this.placeholderHTML);
         },
-        // place widget in most left and most top available position
-        add: function() {
-            var self = this;
-            var newX;
-            var newY;
-            var newL;
-            var linear = [];
+        getNextPosMeta: function() {
+            var newX, newY, newL,
+                linear = [];
+
             // transform two-dimensional widgets layout to linear cells array
-            _.each(self.model.models, function(m) {
-                var topLeft = m.attributes.configModel.y() * self.p.width + m.attributes.configModel.x();
-                // mark cells of multicolumn widgets
-                for (var col = 0, cols = m.attributes.configModel.width(); col < cols; col++) {
-                    //linear[topLeft + col] = true;
-                    // mark cells of multirow widgets
-                    for (var row = 0, rows = m.attributes.configModel.height(); row < rows; row++) {
-                        linear[topLeft + col + row * self.p.width] = true;
+            _.forEach(this.model.models, function(m) {
+                var configModel = m.get(uddConstants.modelIDs.WIDGET_META),
+                    configJSON = configModel.model().toJSON() || {};
+
+                if (!this.invalidPosMeta(configJSON)) {
+                    var topLeft = configModel.y() * this.p.width + configModel.x();
+                    // mark cells of multicolumn widgets
+                    for (var col = 0, cols = configModel.width(); col < cols; col++) {
+                        // linear[topLeft + col] = true;
+                        // mark cells of multirow widgets
+                        for (var row = 0, rows = configModel.height(); row < rows; row++) {
+                            linear[topLeft + col + row * this.p.width] = true;
+                        }
                     }
                 }
-            });
+            }, this);
+
             // find empty cell or use last
             for (var i = 0, len = linear.length; i <= len; i++) {
                 if (!linear[i]) {
@@ -87,36 +90,62 @@ define([
                     break;
                 }
             }
-            newX = newL % self.p.width;
-            newY = Math.floor(newL / self.p.width);
 
-            self.model.add({
-                dashboardId: self.p.dashboardId,
-                tabId: self.p.tabId,
-                tabName: self.model.getTabName(),
+            newX = newL % this.p.width;
+            newY = Math.floor(newL / this.p.width);
+
+            return {
+                x: newX,
+                y: newY,
+                width: 1,
+                height: this.p.minHeight
+            };
+        },
+        // place widget in most left and most top available position
+        add: function() {
+            var newWidgetModelConfig = _.merge({
+                dashboardId: this.p.dashboardId,
+                tabId: this.p.tabId,
+                tabName: this.model.getTabName(),
+                tabCreationTime: this.model.getTabCreationTime(),
                 config: {
-                    x: newX,
-                    y: newY,
-                    width: 1,
-                    height: self.p.minHeight,
-                    isReady: false
-                },
+                    isReady: false,
+                    step: uddConstants.steps.DATA_CONFIG,
+                    editingTitle: false
+                }
+            }, {
+                config: this.getNextPosMeta()
             });
+
+            this.model.add(newWidgetModelConfig);
         },
 
         clear: function() {
-            var self = this;
-            self.grid.removeAll();
+            this.grid.removeAll();
+
             return false;
         },
 
         // Add a single widget to the area by creating a view for it
         onAdd: function(model) {
-            var self = this;
-            var id = model.get("id");
-            var widgetConfig = model.get("configModel").model().toJSON() || {};
+            var self = this,
+                id = model.get("id"),
+                configModel = model.get(uddConstants.modelIDs.WIDGET_META),
+                widgetConfig = model.get(uddConstants.raw.WIDGET_META) || {};
+
             widgetConfig.id = id;
-            self.grid.addWidget(self.widgetTemplate(widgetConfig),
+
+            if (self.invalidPosMeta(widgetConfig)) {
+                var newPosMeta = self.getNextPosMeta();
+
+                model.set(uddConstants.raw.WIDGET_META, _.merge(widgetConfig, newPosMeta));
+                _.forOwn(newPosMeta, function(value, key) {
+                    configModel[key](value);
+                });
+            }
+
+            self.grid.addWidget(
+                self.widgetTemplate(widgetConfig),
                 widgetConfig.x,
                 widgetConfig.y,
                 widgetConfig.width,
@@ -136,7 +165,7 @@ define([
                     elementId: id,
                     viewPathPrefix: "reports/udd/ui/js/views/",
                     viewConfig: {},
-                }, null, null, null, function(view) {
+                }, null, null, null, function(view) { // eslint-disable-line
                     // self.reconcileContentHeight(view.childViewMap[id].$el);
                 });
             }
@@ -149,16 +178,16 @@ define([
         },
 
         onRemove: function(model) {
-            var self = this;
-            var el = self.$("#" + model.id);
-            self.grid.removeWidget(el);
+            var el = this.$("#" + model.id);
+            this.grid.removeWidget(el);
         },
 
         onResize: function(event, ui) {
-            var self = this;
-            var widget = _.find(self.childViewMap, function(w) {
-                return w.$el[0] === ui.element[0];
-            });
+            var self = this,
+                widget = _.find(self.childViewMap, function(w) {
+                    return w.$el[0] === ui.element[0];
+                });
+
             // pospone resizing due to widget animation
             setTimeout(function() {
                 widget.resize();
@@ -168,25 +197,24 @@ define([
         // Update widget model config on gridstack items change
         // TODO Why onChange event get called with items as undefined so many time? Can we restrict it to more specific change condition?
         onChange: function(event, items) {
-            var self = this;
-            _.each(items, function(item) {
+            _.forEach(items, function(item) {
                 if (!item.id) {
                     return;
                 }
 
-                var widgetView = self.childViewMap[item.id];
+                var widgetView = this.childViewMap[item.id];
                 if (!widgetView) {
                     return;
                 }
 
-                var config = widgetView.model.get("configModel").model();
+                var config = widgetView.model.get(uddConstants.modelIDs.WIDGET_META).model();
                 config.set({
                     x: item.x,
                     y: item.y,
                     width: item.width,
                     height: item.height,
                 });
-            });
+            }, this);
         },
         // TODO: this method is specific to a widget having GridView as content.
         // It should be moved to a specific location rather that this generic one.
@@ -230,6 +258,12 @@ define([
             $components.gridBody.outerHeight(newGridBodyHeight);
             $components.gridContentRow.outerHeight(newContentHeight);
             $contrailGrid.data("contrailGrid")._grid.resizeCanvas();
+        },
+        invalidPosMeta: function(posMetaConfig) {
+            return posMetaConfig.x === -1
+                || posMetaConfig.y === -1
+                || posMetaConfig.width === -1
+                || posMetaConfig.height === -1;
         }
     });
     return GridStackView;

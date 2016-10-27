@@ -11,6 +11,9 @@
         "viewPathPrefix": "reports/udd/ui/js/views/contentConfigs/",
         "model": "GridConfigModel",
         "modelPathPrefix": "reports/udd/ui/js/models/contentConfigs/"
+      },
+      "validations": {
+        "QueryConfigView": {}
       }
     },
     "LineWithFocusChartView": {
@@ -24,6 +27,16 @@
         "viewPathPrefix": "reports/udd/ui/js/views/contentConfigs/",
         "model": "LineChartConfigModel",
         "modelPathPrefix": "reports/udd/ui/js/models/contentConfigs/"
+      },
+      "validations": {
+        "QueryConfigView": {
+          "select": {
+              "requiredFieldTypes": ["plottable"]
+          },
+          "table_type": {
+              "rejectedFieldTypes": ["loggable"]
+          }
+        }
       }
     },
     "LineBarWithFocusChartView": {
@@ -37,6 +50,16 @@
         "viewPathPrefix": "reports/udd/ui/js/views/contentConfigs/",
         "model": "LineBarChartConfigModel",
         "modelPathPrefix": "reports/udd/ui/js/models/contentConfigs/"
+      },
+      "validations": {
+        "QueryConfigView": {
+          "select": {
+              "requiredFieldTypes": ["plottable"]
+          },
+          "table_type": {
+              "rejectedFieldTypes": ["loggable"]
+          }
+        }
       }
     },
     "LogsView": {
@@ -50,6 +73,13 @@
         "viewPathPrefix": "reports/udd/ui/js/views/contentConfigs/",
         "model": "LogsConfigModel",
         "modelPathPrefix": "reports/udd/ui/js/models/contentConfigs/"
+      },
+      "validations": {
+        "QueryConfigView": {
+          "table_type": {
+              "requiredFieldTypes": ["loggable"]
+          }
+        }
       }
     }
   },

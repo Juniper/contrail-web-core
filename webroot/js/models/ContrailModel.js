@@ -44,12 +44,6 @@ define([
             return self;
         },
 
-        rollback: function () {
-          //TODO is there a way to rollback in one shot?
-          this.model().set(this._modelAttributes);
-          this.model().set(this._modelAttributes);
-        },
-
         getValueByPath: function (path) {
             var obj = this.model().attributes;
             path = path.replace(/\[(\w+)\]/g, '.$1');

@@ -5,18 +5,19 @@
 define([
     "knockback",
     "validation",
+    "core-constants",
     "layout-handler",
     "query-form-view",
     "core-basedir/reports/qe/ui/js/models/ObjectLogsFormModel",
     "core-basedir/reports/qe/ui/js/common/qe.utils"
-], function(kb, kbValidation, LayoutHandler, QueryFormView, ObjectLogsFormModel, qeUtils) {
+], function(kb, kbValidation, coreConstants, LayoutHandler, QueryFormView, ObjectLogsFormModel, qeUtils) {
     var layoutHandler = new LayoutHandler();
 
     var ObjectLogsFormView = QueryFormView.extend({
         render: function() {
             var self = this,
                 viewConfig = self.attributes.viewConfig,
-                queryPageTmpl = contrail.getTemplate4Id(ctwc.TMPL_QUERY_PAGE),
+                queryPageTmpl = contrail.getTemplate4Id(coreConstants.TMPL_QUERY_PAGE),
                 modelMap = contrail.handleIfNull(self.modelMap, {}),
                 hashParams = layoutHandler.getURLHashParams(),
                 queryPrefix = cowc.OBJECT_LOGS_PREFIX,
@@ -60,11 +61,10 @@ define([
         },
 
         renderQueryResult: function() {
-            var self = this,
-                viewConfig = self.attributes.viewConfig,
+            var viewConfig = this.attributes.viewConfig,
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
-                modelMap = contrail.handleIfNull(self.modelMap, {}),
-                queryFormModel = self.model,
+                modelMap = contrail.handleIfNull(this.modelMap, {}),
+                queryFormModel = this.model,
                 queryFormId = cowc.QE_HASH_ELEMENT_PREFIX + cowc.OBJECT_LOGS_PREFIX + cowc.QE_FORM_SUFFIX,
                 queryResultId = cowc.QE_HASH_ELEMENT_PREFIX + cowc.OBJECT_LOGS_PREFIX + cowc.QE_RESULTS_SUFFIX,
                 queryResultTabId = cowl.QE_OBJECT_LOGS_TAB_ID;
@@ -77,7 +77,7 @@ define([
             qeUtils.fetchServerCurrentTime(function(serverCurrentTime) {
                 var queryRequestPostData = queryFormModel.getQueryRequestPostData(serverCurrentTime);
 
-                self.renderView4Config($(queryResultId), self.model,
+                this.renderView4Config($(queryResultId), this.model,
                     getQueryResultTabViewConfig(queryRequestPostData, queryResultTabId), null, null, modelMap,
                     function() {
                         var queryResultListModel = modelMap[cowc.UMID_QUERY_RESULT_LIST_MODEL];
@@ -86,7 +86,7 @@ define([
                             queryFormModel.is_request_in_progress(false);
                         });
                     });
-            });
+            }.bind(this));
         },
 
         getViewConfig: function() {

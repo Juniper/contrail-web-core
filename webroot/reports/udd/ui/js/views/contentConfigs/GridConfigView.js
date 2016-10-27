@@ -11,19 +11,17 @@ define([
     "knockout",
     "knockback",
     "validation",
-    "contrail-view"
-], function(_, ko, kb, kbValidation, ContrailView) {
+    "/reports/udd/ui/js/views/BaseContentConfigView.js"
+], function(_, ko, kb, kbValidation, BaseContentConfigView) {
 
-    return ContrailView.extend({
+    return BaseContentConfigView.extend({
         render: function() {
-            var self = this;
-
-            self.renderView4Config(self.$el, self.model, self.getViewConfig(), "validation",
+            this.renderView4Config(this.$el, this.model, this.getViewConfig(), "validation",
                 null, null,
                 function() {
-                    kb.applyBindings(self.model, self.$el[0]);
-                    kbValidation.bind(self);
-                });
+                    kb.applyBindings(this.model, this.$el[0]);
+                    kbValidation.bind(this);
+                }.bind(this));
         },
 
         getViewConfig: function() {
@@ -35,60 +33,51 @@ define([
                             elementId: "gridTitle",
                             view: "FormInputView",
                             viewConfig: {
-                                label: cowl.GRID_TITLE,
+                                label: window.cowl.GRID_TITLE,
                                 path: "gridTitle",
                                 dataBindValue: "gridTitle",
-                                class: "col-xs-4",
+                                class: "col-xs-4"
                             }
                         }, {
                             elementId: "pageSize",
                             view: "FormDropdownView",
                             viewConfig: {
-                                label: cowl.GRID_PAGE_SIZE,
+                                label: window.cowl.GRID_PAGE_SIZE,
                                 path: "pageSize",
                                 dataBindValue: "pageSize",
                                 class: "col-xs-4",
                                 elementConfig: {
                                     dataTextField: "text",
                                     dataValueField: "id",
-                                    data: [8, 25, 50, 100],
-                                },
+                                    data: [8, 25, 50, 100]
+                                }
                             }
                         }, {
                             elementId: "detailedEntry",
                             view: "FormCheckboxView",
                             viewConfig: {
-                                label: cowl.GRID_ENTRY_WITH_DETAILS,
+                                label: window.cowl.GRID_ENTRY_WITH_DETAILS,
                                 path: "detailedEntry",
                                 dataBindValue: "detailedEntry",
                                 class: "col-xs-4"
-                            },
+                            }
                         }]
                     }, {
                         columns: [{
                             elementId: "visibleColumns",
                             view: "FormMultiselectView",
                             viewConfig: {
-                                label: cowl.GRID_VISIBLE_COLUMNS,
+                                label: window.cowl.GRID_VISIBLE_COLUMNS,
                                 path: "visibleColumns",
                                 dataBindValue: "visibleColumns",
                                 dataBindOptionList: "availableColumns",
                                 class: "col-xs-12",
                                 elementConfig: {}
-                            },
+                            }
                         }]
-                    }],
-                },
+                    }]
+                }
             };
-        },
-        remove: function() {
-            var self = this;
-            kb.release(self.model, self.$el[0]);
-            ko.cleanNode(self.$el[0]);
-            kbValidation.unbind(self);
-            self.$el.empty().off(); // off to unbind the events
-            self.stopListening();
-            return self;
-        },
+        }
     });
 });
