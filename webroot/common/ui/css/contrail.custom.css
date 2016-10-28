@@ -1220,6 +1220,10 @@ button#close-error-popup{
 .custom-grid-stack .custom-grid-stack-item .item-content {
     height: 100%;
 }
+.custom-grid-stack .drag-handle {
+    cursor: move;
+}
+
 .custom-grid-stack .custom-grid-stack-item .item-content .nv-axislabel,
 .custom-grid-stack .custom-grid-stack-item .item-content .axis-label,
 .custom-grid-stack .custom-grid-stack-item .item-content .contrail-chart-title text {
@@ -1230,3 +1234,73 @@ button#close-error-popup{
 .custom-grid-stack .custom-grid-stack-item:hover {
     border: 0px solid #f2f2f2;
 }
+
+
+/* Start - Event-drops css */
+/*.event-drops-tooltip {
+    position: absolute;            
+    text-align: center;         
+    width: 60px;                    
+    height: 28px;                   
+    padding: 2px;               
+    font: 12px sans-serif;      
+    background: lightsteelblue; 
+    border: 0px;        
+    border-radius: 8px;         
+    pointer-events: none;       
+}*/
+.event-drops-tooltip {
+    position: absolute;
+    background: #fff;
+    border: 3px solid #e7e7e7;
+    border-radius: 1rem;
+    padding: .5rem 1rem;
+    /* width: 10rem; */
+    width: 200px;
+    line-height: 1.4rem;
+}
+
+.event-drops-tooltip::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: -.65rem;
+    width: 1rem;
+    height: 1rem;
+    background: #fff;
+    border: 3px solid #e7e7e7;
+    border-width: 3px 0 0 3px;
+    transform: rotate(45deg);
+    z-index: 1;
+}
+
+.event-drops-tooltip.left::before {
+    left: 1.65rem;
+}
+
+.event-drops-tooltip.right::before {
+    right: 1.65rem;
+}
+
+.event-drops-tooltip::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: -.65rem;
+    width: 1rem;
+    height: 1rem;
+    background: #fff;
+    border: 3px solid #e7e7e7;
+    border-width: 3px 0 0 3px;
+    transform: rotate(45deg);
+    z-index: 1;
+}
+
+.event-drops-tooltip.left::before {
+    left: 1.65rem;
+}
+
+.event-drops-tooltip.right::before {
+    right: 1.65rem;
+}
+/* End - Event-drops CSS */

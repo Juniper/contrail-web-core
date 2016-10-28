@@ -3,8 +3,11 @@ define([
     'backbone',
     'contrail-view',
     'gridstack',
-    'contrail-list-model'
-], function (_, Backbone,ContrailView,gridstack, ContrailListModel) {
+    'contrail-list-model',
+    'core-utils',
+    'chart-utils'
+], function (_, Backbone,ContrailView,gridstack, ContrailListModel,CoreUtils,chUtils) {
+    var cowu = new CoreUtils();
     var GridStackView = ContrailView.extend({
         initialize: function(options) {
             var self = this;
@@ -13,18 +16,20 @@ define([
             self.gridAttr = cowu.getValueByJsonPath(options,'attributes;viewConfig;gridAttr',{});
             self.COLUMN_CNT = 2;
             self.VIRTUAL_COLUMNS = 2;
+            //Decouple cellHieght from height assigned to widget
+            self.CELL_HEIGHT_MULTIPLER = 1;
             //Default is 12 columns. To have 3 column layout, set defaultWidth as 4
             if(self.gridAttr['defaultWidth'] != null)
                 self.COLUMN_CNT = 12/self.gridAttr['defaultWidth'];
 
             self.$el.addClass('grid-stack grid-stack-12 custom-grid-stack');
             self.gridStack = $(self.$el).gridstack({
-                float:false,
-                handle:'.item-content',
+                float:true,
+                handle:'.drag-handle',
                 resizable: {
                     handles:'sw,se',
                 },
-                verticalMargin:8,
+                verticalMargin:8/self.CELL_HEIGHT_MULTIPLER,
                 cellHeight: 20,
                 animate:false,
                 acceptWidgets:'label'
@@ -51,7 +56,8 @@ define([
             var currElem = $($('#gridstack-widget-template').text()).attr('data-gs-height',2);
             var itemAttr = ifNull(cfg['itemAttr'],{});
             var defaultWidth = ifNull(self.gridAttr['defaultWidth'],1);
-            var defaultHeight = ifNull(self.gridAttr['defaultHeight'],1);
+            var defaultHeight = ifNull(self.gridAttr['defaultHeight'],1)*self.CELL_HEIGHT_MULTIPLER;
+
             if(itemAttr['width'] != null) {
                 itemAttr['width'] = itemAttr['width']*defaultWidth;
                 $(currElem).attr('data-gs-width',itemAttr['width']);
@@ -60,14 +66,27 @@ define([
                 itemAttr['height'] = itemAttr['height']*defaultHeight;
                 $(currElem).attr('data-gs-height',itemAttr['height']);
             }
+
             var widgetCnt = self.widgets.length;
             self.gridStack.addWidget(currElem,widgetCnt/self.COLUMN_CNT,(widgetCnt%self.COLUMN_CNT)/**self.VIRTUAL_COLUMNS*/,
                 ifNull(itemAttr['width'],defaultWidth),ifNull(itemAttr['height'],defaultHeight),true);
             self.widgets.push(currElem);
             var modelCfg = cfg['modelCfg'];
             //Maintain a mapping of cacheId vs contrailListModel and if found,return that
-            if(cowu.getValueByJsonPath(cfg,'modelCfg;_type') != 'contrailListModel' && modelCfg != null)
+            if(cowu.getValueByJsonPath(cfg,'modelCfg;source') == 'STATTABLE') {
+                modelCfg = new ContrailListModel(cowu.getStatsModelConfig(modelCfg['config']));
+            } else if(cowu.getValueByJsonPath(cfg,'modelCfg;listModel','') != '') {
+                modelCfg = modelCfg['listModel'];
+            } else if(cowu.getValueByJsonPath(cfg,'modelCfg;_type') != 'contrailListModel' && modelCfg != null) {
                 modelCfg = new ContrailListModel(modelCfg);
+            }
+            var viewType = cowu.getValueByJsonPath(cfg,'viewCfg;view','');
+            if(viewType.match(/eventDropsView/)) {
+                $(currElem).find('header').addClass('drag-handle');
+            } else {
+                $(currElem).find('.item-content').addClass('drag-handle');
+            }
+            cfg['viewCfg'] = $.extend(true,{},chUtils.getDefaultViewConfig(viewType),cfg['viewCfg']);
             self.renderView4Config($(currElem).find('.item-content'), modelCfg, cfg['viewCfg']);
         }
     });
