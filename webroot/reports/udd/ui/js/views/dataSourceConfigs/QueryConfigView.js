@@ -7,10 +7,9 @@ define([
     "validation",
     "core-constants",
     "core-labels",
-    "core-basedir/reports/qe/ui/js/common/qe.utils",
-    "query-form-view"
-], function(ko, kb, kbValidation, coreConstants, coreLabelProcessor,
-    qeUtils, QueryFormView) {
+    "query-form-view",
+    "core-basedir/reports/qe/ui/js/common/qe.utils"
+], function(ko, kb, kbValidation, coreConstants, coreLabelProcessor, QueryFormView, qeUtils) {
     var QueryConfigView = QueryFormView.extend({
         render: function() {
             this.renderView4Config(this.$el, this.model, this.getViewConfig(),

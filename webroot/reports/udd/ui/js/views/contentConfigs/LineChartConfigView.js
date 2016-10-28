@@ -9,7 +9,7 @@ define([
     "knockback",
     "validation",
     "core-constants",
-    "/reports/udd/ui/js/views/BaseContentConfigView.js"
+    "core-basedir/reports/udd/ui/js/views/BaseContentConfigView"
 ], function(ko, kb, kbValidation, coreConstants, BaseContentConfigView) {
     return BaseContentConfigView.extend({
         render: function() {

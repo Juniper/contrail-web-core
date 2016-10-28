@@ -11,6 +11,7 @@ define([
     'core-labels',
     'core-messages',
     'core-views-default-config',
+    "core-form-validation-config",
     'contrail-common',
     'core-contrail-form-elements',
     'chart-utils',
@@ -52,8 +53,9 @@ define([
     'mon-infra-log-list-view',
     'mon-infra-sysinfo-view',
     'mon-infra-dashboard-view'
+
 ], function (CoreHandlebarsUtils, CoreUtils, CoreHashUtils, CoreConstants, CoreFormatters, Cache, CoreLabels,
-             CoreMessages, CoreViewsDefaultConfig, Contrail, CoreContrailFormElements, ChartUtils, CoreCommonTmpls) {
+             CoreMessages, CoreViewsDefaultConfig, formValidationConfig, Contrail, CoreContrailFormElements, ChartUtils, CoreCommonTmpls) {
     cowc = CoreConstants;
     cowf = new CoreFormatters();
     cowl = new CoreLabels();

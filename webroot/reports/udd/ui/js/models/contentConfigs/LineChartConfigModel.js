@@ -2,10 +2,10 @@
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
 
-define(function(require) {
-    var ContentConfigModel = require("reports/udd/ui/js/models/ContentConfigModel.js");
-    var cowc = require("core-constants");
-    var cowf = new(require("core-formatters"));
+define([
+    "core-constants",
+    "core-basedir/reports/udd/ui/js/models/ContentConfigModel"
+], function(cowc, ContentConfigModel) {
 
     return ContentConfigModel.extend({
         defaultConfig: {
@@ -68,7 +68,7 @@ define(function(require) {
                     yAxisLabel: this.yAxisLabel(),
                     colors: [this.color()],
                     forceY: [0, 10],
-                    yFormatter: cowf.getFormattedValue.bind(cowf, [{
+                    yFormatter: window.cowf.getFormattedValue.bind(window.cowf, [{
                         format: cowc.QUERY_COLUMN_FORMATTER[this.yAxisValue()],
                         options: {
                             unit: this.yAxisValueUnit()
