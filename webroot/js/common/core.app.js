@@ -423,6 +423,7 @@ var coreBundles = {
             'core-labels',
             'core-messages',
             'core-views-default-config',
+            "core-form-validation-config",
             'contrail-common',
             'core-contrail-form-elements',
             'chart-utils',
