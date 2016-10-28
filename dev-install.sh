@@ -14,6 +14,14 @@ cp -af node_modules/ipv6/lib/browser/sprintf.js webroot/assets/ip/
 cp -af node_modules/ipv6/ipv6.js webroot/assets/ip/
 #End - copy javascript-ipv6 node module files for IPv4/v6 address manipulations/validations
 
+#Start - copy event drops files from node_module
+rm -rf webroot/assets/event-drops
+mkdir -p webroot/assets/event-drops/js
+mkdir -p webroot/assets/event-drops/css
+cp -af node_modules/event-drops/dist/eventDrops.js webroot/assets/event-drops/js
+cp -af node_modules/event-drops/dist/eventDrops.css webroot/assets/event-drops/css
+#End - copy  event drops files from node_module
+
 #Start - Copy d3/vnd3 files from $THIRD_PARTY
 rm -rf webroot/assets/d3-v3.5.6
 mkdir -p webroot/assets/d3-v3.5.6/js

@@ -3,8 +3,9 @@
  */
 
 define([
-    'underscore'
-], function (_) {
+    'underscore',
+    'legend-view'
+], function (_,LegendView) {
     var chartUtils = {
         updateChartOnResize: function(selector,chart){
             if(selector != null && $(selector).is(':visible') && chart != null) {
@@ -133,6 +134,81 @@ define([
                 return false;
             }
             return true;
+        },
+        getDefaultViewConfig: function(chartType) {
+            var stackChartConfig = {
+                    viewConfig: {
+                        class: 'mon-infra-chart chartMargin',
+                        chartOptions: {
+                            // bucketSize: this.STATS_BUCKET_DURATION,
+                            bucketSize: 2.5,
+                            showLegend: true,
+                            showControls: true,
+                            tickPadding: 8,
+                            margin: {
+                                left: 45,
+                                top: 20,
+                                right: 0,
+                                bottom: 15
+                            },
+                            yAxisOffset: 25,
+                            defaultZeroLineDisplay: true
+                        }
+                    }
+                };
+            var defaultViewConfigMap = {
+                 'StackedBarChartWithFocusView' : stackChartConfig,
+                 'StackedAreaChartView'         : stackChartConfig,
+                 "LineWithFocusChartView": {
+                    viewConfig: {
+                        class: 'mon-infra-chart chartMargin',
+                        parseFn: cowu.chartDataFormatter,
+                        chartOptions : {
+                            brush: false,
+                            xAxisLabel: '',
+                            yAxisLabel: '',
+                            groupBy: 'Source',
+                            yField: '',
+                            yFieldOperation: 'average',
+                            // bucketSize: this.STATS_BUCKET_DURATION,
+                            bucketSize: 2.5,
+                            colors: {},
+                            title: '',
+                            axisLabelDistance : 0,
+                            margin: {
+                                left: 58,
+                                top: 20,
+                                right: 0,
+                                bottom: 20
+                            },
+                            tickPadding: 8,
+                            hideFocusChart: true,
+                            forceY: false,
+                            yFormatter : function(d){
+                                return d;
+                            },
+                            xFormatter: function(xValue, tickCnt) {
+                                var date = xValue > 1 ? new Date(xValue) : new Date();
+                                if (tickCnt != null) {
+                                var mins = date.getMinutes();
+                                date.setMinutes(Math.ceil(mins/15) * 15);
+                                }
+                                return d3.time.format('%H:%M')(date);
+                            },
+                            yTickFormat: function(value){
+                                return d3.format('.2f')(value);
+                            },
+                            showLegend: true,
+                            defaultZeroLineDisplay: true,
+                            legendView: LegendView
+                        }
+                    }
+                }
+            };
+            if(defaultViewConfigMap[chartType] != null) 
+                return defaultViewConfigMap[chartType]
+            else
+                return {};
         }
     };
 
