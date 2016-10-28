@@ -3,7 +3,7 @@
  */
 
 define([
-    "reports/udd/ui/js/models/ContentConfigModel.js"
+    "core-basedir/reports/udd/ui/js/models/ContentConfigModel"
 ], function(ContentConfigModel) {
     return ContentConfigModel.extend({
         defaultConfig: {

@@ -6,8 +6,8 @@ define(["require"], function(require) {
     return function UDDashboardLoader() {
         this.load = function (paramObject) {
             var self = this,
-                UDDViewPath = window.coreBaseDir + "views/UDDashboardView.js",
-                UDDModelPath = window.coreBaseDir + "models/WidgetsCollection.js",
+                UDDViewPath = window.coreBaseDir + "views/UDDashboardView",
+                UDDModelPath = window.coreBaseDir + "models/WidgetsCollection",
                 loadingStartedDefObj = paramObject.loadingStartedDefObj;
 
             self.hashParams = paramObject.hashParams;

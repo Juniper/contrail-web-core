@@ -2,11 +2,11 @@
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
 
-define(function(require) {
-    var ContentConfigModel = require("reports/udd/ui/js/models/ContentConfigModel.js");
-    var cowc = require("core-constants");
-    var cowf = new(require("core-formatters"));
-
+define([
+    "core-constants",
+    "core-basedir/reports/udd/ui/js/models/ContentConfigModel"
+], function(cowc, ContentConfigModel) {
+    
     return ContentConfigModel.extend({
         defaultConfig: {
             barColor: "1f77b4",
@@ -89,13 +89,13 @@ define(function(require) {
                     yAxisLabels: [this.barLabel(), this.lineLabel()],
                     colors: [this.barColor(), this.lineColor()],
                     forceY: [0, 10],
-                    y1Formatter: cowf.getFormattedValue.bind(cowf, [{
+                    y1Formatter: window.cowf.getFormattedValue.bind(window.cowf, [{
                         format: cowc.QUERY_COLUMN_FORMATTER[this.barValue()],
                         options: {
                             unit: this.barValueUnit()
                         }
                     }]),
-                    y2Formatter: cowf.getFormattedValue.bind(cowf, [{
+                    y2Formatter: window.cowf.getFormattedValue.bind(window.cowf, [{
                         format: cowc.QUERY_COLUMN_FORMATTER[this.lineValue()],
                         options: {
                             unit: this.lineValueUnit()
