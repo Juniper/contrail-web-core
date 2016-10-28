@@ -4,11 +4,11 @@
 
 define([
     "lodash",
-    "core-basedir/reports/qe/ui/js/common/qe.model.config",
     "core-constants",
     "core-form-validation-config",
-    "query-form-model"
-], function(_, qeModelConfig, coreConstants, formValidationConfig, QueryFormModel) {
+    "query-form-model",
+    "core-basedir/reports/qe/ui/js/common/qe.model.config"
+], function(_, coreConstants, formValidationConfig, QueryFormModel, qeModelConfig) {
     var QueryConfigModel = QueryFormModel.extend({
         defaultSelectFields: [],
         constructor: function(modelConfig, queryReqConfig) {

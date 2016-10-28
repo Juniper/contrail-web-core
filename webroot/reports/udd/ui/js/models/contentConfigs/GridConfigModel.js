@@ -7,7 +7,7 @@ define([
     "core-constants",
     "core-basedir/reports/qe/ui/js/common/qe.utils",
     "core-basedir/reports/qe/ui/js/common/qe.grid.config",
-    "reports/udd/ui/js/models/ContentConfigModel.js"
+    "core-basedir/reports/udd/ui/js/models/ContentConfigModel"
 ], function(_, coreConstants, qeUtils, qeGridConfig, ContentConfigModel) {
     var delimiter = ",";
 
