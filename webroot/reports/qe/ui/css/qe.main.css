@@ -134,8 +134,8 @@ a.selectAllLink:hover {
     color: #999;
     padding: 10px 10px 10px 0;
 }
-.and-clause-collection table {
-    margin: 10px 0 0;
+.and-clause-collection {
+    padding: 10px 0 0;
 }
 .and-clause-collection .collection-actions {
     padding: 10px 0;
