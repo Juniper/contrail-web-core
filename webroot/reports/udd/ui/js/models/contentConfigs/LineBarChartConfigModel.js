@@ -9,8 +9,8 @@ define([
     
     return ContentConfigModel.extend({
         defaultConfig: {
-            barColor: "1f77b4",
-            lineColor: "green",
+            barColor:  cowc.D3_COLOR_CATEGORY5[1],
+            lineColor: cowc.D3_COLOR_CATEGORY5[3],
             barLabel: "",
             barValue: "",
             barValueUnit: "",
