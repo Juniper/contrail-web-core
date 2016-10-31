@@ -12,6 +12,8 @@ define([
     var delimiter = ",";
 
     return ContentConfigModel.extend({
+        canUseSelectChange: false, // a flag indicating if the select field
+                                   // change can be used to update visible columns
         defaultConfig: {
             gridTitle: "",
             tableName: "",
@@ -50,11 +52,22 @@ define([
             }));
 
             var columnsToShow = this.visibleColumns().split(delimiter),
-                invalidColumnsToRemove = _.difference(columnsToShow, selectedFieldArray),
-                newColumnsToShowByDefault = _.difference(selectedFieldArray, columnsToShow);
+                newColumnsToShowByDefault = [""];
 
-            // TODO: When Lodash@4.x.x is available, replace this whole line with _.pullAll(columnsToShow, invalidColumnsToRemove);
-            columnsToShow = _.difference(columnsToShow, invalidColumnsToRemove);
+            if (!_.isEmpty(viewModel.changed.select) && this.canUseSelectChange) {
+                /** 
+                 * when data source config form's select field is updated,
+                 * find and delete those removed DB fields from visible columns.
+                 * Then, by default, add any new DB fields to the visible columns.
+                 */
+                var invalidColumnsToRemove = _.difference(columnsToShow, selectedFieldArray);
+                    newColumnsToShowByDefault = _.difference(selectedFieldArray, columnsToShow);
+                
+                // TODO: When Lodash@4.x.x is available, replace this whole line with _.pullAll(columnsToShow, invalidColumnsToRemove);
+                columnsToShow = _.difference(columnsToShow, invalidColumnsToRemove);
+
+                this.canUseSelectChange = true;
+            }
 
             // TODO: When Lodash^4.x.x is available, replace this whole line with this.visibleColumns(_.concat(columnsToShow, newColumnsToShowByDefault).join(delimiter));
             this.visibleColumns(columnsToShow.concat(newColumnsToShowByDefault).join(delimiter));
@@ -98,7 +111,7 @@ define([
                 }
             };
 
-            // This is attribute is handled separately, since its value should be an object when enabled.
+            // This attribute is handled separately, since its value should be an object when enabled.
             // Refer to core.views.default.config.js
             // Only include this attribute when it's disabled with false.
             if (!this.detailedEntry()) {
