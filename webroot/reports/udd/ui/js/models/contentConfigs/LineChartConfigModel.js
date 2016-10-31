@@ -9,7 +9,7 @@ define([
 
     return ContentConfigModel.extend({
         defaultConfig: {
-            color: "1f77b4",
+            color: cowc.D3_COLOR_CATEGORY5[3],
             yAxisLabel: "",
             yAxisValue: "",
             yAxisValueUnit: "",
