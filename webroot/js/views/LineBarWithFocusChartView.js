@@ -45,12 +45,12 @@ define([
             }
         },
 
-        renderChart: function (selector, viewConfig, chartViewModel) {
+        renderChart: function (selector, viewConfig, chartDataModel) {
             var self = this,
-                data = chartViewModel.getItems(),
+                data = chartDataModel.getItems(),
                 chartTemplate = contrail.getTemplate4Id(cowc.TMPL_CHART),
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
-                chartViewConfig, chartOptions, chartModel;
+                chartViewConfig, chartOptions, chartViewModel;
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data);
@@ -59,10 +59,10 @@ define([
             chartViewConfig = self.getChartViewConfig(data, viewConfig.chartOptions);
             chartOptions = chartViewConfig['chartOptions'];
             //viewConfig.chartOptions = chartOptions;
-            chartModel = new LineBarWithFocusChartModel(chartOptions);
-            chartModel.chartOptions = chartOptions;
+            chartViewModel = new LineBarWithFocusChartModel(chartOptions);
+            chartViewModel.chartOptions = chartOptions;
 
-            self.chartModel = chartModel;
+            self.chartViewModel = chartViewModel;
 
             if ($(selector).find("svg") != null) {
                 $(selector).empty();
@@ -71,7 +71,7 @@ define([
             $(selector).append(chartTemplate(chartOptions));
 
             //Store the chart object as a data attribute so that the chart can be updated dynamically
-            $(selector).data('chart', chartModel);
+            $(selector).data('chart', chartViewModel);
 
             if (chartOptions['showLegend'] && chartOptions['legendView'] != null) {
                 self.legendView = new chartOptions['legendView']({
@@ -82,28 +82,29 @@ define([
             }
 
             nv.addGraph(function () {
-                if (!($(selector).is(':visible'))) {
-                    $(selector).find('svg').bind("refresh", function () {
-                        setData2Chart(self, chartViewConfig, chartViewModel, chartModel);
-                    });
-                    
-                } else {
-                    setData2Chart(self, chartViewConfig, chartViewModel, chartModel);
-                }
-
                 self.resizeFn = _.debounce(function () {
-                    chUtils.updateChartOnResize($(self.$el), self.chartModel);
+                    chUtils.updateChartOnResize($(self.$el), self.chartViewModel);
                 }, 500);
                 nv.utils.windowResize(self.resizeFn);
 
-                chartModel.dispatch.on('stateChange', function (e) {
+                chartViewModel.dispatch.on('stateChange', function (e) {
                     nv.log('New State:', JSON.stringify(e));
                 });
-                return chartModel;
+
+                //Bind the refresh to updateChart() so it can be updated later. Eg: tabs onActivate
+                $(selector).find('svg').bind("refresh", function () {
+                    self.updateChart(selector, viewConfig, chartDataModel);
+                });
+
+                if (($(selector).is(':visible'))) {
+                    setData2Chart(self, chartViewConfig, chartDataModel, chartViewModel);
+                }
+                updateDataStatusMessage(self, chartViewConfig, chartDataModel);
+                return chartViewModel;
             });
 
             if (widgetConfig !== null) {
-                this.renderView4Config(selector.find('.chart-container'), chartViewModel, widgetConfig, null, null, null);
+                this.renderView4Config(selector.find('.chart-container'), chartDataModel, widgetConfig, null, null, null);
             }
         },
 
@@ -111,7 +112,7 @@ define([
             var self = this,
                 message = contrail.handleIfNull(message, ""),
                 selector = contrail.handleIfNull(selector, $(self.$el)),
-                chartOptions = contrail.handleIfNull(chartOptions, self.chartModel.chartOptions),
+                chartOptions = contrail.handleIfNull(chartOptions, self.chartViewModel.chartOptions),
                 container = d3.select($(selector).find("svg")[0]),
                 requestStateText = container.selectAll('.nv-requestState').data([message]),
                 textPositionX = $(selector).width() / 2,
@@ -169,8 +170,8 @@ define([
 
         updateChart: function(selector, viewConfig, dataModel) {
             var self = this,
-                dataModel = dataModel ? dataModel : self.model(),
-                data = dataModel.getItems();
+                chartDataModel = dataModel ? dataModel : self.model(),
+                data = chartDataModel.getItems();
 
             if (_.isFunction(viewConfig.parseFn)) {
                 data = viewConfig['parseFn'](data, viewConfig.chartOptions);
@@ -180,25 +181,32 @@ define([
             //If legendView exist, update with new config built from new data.
             if (self.legendView) self.legendView.update(getLegendViewConfig(chartViewConfig.chartOptions, data));
 
-            setData2Chart(self, chartViewConfig, dataModel, self.chartModel);
+            setData2Chart(self, chartViewConfig, chartDataModel, self.chartViewModel);
+            updateDataStatusMessage(self, chartViewConfig, chartDataModel);
         }
     });
 
-    function setData2Chart(self, chartViewConfig, chartViewModel, chartModel) {
+    function setData2Chart(self, chartViewConfig, chartDataModel, chartViewModel) {
+        var chartDataObj = {
+                data: chartViewConfig.chartData,
+                requestState: getDataRequestState(chartViewConfig, chartDataModel)
+            },
+            chartOptions = chartViewConfig['chartOptions'];
+        d3.select($(self.$el)[0]).select('svg').datum(chartDataObj).call(chartViewModel);
+    }
 
+    function getDataRequestState(chartViewConfig, chartDataModel) {
         var chartData = chartViewConfig.chartData,
             checkEmptyDataCB = function (data) {
                 return (!data || data.length === 0 || !data.filter(function (d) { return d.values.length; }).length);
-            },
-            chartDataRequestState = cowu.getRequestState4Model(chartViewModel, chartData, checkEmptyDataCB),
-            chartDataObj = {
-                data: chartData,
-                requestState: chartDataRequestState
-            },
-            chartOptions = chartViewConfig['chartOptions'];
+            };
+        return cowu.getRequestState4Model(chartDataModel, chartData, checkEmptyDataCB);
+    }
 
-        d3.select($(self.$el)[0]).select('svg').datum(chartDataObj).call(chartModel);
-
+    function updateDataStatusMessage(self, chartViewConfig, dataModel) {
+        var chartDataModel = dataModel || self.model(),
+            chartOptions = chartViewConfig.chartOptions,
+            chartDataRequestState = getDataRequestState(chartViewConfig, chartDataModel);
         if (chartOptions.defaultDataStatusMessage) {
             var messageHandler = chartOptions.statusMessageHandler;
             self.renderMessage(messageHandler(chartDataRequestState));
