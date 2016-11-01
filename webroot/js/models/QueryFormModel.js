@@ -70,7 +70,7 @@ define([
                 }
                 this.setTableValues(setTableValuesCallbackFn, table_type)
             }
-            else this.setTableFieldValues()
+            this.setTableFieldValues()
         },
 
         setTableValues: function(setTableValuesCallbackFn, tabletype) {
