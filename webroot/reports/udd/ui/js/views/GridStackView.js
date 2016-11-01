@@ -8,10 +8,10 @@
 define([
     "lodash",
     "handlebars",
-    "/reports/udd/ui/js/udd.constants.js",
-    "/assets/gridstack/js/gridstack.js",
-    "contrail-view"
-], function(_, Handlebars, uddConstants, GridStack, ContrailView) {
+    "gridstack",
+    "contrail-view",
+    "core-basedir/reports/udd/ui/js/udd.constants"
+], function(_, Handlebars, GridStack, ContrailView, uddConstants) {
 
     var GridStackView = ContrailView.extend({
         initialize: function() {
