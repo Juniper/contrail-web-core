@@ -7,7 +7,7 @@
 
 define([
     "lodash",
-    "text!reports/udd/config/default.config.json"
+    "text!core-basedir/reports/udd/config/default.config.json"
 ], function(_, defaultConfig) {
     var unifiedDataTypes = {
         LOGGABLE: "loggable",

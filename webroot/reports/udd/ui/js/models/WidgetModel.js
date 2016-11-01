@@ -6,12 +6,12 @@ define([
     "lodash",
     "backbone",
     "knockout",
-    "core-basedir/reports/qe/ui/js/common/qe.utils",
     "core-constants",
     "contrail-model",
-    "/reports/udd/ui/js/udd.constants.js",
-    "text!reports/udd/config/default.config.json"
-], function(_, Backbone, ko, qeUtils, cowc, ContrailModel, uddConstants, defaultConfig) {
+    "core-basedir/reports/qe/ui/js/common/qe.utils",
+    "core-basedir/reports/udd/ui/js/udd.constants",
+    "text!core-basedir/reports/udd/config/default.config.json"
+], function(_, Backbone, ko, cowc, ContrailModel, qeUtils, uddConstants, defaultConfig) {
     var oldConfigState = null, // a private property remembering the oldConfigState of this widget
         dataModelChangeHandler = _.noop, // a private property holding visualization meta config
                                          // model's handlers to data config model change event

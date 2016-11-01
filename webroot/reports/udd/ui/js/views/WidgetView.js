@@ -9,9 +9,9 @@ define([
     "lodash",
     "knockback",
     "core-constants",
-    "/reports/udd/ui/js/udd.constants.js",
-    "contrail-view"
-], function(_, kb, cowc, uddConstants, ContrailView) {
+    "contrail-view",
+    "core-basedir/reports/udd/ui/js/udd.constants"
+], function(_, kb, cowc, ContrailView, uddConstants) {
     var WidgetView = ContrailView.extend({
         selectors: {
             configTitle: ".config-title",
