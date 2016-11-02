@@ -198,12 +198,35 @@ define([
                             yTickFormat: function(value){
                                 return d3.format('.2f')(value);
                             },
-                            showLegend: true,
+                            showLegend: false,
                             defaultZeroLineDisplay: true,
                             legendView: LegendView
                         }
                     }
-                }
+                },
+                "ZoomScatterChartView" : {
+                      viewConfig: {
+                          loadChartInChunks: false,
+                          chartOptions: {
+                              sortFn:function(data){
+                                  return data.reverse();
+                              },
+                              doBucketize: true,
+                              xLabel: ctwl.TITLE_CPU,
+                              yLabel: 'Memory (MB)',
+                              xField: 'x',
+                              yField: 'y',
+                              sizeField: 'size',
+                              xTickCount: 5,
+                              yTickCount: 5,
+                              dataParser: cowu.parseDataForScatterChart,
+                              margin: {top:5},
+                              bubbleSizeFn: function(d) {
+                                   return d3.max(d,function(d) { return d.size;});
+                              },
+                          }
+                      }
+                  }
             };
             if(defaultViewConfigMap[chartType] != null) 
                 return defaultViewConfigMap[chartType]

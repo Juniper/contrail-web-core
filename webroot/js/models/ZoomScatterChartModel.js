@@ -44,7 +44,7 @@ define([
 
         self.refresh = function(chartConfig) {
             var rawData = dataListModel.getFilteredItems();
-            self.data = contrail.checkIfFunction(chartConfig['dataParser']) ? chartConfig['dataParser'](rawData) : rawData;
+            self.data = contrail.checkIfFunction(chartConfig['dataParser']) ? chartConfig['dataParser'](rawData,chartConfig) : rawData;
 
             if(chartConfig['doBucketize'] == true) {
                 self.data = doBucketization(self.data,chartConfig);
@@ -160,7 +160,7 @@ define([
             });
 
             //Set tickFormat only if specified
-            self.xAxis = d3.svg.axis().scale(self.xScale).orient("bottom").ticks(10)
+            self.xAxis = d3.svg.axis().scale(self.xScale).orient("bottom").ticks(chartConfig.xTickCount)
                 .tickSize(-self.height)
                 // .outerTickSize(0)
             if(chartConfig['doBucketize'] != true) {
@@ -168,7 +168,7 @@ define([
             } else if(chartConfig.xLabelFormat != null) {
                 self.xAxis.tickFormat(chartConfig.xLabelFormat);
             }
-            self.yAxis = d3.svg.axis().scale(self.yScale).orient("left").ticks(5)
+            self.yAxis = d3.svg.axis().scale(self.yScale).orient("left").ticks(chartConfig.yTickCount)
                 .tickSize(-self.width)
                 // .outerTickSize(0)
             if(chartConfig['doBucketize'] != true) {
