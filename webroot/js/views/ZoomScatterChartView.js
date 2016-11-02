@@ -7,8 +7,9 @@ define([
     'contrail-view',
     'core-basedir/js/models/ZoomScatterChartModel',
     'contrail-list-model',
-    'core-basedir/js/views/ControlPanelView'
-], function (_, ContrailView, ZoomScatterChartModel, ContrailListModel, ControlPanelView) {
+    'core-basedir/js/views/ControlPanelView',
+    'chart-utils'
+], function (_, ContrailView, ZoomScatterChartModel, ContrailListModel, ControlPanelView, chUtils) {
     var ZoomScatterChartView = ContrailView.extend({
         render: function () {
             var self = this,
@@ -39,6 +40,7 @@ define([
                         self.renderChart(selector, viewConfig, self.model);
                         viewConfig['cfg'] = {};
                     });
+                    self.renderChart(selector, viewConfig, self.model);
                 } else {
                     self.model.onAllRequestsComplete.subscribe(function () {
                         self.renderChart(selector, viewConfig, self.model);
@@ -54,14 +56,20 @@ define([
                 $(selector).bind("refresh", function () {
                     self.renderChart(selector, viewConfig, self.model);
                 });
+                var prevDimensions = chUtils.getDimensionsObj(self.$el);
 
-                var resizeFunction = function (e) {
-                    self.renderChart(selector, viewConfig, self.model);
-                };
+                self.resizeFunction = _.debounce(function (e) {
+                    if(!chUtils.isReRenderRequired({
+                        prevDimensions:prevDimensions,
+                        elem:self.$el})) {
+                        return;
+                    }
+                    prevDimensions = chUtils.getDimensionsObj(self.$el);
+                    self.renderChart($(self.$el), viewConfig, self.model);
+                },cowc.THROTTLE_RESIZE_EVENT_TIME);
 
-                $(window)
-                    .off('resize', resizeFunction)
-                    .on('resize', resizeFunction);
+                window.addEventListener('resize',self.resizeFunction);
+                $(self.$el).parents('.custom-grid-stack-item').on('resize',self.resizeFunction);
             }
 
             if (widgetConfig !== null) {
@@ -368,8 +376,8 @@ define([
                             .attr("y", 0);
 
                         chartSVG.selectAll("circle").attr("transform", function (d) {
-                            var xTranslate = chartModel.xScale(d[chartConfig.xField]) + maxCircleRadius,
-                                yTranslate = chartModel.yScale(d[chartConfig.yField]);
+                            var xTranslate = chartModel.xScale(d['x']) + maxCircleRadius,
+                                yTranslate = chartModel.yScale(d['y']);
                             //Position the non x/y nodes at axis start
                             if(!$.isNumeric(xTranslate))
                                 xTranslate = chartModel.xScale.range()[0] + maxCircleRadius;
@@ -716,8 +724,8 @@ define([
                 return bubbleClass;
             })
             .attr("transform", function (d) {
-                var xTranslate = chartModel.xScale(d[chartConfig.xField]) + maxCircleRadius,
-                    yTranslate = chartModel.yScale(d[chartConfig.yField]);
+                var xTranslate = chartModel.xScale(d['x']) + maxCircleRadius,
+                    yTranslate = chartModel.yScale(d['y']);
                 //Position the non x/y nodes at axis start
                 if(!$.isNumeric(xTranslate))
                     xTranslate = chartModel.xScale.range()[0] + maxCircleRadius;
@@ -844,8 +852,8 @@ define([
                 .attr("y", 0);
 
             chartView.svg.selectAll("circle").attr("transform", function (d) {
-                var xTranslate = chartModel.xScale(d[chartConfig.xField]) + chartConfig.maxCircleRadius,
-                    yTranslate = chartModel.yScale(d[chartConfig.yField]);
+                var xTranslate = chartModel.xScale(d['x']) + chartConfig.maxCircleRadius,
+                    yTranslate = chartModel.yScale(d['y']);
                 //Position the non x/y nodes at axis start
                 if(!$.isNumeric(xTranslate))
                     xTranslate = chartModel.xScale.range()[0] + chartConfig.maxCircleRadius;
@@ -907,8 +915,8 @@ define([
 
                 chartView.svg.selectAll("circle")
                     .attr("transform", function (d) {
-                        var xTranslate = chartModel.xScale(d[chartConfig.xField]) + chartConfig.maxCircleRadius,
-                            yTranslate = chartModel.yScale(d[chartConfig.yField]);
+                        var xTranslate = chartModel.xScale(d['x']) + chartConfig.maxCircleRadius,
+                            yTranslate = chartModel.yScale(d['y']);
                         //Position the non x/y nodes at axis start
                         if(!$.isNumeric(xTranslate))
                             xTranslate = chartModel.xScale.range()[0] + chartConfig.maxCircleRadius;
@@ -1331,7 +1339,9 @@ define([
         var margin = $.extend(true, {}, {top: 20, right: 5, bottom: 50, left: 50}, chartOptions['margin']),
             chartSelector = $(selector).find('.chart-container'),
             width = $(chartSelector).width() - 10,
-            height = 275;
+            height = ($(selector).closest('.custom-grid-stack-item').length > 0 )? 
+                    $(selector).closest('.custom-grid-stack-item').height() - 25:
+                        (chartOptions['height'])? chartOptions['height'] : 275;
 
         var chartViewConfig = {
             maxCircleRadius: 10,
@@ -1341,8 +1351,13 @@ define([
             xLabel: chartOptions.xLabel,
             yLabelFormat: chartOptions.yLabelFormat,
             xLabelFormat: chartOptions.xLabelFormat,
-            xField: 'x',
-            yField: 'y',
+            yFormatter: chartOptions.yFormatter,
+            xFormatter: chartOptions.xFormatter,
+            xTickCount: getValueByJsonPath(chartOptions,'xTickCount',10),
+            yTickCount: getValueByJsonPath(chartOptions,'yTickCount',5),
+            xField: getValueByJsonPath(chartOptions,'xField','x'),
+            yField: getValueByJsonPath(chartOptions,'yField','y'),
+            sizeField: getValueByJsonPath(chartOptions,'sizeField','size'),
             forceX: chartOptions.forceX,
             forceY: chartOptions.forceY,
             colorFilterFields: 'color',
