@@ -44,7 +44,7 @@ define([
 
         self.refresh = function(chartConfig) {
             var rawData = dataListModel.getFilteredItems();
-            self.data = contrail.checkIfFunction(chartConfig['dataParser']) ? chartConfig['dataParser'](rawData) : rawData;
+            self.data = contrail.checkIfFunction(chartConfig['dataParser']) ? chartConfig['dataParser'](rawData,chartConfig) : rawData;
 
             if(chartConfig['doBucketize'] == true) {
                 self.data = doBucketization(self.data,chartConfig);
