@@ -44,14 +44,15 @@ define([
 
         self.refresh = function(chartConfig) {
             var rawData = dataListModel.getFilteredItems();
-            self.data = contrail.checkIfFunction(chartConfig['dataParser']) ? chartConfig['dataParser'](rawData) : rawData;
+            self.data = contrail.checkIfFunction(chartConfig['dataParser']) ?
+                    chartConfig['dataParser'](rawData,chartConfig) : rawData;
 
             if(chartConfig['doBucketize'] == true) {
                 self.data = doBucketization(self.data,chartConfig);
             }
             chartData = JSON.parse(JSON.stringify(self.data));
             self.chartData = chartData;
-            self.sizeFieldName = contrail.handleIfNull(chartConfig['sizeFieldName'], 'size');
+            self.sizeFieldName = contrail.handleIfNull(chartConfig['sizeField'], 'size');
             self.sizeMinMax = getSizeMinMax(self.data, self.sizeFieldName,chartConfig);
 
             d3Scale = d3.scale.linear().range([6, 10]).domain(self.sizeMinMax);
@@ -65,7 +66,7 @@ define([
             $.each(chartData, function (idx, chartDataPoint) {
                 if(chartConfig['doBucketize'] == true) {
                     //In case of single-node,plot with default size (radius 6)
-                    chartDataPoint['size'] = ((chartDataPoint['size'] == 0) || (self.chartData.length == 1)) ? 6 : d3SizeScale(chartDataPoint[self.sizeFieldName]);
+                    chartDataPoint['size'] = ((chartDataPoint[self.sizeFieldName] == 0) || (self.chartData.length == 1)) ? 6 : d3SizeScale(chartDataPoint[self.sizeFieldName]);
                 } else {
                     chartDataPoint['size'] = contrail.handleIfNaN(d3Scale(chartDataPoint[self.sizeFieldName]), 6);
                 }
@@ -160,7 +161,7 @@ define([
             });
 
             //Set tickFormat only if specified
-            self.xAxis = d3.svg.axis().scale(self.xScale).orient("bottom").ticks(10)
+            self.xAxis = d3.svg.axis().scale(self.xScale).orient("bottom").ticks(chartConfig.xTickCount)
                 .tickSize(-self.height)
                 // .outerTickSize(0)
             if(chartConfig['doBucketize'] != true) {
@@ -168,7 +169,7 @@ define([
             } else if(chartConfig.xLabelFormat != null) {
                 self.xAxis.tickFormat(chartConfig.xLabelFormat);
             }
-            self.yAxis = d3.svg.axis().scale(self.yScale).orient("left").ticks(5)
+            self.yAxis = d3.svg.axis().scale(self.yScale).orient("left").ticks(chartConfig.yTickCount)
                 .tickSize(-self.width)
                 // .outerTickSize(0)
             if(chartConfig['doBucketize'] != true) {
@@ -178,11 +179,11 @@ define([
             }
 
             self.xMed = median(_.map(chartData, function (d) {
-                return d[chartConfig.xField];
+                return getValueByJsonPath(d,chartConfig.xField);
             }));
 
             self.yMed = median(_.map(chartData, function (d) {
-                return d[chartConfig.yField];
+                return getValueByJsonPath(d,chartConfig.yField);
             }));
         };
 
@@ -201,10 +202,10 @@ define([
         //If all nodes are closer,then adding 10% buffer on edges makes them even closer
         if(chartData.length > 0) {
             axisMax = d3.max(chartData, function (d) {
-                    return +d[fieldName];
+                    return +getValueByJsonPath(d,fieldName);
                 });
             axisMin = d3.min(chartData, function (d) {
-                    return +d[fieldName];
+                    return +getValueByJsonPath(d,fieldName);
                 });
 
             if (axisMax == null || axisMax === 0) {
@@ -240,7 +241,10 @@ define([
         var minMax, minMaxX, minMaxY, parentMinMax, currLevel, maxBucketizeLevel, bucketsPerAxis,
             defaultBucketsPerAxis = 6;
         bucketsPerAxis = defaultBucketsPerAxis;
-
+        var xField,yField,sizeField;
+        xField = getValueByJsonPath(chartOptions,'xField','x');
+        yField = getValueByJsonPath(chartOptions,'yField','y');
+        sizeField = getValueByJsonPath(chartOptions,'sizeField','size');
         if (data != null) {
             var combinedValues = data;
             var cf = crossfilter(data),
@@ -248,10 +252,10 @@ define([
                 yDim = cf.dimension(function(d) { return d.y;});
 
             minMaxX = d3.extent(combinedValues,function(obj){
-                return obj['x'];
+                return obj[xField];
             });
             minMaxY = d3.extent(combinedValues,function(obj){
-                return obj['y'];
+                return obj[yField];
             });
             //set forceX and  forceY to fix the axes boundaries
             chartOptions.forceX = minMaxX;
@@ -282,8 +286,8 @@ define([
                 var buckets = {};
                 //Group nodes into buckets
                 $.each(data,function(idx,obj) {
-                    var xBucket = xBucketScale(obj['x']);
-                    var yBucket = yBucketScale(obj['y']);
+                    var xBucket = xBucketScale(obj[xField]);
+                    var yBucket = yBucketScale(obj[yField]);
                     if(buckets[xBucket] == null) {
                         buckets[xBucket] = {};
                     }
@@ -300,17 +304,17 @@ define([
                         if(buckets[x][y] != null && buckets[x][y] instanceof Array) {
                             if($.isNumeric(x) && $.isNumeric(y)) {
                                 var obj = {};
-                                avgX = d3.mean(buckets[x][y],function(d){return d.x});
-                                avgY = d3.mean(buckets[x][y],function(d){return d.y});
+                                avgX = d3.mean(buckets[x][y],function(d){return d[xField]});
+                                avgY = d3.mean(buckets[x][y],function(d){return d[yField]});
                                 //To Plot at center of bucket
                                 // avgX = d3.mean(xBucketScale.invertExtent(parseInt(x)),function(d) { return d});
                                 // avgY = d3.mean(yBucketScale.invertExtent(parseInt(y)),function(d) { return d});
-                                obj['x'] = avgX;
-                                obj['y'] = avgY;
+                                obj[xField] = avgX;
+                                obj[yField] = avgY;
                                 if(typeof(chartOptions['bubbleSizeFn']) == 'function') {
-                                    obj['size'] = chartOptions['bubbleSizeFn'](buckets[x][y]);
+                                    obj[sizeField] = chartOptions['bubbleSizeFn'](buckets[x][y]);
                                 } else {
-                                    obj['size'] = buckets[x][y].length;
+                                    obj[sizeField] = buckets[x][y].length;
                                 }
                                 //Show overlapped nodes with black storke
                                 if(buckets[x][y].length > 1) {
@@ -325,10 +329,10 @@ define([
                                 obj['color'] = buckets[x][y][nodeCnt-1]['color'];
                                 //If bucket contains only one node,minX and maxX will be same
                                 obj['minMaxX'] = d3.extent(buckets[x][y],function(obj)  {
-                                    return obj['x'];
+                                    return obj[xField];
                                 });
                                 obj['minMaxY'] = d3.extent(buckets[x][y],function(obj) {
-                                    return obj['y'];
+                                    return obj[yField];
                                 });
                                 // obj['minMaxX'] = xBucketScale.invertExtent(parseInt(x));
                                 // obj['minMaxY'] = yBucketScale.invertExtent(parseInt(y));
@@ -384,7 +388,7 @@ define([
 
     function getBubbleSizeRange(values, sizeFieldName,chartConfig) {
         var sizeMinMax = d3.extent(values, function (obj) {
-            return  contrail.handleIfNaN(obj[sizeFieldName], 0)
+            return  contrail.handleIfNaN(getValueByJsonPath(obj,sizeFieldName), 0)
         });
         
         if(chartConfig.bubbleDefMaxValue > 0){
@@ -402,8 +406,8 @@ define([
                     // && Min value should not be 0 for this calculation.
                     var validMinSize = sizeMinMax[0];
                     if (validMinSize == 0) {
-                        sortedValues = _.sortBy(values, 'size').filter(function (obj) {return obj[sizeFieldName] > 0});
-                        validMinSize = sortedValues[0] != null ? (sortedValues[0]['size'] != null ? sortedValues[0]['size'] : 0) :0;
+                        sortedValues = _.sortBy(values, sizeFieldName).filter(function (obj) {return getValueByJsonPath(obj,sizeFieldName) > 0});
+                        validMinSize = sortedValues[0] != null ? (sortedValues[0][sizeFieldName] != null ? sortedValues[0][sizeFieldName] : 0) :0;
                     }
                     if((validMinSize * 4) > sizeMinMax[1])
                         sizeMinMax[1] = validMinSize * 4;

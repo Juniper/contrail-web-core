@@ -742,7 +742,7 @@ define([
                         return $.extend(true,[],currObj);
                     }
                 } else if(typeof(currObj) == "object") {
-                    if(doClone == false) { 
+                    if(doClone == false) {
                         return currObj;
                     } else {
                         return $.extend(true,{},currObj);
@@ -1501,7 +1501,7 @@ define([
             var cf = crossfilter(response);
             var timeStampField = 'T',
                 parsedData = [], failureCheckFn = getValueByJsonPath(options, 'failureCheckFn'),
-                colors = getValueByJsonPath(options, 'colors'),
+                colors = getValueByJsonPath(options, 'colors',cowc.FIVE_NODE_COLOR),
                 groupBy = getValueByJsonPath(options, 'groupBy'),
                 yField = getValueByJsonPath(options, 'yField'),
                 yFieldOperation = getValueByJsonPath(options, 'yFieldOperation'),
@@ -1524,7 +1524,7 @@ define([
                 insertEmptyBuckets: getValueByJsonPath(options, 'insertEmptyBuckets', true)
             });
             var tsDim = cf.dimension(function(d) { return d[timeStampField]});
-            if (failureCheckFn != null && typeof failureCheckFn == 'function' 
+            if (failureCheckFn != null && typeof failureCheckFn == 'function'
                 && response.length > 0) {
                 parsedData.push({
                    key: failureLabel,
@@ -1570,7 +1570,8 @@ define([
                 for (var i = 0; i < groupByMapLen; i++) {
                     parsedData.push({
                         key: groupByMap[i]['key'],
-                        color: colors[groupByMap[i]['key']],
+                        color: (colors[groupByMap[i]['key']] == null)? colors[i]
+                                : colors[groupByMap[i]['key']],
                         values: []
                     });
                 }
@@ -1709,6 +1710,73 @@ define([
             return _.values(parsedData);
         };
 
+        this.parseDataForScatterChart = function(data,options) {
+            //Loop through and set the x, y and size field based on the chartOptions selected
+            var xField = getValueByJsonPath(options,'xField','x');
+            var yField = getValueByJsonPath(options,'yField','y');
+            var sizeField = getValueByJsonPath(options,'sizeField','size');
+            var ret =  [];
+            var clonedData = $.extend({},true,data);
+            $.each(clonedData,function(i,d){
+                d['x'] = getValueByJsonPath(d,xField,0);
+                d['y'] = getValueByJsonPath(d,yField,0);
+                d['size'] = getValueByJsonPath(d,sizeField,0);
+                ret.push(d);
+            });
+            return ret;
+        };
+
+        this.parsePercentilesData = function(data,options) {
+            var yFields = getValueByJsonPath(options,'yFields',[]);
+            var parsedData = [];
+            var colors = getValueByJsonPath(options,'colors',cowc.THREE_NODE_COLOR);
+            $.each(yFields,function(i,yField){
+                var key = getLabelForPercentileYField(yField);
+                parsedData[yField] = {"key":key,"color":colors[i],values:[]};
+                var values = parsedData[yField]['values'];
+                $.each(data,function(j,d){
+                    values.push({x:getValueByJsonPath(d,"T="),y:getValueByJsonPath(d,yField,0)});
+                });
+                parsedData[yField]['values'] = values;
+            });
+            return _.values(parsedData);
+        };
+        this.parseDataForLineChart = function(data,options) {
+            var yFields = getValueByJsonPath(options,'yFields',[]);
+            var yLabels = getValueByJsonPath(options,'yLabels',[]);
+            var parsedData = [];
+            var colors = getValueByJsonPath(options,'colors',cowc.THREE_NODE_COLOR);
+            $.each(yFields,function(i,yField){
+                var key = getValueByJsonPath(yLabels,""+i,yField);
+                parsedData[yField] = {"key":key,"color":colors[i],values:[]};
+                var values = parsedData[yField]['values'];
+                $.each(data,function(j,d){
+                    values.push({x:getValueByJsonPath(d,"T="),y:getValueByJsonPath(d,yField,0)});
+                });
+                parsedData[yField]['values'] = values;
+            });
+            return _.values(parsedData);
+        }
+        this.parsePercentilesDataForStack = function (data,options) {
+            var yFields = getValueByJsonPath(options,'yFields',[]);
+            var parsedData = [];
+            var colors = getValueByJsonPath(options,'colors',cowc.THREE_NODE_COLOR);
+            var parsedData = [];
+            $.each(yFields,function(i,yfield){
+                $.each(data,function(j,d){
+                   var itemData = $.extend(true,{},d);
+                   itemData['Source'] = yfield;
+                   itemData['percentileValue'] = getValueByJsonPath(d,yfield);
+                   parsedData.push(itemData);
+                });
+            });
+            return parsedData;
+        };
+        function getLabelForPercentileYField (key) {
+            var splits = key.split(';');
+            return splits[splits.length - 1] + "th Percentile";
+        }
+
         this.parseLineBarChartWithFocus = function (data, options) {
             var cf = crossfilter(data);
             var buckets = cowu.bucketizeStats(data, {
@@ -1807,60 +1875,131 @@ define([
             }
             return false;
         }
-        this.getStatsModelConfig = function (statsConfig) {
-            var postData = {
-                "autoSort": true,
-                "async": false,
-                "formModelAttrs": {
-                  "table_type": "STAT",
-                  "query_prefix": "stat",
-                  "from_time": Date.now() - (2 * 60 * 60 * 1000),
-                  "from_time_utc": Date.now() - (2 * 60 * 60 * 1000),
-                  "to_time": Date.now(),
-                  "to_time_utc": Date.now(),
-                  "time_granularity_unit": "secs",
-                  "time_granularity": 150,
-                  "limit": "150000"
-                }
-            };
 
-            if (statsConfig['table_name'] != null) {
-                postData['formModelAttrs']['table_name'] = statsConfig['table_name'];
+        self.parseAndMergeStats = function (response,primaryDS) {
+            var primaryData = primaryDS.getItems();
+            if(primaryData.length == 0) {
+                primaryDS.setData(response);
+                return;
             }
-            if (statsConfig['table_type'] != null) {
-                postData['formModelAttrs']['table_type'] = statsConfig['table_type'];
+            if(response.length == 0) {
+                return;
             }
-            if (statsConfig['select'] != null) {
-                postData['formModelAttrs']['select'] = statsConfig['select'];
+            //If both arrays are not having first element at same time
+            //remove one item accordingly
+            while (primaryData[0]['T='] != response[0]['T=']) {
+                if(primaryData[0]['T='] > response[0]['T=']) {
+                    response = response.slice(1,response.length-1);
+                } else {
+                    primaryData = primaryData.slice(1,primaryData.length-1);
+                }
             }
-            if (statsConfig['where'] != null) {
-                postData['formModelAttrs']['where'] = statsConfig['where'];
+            var cnt = primaryData.length;
+            var responseKeys = _.keys(response[0]);
+            for (var i = 0; i < cnt ; i++) {
+//                primaryData[i]['T'] = primaryData[i]['T='];
+                for (var j = 0; j < responseKeys.length; j++) {
+                    if (response[i] != null && response[i][responseKeys[j]] != null) {
+                        primaryData[i][responseKeys[j]] =
+                            response[i][responseKeys[j]];
+                    } else if (i > 0){
+                        primaryData[i][responseKeys[j]] =
+                            primaryData[i-1][responseKeys[j]];
+                    }
+                }
             }
-            if (statsConfig['time_granularity'] != null) {
-                postData['formModelAttrs']['time_granularity'] = statsConfig['time_granularity'];
+            primaryDS.updateData(primaryData);
+        };
+
+        /**
+         * Takes input as an array of configs.
+         * The first one is considered as primary req and the rest are added as
+         * vl config
+         */
+        self.getStatsModelConfig = function (config) {
+            if (!_.isArray(config)) {
+                config = [config];
             }
-            if (statsConfig['time_granularity_unit'] != null) {
-                postData['formModelAttrs']['time_granularity_unit'] = statsConfig['time_granularity_unit'];
+            var primaryRemoteConfig ;
+            var vlRemoteList = [];
+            for (var i = 0; i < config.length; i++) {
+                var statsConfig = config[i];
+                var postData = {
+                    "autoSort": true,
+                    "async": false,
+                    "formModelAttrs": {
+                      "table_type": "STAT",
+                      "query_prefix": "stat",
+                      "from_time": Date.now() - (2 * 60 * 60 * 1000),
+                      "from_time_utc": Date.now() - (2 * 60 * 60 * 1000),
+                      "to_time": Date.now(),
+                      "to_time_utc": Date.now(),
+                      "time_granularity_unit": "secs",
+                      "time_granularity": 150,
+                      "limit": "150000"
+                    }
+                };
+
+                if (statsConfig['table_name'] != null) {
+                    postData['formModelAttrs']['table_name'] = statsConfig['table_name'];
+                }
+                if (statsConfig['table_type'] != null) {
+                    postData['formModelAttrs']['table_type'] = statsConfig['table_type'];
+                }
+                if (statsConfig['select'] != null) {
+                    postData['formModelAttrs']['select'] = statsConfig['select'];
+                }
+                if (statsConfig['where'] != null) {
+                    postData['formModelAttrs']['where'] = statsConfig['where'];
+                }
+                if (statsConfig['time_granularity'] != null) {
+                    postData['formModelAttrs']['time_granularity'] = statsConfig['time_granularity'];
+                }
+                if (statsConfig['time_granularity_unit'] != null) {
+                    postData['formModelAttrs']['time_granularity_unit'] = statsConfig['time_granularity_unit'];
+                }
+
+                if(i == 0) {
+                    var remoteObj = {
+                            ajaxConfig : {
+                                url : "/api/qe/query",
+                                type: 'POST',
+                                data: JSON.stringify(postData)
+                            },
+                            dataParser : function (response) {
+                                var data = response['data'];
+                                if (statsConfig['parser'] != null && typeof statsConfig['parser'] == "function") {
+                                    data = statsConfig['parser'](data);
+                                }
+                                return data;
+                            }
+                        };
+                    primaryRemoteConfig = remoteObj;
+                } else {
+                    var vlRemoteObj = {
+                        getAjaxConfig: function() {
+                            return {
+                                url : "/api/qe/query",
+                                type: 'POST',
+                                data: JSON.stringify(postData)
+                            }
+                        },
+                        successCallback: function(response, contrailListModel) {
+                            var data = getValueByJsonPath(response,'data',[]);
+                            statsConfig['mergeFn'] (data,contrailListModel,'MAX(flow_rate.active_flows)');
+                        }
+                    };
+                    vlRemoteList.push (vlRemoteObj);
+                }
             }
             var listModelConfig =  {
-                remote : {
-                    ajaxConfig : {
-                        url : "/api/qe/query",
-                        type: 'POST',
-                        data: JSON.stringify(postData)
-                    },
-                    dataParser : function (response) {
-                        var data = response['data'];
-                        if (statsConfig['parser'] != null && typeof statsConfig['parser'] == "function") {
-                            data = statsConfig['parser'](data);
-                        }
-                        return data;
-                    }
-                },
-                cacheConfig : {
-
-                }
+                remote : primaryRemoteConfig,
+                cacheConfig:{}
             };
+            if(vlRemoteList.length > 0) {
+                var vlRemoteConfig = {vlRemoteList:vlRemoteList};
+                listModelConfig['vlRemoteConfig'] = vlRemoteConfig;
+            }
             if (statsConfig['ucid'] != null) {
                 listModelConfig['cacheConfig']['ucid'] = statsConfig['ucid'];
             }

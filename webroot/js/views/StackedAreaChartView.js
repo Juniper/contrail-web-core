@@ -113,7 +113,7 @@ define([
               heightOverview = totalHeight - marginOverview.top - marginOverview.bottom;
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                data = viewConfig['parseFn'](data, chartViewModel);
+                data = viewConfig['parseFn'](data, chartOptions);
               //Need to check and remove the data.length condition because invalid for object
             } else if (data != null && data.length > 0) {
                 data = cowu.chartDataFormatter(data, chartOptions);
