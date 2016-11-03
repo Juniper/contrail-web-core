@@ -10,7 +10,7 @@
         "view": "GridConfigView",
         "viewPathPrefix": "reports/udd/ui/js/views/contentConfigs/",
         "model": "GridConfigModel",
-        "modelPathPrefix": "reports/udd/ui/js/models/contentConfigs/"
+        "modelPathPrefix": "core-basedir/reports/udd/ui/js/models/contentConfigs/"
       },
       "validations": {
         "QueryConfigView": {}
@@ -26,7 +26,7 @@
         "view": "LineChartConfigView",
         "viewPathPrefix": "reports/udd/ui/js/views/contentConfigs/",
         "model": "LineChartConfigModel",
-        "modelPathPrefix": "reports/udd/ui/js/models/contentConfigs/"
+        "modelPathPrefix": "core-basedir/reports/udd/ui/js/models/contentConfigs/"
       },
       "validations": {
         "QueryConfigView": {
@@ -49,7 +49,7 @@
         "view": "LineBarChartConfigView",
         "viewPathPrefix": "reports/udd/ui/js/views/contentConfigs/",
         "model": "LineBarChartConfigModel",
-        "modelPathPrefix": "reports/udd/ui/js/models/contentConfigs/"
+        "modelPathPrefix": "core-basedir/reports/udd/ui/js/models/contentConfigs/"
       },
       "validations": {
         "QueryConfigView": {
@@ -72,7 +72,7 @@
         "view": "LogsConfigView",
         "viewPathPrefix": "reports/udd/ui/js/views/contentConfigs/",
         "model": "LogsConfigModel",
-        "modelPathPrefix": "reports/udd/ui/js/models/contentConfigs/"
+        "modelPathPrefix": "core-basedir/reports/udd/ui/js/models/contentConfigs/"
       },
       "validations": {
         "QueryConfigView": {
@@ -89,7 +89,7 @@
       "view": "QueryConfigView",
       "viewPathPrefix": "reports/udd/ui/js/views/dataSourceConfigs/",
       "model": "QueryConfigModel",
-      "modelPathPrefix": "reports/udd/ui/js/models/dataSourceConfigs/",
+      "modelPathPrefix": "core-basedir/reports/udd/ui/js/models/dataSourceConfigs/",
       "modelConfig": {
         "time_range": 600
       }
