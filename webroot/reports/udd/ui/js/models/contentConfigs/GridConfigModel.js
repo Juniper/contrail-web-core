@@ -52,22 +52,29 @@ define([
             }));
 
             var columnsToShow = this.visibleColumns().split(delimiter),
-                newColumnsToShowByDefault = [""];
+                newColumnsToShowByDefault = [];
 
-            if ((!_.isEmpty(viewModel.changed.select) && this.canUseSelectChange)
-                || (_.isEmpty(viewModel.changed.select) && !this.canUseSelectChange)) {
-                /** 
-                 * when data source config form's select field is updated,
-                 * find and delete those removed DB fields from visible columns.
-                 * Then, by default, add any new DB fields to the visible columns.
-                 */
-                var invalidColumnsToRemove = _.difference(columnsToShow, selectedFieldArray);
+            /** 
+             * when data source config form's select field is updated,
+             * find and delete those removed DB fields from visible columns.
+             * Then, by default, add any new DB fields to the visible columns.
+             */
+            if (!_.isEmpty(viewModel.changed.select)) {
+                if (!this.canUseSelectChange) {
+                    // This takes advantage of the truth that
+                    // on widget initialization, select field will be updated once
+                    // based on server response. And this initialization change
+                    // should be omitted. The else-clause should be enabled for all following 
+                    // select field changes.
+                    this.canUseSelectChange = true;
+                } else {
+                    var invalidColumnsToRemove = _.difference(columnsToShow, selectedFieldArray);
+
                     newColumnsToShowByDefault = _.difference(selectedFieldArray, columnsToShow);
-                
-                // TODO: When Lodash@4.x.x is available, replace this whole line with _.pullAll(columnsToShow, invalidColumnsToRemove);
-                columnsToShow = _.difference(columnsToShow, invalidColumnsToRemove);
 
-                this.canUseSelectChange = true;
+                    // TODO: When Lodash@4.x.x is available, replace this whole line with _.pullAll(columnsToShow, invalidColumnsToRemove);
+                    columnsToShow = _.difference(columnsToShow, invalidColumnsToRemove);
+                }
             }
 
             // TODO: When Lodash^4.x.x is available, replace this whole line with this.visibleColumns(_.concat(columnsToShow, newColumnsToShowByDefault).join(delimiter));
