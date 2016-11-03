@@ -4,6 +4,7 @@
 var logutils = require('../utils/log.utils');
 var commonUtils = require('../utils/common.utils');
 var global = require('./global');
+var opApiServer = require('./opServer.api');
 
 function formatAndClause (objArr)
 {
@@ -277,16 +278,15 @@ function createTimeQueryJsonObjByAppData (appData)
     return timeObj;
 }
 
-function executeQueryString (queryJSON, callback)
+function executeQueryString (queryJSON, appData, callback)
 {
     var resultData, startTime = (new Date()).getTime(), endTime;
-    opServer.authorize(function () {
-        opServer.api.post(global.RUN_QUERY_URL, queryJSON, function (error, jsonData) {
-            endTime = (new Date()).getTime();
-            logutils.logger.debug("Query executed in " + ((endTime - startTime) / 1000) +
-                'secs ' + JSON.stringify(queryJSON));
-            callback(error, jsonData);
-        });
+    opApiServer.apiPost(global.RUN_QUERY_URL, queryJSON, appData,
+                        function (error, jsonData) {
+        endTime = (new Date()).getTime();
+        logutils.logger.debug("Query executed in " + ((endTime - startTime) / 1000) +
+                              'secs ' + JSON.stringify(queryJSON));
+        callback(error, jsonData);
     });
 };
 
