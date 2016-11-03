@@ -133,10 +133,13 @@ define([
                 });
 
                 this.set("id", uuid);
-                this.set(uddConstants.raw.WIDGET_META, _widgetConfig);
-                this.set(uddConstants.raw.SUBVIEWS_CONFIG,
-                    this.get(uddConstants.raw.SUBVIEWS_CONFIG) || this.getDefaultConfig());
+            } else {
+                _widgetConfig = _p[uddConstants.raw.WIDGET_META];
             }
+
+            this.set(uddConstants.raw.WIDGET_META, _widgetConfig);
+            this.set(uddConstants.raw.SUBVIEWS_CONFIG,
+                this.get(uddConstants.raw.SUBVIEWS_CONFIG) || this.getDefaultConfig());
 
             var _contentConfig = this.get(uddConstants.raw.SUBVIEWS_CONFIG),
                 modelConfig = _.zipObject(
