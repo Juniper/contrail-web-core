@@ -11,7 +11,7 @@ define([
     "knockback",
     "core-constants",
     "contrail-view",
-    "core-basedir/reports/udd/ui/js/udd.constants"
+    "core-basedir/reports/udd/ui/js/common/udd.constants"
 ], function(_, ko, kb, cowc, ContrailView, uddConstants) {
     var WidgetView = ContrailView.extend({
         selectors: {
