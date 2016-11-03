@@ -9,7 +9,7 @@ define([
     "core-constants",
     "contrail-model",
     "core-basedir/reports/qe/ui/js/common/qe.utils",
-    "core-basedir/reports/udd/ui/js/udd.constants",
+    "core-basedir/reports/udd/ui/js/common/udd.constants",
     "text!core-basedir/reports/udd/config/default.config.json"
 ], function(_, Backbone, ko, cowc, ContrailModel, qeUtils, uddConstants, defaultConfig) {
     var oldConfigState = null, // a private property remembering the oldConfigState of this widget

@@ -10,9 +10,8 @@ define([
     "handlebars",
     "gridstack",
     "contrail-view",
-    "core-basedir/reports/udd/ui/js/udd.constants"
+    "core-basedir/reports/udd/ui/js/common/udd.constants"
 ], function(_, Handlebars, GridStack, ContrailView, uddConstants) {
-
     var GridStackView = ContrailView.extend({
         initialize: function() {
             this.p = _.extend({
@@ -28,19 +27,20 @@ define([
                 minHeight: 6,
             }, this.attributes.viewConfig);
 
+            this.template = window.contrail.getTemplate4Id("udd-layout-template");
+            this.widgetTemplate = window.contrail.getTemplate4Id("udd-widget-template");
+            this.placeholderHTML = window.contrail.getTemplate4Id("udd-layout-placeholder-template");
+
             this.listenTo(this.model, "add", this.onAdd);
             this.listenTo(this.model, "remove", this.onRemove);
         },
 
         id: "widgets",
-        template: window.contrail.getTemplate4Id("udd-layout-template"),
-        widgetTemplate: window.contrail.getTemplate4Id("udd-widget-template"),
         events: {
             "change .grid-stack": "onChange",
             "resizestop .grid-stack": "onResize",
             "click .add-widget": "add",
         },
-        placeholderHTML: window.contrail.getTemplate4Id("udd-layout-placeholder-template"),
 
         render: function() {
             this.$el.html(this.template({ width: this.p.width }));

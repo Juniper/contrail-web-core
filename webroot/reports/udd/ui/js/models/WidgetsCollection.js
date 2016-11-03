@@ -4,7 +4,7 @@
 define([
     "lodash",
     "backbone",
-    "core-basedir/reports/udd/ui/js/udd.constants",
+    "core-basedir/reports/udd/ui/js/common/udd.constants",
     "core-basedir/reports/udd/ui/js/models/WidgetModel"
 ], function(_, Backbone, uddConstants, Widget) {
 

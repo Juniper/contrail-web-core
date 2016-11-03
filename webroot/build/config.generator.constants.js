@@ -24,46 +24,46 @@ constants.coreBaseUrl = "./"
 constants.coreModules  = [
     {
         enabled: true,
-        name: 'core-bundle',
+        name: "core-bundle",
         exclude: [
-            'jquery','jquery-ui'
+            "jquery","jquery-ui"
         ]
     },{
         enabled: true,
-        name: './js/common/contrail.core.views',
+        name: "./js/common/contrail.core.views",
         exclude: [
-            'lodash','jquery','backbone','knockback','knockout','contrail-remote-data-handler','contrail-view',
-            'contrail-list-model','contrail-model','contrail-view-model','d3','nv.d3','slick.checkboxselectcolumn','jquery.event.drag',
-            'slick.grid','slick.rowselectionmodel','select2','jquery-ui','jquery.multiselect','jquery.multiselect.filter'
+            "lodash","jquery","backbone","knockback","knockout","contrail-remote-data-handler","contrail-view",
+            "contrail-list-model","contrail-model","contrail-view-model","d3","nv.d3","slick.checkboxselectcolumn","jquery.event.drag",
+            "slick.grid","slick.rowselectionmodel","select2","jquery-ui","jquery.multiselect","jquery.multiselect.filter"
         ]
     },{
         enabled: true,
-        name: './js/common/chart.libs',
+        name: "./js/common/chart.libs",
         exclude: [
-            'jquery','lodash','backbone'
+            "jquery","lodash","backbone"
         ]
     },{
         enabled: true,
-        name: './js/common/thirdparty.libs',
+        name: "./js/common/thirdparty.libs",
         exclude: [
-            'jquery','jquery.event.drag','knockout','backbone','knockback','validation'
+            "jquery","jquery.event.drag","knockout","backbone","knockback","validation"
         ]
     },{
         enabled: true,
-        name: './js/common/jquery.dep.libs',
+        name: "./js/common/jquery.dep.libs",
         exclude: [
-            'jquery'
+            "jquery"
         ],
         override: {
             wrapShim: false
         }
     },{
         enabled: true,
-        name: './js/common/nonamd.libs',
+        name: "./js/common/nonamd.libs",
         exclude: [
-            'jquery','jquery-ui','knockout','bootstrap','jquery.xml2json',
-            'jquery.json','d3','backbone','validation',
-            'core-bundle'
+            "jquery","jquery-ui","knockout","bootstrap","jquery.xml2json",
+            "jquery.json","d3","backbone","validation",
+            "core-bundle"
         ],
         override: {
             wrapShim: false
@@ -71,31 +71,34 @@ constants.coreModules  = [
     },
     {
         enabled: true,
-        name: 'qe-module',
-        include: [
-            'core-basedir/reports/qe/ui/js/common/qe.utils',
-            'core-basedir/reports/qe/ui/js/common/qe.parsers',
-            'core-basedir/reports/qe/ui/js/common/qe.grid.config',
-            'core-basedir/reports/qe/ui/js/common/qe.model.config',
-            'core-basedir/reports/qe/ui/js/views/QueryEngineView',
-            'core-basedir/reports/qe/ui/js/views/QueryQueueView',
-            'core-basedir/reports/qe/ui/js/views/QueryTextView',
-            'core-basedir/reports/qe/ui/js/views/ObjectLogsFormView',
-            'core-basedir/reports/qe/ui/js/views/SystemLogsFormView',
-            'core-basedir/reports/qe/ui/js/views/StatQueryFormView',
-            'core-basedir/reports/qe/ui/js/models/ContrailListModelGroup',
-            'core-basedir/reports/qe/ui/js/models/ObjectLogsFormModel',
-            'core-basedir/reports/qe/ui/js/models/StatQueryFormModel',
-            'core-basedir/reports/qe/ui/js/models/SystemLogsFormModel'
-        ],
+        name: "qe-module",
         exclude: [
-            'underscore',
-            'moment',
-            'contrail-view',
-            'contrail-model',
-            'core-basedir/js/views/ZoomScatterChartView',
-            'core-basedir/js/views/LineWithFocusChartView',
-            'text!core-basedir/reports/qe/ui/templates/qe.tmpl'
+            "underscore",
+            "moment",
+            "text",
+            "contrail-view",
+            "contrail-model",
+            "core-constants",
+            "core-basedir/js/views/ZoomScatterChartView",
+            "core-basedir/js/views/LineWithFocusChartView"
+        ]
+    },
+    {
+        enabled: true,
+        name: "udd-module",
+        exclude: [
+            "underscore",
+            "moment",
+            "text",
+            "handlebars",
+            "jquery-ui",
+            "gridstack",
+            "core-constants",
+            "contrail-view",
+            "contrail-model",
+            "contrail-list-model",
+            "core-labels",
+            "qe-module"
         ]
     }
 ];
@@ -115,7 +118,7 @@ constants.controllerCoreRelativePath = "./../../contrail-web-core/webroot/";
 constants.controllerModules = [
     {
         enabled: true,
-        name: 'controller-init',
+        name: "controller-init",
         exclude: [
             "underscore",
             "contrail-view",
@@ -131,97 +134,96 @@ constants.controllerModules = [
     },
     {
         enabled: true,
-        name: 'monitor-infra-module',
+        name: "monitor-infra-module",
         include: [
-            'mon-infra-controller-dashboard',
+            "mon-infra-controller-dashboard",
+            "controller-basedir/monitor/infrastructure/common/ui/js/views/VRouterScatterChartView",
+            "controller-basedir/monitor/infrastructure/common/ui/js/views/ConfigNodeChartsView",
+            "controller-basedir/monitor/infrastructure/common/ui/js/views/ControlNodeScatterChartView",
+            "controller-basedir/monitor/infrastructure/common/ui/js/views/DatabaseNodeScatterChartView",
+            "controller-basedir/monitor/infrastructure/common/ui/js/views/AnalyticsNodeScatterChartView",
+            "vrouter-dashboard-view",
 
-            'controller-basedir/monitor/infrastructure/common/ui/js/views/VRouterScatterChartView',
-            'controller-basedir/monitor/infrastructure/common/ui/js/views/ConfigNodeChartsView',
-            'controller-basedir/monitor/infrastructure/common/ui/js/views/ControlNodeScatterChartView',
-            'controller-basedir/monitor/infrastructure/common/ui/js/views/DatabaseNodeScatterChartView',
-            'controller-basedir/monitor/infrastructure/common/ui/js/views/AnalyticsNodeScatterChartView',
-            'vrouter-dashboard-view',
+            "monitor-infra-analyticsnode-model",
+            "monitor-infra-databasenode-model",
+            "monitor-infra-confignode-model",
+            "monitor-infra-controlnode-model",
+            "monitor-infra-vrouter-model",
+            "monitor-infra-confignode-charts-model",
 
-            'monitor-infra-analyticsnode-model',
-            'monitor-infra-databasenode-model',
-            'monitor-infra-confignode-model',
-            'monitor-infra-controlnode-model',
-            'monitor-infra-vrouter-model',
-            'monitor-infra-confignode-charts-model',
-
-            'monitor-infra-parsers',
-            'monitor-infra-utils',
-            'monitor-infra-constants'
+            "monitor-infra-parsers",
+            "monitor-infra-utils",
+            "monitor-infra-constants"
         ],
         exclude: [
-            'underscore',
-            'cf-datasource',
-            'contrail-view',
-            'controller-init',
-            'contrail-model',
-            'mon-infra-dashboard-view',
+            "underscore",
+            "cf-datasource",
+            "contrail-view",
+            "controller-init",
+            "contrail-model",
+            "mon-infra-dashboard-view",
             "core-basedir/js/views/LoginWindowView"
         ]
     },
     {
         enabled: true,
-        name: 'nm-module',
+        name: "nm-module",
         include: [
-            'controller-basedir/monitor/networking/ui/js/views/MonitorNetworkingView',
-            'controller-basedir/monitor/networking/ui/js/views/NetworkingGraphView',
-            'controller-basedir/monitor/networking/ui/js/views/NetworkGridView',
-            'controller-basedir/monitor/networking/ui/js/views/NetworkListView',
-            'controller-basedir/monitor/networking/ui/js/views/NetworkTabView',
-            'controller-basedir/monitor/networking/ui/js/views/NetworkView',
-            'controller-basedir/monitor/networking/ui/js/views/ProjectGridView',
-            'controller-basedir/monitor/networking/ui/js/views/ProjectListView',
-            'controller-basedir/monitor/networking/ui/js/views/ProjectTabView',
-            'controller-basedir/monitor/networking/ui/js/views/ProjectView',
-            'controller-basedir/monitor/networking/ui/js/views/InstanceGridView',
-            'controller-basedir/monitor/networking/ui/js/views/InstanceListView',
-            'controller-basedir/monitor/networking/ui/js/views/InstanceTabView',
-            'controller-basedir/monitor/networking/ui/js/views/InstanceTrafficStatsView',
-            'controller-basedir/monitor/networking/ui/js/views/InstancePortDistributionView',
-            'controller-basedir/monitor/networking/ui/js/views/InstanceView',
-            'controller-basedir/monitor/networking/ui/js/views/ConnectedNetworkTabView',
-            'controller-basedir/monitor/networking/ui/js/views/ConnectedNetworkTrafficStatsView',
-            'controller-basedir/monitor/networking/ui/js/views/FlowGridView',
-            'controller-basedir/monitor/networking/ui/js/views/FlowListView',
-            'controller-basedir/monitor/networking/ui/js/views/InterfaceGridView'
+            "controller-basedir/monitor/networking/ui/js/views/MonitorNetworkingView",
+            "controller-basedir/monitor/networking/ui/js/views/NetworkingGraphView",
+            "controller-basedir/monitor/networking/ui/js/views/NetworkGridView",
+            "controller-basedir/monitor/networking/ui/js/views/NetworkListView",
+            "controller-basedir/monitor/networking/ui/js/views/NetworkTabView",
+            "controller-basedir/monitor/networking/ui/js/views/NetworkView",
+            "controller-basedir/monitor/networking/ui/js/views/ProjectGridView",
+            "controller-basedir/monitor/networking/ui/js/views/ProjectListView",
+            "controller-basedir/monitor/networking/ui/js/views/ProjectTabView",
+            "controller-basedir/monitor/networking/ui/js/views/ProjectView",
+            "controller-basedir/monitor/networking/ui/js/views/InstanceGridView",
+            "controller-basedir/monitor/networking/ui/js/views/InstanceListView",
+            "controller-basedir/monitor/networking/ui/js/views/InstanceTabView",
+            "controller-basedir/monitor/networking/ui/js/views/InstanceTrafficStatsView",
+            "controller-basedir/monitor/networking/ui/js/views/InstancePortDistributionView",
+            "controller-basedir/monitor/networking/ui/js/views/InstanceView",
+            "controller-basedir/monitor/networking/ui/js/views/ConnectedNetworkTabView",
+            "controller-basedir/monitor/networking/ui/js/views/ConnectedNetworkTrafficStatsView",
+            "controller-basedir/monitor/networking/ui/js/views/FlowGridView",
+            "controller-basedir/monitor/networking/ui/js/views/FlowListView",
+            "controller-basedir/monitor/networking/ui/js/views/InterfaceGridView"
         ],
         exclude: [
-            'underscore',
-            'dagre',
-            'joint',
-            'joint.contrail',
-            'contrail-view',
-            'contrail-view-model',
-            'core-basedir/js/views/ZoomScatterChartView',
-            'core-basedir/js/views/LineWithFocusChartView',
-            'controller-init'
+            "underscore",
+            "dagre",
+            "joint",
+            "joint.contrail",
+            "contrail-view",
+            "contrail-view-model",
+            "core-basedir/js/views/ZoomScatterChartView",
+            "core-basedir/js/views/LineWithFocusChartView",
+            "controller-init"
         ]
     },
     {
         enabled: true,
-        name: 'controller-qe-module',
+        name: "controller-qe-module",
         include: [
-            'controller-basedir/reports/qe/ui/js/views/ControllerQEView',
-            'controller-basedir/reports/qe/ui/js/views/FlowSeriesFormView',
-            'controller-basedir/reports/qe/ui/js/views/FlowRecordFormView',
-            'controller-basedir/reports/qe/ui/js/views/FlowDetailsTabView',
-            'controller-basedir/reports/qe/ui/js/views/SessionAnalyzerView',
-            'controller-basedir/reports/qe/ui/js/models/SessionAnalyzerModel',
-            'controller-basedir/reports/qe/ui/js/models/FlowRecordFormModel',
-            'controller-basedir/reports/qe/ui/js/models/FlowSeriesFormModel'
+            "controller-basedir/reports/qe/ui/js/views/ControllerQEView",
+            "controller-basedir/reports/qe/ui/js/views/FlowSeriesFormView",
+            "controller-basedir/reports/qe/ui/js/views/FlowRecordFormView",
+            "controller-basedir/reports/qe/ui/js/views/FlowDetailsTabView",
+            "controller-basedir/reports/qe/ui/js/views/SessionAnalyzerView",
+            "controller-basedir/reports/qe/ui/js/models/SessionAnalyzerModel",
+            "controller-basedir/reports/qe/ui/js/models/FlowRecordFormModel",
+            "controller-basedir/reports/qe/ui/js/models/FlowSeriesFormModel"
         ],
         exclude: [
-            'underscore',
-            'contrail-view',
-            'contrail-model',
-            'core-basedir/js/views/ZoomScatterChartView',
-            'core-basedir/js/views/LineWithFocusChartView',
-            'controller-init',
-            'core-basedir/reports/qe/ui/js/models/ContrailListModelGroup'
+            "underscore",
+            "contrail-view",
+            "contrail-model",
+            "core-basedir/js/views/ZoomScatterChartView",
+            "core-basedir/js/views/LineWithFocusChartView",
+            "controller-init",
+            "core-basedir/reports/qe/ui/js/models/ContrailListModelGroup"
         ]
     }
 ];
@@ -234,10 +236,10 @@ constants.smCoreRelativePath = "./../../contrail-web-core/webroot/";
 constants.smModules = [
     {
         enabled: true,
-        name: 'sm-init',
+        name: "sm-init",
         include:[],
         exclude: [
-            'underscore'
+            "underscore"
         ] 
     }
 ];
@@ -249,11 +251,11 @@ constants.storageCoreRelativePath = "./../../contrail-web-core/webroot/";
 constants.storageModules = [
     {
         enabled: true,
-        name: 'storage-init',
+        name: "storage-init",
         include:[],
         exclude: [
-            'underscore',
-            'contrail-view-model'
+            "underscore",
+            "contrail-view-model"
         ]
     }
 ];
@@ -264,18 +266,18 @@ constants.storageModules = [
  * non-default values are individually defined as above.
  */
 constants.buildBaseConfJson = {
-    appDir: '',
-    dir: '',
-    baseUrl: '',
+    appDir: "",
+    dir: "",
+    baseUrl: "",
     paths: {},
     map: {},
     shim: {},
     waitSeconds: 0,
-    optimizeCss: 'default',
+    optimizeCss: "default",
     // skipModuleInsertion: true,
     keepAmdefine: true,
     modules: [],
-    optimize: 'none',
+    optimize: "none",
     uglify2: {
         output: {
             beautify: false
@@ -293,7 +295,7 @@ constants.buildBaseConfJson = {
     throwWhen: {
         optimize: true
     },
-    fileExclusionRegExp: ''
+    fileExclusionRegExp: ""
 };
 
 module.exports = constants;
