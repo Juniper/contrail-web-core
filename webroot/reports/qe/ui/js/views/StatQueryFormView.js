@@ -6,13 +6,10 @@ define([
     "knockback",
     "validation",
     "core-constants",
-    "layout-handler",
     "query-form-view",
     "core-basedir/reports/qe/ui/js/models/StatQueryFormModel",
     "core-basedir/reports/qe/ui/js/common/qe.utils"
-], function(kb, kbValidation, coreConstants, LayoutHandler, QueryFormView, StatQueryFormModel, qeUtils) {
-    var layoutHandler = new LayoutHandler();
-
+], function(kb, kbValidation, coreConstants, QueryFormView, StatQueryFormModel, qeUtils) {
     var StatQueryFormView = QueryFormView.extend({
         render: function() {
             var self = this,
