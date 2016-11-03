@@ -8,6 +8,7 @@ define([
     var CoreConstants = function () {
         var self = this;
 
+        this.THROTTLE_RESIZE_EVENT_TIME = 500;
         this.TMPL_SUFFIX_ID = "-template";
         this.RESULTS_SUFFIX_ID = "-results";
         this.ERROR_SUFFIX_ID = "_error";
