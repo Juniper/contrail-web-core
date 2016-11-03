@@ -89,6 +89,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'iframe-view'                 : coreWebDir + '/js/views/IframeView',
         'jdorn-jsoneditor'            : coreWebDir + '/assets/jdorn-jsoneditor/js/jdorn-jsoneditor',
         'qe-module'                   : coreWebDir + '/reports/qe/ui/js/qe.module',
+        'udd-module'                  : coreWebDir + '/reports/udd/ui/js/udd.module',
         'legend-view'                 : coreWebDir + '/js/views/LegendView',
     };
 
@@ -104,7 +105,6 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'core-labels'                 : coreWebDir + '/js/common/core.labels',
             'core-messages'               : coreWebDir + '/js/common/core.messages',
             'core-views-default-config'   : coreWebDir + '/js/common/core.views.default.config',
-            "core-form-validation-config" : coreWebDir + "/js/common/core.form.validation.config",
             'chart-utils'                 : coreWebDir + "/js/common/chart.utils",
             'contrail-remote-data-handler': coreWebDir + '/js/handlers/ContrailRemoteDataHandler',
             'cf-datasource'               : coreWebDir + '/js/common/cf.datasource',
@@ -422,7 +422,6 @@ var coreBundles = {
             'core-labels',
             'core-messages',
             'core-views-default-config',
-            "core-form-validation-config",
             'contrail-common',
             'core-contrail-form-elements',
             'chart-utils',
@@ -514,6 +513,7 @@ var coreBundles = {
             'jsonpath'
         ],
         'qe-module': [
+            "core-basedir/reports/qe/ui/templates/qe.tmpl",
             'core-basedir/reports/qe/ui/js/common/qe.utils',
             'core-basedir/reports/qe/ui/js/common/qe.parsers',
             'core-basedir/reports/qe/ui/js/common/qe.grid.config',
@@ -527,7 +527,30 @@ var coreBundles = {
             'core-basedir/reports/qe/ui/js/models/ContrailListModelGroup',
             'core-basedir/reports/qe/ui/js/models/ObjectLogsFormModel',
             'core-basedir/reports/qe/ui/js/models/StatQueryFormModel',
-            'core-basedir/reports/qe/ui/js/models/SystemLogsFormModel'
+            'core-basedir/reports/qe/ui/js/models/SystemLogsFormModel',
+        ],
+        'udd-module': [
+            "core-basedir/reports/udd/ui/templates/udd.tmpl",
+            "core-basedir/reports/udd/ui/js/common/udd.form.validation.config",
+            "core-basedir/reports/udd/ui/js/common/udd.constants",
+            "core-basedir/reports/udd/ui/js/models/ContentConfigs/GridConfigModel",
+            "core-basedir/reports/udd/ui/js/models/ContentConfigs/LineBarChartConfigModel",
+            "core-basedir/reports/udd/ui/js/models/ContentConfigs/LineChartConfigModel",
+            "core-basedir/reports/udd/ui/js/models/ContentConfigs/LogsConfigModel",
+            "core-basedir/reports/udd/ui/js/models/dataSourceConfigs/QueryConfigModel",
+            "core-basedir/reports/udd/ui/js/models/ContentConfigModel",
+            "core-basedir/reports/udd/ui/js/models/WidgetModel",
+            "core-basedir/reports/udd/ui/js/models/WidgetsCollection",
+            "core-basedir/reports/udd/ui/js/views/ContentConfigs/GridConfigView",
+            "core-basedir/reports/udd/ui/js/views/ContentConfigs/LineBarChartConfigView",
+            "core-basedir/reports/udd/ui/js/views/ContentConfigs/LineChartConfigView",
+            "core-basedir/reports/udd/ui/js/views/ContentConfigs/LogsConfigView",
+            "core-basedir/reports/udd/ui/js/views/dataSourceConfigs/QueryConfigView",
+            "core-basedir/reports/udd/ui/js/views/BaseContentConfigView",
+            "core-basedir/reports/udd/ui/js/views/GridStackView",
+            "core-basedir/reports/udd/ui/js/views/LogsView",
+            "core-basedir/reports/udd/ui/js/views/UDDashboardView",
+            "core-basedir/reports/udd/ui/js/views/WidgetView",
         ]
     };
 
