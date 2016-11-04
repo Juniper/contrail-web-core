@@ -154,3 +154,8 @@
     font-weight: bold;
     font-style: italic;
 }
+
+/* required by https://app.asana.com/0/162139934853695/179560114360086 */
+textarea[name="select"] {
+  min-height: 4.5rem;
+}

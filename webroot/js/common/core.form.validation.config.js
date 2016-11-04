@@ -151,7 +151,7 @@ define([
                 }
             }
         } else {
-            return false;
+            return "";
         }
     }
 
