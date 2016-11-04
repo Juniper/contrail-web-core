@@ -111,6 +111,11 @@ define([
                 config: {
                     isReady: false,
                     step: uddConstants.steps.DATA_CONFIG,
+                    /** original solution for https://app.asana.com/0/162139934853695/206515470400258,
+                        disabled due to solution impact investigation
+                    
+                    canProceed: false,
+                    */
                     editingTitle: false
                 }
             }, {
