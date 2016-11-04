@@ -109,7 +109,7 @@ define([
             var failureLabel = getValueByJsonPath(chartOptions,'failureLabel', cowc.FAILURE_LABEL);
             var tooltipFn = getValueByJsonPath(chartOptions,'tooltipFn', defaultTooltipFn);
             var colors = getValueByJsonPath(chartOptions,'colors', {yAxisLabel: cowc.DEFAULT_COLOR});
-            var yAxisFormatter = getValueByJsonPath(chartOptions,'yAxisFormatter',cowu.numberFormatter);
+            var yAxisFormatter = getValueByJsonPath(chartOptions,'yAxisFormatter');
             var onClickBar = getValueByJsonPath(chartOptions,'onClickBar',false);
             var defaultZeroLineDisplay = getValueByJsonPath(chartOptions,'defaultZeroLineDisplay', false);
             var groupBy = chartOptions['groupBy'], groups = [], yAxisMaxValue;
@@ -585,7 +585,9 @@ define([
                     colors: {
                         yAxisLabel: cowc.DEFAULT_COLOR
                     },
-                    yAxisFormatter: cowu.numberFormatter,
+                    yAxisFormatter: function (value) {
+                        return cowu.numberFormatter(value);
+                    },
                     onClickBar: false,
                     margin: {},
                     yField: null,
