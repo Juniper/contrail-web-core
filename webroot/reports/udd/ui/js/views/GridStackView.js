@@ -111,6 +111,7 @@ define([
                 config: {
                     isReady: false,
                     step: uddConstants.steps.DATA_CONFIG,
+                    canProceed: false,
                     editingTitle: false
                 }
             }, {

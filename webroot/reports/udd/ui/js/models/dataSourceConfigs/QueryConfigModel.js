@@ -50,6 +50,10 @@ define([
                 }
             });
 
+            this.model().on("change", function(model) {
+                model.isValid(true, cowc.KEY_RUN_QUERY_VALIDATION);
+            });
+            
             return this;
         },
 
