@@ -49,7 +49,14 @@ define([
                         );
                 }
             });
-
+            /** original solution for https://app.asana.com/0/162139934853695/206515470400258,
+                disabled due to solution impact investigation
+            
+            this.model().on("change", function(model) {
+                model.isValid(true, cowc.KEY_RUN_QUERY_VALIDATION);
+            });
+            */
+            
             return this;
         },
 

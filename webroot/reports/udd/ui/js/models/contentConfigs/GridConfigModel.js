@@ -26,7 +26,11 @@ define([
         },
 
         validations: {
-            validation: {}
+            validation: {
+                "visibleColumns": {
+                    required: true
+                }
+            }
         },
         // update fields dependent on data model
         onDataModelChange: function(viewModel) {
@@ -60,7 +64,7 @@ define([
              * Then, by default, add any new DB fields to the visible columns.
              */
             if (!_.isEmpty(viewModel.changed.select)) {
-                if (!this.canUseSelectChange) {
+                if (!this.canUseSelectChange && _.isUndefined(viewModel.previous("select"))) {
                     // This takes advantage of the truth that
                     // on widget initialization, select field will be updated once
                     // based on server response. And this initialization change
@@ -135,14 +139,31 @@ define([
                         actionCell: false,
                         actionCellPosition: "end",
                         queryQueueUrl: cowc.URL_QUERY_STAT_QUEUE,
-                        queryQueueTitle: cowl.TITLE_STATS
+                        queryQueueTitle: cowl.TITLE_STATS,
+                        lazyLoading: false,
+                        defaultDataStatusMessage: true
                     }
                 ),
                 customGridConfig
             );
 
-            var colToShow = this.visibleColumns().split(delimiter),
-                len = colToShow.length,
+            var colToShow = this.visibleColumns().split(delimiter);
+                /**
+                 * A code snippet that specially handles `T=` for `FlowSeriesTable`.
+                 * Refer to columnDisplayMap in qe.grid.config.js.
+                 * 
+                 * Without this code, the "Time" column won't be shown properly in GridView in UDD Widget.
+                 * 
+                 * NOTE: this is due to a potential implementation issue of qe.grid.config.js
+                 */
+                if (this.tableName() === "FlowSeriesTable") {
+                    var idx = colToShow.indexOf("T=");
+                    if (~idx) {
+                        colToShow[idx] = "T";
+                    }
+                }
+
+            var len = colToShow.length,
                 shouldShow = _.zipObject(colToShow, _.times(len, function() {
                     // TODO: When Lodash@4.13.x and above are available, replace this anonymous function with _.stubTrue
                     return true;

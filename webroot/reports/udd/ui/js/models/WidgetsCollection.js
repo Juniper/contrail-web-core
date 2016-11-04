@@ -12,7 +12,12 @@ define([
         _.merge(widget.config, {
             isReady: true,
             step: uddConstants.steps.SHOW_VISUALIZATION,
-            editingTitle: false
+            editingTitle: false,
+            /** original solution for https://app.asana.com/0/162139934853695/206515470400258,
+                disabled due to solution impact investigation
+            
+            canProceed: true
+            */
         });
 
         return widget;
