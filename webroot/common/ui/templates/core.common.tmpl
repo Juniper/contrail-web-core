@@ -351,8 +351,10 @@
                             <span {{#if link}}class="hyperlink" onclick=javascript:layoutHandler.setURLHashObj({{#jsonStringify link}}{{/jsonStringify}}){{else}}class="hyperlink-inactive"{{/if}}> {{moduleId}} </span>
                         </div>
                         <div class="time col-xs-3">
-                            <i class="fa fa-clock-o" style="cursor:default"></i>
-                            <span class="green"> {{timeStr}} </span>
+                            <div class="pull-right">
+                                <i class="fa fa-clock-o" style="cursor:default"></i>
+                                <span class="green"> {{timeStr}} </span>
+                            </div>
                         </div>
                     </div>
                     <div class="text col-xs-12"> {{#truncate message 200}} {{/truncate}}</div>

@@ -63,11 +63,14 @@ define([
         validateAttr: function (attributePath, validation) {
             var attr = cowu.getAttributeFromPath(attributePath),
                 errors = this.model().get(cowc.KEY_MODEL_ERRORS),
-                attrErrorObj = {}, isValid;
+                attrErrorObj = {}, isValid, model = this.model();
 
-            isValid = this.model().isValid(attributePath, validation);
+            isValid = model.isValid(attributePath, validation);
             attrErrorObj[attr + cowc.ERROR_SUFFIX_ID] = (isValid == true) ? false : isValid;
             errors.set(attrErrorObj);
+
+            model.trigger("validated", isValid === "", model, attributePath);
+            model.trigger("validated:" + (isValid === "" ? "valid" : "invalid"), model, attributePath);
         },
 
         isDeepValid: function(validations) {
