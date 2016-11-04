@@ -7,17 +7,17 @@
 
 define([
     "lodash",
+    "knockout",
     "knockback",
     "core-constants",
     "contrail-view",
     "core-basedir/reports/udd/ui/js/udd.constants"
-], function(_, kb, cowc, ContrailView, uddConstants) {
+], function(_, ko, kb, cowc, ContrailView, uddConstants) {
     var WidgetView = ContrailView.extend({
         selectors: {
             configTitle: ".config-title",
             footer: ".panel-footer",
             configSelectors: ".panel-body>.config-selectors",
-            back: ".panel-footer .back",
             confirmDeletionModal: "#confirm-to-delete",
             contentView: ".content-view"
         },
@@ -43,7 +43,14 @@ define([
                 this._renderDataConfigView.bind(this));
             this.listenTo(this.model, "change:" + uddConstants.modelIDs.VISUAL_META,
                 this._renderContentConfigView.bind(this));
+            /** original solution for https://app.asana.com/0/162139934853695/206515470400258,
+                disabled due to solution impact investigation
 
+            this.listenTo(this.model.get(uddConstants.modelIDs.DATA_SOURCE).model(),
+                "validated", this._validatedFormHandler.bind(this, this.steps.DATA_CONFIG));
+            this.listenTo(this.model.get(uddConstants.modelIDs.VISUAL_META).model(),
+               "validated", this._validatedFormHandler.bind(this, this.steps.VISUAL_META_CONFIG));
+            */
             kb.applyBindings(this.model.get(uddConstants.modelIDs.WIDGET_META), this.$el[0]);
         },
 
@@ -57,6 +64,22 @@ define([
 
             return this;
         },
+
+        /** original solution for https://app.asana.com/0/162139934853695/206515470400258,
+                disabled due to solution impact investigation
+        */
+        // _validatedFormHandler: function(validatedStep, isValid) {
+        //     var currentStep = this.model.get(uddConstants.modelIDs.VIEWS_MODEL_COLLECTION).currentStep();
+
+               /**
+                * Have to filter out validation info of those attrs which are not part of current step form.
+                * The current design runs validate on all forms somehow. --- need investigation when have time.
+                */
+        //     if (validatedStep === currentStep) {
+        //         this.model.get(uddConstants.modelIDs.WIDGET_META).canProceed(isValid);
+        //     }
+        // },
+
         // render data source config (query) on the back
         _renderDataConfigView: function() {
             var config = this.model.getViewConfig(uddConstants.subviewIDs.DATA_SOURCE),
@@ -107,15 +130,20 @@ define([
                 model = this.model.get(uddConstants.modelIDs.VIEWS_MODEL_COLLECTION);
 
             this.renderView4Config(element, model, config, null, null, null, function() {
+                ko.cleanNode(element[0]);
                 kb.applyBindings(model, element[0]);
             });
         },
 
         _renderFooter: function() {
             var config = this.getFooterConfig(),
-                element = this.$(this.selectors.footer);
+                element = this.$(this.selectors.footer),
+                model = this.model.get(uddConstants.modelIDs.WIDGET_META);
 
-            this.renderView4Config(element, null, config);
+            this.renderView4Config(element, model, config, null, null, null, function() {
+                ko.cleanNode(element[0]);
+                kb.applyBindings(model, element[0]);
+            });
         },
 
         getViewConfig: function() {
@@ -168,18 +196,23 @@ define([
                             elementId: "back",
                             view: "FormButtonView",
                             viewConfig: {
-                                // visible: "step() === '" + this.steps.VISUAL_META_CONFIG + "'",
+                                visible: "step() === '" + this.steps.VISUAL_META_CONFIG + "'",
                                 label: window.cowl.UDD_WIDGET_BACK,
-                                class: "back display-inline-block hidden"
+                                class: "back display-inline-block"
                             },
                         }, {
                             elementId: "submit",
                             view: "FormButtonView",
                             viewConfig: {
+                                /** original solution for https://app.asana.com/0/162139934853695/206515470400258,
+                                    disabled due to solution impact investigation
+                                
+                                disabled: "!canProceed()",
+                                */
                                 label: window.cowl.UDD_WIDGET_NEXT,
                                 class: "submit display-inline-block",
                                 elementConfig: {
-                                    btnClass: "btn-primary",
+                                    btnClass: "btn-primary"
                                 },
                             },
                         }, {
@@ -367,13 +400,11 @@ define([
             if (step === this.steps.DATA_CONFIG) {
                 this._enableConfigFocusMode(true);
                 configTitle = window.cowl.TITLE_UDD_DATA_CONFIG;
-                this.$(this.selectors.back).addClass("hidden");
                 this.$(".submit button").html(window.cowl.UDD_WIDGET_NEXT);
             }
             if (step === this.steps.VISUAL_META_CONFIG) {
                 this._enableConfigFocusMode(true);
                 configTitle = window.cowl.TITLE_UDD_VISUAL_META_CONFIG;
-                this.$(this.selectors.back).removeClass("hidden");
                 this.$(".submit button").html(window.cowl.UDD_WIDGET_SUBMIT);
             }
 

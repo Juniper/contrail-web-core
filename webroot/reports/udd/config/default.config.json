@@ -1,7 +1,7 @@
 {
   "contentViews": {
     "GridView": {
-      "label": "Grid List",
+      "label": "Grid",
       "contentView": {
         "view": "GridView",
         "viewPathPrefix": "js/views/"
@@ -17,7 +17,7 @@
       }
     },
     "LineWithFocusChartView": {
-      "label": "Line With Focus Chart",
+      "label": "Line Chart",
       "contentView": {
         "view": "LineWithFocusChartView",
         "viewPathPrefix": "js/views/"
@@ -40,7 +40,7 @@
       }
     },
     "LineBarWithFocusChartView": {
-      "label": "Line Bar Chart View",
+      "label": "Line Bar Chart",
       "contentView": {
         "view": "LineBarWithFocusChartView",
         "viewPathPrefix": "js/views/"
@@ -63,7 +63,7 @@
       }
     },
     "LogsView": {
-      "label": "Logs View",
+      "label": "Logs",
       "contentView": {
         "view": "LogsView",
         "viewPathPrefix": "reports/udd/ui/js/views/"
