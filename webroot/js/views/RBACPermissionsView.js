@@ -185,11 +185,11 @@ define([
                         {onClick: "function() {" +
                             "$root.addShare();" +
                             "}",
-                         iconClass: 'icon-plus'},
+                         iconClass: 'fa fa-plus'},
                         {onClick: "function() {" +
                             "$root.deleteShare($data, this);" +
                            "}",
-                         iconClass: 'icon-minus'}
+                         iconClass: 'fa fa-minus'}
                     ],
                     gridActions: [
                         {onClick: "function() {" +

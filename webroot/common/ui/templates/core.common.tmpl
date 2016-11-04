@@ -942,14 +942,14 @@
 <script type="text/x-handlebars-template" id="core-editable-grid-input-view-template">
         <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
             {{#IfCompare type 'password' operator='==='}}
-                <div class="input-append editable-grid-input-append inset col-xs-12">
+                <div class="input-group input-append editable-grid-input-append inset col-xs-12">
                     <input type="{{type}}" name="{{id}}" class="col-xs-12 {{class}}"
                         data-bind="
                             {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                             value: {{viewConfig.dataBindValue}},
                             event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data) } }"
                     />
-                    <span class="input-group-addon input-type-toggle-action"><i class="fa fa-eye-open"></i></span>
+                    <span class="input-group-addon input-type-toggle-action"><i class="fa fa-eye"></i></span>
                 </div>
             {{else}}
                 <input type="{{type}}" name="{{name}}" class="form-control" placeholder="{{viewConfig.placeholder}}"
