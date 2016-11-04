@@ -12,7 +12,8 @@ define([
         _.merge(widget.config, {
             isReady: true,
             step: uddConstants.steps.SHOW_VISUALIZATION,
-            editingTitle: false
+            editingTitle: false,
+            canProceed: true
         });
 
         return widget;
