@@ -95,7 +95,9 @@ define([
             var tooltipFn = getValueByJsonPath(chartOptions,'tooltipFn', defaultTooltipFn);
             var colors = getValueByJsonPath(chartOptions,'colors', {yAxisLabel: cowc.DEFAULT_COLOR});
             var yAxisOffset = getValueByJsonPath(chartOptions,'yAxisOffset',0);
-            var yAxisFormatter = getValueByJsonPath(chartOptions,'yAxisFormatter',cowu.numberFormatter);
+            var yAxisFormatter = getValueByJsonPath(chartOptions,'yAxisFormatter',function (value) {
+                return cowu.numberFormatter(value);
+            });
             var customTimeFormat = d3.time.format.multi([
                     //[".%L", function(d) { return d.getMilliseconds(); }],
                     [":%S", function(d) { return d.getSeconds(); }],
