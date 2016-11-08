@@ -124,35 +124,11 @@ global.STR_GET_COMPUTE_NODE_ACL = 'getComputeNodeAcl';
 global.STR_GET_COMPUTE_NODE_ACL_FLOWS = 'getComputeNodeAclFlows';
 global.STR_GET_CTRL_NODES_COMBOLIST = 'getControlNodeAutoCompleteList';
 global.STR_PROJECT_DETAILS = 'getProjectDetails';
-global.STR_NW_DOMAIN_SUMMARY = 'getNetworkDomainSummary';
-global.STR_GET_TOP_NW_BY_PROJECT = 'getTopNetworkDetailsByProject';
-global.STR_GET_TOP_NW_BY_DOMAIN = 'getTopNetworkDetailsByDomain';
-global.STR_GET_TOP_PROJECT_BY_DOMAIN = 'getTopProjectDetailsByDomain';
-global.STR_GET_TOP_PORT_BY_DOMAIN = 'getTopPortByDomain';
-global.STR_GET_TOP_PORT_BY_PROJECT = 'getTopPortByProject';
 global.STR_GET_TOP_PORT_BY_NW = 'getTopPortByNetwork';
-global.STR_GET_TOP_FLOWS_BY_PROJECT = 'getTopFlowsByProject';
-global.STR_GET_TOP_FLOWS_BY_DOMAIN = 'getTopFlowsByDomain';
 global.STR_GET_TOP_FLOWS_BY_NW = 'getTopFlowsByNetwork';
-global.STR_GET_TOP_PEER_BY_PROJECT = 'getTopPeerByProject';
 global.GET_FLOW_SERIES_BY_VN = 'getVNFlowSeriesData';
 global.GET_FLOW_SERIES_BY_VM = 'getVMFlowSeriesData';
 global.GET_FLOW_SERIES_BY_VNS = 'getVNsFlowSeriesData';
-global.STR_FLOW_SERIES_BY_VM = 'getFlowSeriesByVM';
-global.STR_GET_TOP_PEER_BY_DOMAIN = 'getTopPeerByDomain';
-global.STR_GET_TOP_PEER_BY_NW = 'getTopPeerByNetwork';
-global.STR_GET_TOP_PORT_BY_VM = 'getTopPortByVM';
-global.STR_GET_TOP_PEER_BY_VM = 'getTopPeerByVM';
-global.STR_GET_TOP_FLOWS_BY_VM = 'getTopFlowsByVM';
-global.GET_STAT_SUMMARY_BY_VM = 'getVMStatSummary';
-global.GET_STAT_SUMMARY_BY_CONN_NWS = 'getConnNetStatsSummary';
-global.STR_GET_TOP_PORT_BY_CONN_NW = 'getTopPortByConnNet';
-global.STR_GET_TOP_PEER_BY_CONN_NW = 'getTopPeerByConnNet';
-global.STR_GET_TOP_FLOWS_BY_CONN_NW = 'getTopFlowsByConnNet';
-global.STR_GET_TOP_DETAILS = 'getTopDetails';
-global.STR_GET_TOP_PEER_DETAILS_BY_PORT = 'getTopPeerDetailsByPort';
-global.STR_GET_PORT_LEVEL_FLOW_SERIES = 'getPortLevelFlowSeries';
-global.STR_GET_FLOW_DETAILS_BY_FLOW_TUPLE = 'getFlowDetailsByFlowTuple';
 global.STR_GET_CPU_FLOW_SERIES = 'getCPULoadFlowSeries';
 global.INTERNAL_VENDOR_TYPE = 'contrail';
 global.MSG_REDIRECT_TO_LOGOUT = 'redirectToLogout';
@@ -333,6 +309,9 @@ global.FORMAT_TABLE_COLUMNS = {
 
 global.VALID_LIKE_OPR_FIELDS = ['sourcevn', 'destvn'];
 global.VALID_RANGE_OPR_FIELDS = ['protocol', 'sourceip', 'destip', 'sport', 'dport'];
+
+global.QE_STAT_TABLE_TYPE = "STAT";
+global.QE_FLOW_TABLE_TYPE = "FLOW";
 
 /* Async URL Timeout */
 global.DEFAULT_ASYNC_REQUEST_TIMEOUT = 300 * 1000; /* 5 Minutes */

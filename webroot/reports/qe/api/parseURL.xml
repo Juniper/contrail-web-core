@@ -25,7 +25,7 @@
         <feature>query-engine</feature>
         <callback>qeapi.runPOSTQuery</callback>
     </item>
-     <item>
+    <item>
         <url>/api/qe/get-query</url>
         <method>post</method>
         <timeout>600</timeout>
@@ -77,6 +77,12 @@
         <method>get</method>
         <feature>query-engine</feature>
         <callback>qeapi.getTables</callback>
+    </item>
+    <item>
+        <url>/api/qe/table/values/:tableName/:column</url>
+        <method>get</method>
+        <feature>query-engine</feature>
+        <callback>qeapi.getColumnValues</callback>
     </item>
     <item>
         <url>/api/qe/table/column/values</url>
