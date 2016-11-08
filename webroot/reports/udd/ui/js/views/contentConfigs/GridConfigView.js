@@ -11,8 +11,9 @@ define([
     "knockout",
     "knockback",
     "validation",
+    "core-basedir/reports/udd/ui/js/common/udd.constants",
     "core-basedir/reports/udd/ui/js/views/BaseContentConfigView"
-], function(_, ko, kb, kbValidation, BaseContentConfigView) {
+], function(_, ko, kb, kbValidation, uddConstants, BaseContentConfigView) {
 
     return BaseContentConfigView.extend({
         render: function() {
@@ -49,7 +50,7 @@ define([
                                 elementConfig: {
                                     dataTextField: "text",
                                     dataValueField: "id",
-                                    data: [8, 25, 50, 100]
+                                    data: uddConstants.uddWidget.gridPageSizeList
                                 }
                             }
                         }, {
