@@ -8,6 +8,7 @@ define([
 ], function (_, moment) {
     var serializer = new XMLSerializer(),
         domParser = new DOMParser();
+    var maxCountInWhere = 100;
 
     function filterXML(xmlString, is4SystemLogs) {
         var xmlDoc = parseXML(xmlString);
@@ -397,6 +398,82 @@ define([
 
         return isAggregate;
     }
+
+    function fillQEFilterByKey (key, value, filterStr) {
+        if (cowu.isNil(filterStr)) {
+            filterStr = "";
+        }
+        if (filterStr.length > 0) {
+            filterStr += " & ";
+        }
+        var keyStr = (filterStr.length > 0) ? " & " : "";
+        keyStr += key;
+        filterStr = keyStr + ": " + value;
+        return filterStr;
+    }
+
+    function formatUIWhereClauseConfigByMember (whereClause, key, list) {
+        return formatUIWhereClauseConfigByAdmin(whereClause, key, list);
+    }
+
+    function formatUIWhereClauseConfigByAdmin (whereClause, key, list) {
+        if (cowu.isNil(list) || (!list.length)) {
+            return "(" + key + " = )";
+        }
+        var cnt = list.length;
+        if (cnt > maxCountInWhere) {
+            /* We do not blow out where Clause */
+            if (!cowu.isNil(whereClause)) {
+                return whereClause;
+            }
+            return "(" + key + " Starts with )";
+        }
+        var whereClause = "";
+        if (cnt > 0) {
+            for (var i = 0; i < cnt; i++) {
+                whereClause += "(" + key + " = " + list[i] + ")";
+                if ((cnt > 1) && (i < cnt - 1)) {
+                    whereClause += " OR ";
+                }
+            }
+        } else {
+            whereClause += "(" + key + " = )";
+        }
+        return whereClause;
+    }
+
+    var qeTableJSON = {
+        "MessageTable": {
+            "select": "MessageTS, Type, Source, ModuleId, Messagetype, " +
+                "Xmlmessage, Level, Category",
+            "from_time_utc": "now-10m",
+            "to_time_utc": "now",
+            "level": 4,
+            "sort_fields": "MessageTS",
+            "sort": "desc"
+        },
+        "StatTable.VirtualMachineStats.cpu_stats": {
+            "select": "Source, T, cpu_stats.cpu_one_min_avg, cpu_stats.rss," +
+                " name",
+            "from_time_utc": "now-10m",
+            "to_time_utc": "now",
+            "where": []
+        },
+        "StatTable.UveVirtualNetworkAgent.vn_stats": {
+            "select": "SUM(vn_stats.in_bytes), SUM(vn_stats.out_bytes), SUM(vn_stats.in_tpkts)," +
+                " SUM(vn_stats.out_tpkts), name",
+            "from_time_utc": "now-60m",
+            "to_time_utc": "now",
+            "where": []
+        },
+        "StatTable.UveVMInterfaceAgent.if_stats": {
+            "select": "SUM(if_stats.in_bytes), SUM(if_stats.out_bytes), SUM(if_stats.in_pkts)," +
+                " SUM(if_stats.out_pkts), vm_uuid",
+            "from_time_utc": "now-60m",
+            "to_time_utc": "now",
+            "where": []
+        }
+    };
 
     return {
         generateQueryUUID: function () {
@@ -827,6 +904,94 @@ define([
             }
             return enable;
         },
+        formatQEUIQuery: function(qObj) {
+            var qeQuery = {};
+            var qeModAttrs = {};
+            if (cowu.isNil(qObj)) {
+                return null;
+            }
+            qeQuery.async = false;
+            if (!cowu.isNil(qObj.async)) {
+                qeQuery.async = qObj.async;
+            }
+            qeQuery.chunk = 1;
+            if (!cowu.isNil(qObj.chunk)) {
+                qeQuery.chunk = qObj.chunk;
+            }
+            qeQuery.chunkSize = 10000;
+            if (!cowu.isNil(qObj.chunkSize)) {
+                qeQuery.chunkSize = qObj.chunkSize;
+            }
+            if (!cowu.isNil(qObj.table)) {
+                qeModAttrs = qeTableJSON[qObj.table];
+                qeModAttrs.table_name = qObj.table;
+            }
+            if (!cowu.isNil(qObj.select)) {
+                qeModAttrs.select = qObj.select;
+            }
+            if (!cowu.isNil(qObj.where)) {
+                qeModAttrs.where = qObj.where;
+            }
+            if (!cowu.isNil(qObj.minsSince)) {
+                qeModAttrs.to_time_utc = "now";
+                qeModAttrs.from_time_utc = "now-" + qObj.minsSince + "m";
+            } else if (!cowu.isNil(qObj.from_time_utc) &&
+                       !cowu.isNil(qObj.to_time_utc)) {
+                qeModAttrs.from_time_utc = qObj.from_time_utc;
+                qeModAttrs.to_time_utc = qObj.to_time_utc;
+            }
+            if (!cowu.isNil(qObj.table_type)) {
+                qeModAttrs.table_type = qObj.table_type;
+            }
+            if (!cowu.isNil(qObj.time_range)) {
+                qeModAttrs.time_range = qObj.time_range;
+                qeModAttrs.time_granularity_unit = "secs";
+            }
+            if (!cowu.isNil(qObj.time_granularity_unit)) {
+                qeModAttrs.time_granularity_unit = qObj.time_granularity_unit;
+            }
+            qeModAttrs.filters = "";
+            if (!cowu.isNil(qObj.filter)) {
+                qeModAttrs.filters =
+                    fillQEFilterByKey("filter", qObj.filter,
+                                      qeModAttrs.filters);
+            }
+            if (cowu.isNil(qObj.limit)) {
+                qObj.limit = 150000;
+            }
+            qeModAttrs.filters +=
+                fillQEFilterByKey("limit", qObj.limit, qeModAttrs.filters);
+            if (cowu.isNil(qObj.sort_fields)) {
+                if (!cowu.isNil(qeModAttrs.sort_fields)) {
+                    qObj.sort_fields = qeModAttrs.sort_fields;
+                }
+            }
+            delete qeModAttrs.sort_fields;
+            if (!cowu.isNil(qObj.sort_fields)) {
+                qeModAttrs.filters +=
+                    fillQEFilterByKey("sort_fields", qObj.sort_fields,
+                                      qeModAttrs.filters);
+            }
+            if (cowu.isNil(qObj.sort)) {
+                if (!cowu.isNil(qeModAttrs.sort)) {
+                    qObj.sort = qeModAttrs.sort;
+                    qeModAttrs.filters +=
+                        fillQEFilterByKey("sort", qObj.sort, qeModAttrs.filters);
+                }
+            }
+            delete qeModAttrs.sort;
+            qeQuery.formModelAttrs = qeModAttrs;
+            qeQuery.queryId = this.generateQueryUUID();
+            return qeQuery;
+        },
+        formatUIWhereClauseConfigByUserRole: function(whereClause, key, list) {
+            var userRole = getValueByJsonPath(globalObj, "webServerInfo;role", []);
+            var isAdminRole = userRole.indexOf(globalObj.roles.ADMIN) > -1;
+            if (true == isAdminRole) {
+                return formatUIWhereClauseConfigByAdmin(whereClause, key, list);
+            } else {
+                return formatUIWhereClauseConfigByMember(whereClause, key, list);
+            }
+        }
     };
-
 });

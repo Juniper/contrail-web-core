@@ -431,7 +431,7 @@ define([
              */
             footerTestGroup.registerTest(cotr.test(cotm.GRIDVIEW_FOOTER_TOTAL_PAGES, function () {
                 expect(1);
-                var expectedCount = Math.floor(gridItems.length/viewConfigFooter.pager.options.pageSize +1);
+                var expectedCount = Math.ceil(gridItems.length/viewConfigFooter.pager.options.pageSize);
                 equal($(el).find('.csg-total-page-count').text().trim(),
                     expectedCount,
                     "The total number of pages should be according to page size");

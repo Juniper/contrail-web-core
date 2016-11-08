@@ -427,6 +427,7 @@ define([
 
         this.BYTE_PREFIX = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
+        this.URL_QE_QUERY = '/api/qe/query';
         this.URL_TABLES = "/api/qe/tables";
         this.URL_PREFIX_TABLE_SCHEMA = "/api/qe/table/schema/";
 

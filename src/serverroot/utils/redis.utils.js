@@ -146,9 +146,40 @@ function checkAndGetRedisDataByKey (key, postRedisLookupCallback, req,
     });
 }
 
+function getRedisData (key, callback) {
+    process.mainModule.exports.redisClient.get(key, function(err, value) {
+        if ((null != err) || (null == value)) {
+            callback(err, null);
+            return;
+        }
+        callback(err, JSON.parse(value));
+    });
+}
+
+function setRedisData (key, value, callback) {
+    var data = JSON.stringify(value);
+    process.mainModule.exports.redisClient.set(key, data, function(error) {
+        if (callback) {
+            callback(error);
+        }
+    });
+}
+
+function setexRedisData (key, expiry, value, callback) {
+    process.mainModule.exports.redisClient.setex(key, expiry, JSON.stringify(value),
+                                                 function(error) {
+        if (callback) {
+            callback(error);
+        }
+    });
+}
+
 exports.createRedisClient = createRedisClient;
 exports.redisLog = redisLog;
 exports.createRedisClientAndWait = createRedisClientAndWait;
 exports.createDefRedisClientAndWait = createDefRedisClientAndWait;
 exports.checkAndGetRedisDataByKey = checkAndGetRedisDataByKey;
 exports.subscribeToRedisEvents = subscribeToRedisEvents;
+exports.getRedisData = getRedisData;
+exports.setRedisData = setRedisData;
+exports.setexRedisData = setexRedisData;
