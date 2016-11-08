@@ -8,14 +8,15 @@
 define([
     "lodash",
     "text!core-basedir/reports/udd/config/default.config.json"
-], function(_, defaultConfig) {
-    var unifiedDataTypes = {
-        LOGGABLE: "loggable",
-        PLOTTABLE: "plottable",
-    }, shouldIgnore = {
-        "T": true,
-        "T=": true
-    };
+], function(_, defaultConfigString) {
+    var defaultConfigJSON = JSON.parse(defaultConfigString),
+        unifiedDataTypes = {
+            LOGGABLE: "loggable",
+            PLOTTABLE: "plottable",
+        }, shouldIgnore = {
+            "T": true,
+            "T=": true
+        };
 
     /**
      * combine two rules and return the combination.
@@ -121,12 +122,30 @@ define([
             return visualizationConfig.validations;
         });
     }
+
+    /**
+     * Return an array of labels calculated by default.config.json and the array of field type.
+     *
+     * @param      {Array/String}  fieldTypes  The field type(s)
+     * @return     {Array}                     The calculated label array
+     */
+    function convertToLabel(fieldTypes) {
+        fieldTypes = [].concat(fieldTypes);
+        
+        return _.map(fieldTypes, function(fieldType) {
+            var fieldTypeConfig = defaultConfigJSON.contentViews[fieldType]
+                                || defaultConfigJSON.dataSources[fieldType];
+
+            return fieldTypeConfig ? fieldTypeConfig.label : null;
+        });
+    }
+
     /**
      * This is the object that describes what validations rules should be applied to any fields in the query form.
      *
      * @type {Object}
      */
-    var viewRequiredFormInfo = getValidationSchema(JSON.parse(defaultConfig));
+    var viewRequiredFormInfo = getValidationSchema(defaultConfigJSON);
 
     function hasAllRequiredFields(value, attr, metrics, dataTypeNormalizer) { // eslint-disable-line
         var key = metrics.key,
@@ -143,11 +162,11 @@ define([
                 isRejected = _.partial(_.partialRight(_.includes, null), rejectedFieldTypes);
 
             if (_.some(selectedTypes, isRejected)) { // if selected types is rejected by rule of the key
-                return getFieldErrorMsg(key, "rejects", rejectedFieldTypes.join(", "));
+                return getFieldErrorMsg(convertToLabel(key)[0], "rejects", rejectedFieldTypes.join(", "));
             } else {
                 var neededFieldTypes = _.difference(requiredFieldTypes, selectedTypes);
                 if (neededFieldTypes.length !== 0) { // if selected types don't cover all types required by rule of the key
-                    return getFieldErrorMsg(key, "requires", neededFieldTypes.join(", "));
+                    return getFieldErrorMsg(convertToLabel(key)[0], "requires", neededFieldTypes.join(", "));
                 }
             }
         } else {
