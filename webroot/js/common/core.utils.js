@@ -1800,6 +1800,12 @@ define([
                 return true;
             }
             return false;
+        };
+        this.isNil = function(value) {
+            if ((null === value) || (undefined === value)) {
+                return true;
+            }
+            return false;
         }
     };
 

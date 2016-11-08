@@ -320,8 +320,6 @@ define([
         this.TITLE_ACKNOWLEDGE = 'Acknowledge';
         this.TITLE_ALARM_HISTORY = 'Alarm History';
         this.TITLE_ALARM_DETAILS = 'Alarm Details';
-
-        this.DASHBOARD_LOGS_URL = '/api/admin/reports/query?where=&filters=&level=4&fromTimeUTC=now-10m&toTimeUTC=now&table=MessageTable&limit=10';
         this.CACHE_DASHBORAD_LOGS = 'cache-dashboard-logs';
 
         this.CHART_BAR_COLOR = 'Bar Color';
