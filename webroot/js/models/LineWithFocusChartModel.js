@@ -94,6 +94,7 @@ define([
             , transitionDuration = 250
             , state = nv.utils.state()
             , defaultState = null
+            , showTicks = cowu.getValueByJsonPath(chartOptions, 'showTicks', true);
             ;
 
         lines.clipEdge(false).duration(0);
@@ -346,7 +347,12 @@ define([
                     d3.transition(g.select('.nv-context .nv-y.nv-axis'))
                         .call(y2Axis);
                 }
-
+                if (!showTicks) {
+                    xAxis._ticks(0);
+                    yAxis._ticks(0);
+                    x2Axis._ticks(0);
+                    y2Axis._ticks(0);
+                }
                 g.select('.nv-context .nv-x.nv-axis')
                     .attr('transform', 'translate(0,' + y2.range()[0] + ')');
 

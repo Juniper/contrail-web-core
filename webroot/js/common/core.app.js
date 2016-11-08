@@ -1314,6 +1314,8 @@ if (typeof document !== 'undefined' && document) {
             logout: function() {
                 //Clear iframes
                 $('.iframe-view').remove();
+                //Clear alarms popup
+                $('.custom-popover').remove();
                 //Clear All Pending Ajax calls
                 $.allajax.abort();
                 $.ajax({

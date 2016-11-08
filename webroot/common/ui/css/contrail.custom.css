@@ -1567,3 +1567,187 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
 .carousel-control-cover-story{
     z-index: 1;
 }
+
+/*
+Alarms popup css
+*/
+dd.alarm_message div{
+    padding-top: 4px;
+    font-size: 13px;
+    color: #5093e1;
+    padding-bottom: 2px;
+}
+dd.time_stamp {
+    font-size: 9px;
+    font-weight: bold;
+    position:relative;
+}
+dd.time_stamp span{
+    display:block;
+}
+dd.time_stamp:before {
+    font-family: FontAwesome;
+    top: 0px;
+    left: -5px;
+    padding-right: 10px;
+    content: "\f017";
+    font-size: 15px;
+    padding-left: 14px;
+    margin-top: 3px;
+    display: block;
+}
+
+.notification-heading {
+    background-color: #599ac9;
+    height: 36px;
+    color: #4682b4;
+    width: 294px;
+    margin: -5px;
+}
+.notification-heading label {
+    padding: 10px;
+    font-size: 13px;
+    color: #ffffff;
+}
+.notification-heading a.close_btn {
+    float: right;
+    padding: 8px 10px;
+    color: #ffffff;
+    font-size: 16px;
+}
+.custom-popover{
+    position:absolute;
+    left:auto!important;
+    right: 0px;
+    left: auto!important;
+    background:white;
+    z-index:1000;
+    -webkit-box-shadow: -4px 5px 5px -4px rgba(0,0,0,0.50);
+    -moz-box-shadow: -4px 5px 5px -4px rgba(0,0,0,0.50);
+    box-shadow: -4px 5px 5px -4px rgba(0,0,0,0.50);
+    width:300px;
+    /*height: 95vh;*/
+    /*overflow: scroll;*/
+}
+#notification_section_text_id {
+    height: 75vh;
+    overflow: scroll;
+} 
+.notification-heading{
+    margin:0;
+    width:auto;
+ 
+}
+.notification-menu{
+     width: 100%;
+     background:#fdfdfd;
+     border-bottom:#eeeeee solid 1px;
+     padding:2px 2px 2px 10px;
+     /* display: block; */
+}
+.notification-menu:after{
+      content: "";
+      clear: both;
+      display: table;
+ 
+}
+.custom-popover .ack-info{
+    line-height:35px;
+}
+.custom-popover .pointer {
+    height: 20px;
+    width: 20px;
+    position:relative;
+    -ms-transform: rotate(180deg); /* IE 9 */
+    -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+    transform: rotate(180deg);
+    width: 100%;
+    margin-top:-20px
+}
+.custom-popover .pointer div{
+    position:absolute;
+    width:100%;
+    height:20px;
+    top:0px;
+    left:10px;
+    overflow:hidden;
+}
+.custom-popover .pointer div:after{
+    content:'';
+    width:20px;
+    height:20px;
+    background: #599ac9;
+    position:absolute;
+    -moz-transform:rotate(45deg);
+    -webkit-transform:rotate(45deg);
+    transform:rotate(45deg);
+    border-right: #599ac9 solid 1px;
+    border-bottom:#dbdbdb solid 1px;
+    top:-10px;
+    left:50%;
+}
+
+.notification-menu a.widget-toolbar-icon {
+    color: #599ac9;
+}
+.notification-content dt {
+    width: 20px \/;
+    min-width: 199px \/;
+}
+ 
+.notification-content dt, .notification-content dd {
+    float: left;
+}
+.notification-content dd {
+    /* width: 50px; */
+    float: left;
+}
+.notification-content dt .circle {
+    margin: 0px 5px;
+    padding: 0px;
+}
+.notification-content dd.alarm_message {
+    width: 72%;
+    min-width: 175px;
+    padding-left: 10px;
+    padding-right: 5px;
+    padding-bottom: 8px;
+    padding-top: px;
+}
+.notification-content ul li {
+    border-bottom: 1px solid #e5e5e5;
+    position: relative;
+    cursor: pointer;
+    margin: 0px 20px;
+}
+.notification-content dl {
+    margin:0px 10px 0px 10px;
+    border-bottom:#efefef solid 1px;
+}
+.notification-content dl:after{
+   content: ".";
+   visibility: hidden;
+   display: block;
+   height: 0;
+   clear: both;
+}
+dd.alarm_message div{
+    padding-top: 4px;
+    font-size: 13px;
+    color: #5093e1;
+}
+dd.time_stamp {
+    font-size: 9px;
+    font-weight: bold;
+    position:relative;
+}
+dd.time_stamp span {
+    display:block;
+} 
+dd.time_stamp:before {
+    font-family: FontAwesome;
+    top:0;
+    left:-5px;
+    padding-right:10px;
+    content: "\f017";
+}

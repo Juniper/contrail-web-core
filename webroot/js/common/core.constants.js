@@ -9,8 +9,9 @@ define([
         var self = this;
 
         this.INFRA_MODEL_CACHE_TIMEOUT = 5 * 60;
-        this.ENABLE_CAROUSEL = false;
+        this.ENABLE_CAROUSEL = true;
         this.THROTTLE_RESIZE_EVENT_TIME = 500;
+
         this.TMPL_SUFFIX_ID = "-template";
         this.RESULTS_SUFFIX_ID = "-results";
         this.ERROR_SUFFIX_ID = "_error";
@@ -1968,6 +1969,11 @@ define([
         this.DEFAULT_BUCKET_DURATION = 5; //MINUTES
 
         this.DROPDOWN_VALUE_SEPARATOR = ";";
+        this.NOTIFICATION_SECTION_ID = 'notification_section_id';
+        this.NOTIFICATION_CHART_SECTION_ID = 'notification_section_chart_id';
+        this.NOTIFICATION_TEXT_SECTION_ID = 'notification_section_text_id';
+        this.NOTIFICATION_CHART_ID = 'notification_chart_id';
+        this.NOTIFICATION_TEXT_ID = 'notification_text_id';
 
         this.GRAPH_IMAGE_MAP = {
             'physical-router': 'prouter',
@@ -2028,13 +2034,13 @@ define([
         this.DEFAULT_CHART_DURATION = 2;
 
         this.OTHERS = 'Others';
-        this.FAILURE_LABEL = 'Failures';
 
         // Query Engine constants
         this.TMPL_QUERY_PAGE = "query-page-template";
         this.TMPL_QUERY_QUEUE_PAGE = "query-queue-page-template";
         this.TMPL_QUERY_TEXT = "query-text-template";
         this.TMPL_QUERY_SELECT = "query-select-popup-template";
+        this.FAILURE_LABEL = 'Failures';        
     };
     //Export to global scope
     cowc = new CoreConstants();
