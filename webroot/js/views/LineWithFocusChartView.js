@@ -129,6 +129,9 @@ define([
             if ($(selector).is(':visible')) {
                 setData2Chart(self, chartViewConfig, chartDataModel, chartViewModel);
             }
+            if (chartOptions.showTextAtCenter) {
+                self.showText(data, viewConfig);
+            }
             updateDataStatusMessage(self, chartViewConfig, chartDataModel);
 
             //Seems like in d3 chart renders with some delay so this deferred object helps in that situation,which resolves once the chart is rendered
@@ -140,6 +143,32 @@ define([
                     chUtils.updateChartOnResize(selector, chartViewModel);
                 });
             }
+
+        },
+
+        showText: function (data, viewConfig) {
+            var self = this,
+                selector = contrail.handleIfNull(selector, $(self.$el)),
+                groups = d3.selectAll($(selector).find(".nv-group")),
+                textPositionX = ($(selector).find('.chart-container').width() - 20) / 2,
+                textPositionY = $(selector).find('.chart-container').height() / 2;
+                groups.selectAll('text.center-text').remove();
+                groups.selectAll('text')
+                      .data(function (d) {
+                            return [d];
+                      })
+                      .enter()
+                      .append('text')
+                      .style('text-anchor', 'middle')
+                      .style('fill', function (d) {
+                            return d['color'];
+                      })
+                      .attr('class', 'center-text')
+                      .attr('x', textPositionX)
+                      .attr('y', textPositionY)
+                      .text(function (d) {
+                            return d['text'] != null ? d['text'] : getLastYValue(data, viewConfig);
+                      });
 
         },
 
@@ -236,6 +265,9 @@ define([
             if (self.legendView) self.legendView.update(getLegendViewConfig(chartViewConfig.chartOptions, data));
 
             setData2Chart(self, chartViewConfig, dataModel, self.chartViewModel);
+            if (cowu.getValueByJsonPath(viewConfig, 'chartOptions;showTextAtCenter', false)) {
+                self.showText(data, viewConfig);
+            }
             updateDataStatusMessage(self, chartViewConfig, dataModel);
         }
     });
@@ -322,6 +354,16 @@ define([
                 legend: formatLegendData(data).line
             }]
         };
+    }
+
+    function getLastYValue (data, viewConfig) {
+        var yFormatter = cowu.getValueByJsonPath(viewConfig, 'chartOptions;yFormatter');
+        var valuesArrLen = cowu.getValueByJsonPath(data, '0;values', []).length;
+        var y = cowu.getValueByJsonPath(data, '0;values;'+ (valuesArrLen - 1 )+';y', '-');
+        if (yFormatter != null) {
+            y = yFormatter(y);
+        }
+        return y;
     }
 
     return LineWithFocusChartView;
