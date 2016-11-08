@@ -5,10 +5,11 @@
 define([
     "lodash",
     "core-constants",
+    "core-basedir/reports/udd/ui/js/common/udd.constants",
     "core-basedir/reports/qe/ui/js/common/qe.utils",
     "core-basedir/reports/qe/ui/js/common/qe.grid.config",
     "core-basedir/reports/udd/ui/js/models/ContentConfigModel"
-], function(_, coreConstants, qeUtils, qeGridConfig, ContentConfigModel) {
+], function(_, coreConstants, uddConstants, qeUtils, qeGridConfig, ContentConfigModel) {
     var delimiter = ",";
 
     return ContentConfigModel.extend({
@@ -117,7 +118,7 @@ define([
                     pager: {
                         options: {
                             pageSize: this.pageSize(),
-                            pageSizeSelect: [8, 25, 50, 100]
+                            pageSizeSelect: uddConstants.uddWidget.gridPageSizeList
                         }
                     }
                 }
