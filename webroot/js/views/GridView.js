@@ -1584,6 +1584,14 @@ define([
                     }
                 }
             };
+        },
+        /**
+         * A resize event handler called by a user of this view.
+         * For example, checkout User Defined Dashboard Widget View, which can use this view.
+         */
+        resize: function() {
+            // A fix to https://app.asana.com/0/162139934853695/206515470400280
+            $(this.$el).data("contrailGrid")._grid.resizeCanvas();
         }
     });
 

@@ -187,7 +187,7 @@ define([
             this.grid.removeWidget(el);
         },
 
-        onResize: function(event, ui) {
+        onResize: _.throttle(function(event, ui) {
             var self = this,
                 widget = _.find(self.childViewMap, function(w) {
                     return w.$el[0] === ui.element[0];
@@ -198,7 +198,7 @@ define([
                 widget.resize();
                 // self.reconcileContentHeight(widget.$el);
             }, 100);
-        },
+        }, 500),
         // Update widget model config on gridstack items change
         // TODO Why onChange event get called with items as undefined so many time? Can we restrict it to more specific change condition?
         onChange: function(event, items) {
