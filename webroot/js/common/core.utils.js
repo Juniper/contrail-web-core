@@ -1195,6 +1195,7 @@ define([
 
         this.loadAlertsPopup = function(cfgObj) {
             var prefixId = 'dashboard-alerts';
+            var notificationView = false;
             var cfgObj = ifNull(cfgObj,{});
             var modalTemplate =
                 contrail.getTemplate4Id('core-modal-template');
@@ -1212,9 +1213,9 @@ define([
             if(!self.getAlarmsFromAnalytics) {
                 modalConfig['title'] = 'Alerts';
             }
-            cowu.createModal(modalConfig);
 
             if(cfgObj.model == null && !self.getAlarmsFromAnalytics) {
+                cowu.createModal(modalConfig);
                 require(['mon-infra-node-list-model','monitor-infra-parsers',
                     'monitor-infra-constants','monitor-infra-utils'],
                     function(NodeListModel,MonitorInfraParsers,MonitorInfraConstants,
@@ -1259,7 +1260,20 @@ define([
                             });
                         }
                     });
+            } else if (notificationView) {
+                require(['js/views/NotificationView', 'core-alarm-parsers', 'core-alarm-utils'],
+                 function (NotificationView, coreAlarmParsers, coreAlarmUtils) {
+                    var notificationView = new NotificationView({
+                        el: $("#alarms-popup-link a"),
+                        viewConfig: {
+                            template: 'notification-popover-template',
+                            title: 'Alarms'
+                        }
+                    });
+                    notificationView.render();
+                });
             } else {
+                cowu.createModal(modalConfig);
                 if(self.getAlarmsFromAnalytics) {
                     require(['js/views/AlarmGridView'], function(AlarmGridView) {
                         var alarmGridView = new AlarmGridView({

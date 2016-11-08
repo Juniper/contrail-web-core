@@ -94,6 +94,9 @@ define([
             , transitionDuration = 250
             , state = nv.utils.state()
             , defaultState = null
+            , showTicks = cowu.getValueByJsonPath(chartOptions, 'showTicks', true)
+            , showXaxis = cowu.getValueByJsonPath(chartOptions, 'showXaxis', true)
+            , showYaxis = cowu.getValueByJsonPath(chartOptions, 'showYaxis', true)
             ;
 
         lines.clipEdge(false).duration(0);
@@ -346,7 +349,12 @@ define([
                     d3.transition(g.select('.nv-context .nv-y.nv-axis'))
                         .call(y2Axis);
                 }
-
+                if (!showTicks) {
+                    xAxis._ticks(0);
+                    yAxis._ticks(0);
+                    x2Axis._ticks(0);
+                    y2Axis._ticks(0);
+                }
                 g.select('.nv-context .nv-x.nv-axis')
                     .attr('transform', 'translate(0,' + y2.range()[0] + ')');
 
@@ -514,10 +522,14 @@ define([
                     xAxis.domain([Math.ceil(extent[0]), Math.floor(extent[1])]);
                     
                     // Update Main (Focus) Axes
-                    g.select('.nv-focus .nv-x.nv-axis').transition().duration(transitionDuration)
+                    if (showXaxis) {
+                        g.select('.nv-focus .nv-x.nv-axis').transition().duration(transitionDuration)
                         .call(xAxis);
-                    g.select('.nv-focus .nv-y.nv-axis').transition().duration(transitionDuration)
+                    }
+                    if (showYaxis) {
+                        g.select('.nv-focus .nv-y.nv-axis').transition().duration(transitionDuration)
                         .call(yAxis);
+                    }
                 }
 
                 onBrush();

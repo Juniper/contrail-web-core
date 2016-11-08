@@ -2489,6 +2489,32 @@
         <a href="#" id="more_btn">More
         <span class="fa fa-caret-down"></span></a>
     </div>
+
+</script>
+<script type="text/x-handlebars-template" id="notification-template">
+    <dl>
+        <dt>
+            {{#IfCompare severity 1 operator='<='}}
+                <div data-color=red class="circle red {{#IfCompare ack false}}filled{{/IfCompare}} alarms-circle-grid-style alarms-circle-display-flex"></div>
+            {{/IfCompare}}
+            {{#IfCompare severity 1 operator='>'}}
+                <div data-color=orange class="circle orange {{#IfCompare ack false}}filled{{/IfCompare}} alarms-circle-grid-style alarms-circle-display-flex"></div>
+            {{/IfCompare}}
+        <dt>
+        <dd class="alarm_message">
+            {{#IfCompare display_name null operator='!='}}
+                <div> {{display_name}} </div>
+            {{/IfCompare}}
+            {{#IfCompare alarm_msg null operator='!='}}
+                <span> {{alarm_msg}} </span>
+            {{/IfCompare}}
+        </dd>
+        <dd class="time_stamp">
+        {{#IfCompare timeDiff null operator='!='}}
+            <span> {{timeDiff}} </span>
+        {{/IfCompare}}
+        </dd>
+    </dl>
 </script>
 <script type="text/x-handlebars-template" id="tooltip-template">
  <div class="nvtooltip xy-tooltip nv-pointer-events-none popover popover-tooltip popover-tooltip-no-icon" id="nvtooltip">
@@ -2542,3 +2568,21 @@
     </div>
 </div>
  </script>
+
+<script type="text/x-handlebars-template" id="notification-popover-template">
+<div>
+    <div class="pointer">
+        <div></div>
+    </div>
+    <div class="notification-heading">
+        <label class=""><i class="fa fa-fw" aria-hidden="true" title="Alarms"></i> Alarms</label>
+        <a hfref="#" class="close_btn"><i class="fa fa-close" aria-hidden="true" title="close"></i></a>
+    </div>
+    <div class="notification-menu">
+        <span class="ack-info">(<strong>- </strong>New, <strong>-</strong> Acknowledged)</span>
+        <div class="widget-toolbar config-alarms pull-right"><a class="widget-toolbar-icon" title="Config Alarms"><i class="fa fa-wrench"></i></a></div>
+        <div class="widget-toolbar monitor-alarms pull-right"><a class="widget-toolbar-icon" title="Monitor Alarms"><i class="fa fa-bar-chart-o "></i></a></div>
+    </div>
+    <div class="notification-content"><div>    
+</div>
+</script>
