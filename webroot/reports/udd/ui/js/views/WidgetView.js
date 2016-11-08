@@ -13,6 +13,34 @@ define([
     "contrail-view",
     "core-basedir/reports/udd/ui/js/common/udd.constants"
 ], function(_, ko, kb, cowc, ContrailView, uddConstants) {
+    var delimiter = ",",
+        // extract visible column IDs from GridView's ColumnPicker
+        columnIdExtractor = _.flow(_.map, _.partialRight(_.pluck, "value")),
+        // debounced event handler which saves visible column changes back to server/DB
+        persistVisibleColChange = _.debounce(function(view, event) {
+            var $columnPickerTrigger = view.$el.find("#columnPicker"),
+                $columnPickerPanel = $(event.originalEvent.delegateTarget),
+                visualMetaVM = view.model.get(uddConstants.modelIDs.VISUAL_META),
+                visualMetaRawModel = visualMetaVM.model(),
+                checkedColumns = $columnPickerTrigger.data("contrailCheckedMultiselect").getChecked(),
+                visibleCol = columnIdExtractor(checkedColumns, function(domElem) {
+                    var colVal = $(domElem).val();
+                    return JSON.parse(decodeURI(colVal));
+                }),
+                visibleColStr = visibleCol.join(delimiter),
+                invalidMsg = visualMetaRawModel.preValidate("visibleColumns", visibleColStr);
+
+            if (!invalidMsg) {
+                $columnPickerPanel.tooltip("destroy");
+                visualMetaVM.visibleColumns(visibleCol.join(delimiter));
+                this.model.save();
+            } else {
+                $columnPickerPanel.data("toggle", "tooltip").tooltip({
+                    title: invalidMsg + ". Invalid change won't be saved!"
+                }).tooltip("show");
+            }
+        }, 500);
+
     var WidgetView = ContrailView.extend({
         selectors: {
             configTitle: ".config-title",
@@ -88,7 +116,8 @@ define([
         },
         // render widget content (chart) on the front
         _renderContentView: function() {
-            var _contentConfigModel = this.model.get(uddConstants.modelIDs.VISUAL_META),
+            var self = this,
+                _contentConfigModel = this.model.get(uddConstants.modelIDs.VISUAL_META),
                 _dataConfigModel = this.model.get(uddConstants.modelIDs.DATA_SOURCE),
                 parserOptions = _contentConfigModel ? _contentConfigModel.getParserOptions() : {},
                 model = _dataConfigModel.getDataModel(parserOptions),
@@ -98,7 +127,17 @@ define([
             if (!model) {
                 element.html(window.cowm.NO_COMPATIBLE_DATA_SOURCES);
             }
-            this.renderView4Config(element, model, config);
+
+            self.renderView4Config(element, model, config, null, null, null, function(view) {
+                var subviewModelCollection = view.model.get(uddConstants.modelIDs.VIEWS_MODEL_COLLECTION);
+                
+                if (subviewModelCollection.contentView() === "GridView") {
+                    // for GridView, add a event listener to persist visible columns change on backend.
+                    element.off(".persistColChange")
+                        .on("multiselectclick.persistColChange multiselectoptgrouptoggle.persistColChange",
+                            persistVisibleColChange.bind(self, view));
+                }
+            });
         },
         // render content config view on the back
         _renderContentConfigView: function(p) {
