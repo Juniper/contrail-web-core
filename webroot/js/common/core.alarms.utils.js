@@ -282,6 +282,22 @@ define(
                     var sevText = cowc.SEVERITY_TO_TEXT_MAP[sev];
                     return (sevText == null)? sev : sevText;
                 }
+                /*
+                * Function returns the new (unacknowledged) and acknowledged alarms
+                */
+                 self.getNewAndAcknowledgedAlarms = function (alarms) {
+                    alarms = ifNull(alarms, []);
+                    var ackAlarms = _.filter(alarms, function (alarm){
+                        return alarm['ack'] == true;
+                    });
+                    var newAlarms = _.filter(alarms, function (alarm){
+                        return alarm['ack'] == false;
+                    });
+                    return {
+                        new: newAlarms,
+                        ackAlarms: ackAlarms
+                    };
+                 }
 
             }
             return new CoreAlarmUtils();

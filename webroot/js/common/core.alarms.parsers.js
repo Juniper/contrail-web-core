@@ -38,6 +38,7 @@ define([ 'underscore' ,
                                          currObject.alarm_msg = coreAlarmUtils.getFormattedAlarmMessage({alarm:alarmInfo, nodeType:currNodeType});
                                          currObject.alarm_detailed = coreAlarmUtils.getFormattedAlarmMessage({alarm:alarmInfo, nodeType:currNodeType, detailed:true});
                                          currObject.token = alarmInfo.token;
+                                         currObject.timeDiff = diffDates(new XDate(currObject.T/1000),new XDate());
                                          retArr.push(currObject);
                                      }
                                  }
