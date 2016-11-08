@@ -8,8 +8,9 @@ define([
     "core-constants",
     "core-labels",
     "query-form-view",
+    "core-basedir/reports/udd/ui/js/common/udd.constants",
     "core-basedir/reports/qe/ui/js/common/qe.utils"
-], function(ko, kb, kbValidation, coreConstants, coreLabelProcessor, QueryFormView, qeUtils) {
+], function(ko, kb, kbValidation, coreConstants, coreLabelProcessor, QueryFormView, uddConstants, qeUtils) {
     var QueryConfigView = QueryFormView.extend({
         render: function() {
             this.renderView4Config(this.$el, this.model, this.getViewConfig(),
@@ -55,7 +56,7 @@ define([
                                 elementConfig: {
                                     dataTextField: "text",
                                     dataValueField: "id",
-                                    data: coreConstants.TIMERANGE_DROPDOWN_VALUES_WO_CUSTOM,
+                                    data: uddConstants.uddWidget.TIMERANGE_DROPDOWN_VALUES_WO_CUSTOM,
                                 },
                             },
                         }],
