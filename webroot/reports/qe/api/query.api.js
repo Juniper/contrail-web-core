@@ -15,8 +15,10 @@ var assert = require("assert"), util = require("util"),
     redisUtils = require(process.mainModule.exports.corePath + "/src/serverroot/utils/redis.utils"),
     config = process.mainModule.exports.config,
     redisReadStream = require("redis-rstream"),
-    Worker = require("webworker-threads").Worker,
+    threadApi = require(process.mainModule.exports.corePath + "/src/serverroot/common/threads.api"),
     crypto = require("crypto"),
+    qUtils = require(process.mainModule.exports.corePath +
+                     "/webroot/reports/qe/api/query.utils.js"),
     _ = require("lodash");
 
 var redisServerPort = (config.redis_server_port) ? config.redis_server_port : global.DFLT_REDIS_SERVER_PORT,
@@ -30,12 +32,17 @@ if (!module.parent) {
 
 function runGETQuery(req, res, appData) {
     var reqQuery = req.query;
-    runQuery(req, res, reqQuery, appData);
+    req.query = qUtils.formatQEUIQuery(reqQuery);
+    runQuery(req, req.query, appData, null, function(error, data) {
+        commonUtils.handleJSONResponse(error, res, data);
+    });
 }
 
 function runPOSTQuery(req, res, appData) {
     var queryReqObj = req.body;
-    runQuery(req, res, queryReqObj, appData);
+    runQuery(req, queryReqObj, appData, null, function(error, data) {
+        commonUtils.handleJSONResponse(error, res, data);
+    });
 }
 
 // Handle request to get list of all tables.
@@ -44,6 +51,13 @@ function getTables(req, res, appData) {
     sendCachedJSON4Url(opsUrl, res, 3600, appData);
 }
 
+// Handle request to get valid values of a table column.
+function getColumnValues(req, res, appData) {
+    var opsUrl =
+        global.GET_TABLE_INFO_URL + "/" + req.param("tableName") +
+        "/column-values/" + req.param("column");
+    sendCachedJSON4Url(opsUrl, res, 3600, appData);
+}
 // Handle request to get table schema.
 function getTableSchema(req, res, appData) {
     var opsUrl = global.GET_TABLE_INFO_URL + "/" + req.param("tableName") + "/schema";
@@ -68,7 +82,9 @@ function getTableColumnValues(req, res, appData) {
         setMicroTimeRange(objectQuery, startTime, endTime);
         queryOptions = { queryId: null, async: false, status: "run", queryJSON: objectQuery, errorMessage: "" };
 
-        executeQuery(res, queryOptions, appData);
+        executeQuery(res.req, queryOptions, appData, null, function(error, data) {
+            commonUtils.handleJSONResponse(error, res, data);
+        });
     }
 }
 
@@ -181,14 +197,17 @@ function getCurrentTime(req, res) {
     commonUtils.handleJSONResponse(null, res, { currentTime: currentTime });
 }
 
-function runQuery(req, res, queryReqObj, appData, isGetQ) {
+function runQuery (req, queryReqObj, appData, isGetQ, callback) {
     var queryId = queryReqObj.queryId,
         chunk = queryReqObj.chunk,
         chunkSize = parseInt(queryReqObj.chunkSize),
         sort = queryReqObj.sort,
         cachedResultConfig;
 
-    cachedResultConfig = { "queryId": queryId, "chunk": chunk, "sort": sort, "chunkSize": chunkSize, "toSort": true };
+    cachedResultConfig = {
+        "queryId": queryId, "chunk": chunk, "sort": sort,
+        "chunkSize": chunkSize, "toSort": true
+    };
 
     logutils.logger.debug("Query Request: " + JSON.stringify(queryReqObj));
 
@@ -196,24 +215,25 @@ function runQuery(req, res, queryReqObj, appData, isGetQ) {
         redisClient.exists(queryId + ":chunk1", function(err, exists) {
             if (err) {
                 logutils.logger.error(err.stack);
-                commonUtils.handleJSONResponse(err, res, null);
+                callback(err, null);
             } else if (exists === 1) {
-                returnCachedQueryResult(res, cachedResultConfig, handleQueryResponse);
+                returnCachedQueryResult(cachedResultConfig, handleQueryResponse,
+                                        callback);
             } else {
-                runNewQuery(req, res, queryId, queryReqObj, appData, isGetQ);
+                runNewQuery(req, queryId, queryReqObj, appData, isGetQ, callback);
             }
         });
     } else {
-        runNewQuery(req, res, null, queryReqObj, appData, isGetQ);
+        runNewQuery(req, null, queryReqObj, appData, isGetQ, callback);
     }
 }
 
-function runNewQuery(req, res, queryId, queryReqObj, appData, isGetQ) {
+function runNewQuery(req, queryId, queryReqObj, appData, isGetQ, callback) {
     var queryOptions = getQueryOptions(queryReqObj),
         queryJSON = getQueryJSON4Table(queryReqObj);
 
     queryOptions.queryJSON = queryJSON;
-    executeQuery(res, queryOptions, appData, isGetQ);
+    executeQuery(req, queryOptions, appData, isGetQ, callback);
 }
 
 function getQueryOptions(queryReqObj) {
@@ -247,27 +267,34 @@ function getQueryOptions(queryReqObj) {
     return queryOptions;
 }
 
-function executeQuery(res, queryOptions, appData, isGetQ) {
+function executeQuery(req, queryOptions, appData, isGetQ, callback) {
     var queryJSON = queryOptions.queryJSON,
         async = queryOptions.async,
         asyncHeader = { "Expect": "202-accepted" };
 
-    logutils.logger.debug("Query sent to Opserver at " + new Date() + " " + JSON.stringify(queryJSON));
+    logutils.logger.debug("Query sent to Opserver at " + new Date() + " " +
+                          JSON.stringify(queryJSON));
     queryOptions.startTime = new Date().getTime();
     opApiServer.apiPost(global.RUN_QUERY_URL, queryJSON, appData,
         function (error, jsonData) {
             if (error) {
                 logutils.logger.error("Error Run Query: " + error.stack);
-                commonUtils.handleJSONResponse(error, res, null);
+                callback(error, null);
             } else if (async) {
-                initPollingConfig(queryOptions, queryJSON.start_time, queryJSON.end_time);
+                initPollingConfig(queryOptions, queryJSON.start_time,
+                                  queryJSON.end_time);
                 queryOptions.url = jsonData.href;
                 queryOptions.opsQueryId = parseOpsQueryIdFromUrl(jsonData.href);
-                setTimeout(fetchQueryResults, 3000, res, jsonData, queryOptions, appData);
-                queryOptions.intervalId = setInterval(fetchQueryResults, queryOptions.pollingInterval, res, jsonData, queryOptions, appData);
-                queryOptions.timeoutId = setTimeout(stopFetchQueryResult, queryOptions.pollingTimeout, queryOptions);
+                setTimeout(fetchQueryResults, 3000, req, jsonData, queryOptions,
+                           appData, callback);
+                queryOptions.intervalId =
+                    setInterval(fetchQueryResults, queryOptions.pollingInterval,
+                                req, jsonData, queryOptions, appData, callback);
+                queryOptions.timeoutId =
+                    setTimeout(stopFetchQueryResult, queryOptions.pollingTimeout,
+                               queryOptions);
             } else {
-                processQueryResults(res, jsonData, queryOptions, isGetQ);
+                processQueryResults(req, jsonData, queryOptions, isGetQ, callback);
             }
         }, async ? asyncHeader : {});
 }
@@ -304,7 +331,7 @@ function initPollingConfig(options, fromTime, toTime) {
     }
 }
 
-function fetchQueryResults(res, jsonData, queryOptions, appData) {
+function fetchQueryResults(req, jsonData, queryOptions, appData, callback) {
     var progress;
 
     opApiServer.apiGet(jsonData.href, appData, function(error, queryResults) {
@@ -316,7 +343,7 @@ function fetchQueryResults(res, jsonData, queryOptions, appData) {
             clearTimeout(queryOptions.timeoutId);
             queryOptions.progress = progress;
             if (queryOptions.status === "run") {
-                commonUtils.handleJSONResponse(error, res, null);
+                callback(error, null);
             } else if (queryOptions.status === "queued") {
                 queryOptions.status = "error";
                 queryOptions.errorMessage = error;
@@ -333,11 +360,11 @@ function fetchQueryResults(res, jsonData, queryOptions, appData) {
                 queryOptions.progress = progress;
                 queryOptions.status = "queued";
                 updateQueryStatus(queryOptions);
-                commonUtils.handleJSONResponse(null, res, {status: "queued", data: []});
+                callback(null, {status: "queued", data: []});
             }
-            fetchQueryResults(res, jsonData, queryOptions, appData);
+            fetchQueryResults(req, jsonData, queryOptions, appData, callback);
         } else if (_.isNil(progress) || progress === "undefined") {
-            processQueryResults(res, queryResults, queryOptions);
+            processQueryResults(req, queryResults, queryOptions, null, callback);
                 //TODO: Query should be marked complete
             queryOptions.endTime = new Date().getTime();
             queryOptions.status = "completed";
@@ -346,7 +373,7 @@ function fetchQueryResults(res, jsonData, queryOptions, appData) {
             queryOptions.progress = progress;
             queryOptions.status = "queued";
             updateQueryStatus(queryOptions);
-            commonUtils.handleJSONResponse(null, res, { status: "queued", data: [] });
+            callback(null, { status: "queued", data: [] });
         }
     });
 }
@@ -368,7 +395,7 @@ function sendCachedJSON4Url(opsUrl, res, expireTime, appData) {
 }
 
 
-function returnCachedQueryResult(res, queryOptions, callback) {
+function returnCachedQueryResult(queryOptions, handleQRespCB, callback) {
     var queryId = queryOptions.queryId,
         sort = queryOptions.sort,
         statusJSON;
@@ -384,15 +411,15 @@ function returnCachedQueryResult(res, queryOptions, callback) {
                     queryOptions.toSort = false;
                 }
             }
-            callback(res, queryOptions);
+            handleQRespCB(queryOptions, callback);
         });
     } else {
         queryOptions.toSort = false;
-        callback(res, queryOptions);
+        handleQRespCB(queryOptions, callback);
     }
 }
 
-function handleQueryResponse(res, options) {
+function handleQueryResponse(options, callback) {
     var toSort = options.toSort,
         queryId = options.queryId,
         chunk = options.chunk,
@@ -405,7 +432,7 @@ function handleQueryResponse(res, options) {
             if (exists) {
                 chunk = 1;
             } else {
-                commonUtils.handleJSONResponse(null, res, {data: [], total: 0});
+                callback(null, {data: [], total: 0});
             }
         });
     }
@@ -413,7 +440,7 @@ function handleQueryResponse(res, options) {
         var resultJSON = result ? JSON.parse(result) : {data: [], total: 0};
         if (error) {
             logutils.logger.error(error.stack);
-            commonUtils.handleJSONResponse(error, res, null);
+            callback(error, null);
         } else if (toSort) {
             sortJSON(resultJSON.data, sort, function () {
                 var startIndex, endIndex, total, responseJSON;
@@ -421,11 +448,13 @@ function handleQueryResponse(res, options) {
                 startIndex = (chunk - 1) * chunkSize;
                 endIndex = (total < (startIndex + chunkSize)) ? total : (startIndex + chunkSize);
                 responseJSON = resultJSON.data.slice(startIndex, endIndex);
-                commonUtils.handleJSONResponse(null, res, {data: responseJSON, total: total, queryJSON: resultJSON.queryJSON});
+                callback(null,
+                         {data: responseJSON, total: total,
+                          queryJSON: resultJSON.queryJSON});
                 saveQueryResult2Redis(resultJSON.data, total, queryId, chunkSize, sort, resultJSON.queryJSON);
             });
         } else {
-            commonUtils.handleJSONResponse(null, res, resultJSON);
+            callback(null, resultJSON);
         }
     });
 }
@@ -584,16 +613,16 @@ function createStatRedisKey (req, query) {
     return redisKey;
 }
 
-function saveDataToRedisByReqPayload (res, resJson) {
-    var reqPayload = res.req.body;
-
-    if (global.HTTP_REQUEST_GET === res.req.method) {
-        reqPayload = res.req.query;
-    } else {
-        reqPayload = res.req.body;
+function saveDataToRedisByReqPayload (req, resJson) {
+    if (null === req) {
+        return;
+    }
+    var reqPayload = req.body;
+    if (global.HTTP_REQUEST_GET === req.method) {
+        reqPayload = req.query;
     }
 
-    var redisKey = createStatRedisKey(res.req, reqPayload);
+    var redisKey = createStatRedisKey(req, reqPayload);
 
     redisClient.set(redisKey, JSON.stringify(resJson), function(error) {
         if (!_.isNil(error)) {
@@ -612,21 +641,26 @@ function getQueryData (req, res, appData) {
     }
 
     if ((!_.isNil(req.query)) && ("forceRefresh" in req.query)) {
-        runQuery(req, res, query, appData, true);
+        runQuery(req, query, appData, true, function(error, data) {
+            commonUtils.handleJSONResponse(error, res, data);
+        });
         return;
     }
 
     var redisKey = createStatRedisKey(req, query);
     redisClient.get(redisKey, function(error, data) {
         if (!_.isNil(error) || _.isNil(data)) {
-            runQuery(req, res, query, appData, true);
+            runQuery(req, query, appData, true, function(error, data) {
+                commonUtils.handleJSONResponse(error, res, data);
+            });
             return;
         }
-        commonUtils.handleJSONResponse(null, res, JSON.parse(data));
+        commonUtils.handleJSONResponse(error, res, data);
     });
 }
 
-function processQueryResults(res, queryResults, queryOptions, isGetQ) {
+function processQueryResults(req, queryResults, queryOptions, isGetQ,
+                             callback) {
     var startDate = new Date(),
         startTime = startDate.getTime(),
         queryId = queryOptions.queryId,
@@ -638,8 +672,12 @@ function processQueryResults(res, queryResults, queryOptions, isGetQ) {
         endTime, total, responseJSON, resultJSON;
 
     endTime = endDate.getTime();
-    resultJSON = (queryResults && !isEmptyObject(queryResults)) ? queryResults.value : [];
-    logutils.logger.debug("Query results (" + resultJSON.length + " records) received from opserver at " + endDate + " in " + ((endTime - startTime) / 1000) + "secs. " + JSON.stringify(queryJSON));
+    resultJSON = (queryResults && !isEmptyObject(queryResults)) ?
+        queryResults.value : [];
+    logutils.logger.debug("Query results (" + resultJSON.length +
+                          " records) received from opserver at " +
+                          endDate + " in " + ((endTime - startTime) / 1000) +
+                          "secs. " + JSON.stringify(queryJSON));
     total = resultJSON.length;
 
     if (queryOptions.status === "run") {
@@ -657,28 +695,42 @@ function processQueryResults(res, queryResults, queryOptions, isGetQ) {
             chunkSize: chunkSize,
             serverSideChunking: true
         };
-        commonUtils.handleJSONResponse(null, res, resJson);
+        callback(null, resJson);
         if (isGetQ === true) {
-            saveDataToRedisByReqPayload(res, resJson);
+            saveDataToRedisByReqPayload(req, resJson);
         }
     }
 
     if(!_.isNil(queryId)) {
         var workerData = {};
 
-        saveQueryResult2Redis(resultJSON, total, queryId, chunkSize, getSortStatus4Query(queryJSON), queryJSON);
+        saveQueryResult2Redis(resultJSON, total, queryId, chunkSize,
+                              getSortStatus4Query(queryJSON), queryJSON);
         workerData.selectFields = queryJSON.select_fields;
         workerData.dataJSON = resultJSON;
 
         if (table === "FlowSeriesTable") {
             workerData.groupFieldName = "flow_class_id";
             workerData.timeFieldName = "T";
-            saveData4Chart2Redis(queryId, workerData);
         } else if (tableType === "STAT") {
             workerData.groupFieldName = "CLASS(T=)";
             workerData.timeFieldName = "T=";
-            saveData4Chart2Redis(queryId, workerData);
         }
+        var threadArgs = {queryId: queryId, workerData: workerData};
+        threadApi.runInThread(saveData4Chart2Redis, threadArgs,
+                              function(error, data) {
+            if (null !== error) {
+                logutils.logger.error("QE JSON Stringify Error in thread: " +
+                                      JSON.stringify(error));
+                return;
+            }
+            var charGroupArray = data.charGroupArray,
+                resultData = data.resultData;
+            writeData2Redis({ redisKey: queryId + ":chartgroups", dataJSON:
+                            charGroupArray });
+            writeData2Redis({ redisKey: queryId + ":chartdata", dataJSON:
+                            resultData });
+        });
     }
 }
 
@@ -727,36 +779,24 @@ function writeData2Redis(workerData) {
     var redisKey = workerData.redisKey,
         dataJSON = workerData.dataJSON;
 
-    var jsonWorker = new Worker(function () {
-        this.onmessage = function (event) {
-            var jsonData = event.data;
-            try {
-                var jsonStr = JSON.stringify(jsonData);
-                postMessage({error: null, jsonStr: jsonStr});
-            } catch (error) {
-                postMessage({error: error});
+    try {
+        var jsonStr = JSON.stringify(dataJSON);
+    } catch (error) {
+        logutils.logger.error("QE JSON Stringify Error: " + error);
+        return;
+    }
+
+    if (_.isNil(workerData.error)) {
+        //logutils.logger.debug(redisKey + " start writing data to redis");
+        redisClient.set(redisKey, jsonStr, function (rError) {
+            if (rError) {
+                logutils.logger.error("QE Redis Write Error: " + rError);
             }
-        };
-    });
-
-    jsonWorker.onmessage = function (event) {
-        var workedData = event.data;
-        if (_.isNil(workedData.error)) {
-            var jsonStr = workedData.jsonStr;
-
-            //logutils.logger.debug(redisKey + " start writing data to redis");
-            redisClient.set(redisKey, jsonStr, function (rError) {
-                if (rError) {
-                    logutils.logger.error("QE Redis Write Error: " + rError);
-                }
-                //logutils.logger.debug(redisKey + " end writing data to redis");
-            });
-        } else {
-            logutils.logger.error("QE JSON Stringify Error: " + workedData.error);
-        }
-    };
-
-    jsonWorker.postMessage(dataJSON);
+            //logutils.logger.debug(redisKey + " end writing data to redis");
+        });
+    } else {
+        logutils.logger.error("QE JSON Stringify Error: " + workerData.error);
+    }
 }
 
 function getSortStatus4Query(queryJSON) {
@@ -771,107 +811,82 @@ function getSortStatus4Query(queryJSON) {
     return sortStatus;
 }
 
-function saveData4Chart2Redis(queryId, workerData) {
-    var jsonWorker = new Worker(function () {
-        this.onmessage = function (event) {
-            var workerData = event.data,
-                groupFieldName = workerData.groupFieldName,
-                timeFieldName = workerData.timeFieldName,
-                selectFields = workerData.selectFields,
-                dataJSON = workerData.dataJSON;
+function saveData4Chart2Redis(threadArgs, saveData4ChartDoneCB) {
+    var workerData = threadArgs.workerData;
+    var groupFieldName = workerData.groupFieldName,
+        timeFieldName = workerData.timeFieldName,
+        selectFields = workerData.selectFields,
+        dataJSON = workerData.dataJSON;
 
-            try {
-                var resultData = {},
-                    uniqueChartGroupArray = [],
-                    charGroupArray = [],
-                    result, i, k,
-                    chartGroupId, chartGroup, secTime;
+    try {
+        var resultData = {},
+            uniqueChartGroupArray = [],
+            charGroupArray = [],
+            result, i, k,
+            chartGroupId, chartGroup, secTime;
 
-                if (selectFields.length !== 0) {
-                    for (i = 0; i < dataJSON.length; i++) {
-                        chartGroupId = dataJSON[i][groupFieldName];
+        if (selectFields.length !== 0) {
+            for (i = 0; i < dataJSON.length; i++) {
+                chartGroupId = dataJSON[i][groupFieldName];
 
-                        if (uniqueChartGroupArray.indexOf(chartGroupId) === -1) {
-                            chartGroup = getGroupRecord4Chart(dataJSON[i], groupFieldName);
-                            uniqueChartGroupArray.push(chartGroupId);
-                            charGroupArray.push(chartGroup);
-                        }
-
-                        secTime = Math.floor(dataJSON[i][timeFieldName] / 1000);
-                        result = { "date": new Date(secTime) };
-                        result[groupFieldName] = chartGroupId;
-
-                        for (k = 0; k < selectFields.length; k++) {
-                            result[selectFields[k]] = dataJSON[i][selectFields[k]];
-                        }
-
-                        // TODO: find out why can't use _.isNil here
-                        if (resultData[chartGroupId] == null) { // eslint-disable-line
-                            resultData[chartGroupId] = {};
-                            resultData[chartGroupId][secTime] = result;
-                        } else {
-                            resultData[chartGroupId][secTime] = result;
-                        }
-                    }
-                }
-                postMessage({
-                    error: null,
-                    charGroupArray: charGroupArray,
-                    resultData: resultData
-                });
-            } catch (error) {
-                postMessage({
-                    error: error
-                });
-            }
-
-            function getGroupRecord4Chart(row, groupFieldName) {
-                var groupRecord = {
-                    chart_group_id: row[groupFieldName]
-                };
-
-                for (var fieldName in row) {
-                    if (!isAggregateField(fieldName)) {
-                        groupRecord[fieldName] = row[fieldName];
-                    }
+                if (uniqueChartGroupArray.indexOf(chartGroupId) === -1) {
+                    chartGroup = getGroupRecord4Chart(dataJSON[i], groupFieldName);
+                    uniqueChartGroupArray.push(chartGroupId);
+                    charGroupArray.push(chartGroup);
                 }
 
-                return groupRecord;
-            }
+                secTime = Math.floor(dataJSON[i][timeFieldName] / 1000);
+                result = { "date": new Date(secTime) };
+                result[groupFieldName] = chartGroupId;
 
-            function isAggregateField(fieldName) {
-                var fieldNameLower = fieldName.toLowerCase(),
-                    isAggregate = false;
-
-                var AGGREGATE_PREFIX_ARRAY = ["min(", "max(", "count(", "sum("];
-
-                for (var i = 0; i < AGGREGATE_PREFIX_ARRAY.length; i++) {
-                    if (fieldNameLower.indexOf(AGGREGATE_PREFIX_ARRAY[i]) !== -1) {
-                        isAggregate = true;
-                        break;
-                    }
+                for (k = 0; k < selectFields.length; k++) {
+                    result[selectFields[k]] = dataJSON[i][selectFields[k]];
                 }
 
-                return isAggregate;
+                // TODO: find out why can't use _.isNil here
+                if (resultData[chartGroupId] == null) { // eslint-disable-line
+                    resultData[chartGroupId] = {};
+                    resultData[chartGroupId][secTime] = result;
+                } else {
+                    resultData[chartGroupId][secTime] = result;
+                }
             }
-        };
-    });
-
-    jsonWorker.onmessage = function (event) {
-        var workedData = event.data;
-
-        if (_.isNil(workedData.error)) {
-            var charGroupArray = workedData.charGroupArray,
-                resultData = workedData.resultData;
-
-            writeData2Redis({ redisKey: queryId + ":chartgroups", dataJSON: charGroupArray });
-            writeData2Redis({ redisKey: queryId + ":chartdata", dataJSON: resultData });
-        } else {
-            logutils.logger.error("QE JSON Stringify Error: " + JSON.stringify(workedData.error));
         }
-    };
+        saveData4ChartDoneCB(null, {charGroupArray: charGroupArray, resultData:
+                                    resultData});
+    } catch (error) {
+        saveData4ChartDoneCB(error);
+    }
 
-    jsonWorker.postMessage(workerData);
+    function getGroupRecord4Chart(row, groupFieldName) {
+        var groupRecord = {
+            chart_group_id: row[groupFieldName]
+        };
+
+        for (var fieldName in row) {
+            if (!isAggregateField(fieldName)) {
+                groupRecord[fieldName] = row[fieldName];
+            }
+        }
+
+        return groupRecord;
+    }
+
+    function isAggregateField(fieldName) {
+        var fieldNameLower = fieldName.toLowerCase(),
+            isAggregate = false;
+
+        var AGGREGATE_PREFIX_ARRAY = ["min(", "max(", "count(", "sum("];
+
+        for (var i = 0; i < AGGREGATE_PREFIX_ARRAY.length; i++) {
+            if (fieldNameLower.indexOf(AGGREGATE_PREFIX_ARRAY[i]) !== -1) {
+                isAggregate = true;
+                break;
+            }
+        }
+
+        return isAggregate;
+    }
 }
 
 function setMicroTimeRange(query, fromTime, toTime) {
@@ -1093,7 +1108,6 @@ function parseFilters(query, filters) {
             if (filterBy.length > 0) {
                 parseFilterBy(query, filterBy);
             }
-
         } else if (filter.indexOf("limit:") !== -1) {
             limitBy = splitString2Array(filter, "limit:")[1];
 
@@ -1117,24 +1131,38 @@ function parseFilters(query, filters) {
 }
 
 function parseFilterBy(query, filterBy) {
+    var filtersArray, filtersLength, i, filterAndClause;
+    if (_.isNil(filterBy) || ("" === filterBy.trim())) {
+        return;
+    }
+    filtersArray = filterBy.split(" OR ");
+    filtersLength = filtersArray.length;
+    query.filter = [];
+    if (!filtersLength) {
+        filterAndClause = parseFilterByAndClause(query, filterBy);
+        query.filter.push(filterAndClause);
+        return;
+    }
+    for (i = 0; i < filtersLength; i++) {
+        filtersArray[i] = filtersArray[i].trim();
+        filterAndClause = parseFilterByAndClause(query, filtersArray[i]);
+        query.filter.push(filterAndClause);
+    }
+}
+
+function parseFilterByAndClause (query, filterBy) {
     var filtersArray, filtersLength, filterClause = [],
         i, filterObj;
-
     if (!_.isNil(filterBy) && filterBy.trim() !== "") {
-        filtersArray = filterBy.split(" AND ");
+        filtersArray = filterBy.replace("(", "").replace(")", "").split(" AND ");
         filtersLength = filtersArray.length;
         for (i = 0; i < filtersLength; i += 1) {
             filtersArray[i] = filtersArray[i].trim();
             filterObj = getFilterObj(filtersArray[i]);
             filterClause.push(filterObj);
         }
-        // Loop through the default filters and add the UI submitted ones to each
-        for (var j = 0; j < query.filter.length; j++) {
-            var filterArr = query.filter[j];
-            filterArr = filterArr.concat(filterClause);
-            query.filter[j] = filterArr;
-        }
     }
+    return filterClause;
 }
 
 function parseFilterObj(filter, operator) {
@@ -1160,8 +1188,9 @@ function parseLimitBy(query, limitBy) {
 }
 
 function parseSortOrder(query, sortOrder) {
+    var sort = ("asc" === sortOrder) ? 1 : 2;
     try {
-        query.sort = sortOrder;
+        query.sort = sort;
     } catch (error) {
         logutils.logger.error(error.stack);
     }
@@ -1316,7 +1345,9 @@ function isEmptyObject(obj) {
 
 exports.runGETQuery = runGETQuery;
 exports.runPOSTQuery = runPOSTQuery;
+exports.runQuery = runQuery;
 exports.getTables = getTables;
+exports.getColumnValues = getColumnValues;
 exports.getTableColumnValues = getTableColumnValues;
 exports.getTableSchema = getTableSchema;
 exports.getQueryQueue = getQueryQueue;

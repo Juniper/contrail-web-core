@@ -84,6 +84,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'schema-model'               : coreWebDir + '/js/models/SchemaModel',
         'view-config-generator'      : coreWebDir + '/js/common/view.config.generator',
         'jquery-ui'                 : coreWebDir + '/assets/jquery-ui/js/jquery-ui',
+        'qe-module'                   : coreWebDir + '/reports/qe/ui/js/qe.module',
         'legend-view'                 : coreWebDir + '/js/views/LegendView',
     };
 
