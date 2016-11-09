@@ -100,6 +100,20 @@ cp -af ./$THIRD_PARTY/gridstack-v0.2.5/dist/gridstack.css webroot/assets/gridsta
 cp -af ./$THIRD_PARTY/gridstack-v0.2.5/dist/gridstack-extra.css webroot/assets/gridstack/css/gridstack-extra.css
 #End - Copy gridstack files from $THIRD_PARTY
 
+#Start - Copy palette files from $THIRD_PARTY
+rm -rf webroot/assets/palette
+mkdir -p webroot/assets/palette/js
+cp -af ./$THIRD_PARTY/palette.js-master/palette.js webroot/assets/palette/js/palette.js
+#End - Copy palette files from $THIRD_PARTY
+
+#Start - Copy toolbar files from $THIRD_PARTY
+rm -rf webroot/assets/toolbar
+mkdir -p webroot/assets/toolbar/js
+mkdir -p webroot/assets/toolbar/css
+cp -af ./$THIRD_PARTY/toolbar-v1.0.0/jquery.toolbar.js webroot/assets/toolbar/js/jquery.toolbar.js
+cp -af ./$THIRD_PARTY/toolbar-v1.0.0/jquery.toolbar.css webroot/assets/toolbar/css/jquery.toolbar.css
+#End - Copy toolbar files from $THIRD_PARTY
+
 #Start - Copy Bootstrap from $THIRD_PART
 #rm -rf webroot/assets/bootstrap
 #mkdir -p webroot/assets/bootstrap/js

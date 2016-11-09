@@ -45,6 +45,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         //Files not in bundles
         'widget-configmanager'        : coreWebDir + '/js/widget.configmanager',
         'gridstack'                   : coreWebDir + '/assets/gridstack/js/gridstack',
+        'toolbar'                     : coreWebDir + '/assets/toolbar/js/jquery.toolbar',
         'underscore'                  : coreWebDir + '/assets/underscore/underscore-min',
         'slickgrid-utils'             : coreWebDir + "/js/slickgrid-utils",
         //'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
@@ -56,6 +57,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'vis-edge-model'              : coreWebDir + '/js/models/VisEdgeModel',
         'vis-tooltip-model'           : coreWebDir + '/js/models/VisTooltipModel',
         'gs-view'                     : coreWebDir + '/js/views/GridStackView',
+        'color-scheme'                : coreWebDir + '/js/color_schemes',
+        'palette'                     : coreWebDir + '/assets/palette/js/palette',
         'graph-view'                  : coreWebDir + '/js/views/GraphView',
         'contrail-graph-model'        : coreWebDir + '/js/models/ContrailGraphModel',
         'dagre'                       : coreWebDir + '/assets/joint/js/dagre',

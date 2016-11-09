@@ -75,6 +75,41 @@ define([
                 }
             });
         };
+        this.createPopoverModal = function (options) {
+            var modalId = options['modalId'],
+                actions = [];
+            if ((contrail.checkIfExist(options['onCancel'])) && (contrail.checkIfFunction(options['onCancel']))) {
+                actions.push({
+                    id        : 'cancel',
+                    onclick   : function () {
+                        options['onCancel']();
+                    },
+                    onKeyupEsc: true
+                });
+            }
+            if ((contrail.checkIfExist(options['onSave'])) && (contrail.checkIfFunction(options['onSave']))) {
+                actions.push({
+                    id       : 'save',
+                    onclick: function () {
+                        options['onSave']();
+                        if ($('#' + modalId).find('.generic-delete-form').length > 0) {
+                            $('#' + modalId).find('.btn-primary.btnSave').hide();
+                        }
+                    },
+                    onKeyupEnter: true
+                });
+            }
+
+            $.contrailBootstrapPopover({
+                id: modalId,
+                className: options['className'],
+                title: options['title'],
+                body: options['body'],
+                actions: actions,
+                isBackdropReq: options['isBackdropReq'],
+                targetId: options['targetId']
+            });
+        };
         this.createModal = function (options) {
             var modalId = options['modalId'],
                 footer = [];
@@ -162,6 +197,27 @@ define([
                     }
                 }
             });
+        };
+
+        this.updateColorSettingsWithCookie = function () {
+            var cookieColorScheme = JSON.parse(contrail.getCookie(cowc.COOKIE_COLOR_SCHEME));
+            if(cookieColorScheme && cookieColorScheme.color) {
+                var color = cookieColorScheme.color;
+                cowc.FIVE_NODE_COLOR = color.FIVE_NODE_COLOR;
+                cowc.THREE_NODE_COLOR = color.THREE_NODE_COLOR;
+                cowc.SINGLE_NODE_COLOR = color.SINGLE_NODE_COLOR;
+                cowc.DEFAULT_COLOR = color.SINGLE_NODE_COLOR;
+            }
+        };
+
+        this.updateSettingsWithCookie =  function (viewConfig) {
+            this.updateColorSettingsWithCookie();
+            var cookieSettings = JSON.parse(contrail.getCookie(cowc.COOKIE_CHART_SETTINGS));
+            if(cookieSettings && viewConfig && viewConfig.chartOptions) {
+                for(var key in cookieSettings) {
+                    viewConfig.chartOptions[key] = cookieSettings[key];
+                }
+            }
         };
 
         this.enableModalLoading = function (modalId) {
@@ -1084,6 +1140,30 @@ define([
                 return val;
             });
         };
+        this.notifySettingsChange = function(colorModel) {
+            var p = layoutHandler.getURLHashObj().p,
+            resources =
+                menuHandler.getMenuObjByHash(p).resources.resource;
+            for(var i=0; i<resources.length; i++ ) {
+                var className = resources[i].class;
+                if(className == undefined)
+                    continue;
+                var classIns = window[className];
+                if(classIns == undefined)
+                    continue
+                for(var tag in classIns) {
+                    if(classIns[tag].hasOwnProperty("viewMap")) {
+                        var viewMap = classIns[tag]["viewMap"]
+                        for(var view in viewMap) {
+                            if(typeof viewMap[view].settingsChanged ==
+                                "function") {
+                                viewMap[view].settingsChanged(colorModel);
+                            }
+                        }
+                    }
+                }
+            }
+        };
 
         this.loadAlertsPopup = function(cfgObj) {
             var prefixId = 'dashboard-alerts';
@@ -1569,7 +1649,7 @@ define([
                     groupByMapLen = groupByMap.length,
                     groupByKeys = _.pluck(groupByMap, 'key');
                 if (colors != null && typeof colors == 'function') {
-                    colors = colors(groupByKeys);
+                    colors = colors(groupByKeys, options.resetColor);
                 }
                 for (var i = 0; i < groupByMapLen; i++) {
                     parsedData.push({
@@ -1734,7 +1814,7 @@ define([
         this.parsePercentilesData = function(data,options) {
             var yFields = getValueByJsonPath(options,'yFields',[]);
             var parsedData = [];
-            var colors = getValueByJsonPath(options,'colors',cowc.THREE_NODE_COLOR);
+            var colors = getValueByJsonPath(options,'colors',cowc.FIVE_NODE_COLOR);
             $.each(yFields,function(i,yField){
                 var key = getLabelForPercentileYField(yField);
                 parsedData[yField] = {"key":key,"color":colors[i],values:[]};
@@ -1750,7 +1830,7 @@ define([
             var yFields = getValueByJsonPath(options,'yFields',[]);
             var yLabels = getValueByJsonPath(options,'yLabels',[]);
             var parsedData = [];
-            var colors = getValueByJsonPath(options,'colors',cowc.THREE_NODE_COLOR);
+            var colors = getValueByJsonPath(options,'colors',cowc.FIVE_NODE_COLOR);
             $.each(yFields,function(i,yField){
                 var key = getValueByJsonPath(yLabels,""+i,yField);
                 parsedData[yField] = {"key":key,"color":colors[i],values:[]};
@@ -1765,7 +1845,7 @@ define([
         this.parsePercentilesDataForStack = function (data,options) {
             var yFields = getValueByJsonPath(options,'yFields',[]);
             var parsedData = [];
-            var colors = getValueByJsonPath(options,'colors',cowc.THREE_NODE_COLOR);
+            var colors = getValueByJsonPath(options,'colors',cowc.FIVE_NODE_COLOR);
             var parsedData = [];
             $.each(yFields,function(i,yfield){
                 $.each(data,function(j,d){
@@ -1794,12 +1874,13 @@ define([
             var y2AxisLabel = getValueByJsonPath(options, 'y2AxisLabel');
             var y2AxisColor = getValueByJsonPath(options, 'y2AxisColor');
             var colors = getValueByJsonPath(options, 'colors');
+            var resetColor = getValueByJsonPath(options,'resetColor',false);
             var tsDim = cf.dimension(function (d) {return d.T});
             var groupDim = cf.dimension(function (d) {return d[groupBy]});
             var groupDimData = groupDim.group().all();
             var groupDimKeys = _.pluck(groupDimData, 'key');
             if (typeof colors == 'function') {
-               colors = colors(_.sortBy(groupDimKeys));
+               colors = colors(_.sortBy(groupDimKeys), resetColor);
             }
             var nodeMap = {}, chartData = [];
             $.each(groupDimData, function (idx, obj) {

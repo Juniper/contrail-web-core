@@ -10,6 +10,12 @@ define([
     'chart-utils'
 ], function (_, ContrailView, DonutChartModel, ContrailListModel, chUtils) {
     var DonutChartView = ContrailView.extend({
+        settingsChanged: function(colorModel) {
+            var self = this,
+                vc = self.attributes.viewConfig;
+            vc.resetColor = true;
+            self.renderChart($(self.$el), vc, self.model);
+        },
         render: function () {
             var self = this,
                 viewConfig = self.attributes.viewConfig,
@@ -19,6 +25,8 @@ define([
             if (self.model === null && viewConfig['modelConfig'] !== null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
             }
+            //settings
+            cowu.updateSettingsWithCookie(viewConfig);
 
             self.renderChart(selector, viewConfig, self.model);
 

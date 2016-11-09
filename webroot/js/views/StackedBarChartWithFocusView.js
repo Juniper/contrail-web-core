@@ -13,6 +13,19 @@ define([
 ], function (_, ContrailView,  ContrailListModel, LegendView, cowc, chUtils) {
     var cfDataSource;
     var stackedBarChartWithFocusChartView = ContrailView.extend({
+        settingsChanged: function(newSettings) {
+            var self = this,
+                vc = self.attributes.viewConfig;
+            if(vc.hasOwnProperty("chartOptions")) {
+                vc.chartOptions["resetColor"] = true;
+                for(var key in newSettings) {
+                    if(key in vc.chartOptions) {
+                        vc.chartOptions[key] = newSettings[key];
+                    }
+                }
+            }
+            self.renderChart($(self.$el), vc, self.model);
+        },
 
         render: function () {
             var viewConfig = this.attributes.viewConfig,
@@ -20,8 +33,8 @@ define([
                 self = this, deferredObj = $.Deferred(),
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
                 resizeId;
-
-
+            //settings
+            cowu.updateSettingsWithCookie(viewConfig);
             self.tooltipDiv = d3.select("body").append("div")
                             .attr("class", "stack-bar-chart-tooltip")
                             .style("opacity", 0);
@@ -113,7 +126,12 @@ define([
             var onClickBar = getValueByJsonPath(chartOptions,'onClickBar',false);
             var defaultZeroLineDisplay = getValueByJsonPath(chartOptions,'defaultZeroLineDisplay', false);
             var groupBy = chartOptions['groupBy'], groups = [], yAxisMaxValue;
+            var resetColor = getValueByJsonPath(chartOptions,'resetColor',false);
             chartOptions['timeRange'] =  getValueByJsonPath(self, 'model;queryJSON');
+            //settings
+            if(typeof chartOptions["colors"] != 'function') {
+                chartOptions["colors"] = cowc.FIVE_NODE_COLOR;
+            }
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data, chartOptions);
               //Need to check and remove the data.length condition because invalid for object
@@ -134,7 +152,7 @@ define([
             self.parsedData = _.indexBy(data, 'key');
             if (colors != null && colorNodes[0] != 'DEFAULT') {
                 if (typeof colors == 'function') {
-                    self.colors = colors(colorNodes);
+                    self.colors = colors(_.without(_.pluck(data, 'key'), failureLabel), resetColor);
                 } else if (typeof colors == 'object') {
                     self.colors = colors;
                 }
@@ -365,7 +383,7 @@ define([
             if (groupBy == null) {
                 showControls = false;
             }
-            if (showControls == true || showLegend == true) {
+            //if (showControls == true || showLegend == true) {
                 var colorsMap = self.colors,
                     nodeLegend = [],
                     legendData = [];
@@ -414,7 +432,7 @@ define([
                             transitionStacked(self);
                         }
                     });
-            }
+            //}
             //Need to wait until the widget is rendered.
             setTimeout(updateFilteredCntInHeader,200);
             function getyAxisMaxValue(data, excludey0) {

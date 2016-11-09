@@ -11,12 +11,32 @@ define([
     'chart-utils'
 ], function (_, ContrailView, LineWithFocusChartModel, ContrailListModel, nv, chUtils) {
     var LineWithFocusChartView = ContrailView.extend({
+        settingsChanged: function(newSettings) {
+            var self = this,
+                vc = self.attributes.viewConfig;
+            if(vc.hasOwnProperty("chartOptions")) {
+                for(var key in newSettings) {
+                    if(key in vc.chartOptions) {
+                        vc.chartOptions[key] = newSettings[key];
+                    }
+                }
+                if(!vc.chartOptions.staticColor &&
+                    typeof vc.chartOptions["colors"] != 'function') {
+                    vc.chartOptions["colors"] = cowc.FIVE_NODE_COLOR;
+                }
+            }
+
+            self.renderChart($(self.$el), vc, self.model);
+        },
+
         render: function () {
             var viewConfig = this.attributes.viewConfig,
                 ajaxConfig = viewConfig['ajaxConfig'],
                 self = this, deferredObj = $.Deferred(),
                 selector = $(self.$el),
                 modelMap = contrail.handleIfNull(self.modelMap, {});
+            //settings
+            cowu.updateSettingsWithCookie(viewConfig);
 
             if (contrail.checkIfExist(viewConfig.modelKey) && contrail.checkIfExist(modelMap[viewConfig.modelKey])) {
                 self.model = modelMap[viewConfig.modelKey]
