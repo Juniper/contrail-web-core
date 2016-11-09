@@ -5,8 +5,9 @@
 define([
     'underscore',
     'moment',
-    'handlebars'
-], function (_, moment, Handlebars) {
+    'handlebars',
+    'lodash'
+], function (_, moment, Handlebars, lodash) {
     var serializer = new XMLSerializer(),
         domParser = new DOMParser();
 
@@ -2159,6 +2160,59 @@ define([
             xmlNode.removeAttribute(attrArray[i]);
         }
     };
+    function deepDiff(a, b, r, reversible) {
+        lodash.each(a, function(v, k) {
+            if (r.hasOwnProperty(k) || b[k] === v) return;
+            var value;
+          if (lodash.isObject(v)) {
+              if (lodash.isArray(v)) {
+                if (v.length > 0 || b[k].length > 0) {
+                    var isSame = true; 
+                     if(v.length == b[k].length){
+                            for(var i =0; i < v.length ; i++){
+                                var found = false;
+                               for(var j=0; j< b[k].length;j++){
+                                   if(lodash.isEqual(v[i], b[k][j])){
+                                       found = true;
+                                       break;
+                                   }
+                               }  
+                               if(!found) {
+                                   isSame = false;
+                                   break;
+                               }
+                            }
+                            if(!isSame){
+                                value = b[k];
+                            }
+                        }else if(v.length > b[k].length || v.length < b[k].length){
+                            value = b[k];
+                        }
+                  }
+              } else {
+                 if(!lodash.isEqual(v,b[k])){
+                    value = b[k];
+                 }
+              }
+          } else {
+              value = b[k]
+          }
+            if(value != undefined) r[k] = value;
+          });
 
+    };
+    lodash.mixin({
+        shallowDiff: function(a, b) {
+          return lodash.omit(a, function(v, k) {
+            return b[k] === v;
+          })
+        },
+        diff: function(a, b, reversible) {
+          var r = {};
+          deepDiff(a, b, r, reversible);
+          if(reversible) deepDiff(b, a, r, reversible);
+          return r;
+        }
+   });
     return CoreUtils;
 });
