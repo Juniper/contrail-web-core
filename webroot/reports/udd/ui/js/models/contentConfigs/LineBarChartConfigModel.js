@@ -86,7 +86,8 @@ define([
                 chartOptions: {
                     axisLabelDistance: 5,
                     height: 300,
-                    yAxisLabels: [this.barLabel(), this.lineLabel()],
+                    y1AxisLabel: this.barLabel(),
+                    y2AxisLabel: this.lineLabel(),
                     colors: [this.barColor(), this.lineColor()],
                     forceY: [0, 10],
                     y1Formatter: window.cowf.getFormattedValue.bind(window.cowf, [{
