@@ -52,13 +52,15 @@ define([
     },
 
     initialize: function () {
-      this.selectors.tabs = "#" + this.attributes.elementId;
+      //We will keep the view elementId same but the Tab will be rendered inside container.
+      //Instead of updating the attributes.elementId which view is rendered upon, for now will append '-container' wherever accessed.
+      this.selectors.tabs = "#" + this.attributes.elementId + "-container";
     },
 
     render: function() {
       var self = this,
         viewConfig = self.attributes.viewConfig,
-        elId = self.attributes.elementId,
+        elId = self.attributes.elementId + "-container",
         tabsTemplate = contrail.getTemplate4Id(cowc.TMPL_TABS_VIEW),
         tabHashUrlObj = window.layoutHandler.getURLHashParams().tab,
         activeTab = contrail.handleIfNull(viewConfig.active, 0);
@@ -146,6 +148,14 @@ define([
 
         theme: viewConfig.theme,
       });
+
+      //Adding accessor to contrailTabs initialized under container.
+      self.$el.tabs(function() {
+        return $(self.selectors.tabs).tabs;
+      });
+      self.$el.data("contrailTabs", function() {
+        return $(self.selectors.tabs).data("contrailTabs");
+      }());
     },
 
     _initTabMenu: function(tab) {
@@ -172,7 +182,7 @@ define([
 
     removeTab: function(tabIndex) {
       var self = this;
-      var elId = self.attributes.elementId;
+      var elId = self.attributes.elementId + "-container";
       var tab = self.tabs[tabIndex];
       if (!tab) return;
 
