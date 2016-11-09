@@ -79,6 +79,9 @@ define([
         switch (string) {
             case "int":
             case "long":
+            case "double":
+            case "avg":
+            case "percentiles":
                 return unifiedDataTypes.PLOTTABLE;
             default: // unhandled string will be returned as is
                 return string;
