@@ -36,7 +36,7 @@ define([
                 this.model.save();
             } else {
                 $columnPickerPanel.data("toggle", "tooltip").tooltip({
-                    title: invalidMsg + ". Invalid change won't be saved!"
+                    title: invalidMsg + ". " + window.cowm.INVALID_DATA_NOT_SAVED
                 }).tooltip("show");
             }
         }, 500);
