@@ -344,7 +344,7 @@ define([
 
         this.GRID_TITLE = "Title";
         this.GRID_VISIBLE_COLUMNS = "Columns to Show";
-        this.GRID_PAGE_SIZE = "Records Per Grid";
+        this.GRID_PAGE_SIZE = "Page Size";
         this.GRID_ENTRY_WITH_DETAILS = "With Collapsible Details";
 
         /* UDD Labels */

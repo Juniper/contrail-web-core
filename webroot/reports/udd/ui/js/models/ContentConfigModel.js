@@ -8,6 +8,9 @@ define([
 ], function(_, ContrailModel) {
 
     return ContrailModel.extend({
+        constructor: function() {
+            ContrailModel.prototype.constructor.apply(this, arguments);
+        },
         onDataModelChange: function() {},
 
         toJSON: function() {

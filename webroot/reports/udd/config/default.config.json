@@ -34,7 +34,7 @@
               "requiredFieldTypes": ["plottable"]
           },
           "table_type": {
-              "rejectedFieldTypes": ["loggable"]
+              "rejectedFieldTypes": ["loggable.normal", "loggable.object"]
           }
         }
       }
@@ -57,7 +57,7 @@
               "requiredFieldTypes": ["plottable"]
           },
           "table_type": {
-              "rejectedFieldTypes": ["loggable"]
+              "rejectedFieldTypes": ["loggable.normal", "loggable.object"]
           }
         }
       }
@@ -77,7 +77,7 @@
       "validations": {
         "QueryConfigView": {
           "table_type": {
-              "requiredFieldTypes": ["loggable"]
+              "requiredFieldTypes": ["loggable.normal"]
           }
         }
       }
