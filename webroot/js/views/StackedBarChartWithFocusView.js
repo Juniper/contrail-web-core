@@ -232,15 +232,15 @@ define([
             //Add the axis labels
             var xaxisLabel = main.append("text")
                                 .attr("class", "axis-label")
-                                .attr("text-anchor", "end")
+                                .attr("text-anchor", "middle")
                                 .attr("x", width/2)
                                 .attr("y", height + 40)
                                 .text(xAxisLabel);
             var yaxisLabel = main.append("text")
                                 .attr("class", "axis-label")
-                                .attr("text-anchor", "end")
+                                .attr("text-anchor", "middle")
                                 .attr("y", -margin.left)
-                                .attr("x", -height/2)
+                                .attr("x", -totalHeight/2)
                                 .attr("dy", ".75em")
                                 .attr("dx", ".75em")
                                 .attr("transform", "rotate(-90)")

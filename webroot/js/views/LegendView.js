@@ -14,6 +14,7 @@ define([
         },
 
         setViewConfig: function (config) {
+            var self = this;
             self.viewConfig = config;
         },
 
