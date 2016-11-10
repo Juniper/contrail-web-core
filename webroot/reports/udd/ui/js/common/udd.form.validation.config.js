@@ -11,19 +11,28 @@ define([
 ], function(_, defaultConfigString) {
     var defaultConfigJSON = JSON.parse(defaultConfigString),
         unifiedDataTypes = {
-            LOGGABLE: "loggable",
+            LOGGABLE: {
+                NORMAL: "loggable.normal",
+                OBJECT: "loggable.object"
+            },
             PLOTTABLE: "plottable",
         }, shouldIgnore = {
             "T": true,
             "T=": true
+        }, isCompatibleAggregator = {
+            "sum": true,
+            "avg": true,
+            "min": true,
+            "max": true,
+            "count": true
         };
 
     /**
      * combine two rules and return the combination.
      *
-     * @param  {Object} rule1 rule description
-     * @param  {Object} rule2 rule description
-     * @return {Object}       combined rule description
+     * @param  {object} rule1 rule description
+     * @param  {object} rule2 rule description
+     * @return {object}       combined rule description
      */
     function combine(rule1, rule2) { // eslint-disable-line
         var compatible1 = isCompatibleRule(rule1),
@@ -44,8 +53,8 @@ define([
 
     /**
      * check if the rule is in a format described by Backbone.validation
-     * @param  {Object}  rule rule description
-     * @return {Boolean}
+     * @param  {object}  rule rule description
+     * @return {boolean}
      */
     function isCompatibleRule(rule) {
         return _.isArray(rule) || _.isFunction(rule) || _.isPlainObject(rule);
@@ -55,8 +64,8 @@ define([
      * convert all acceptable rule descritpion format to array-like.
      * The array format is the easiest to merge properly.
      *
-     * @param  {Object} rule rule description
-     * @return {Object}      normalized rule description in form of array
+     * @param  {object} rule rule description
+     * @return {object}      normalized rule description in form of array
      */
     function normalizeRule(rule) {
         if (_.isFunction(rule)) {
@@ -71,32 +80,46 @@ define([
     }
 
     /**
-     * data type mapper for select field
-     * @param  {String} string one field value
-     * @return {String}        unified data type string
+     * a factory method that generates a data type normalizer based on a map of raw data type's meta
+     * @param  {object} dataMetaMap a map, which provides meta of each raw data type
+     * @return {function}           a data type normalizer
      */
-    function normalizeDataType(string) {
-        switch (string) {
-            case "int":
-            case "long":
-            case "double":
-            case "avg":
-                return unifiedDataTypes.PLOTTABLE;
-            default: // unhandled string will be returned as is
-                return string;
-        }
+    function getDataTypeNormalizer(dataMetaMap) {
+        var regexPattern = /(.+)\((.+)\)/gi,
+            // generate a plottable data type dictionary
+            plottableDataTypes = _.reduce(dataMetaMap, function(validTypes, dataMeta, rawDataType) {
+                regexPattern.lastIndex = 0;
+
+                var extracted = regexPattern.exec(rawDataType),
+                    aggregateType = extracted && extracted[1].toLowerCase(),
+                    nonAggregateCore = extracted && extracted[2];
+
+                if (isCompatibleAggregator[aggregateType]
+                    && nonAggregateCore
+                    && !shouldIgnore[nonAggregateCore]) {
+                    validTypes[rawDataType] = unifiedDataTypes.PLOTTABLE;
+                    validTypes[nonAggregateCore] = unifiedDataTypes.PLOTTABLE;
+                }
+
+                return validTypes;
+            }, {});
+
+        return function(rawDataType) {
+            return plottableDataTypes[rawDataType] || rawDataType;
+        };
     }
 
     /**
      * data type mapper for table_type field
-     * @param  {String} string one field value
-     * @return {String}        unified data type string
+     * @param  {string} string one field value
+     * @return {string}        unified data type string
      */
     function normalizeTableType(string) {
         switch (string) {
             case "LOG":
+                return unifiedDataTypes.LOGGABLE.NORMAL;
             case "OBJECT":
-                return unifiedDataTypes.LOGGABLE;
+                return unifiedDataTypes.LOGGABLE.OBJECT;
             default: // unhandled string will be returned as is
                 return string;
         }
@@ -104,10 +127,10 @@ define([
 
     /**
      * A error string generater
-     * @param  {String} subject   string as subject
-     * @param  {String} predicate string as verb
-     * @param  {String} object    string as object
-     * @return {String}           composed error message for a field
+     * @param  {string} subject   string as subject
+     * @param  {string} predicate string as verb
+     * @param  {string} object    string as object
+     * @return {string}           composed error message for a field
      */
     function getFieldErrorMsg(subject, predicate, object) {
         return [subject, predicate, "selection of", object, "fields"].join(" ");
@@ -116,8 +139,8 @@ define([
     /**
      * Gets the validation schema.
      *
-     * @param      {Object}  rawConfig  The raw configuration
-     * @return     {Object}  The validation schema.
+     * @param      {object}  rawConfig  The raw configuration
+     * @return     {object}  The validation schema.
      */
     function getValidationSchema(rawConfig) {
         return _.mapValues(rawConfig.contentViews, function(visualizationConfig) {
@@ -128,8 +151,8 @@ define([
     /**
      * Return an array of labels calculated by default.config.json and the array of field type.
      *
-     * @param      {Array/String}  fieldTypes  The field type(s)
-     * @return     {Array}                     The calculated label array
+     * @param      {array/string}  fieldTypes  The field type(s)
+     * @return     {array}                     The calculated label array
      */
     function convertToLabel(fieldTypes) {
         fieldTypes = [].concat(fieldTypes);
@@ -145,10 +168,20 @@ define([
     /**
      * This is the object that describes what validations rules should be applied to any fields in the query form.
      *
-     * @type {Object}
+     * @type {object}
      */
     var viewRequiredFormInfo = getValidationSchema(defaultConfigJSON);
 
+    /**
+     * A validator core. Determines if the value has all required fields.
+     *
+     * @param      {string}    value               The value passed by Backbone Validation library
+     * @param      {string}    attr                The attribute name passed by Backbone Validation library
+     * @param      {object}    metrics             A configuration object that provides necessary info for the core,
+     *                                             it can have preprocessor to sanitize the raw value for the dataTypeNormalizer.
+     * @param      {function}  dataTypeNormalizer  A data type normalizer that converts various data types to more generic data types.
+     * @return     {string}                        Empty string if has all required fields, error message otherwise.
+     */
     function hasAllRequiredFields(value, attr, metrics, dataTypeNormalizer) { // eslint-disable-line
         var key = metrics.key,
             target = metrics.target,
@@ -180,7 +213,7 @@ define([
         /**
          * This is a rulesets created for query form validation in UDD widget.
          *
-         * @type {Object}
+         * @type {object}
          */
         UDDQueryConfigValidations: {
             runQueryValidation: { // this ruleset ID follows core-constants/KEY_RUN_QUERY_VALIDATION
@@ -188,16 +221,15 @@ define([
                     fn: function(value, attr, computedState) { // eslint-disable-line
                         if (computedState.ui_added_parameters) {
                             var metrics = {
-                                target: computedState.dataSrcType,
-                                key: computedState.visualType,
-                                preprocess: function(fieldName) {
-                                    var fieldTypeTable = computedState.ui_added_parameters.table_schema_column_names_map,
-                                        typeObject = fieldTypeTable[fieldName];
+                                    target: computedState.dataSrcType,
+                                    key: computedState.visualType,
+                                    preprocess: function(fieldName) {
+                                        return !shouldIgnore[fieldName] ? fieldName : "";
+                                    }
+                                },
+                                columnMetaMap = computedState.ui_added_parameters.table_schema_column_names_map;
 
-                                    return !shouldIgnore[fieldName] && typeObject ? typeObject.datatype : "";
-                                }
-                            };
-                            return hasAllRequiredFields(value, attr, metrics, normalizeDataType);
+                            return hasAllRequiredFields(value, attr, metrics, getDataTypeNormalizer(columnMetaMap));
                         }
                     }
                 },
@@ -229,9 +261,9 @@ define([
          *         ...
          *     }
          *
-         * @param  {Object} rulesets1 rulesets description object
-         * @param  {Object} rulesets2 rulesets description object
-         * @return {Object}           combined rulesets with each rule normalized in a form of [{validator1, msg1}, {validator2, msg2}, ...]
+         * @param  {object} rulesets1 rulesets description object
+         * @param  {object} rulesets2 rulesets description object
+         * @return {object}           combined rulesets with each rule normalized in a form of [{validator1, msg1}, {validator2, msg2}, ...]
          */
         mixValidationRules: function(rulesets1, rulesets2) {
             var combinedValidations = {};
@@ -247,6 +279,25 @@ define([
             });
 
             return combinedValidations;
+        },
+        /**
+         * A filter that returns the plottable fields in format of concatenated string.
+         *
+         * @param      {string}    srcString        The source string
+         * @param      {object}    columnSchemaMap  A dictionary that describes the meta info of each field/column
+         * @param      {string}    delimiter        The delimiter used by srcString. By default, it's ", ".
+         * @return     {string}                     A string concatenating filtered plottable fields/columns with delimiter
+         */
+        getPlottableFields: function(srcString, columnSchemaMap, delimiter) {
+            delimiter = delimiter || ", ";
+
+            var dataTypeNormalizer = getDataTypeNormalizer(columnSchemaMap),
+                srcArr = srcString.split(delimiter),
+                plottableFieldArr = _.filter(srcArr, function(column) {
+                    return dataTypeNormalizer(column) === unifiedDataTypes.PLOTTABLE;
+                });
+
+            return plottableFieldArr.join(delimiter);
         }
     };
 });
