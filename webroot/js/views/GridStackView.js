@@ -19,7 +19,7 @@ define([
 
             self.$el.addClass('grid-stack grid-stack-12 custom-grid-stack');
             self.gridStack = $(self.$el).gridstack({
-                float:false,
+                float:true,
                 handle:'.item-content',
                 resizable: {
                     handles:'sw,se',
