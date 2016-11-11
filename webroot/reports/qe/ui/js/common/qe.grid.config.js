@@ -24,7 +24,7 @@ define([
                 columnConfig = {
                     id: selectValue, field: selectValue,
                     name: columnName,
-                    width: columnName.length * 8,
+                    width: 150,
                     formatter: {
                         format: cowc.QUERY_COLUMN_FORMATTER[selectValue]
                     }
@@ -86,8 +86,6 @@ define([
             {select:"dport", display:{width:130}},
             {select:"direction_ing", display:{width:100}},
             {select:"protocol", display:{width:100}},
-            {select:"underlay_proto", display:{width:150}},
-            {select:"underlay_source_port", display:{width:150}},
             {select:"UuidKey", display:{width:280}},
             {select:"sg_rule_uuid", display:{width:280}},
             {select:"nw_ace_uuid", display:{width:280}},
@@ -96,40 +94,16 @@ define([
             {select:"vmi_uuid", display:{width:140}},
             {select:"drop_reason", display:{ width:140}}
         ],
-        "StatTable.AnalyticsCpuState.cpu_info" : [
-            {select:"cpu_info.module_id", display:{width:150}},
-            {select:"cpu_info.inst_id", display:{width:150}},
+        "StatTable.AnalyticsCpuState.cpu_info" : [ 
             {select:"COUNT(cpu_info)", display:{width:120}},
-
-            {select:"cpu_info.mem_virt", display:{width:150}},
-            {select:"SUM(cpu_info.mem_virt)", display:{ width:150}},
-            {select:"MIN(cpu_info.mem_virt)", display:{ width:150}},
-            {select:"MAX(cpu_info.mem_virt)", display:{ width:150}},
-
             {select:"cpu_info.cpu_share", display:{width:120}},
-            {select:"SUM(cpu_info.cpu_share)", display:{width:150}},
-            {select:"MIN(cpu_info.cpu_share)", display:{ width:150}},
-            {select:"MAX(cpu_info.cpu_share)", display:{ width:150}},
-
             {select:"cpu_info.mem_res", display:{ width:170}},
             {select:"SUM(cpu_info.mem_res)", display:{ width:190}},
             {select:"MIN(cpu_info.mem_res)", display:{width:190}},
             {select:"MAX(cpu_info.mem_res)", display:{ width:190}}
         ],
         "StatTable.ConfigCpuState.cpu_info" : [
-            {select:"cpu_info.module_id", display:{width:150}},
-            {select:"cpu_info.inst_id", display:{width:150}},
             {select:"COUNT(cpu_info)", display:{ width:120}},
-            {select:"cpu_info.mem_virt", display:{ width:150}},
-            {select:"SUM(cpu_info.mem_virt)", display:{width:150}},
-            {select:"MIN(cpu_info.mem_virt)", display:{ width:150}},
-            {select:"MAX(cpu_info.mem_virt)", display:{ width:150}},
-
-            {select:"cpu_info.cpu_share", display:{width:150}},
-            {select:"SUM(cpu_info.cpu_share)", display:{ width:150}},
-            {select:"MIN(cpu_info.cpu_share)", display:{ width:150}},
-            {select:"MAX(cpu_info.cpu_share)", display:{ width:150}},
-
             {select:"cpu_info.mem_res", display:{width:170}},
             {select:"SUM(cpu_info.mem_res)", display:{width:190}},
             {select:"MIN(cpu_info.mem_res)", display:{width:190}},
@@ -138,10 +112,6 @@ define([
         "StatTable.ControlCpuState.cpu_info" : [
             {select:"COUNT(cpu_info)", display:{ width:120}},
             {select:"cpu_info.mem_virt", display:{width:120}},
-            {select:"SUM(cpu_info.mem_virt)", display:{ width:150}},
-            {select:"MIN(cpu_info.mem_virt)", display:{ width:150}},
-            {select:"MAX(cpu_info.mem_virt)", display:{ width:150}},
-
             {select:"cpu_info.cpu_share", display:{ width:120}},
             {select:"SUM(cpu_info.cpu_share)", display:{ width:120}},
             {select:"MIN(cpu_info.cpu_share)", display:{ width:120}},
@@ -152,9 +122,7 @@ define([
             {select:"MIN(cpu_info.mem_res)", display:{ width:190}},
             {select:"MAX(cpu_info.mem_res)", display:{ width:190}},
 
-            {select:"cpu_info.inst_id", display:{ width:120}},
-            {select:"cpu_info.module_id", display:{ width:150}}
-
+            {select:"cpu_info.inst_id", display:{ width:120}}
         ],
         "StatTable.PRouterEntry.ifStats" : [
             {select:"COUNT(ifStats)", display:{width:120}},
@@ -226,7 +194,6 @@ define([
             {select:"MAX(cpu_info.cpu_share)", display:{width:160}},
             {select:"MIN(cpu_info.cpu_share)", display:{width:160}},
 
-
             {select:"cpu_info.used_sys_mem", display:{width:190}},
             {select:"SUM(cpu_info.used_sys_mem)", display:{width:190}},
             {select:"MAX(cpu_info.used_sys_mem)", display:{width:190}},
@@ -243,8 +210,6 @@ define([
             {select:"MAX(cpu_info.mem_res)", display:{width:190}}
         ],
         "StatTable.VirtualMachineStats.cpu_stats" : [
-            {select:"COUNT(cpu_stats)", display:{width:150}},
-
             {select:"cpu_stats.cpu_one_min_avg", display:{width:170}},
             {select:"SUM(cpu_stats.cpu_one_min_avg)", display:{width:170}},
             {select:"MAX(cpu_stats.cpu_one_min_avg)", display:{width:170}},
@@ -255,111 +220,14 @@ define([
             {select:"MAX(cpu_stats.vm_memory_quota)", display:{width:190}},
             {select:"MIN(cpu_stats.vm_memory_quota)", display:{width:190}},
 
-            {select:"cpu_stats.rss", display:{width:150}},
-            {select:"SUM(cpu_stats.rss)", display:{width:150}},
-            {select:"MAX(cpu_stats.rss)", display:{width:150}},
-            {select:"MIN(cpu_stats.rss)", display:{width:150}},
-
-            {select:"cpu_stats.virt_memory", display:{width:150}},
-            {select:"SUM(cpu_stats.virt_memory)", display:{width:150}},
-            {select:"MAX(cpu_stats.virt_memory)", display:{width:150}},
-            {select:"MIN(cpu_stats.virt_memory)", display:{width:150}},
-
             {select:"cpu_stats.peak_virt_memory", display:{width:170}},
             {select:"SUM(cpu_stats.peak_virt_memory)", display:{width:170}},
             {select:"MAX(cpu_stats.peak_virt_memory)", display:{width:170}},
             {select:"MIN(cpu_stats.peak_virt_memory)", display:{width:170}}
         ],
-        "StatTable.ComputeStoragePool.info_stats" : [
-            {select:"COUNT(info_stats)", display:{width:150}},
-
-            {select:"info_stats.writes", display:{width:150}},
-            {select:"SUM(info_stats.reads)", display:{width:150}},
-            {select:"MAX(info_stats.reads)", display:{width:150}},
-            {select:"MIN(info_stats.reads)", display:{width:150}},
-
-            {select:"info_stats.writes", display:{width:150}},
-            {select:"SUM(info_stats.writes)", display:{width:150}},
-            {select:"MAX(info_stats.writes)", display:{width:150}},
-            {select:"MIN(info_stats.writes)", display:{width:150}},
-
-            {select:"info_stats.read_kbytes", display:{width:150}},
-            {select:"SUM(info_stats.read_kbytes)", display:{width:150}},
-            {select:"MAX(info_stats.read_kbytes)", display:{width:150}},
-            {select:"MIN(info_stats.read_kbytes)", display:{width:150}},
-
-            {select:"info_stats.write_kbytes", display:{width:150}},
-            {select:"SUM(info_stats.write_kbytes)", display:{width:150}},
-            {select:"MAX(info_stats.write_kbytes)", display:{width:150}},
-            {select:"MIN(info_stats.write_kbytes)", display:{width:150}}
-
-        ],
-        "StatTable.ComputeStorageOsd.info_stats" : [
-            {select:"COUNT(info_stats)", display:{width:150}},
-
-            {select:"info_stats.reads", display:{width:150}},
-            {select:"SUM(info_stats.reads)", display:{width:150}},
-            {select:"MAX(info_stats.reads)", display:{width:150}},
-            {select:"MIN(info_stats.reads)", display:{width:150}},
-
-            {select:"info_stats.writes", display:{width:150}},
-            {select:"SUM(info_stats.writes)", display:{width:150}},
-            {select:"MAX(info_stats.writes)", display:{width:150}},
-            {select:"MIN(info_stats.writes)", display:{width:150}},
-
-            {select:"info_stats.read_kbytes", display:{width:150}},
-            {select:"SUM(info_stats.read_kbytes)", display:{width:150}},
-            {select:"MAX(info_stats.read_kbytes)", display:{width:150}},
-            {select:"MIN(info_stats.read_kbytes)", display:{width:150}},
-
-            {select:"info_stats.write_kbytes", display:{width:150}},
-            {select:"SUM(info_stats.write_kbytes)", display:{width:150}},
-            {select:"MAX(info_stats.write_kbytes)", display:{width:150}},
-            {select:"MIN(info_stats.write_kbytes)", display:{width:150}},
-
-            {select:"info_stats.op_r_latency", display:{width:150}},
-            {select:"SUM(info_stats.op_r_latency)", display:{width:150}},
-            {select:"MAX(info_stats.op_r_latency)", display:{width:150}},
-            {select:"MIN(info_stats.op_r_latency)", display:{width:150}},
-
-            {select:"info_stats.op_w_latency", display:{width:150}},
-            {select:"SUM(info_stats.op_w_latency)", display:{width:150}},
-            {select:"MAX(info_stats.op_w_latency)", display:{width:150}},
-            {select:"MIN(info_stats.op_w_latency)", display:{width:150}}
-        ],
+        "StatTable.ComputeStoragePool.info_stats" : [],
+        "StatTable.ComputeStorageOsd.info_stats" : [],
         "StatTable.ComputeStorageDisk.info_stats" : [
-            {select:"COUNT(info_stats)", display:{width:150}},
-
-            {select:"info_stats.reads", display:{width:150}},
-            {select:"SUM(info_stats.reads)", display:{width:150}},
-            {select:"MAX(info_stats.reads)", display:{width:150}},
-            {select:"MIN(info_stats.reads)", display:{width:150}},
-
-            {select:"info_stats.writes", display:{width:150}},
-            {select:"SUM(info_stats.writes)", display:{width:150}},
-            {select:"MAX(info_stats.writes)", display:{width:150}},
-            {select:"MIN(info_stats.writes)", display:{width:150}},
-
-            {select:"info_stats.read_kbytes", display:{width:150}},
-            {select:"SUM(info_stats.read_kbytes)", display:{width:150}},
-            {select:"MAX(info_stats.read_kbytes)", display:{width:150}},
-            {select:"MIN(info_stats.read_kbytes)", display:{width:150}},
-
-            {select:"info_stats.write_kbytes", display:{width:150}},
-            {select:"SUM(info_stats.write_kbytes)", display:{width:150}},
-            {select:"MAX(info_stats.write_kbytes)", display:{width:150}},
-            {select:"MIN(info_stats.write_kbytes)", display:{width:150}},
-
-            {select:"info_stats.iops", display:{width:150}},
-            {select:"SUM(info_stats.iops)", display:{width:150}},
-            {select:"MAX(info_stats.iops)", display:{width:150}},
-            {select:"MIN(info_stats.iops)", display:{width:150}},
-
-            {select:"info_stats.bw", display:{width:150}},
-            {select:"SUM(info_stats.bw)", display:{width:150}},
-            {select:"MAX(info_stats.bw)", display:{width:150}},
-            {select:"MIN(info_stats.bw)", display:{width:150}},
-
             {select:"info_stats.op_r_latency", display:{width:170}},
             {select:"SUM(info_stats.op_r_latency)", display:{width:170}},
             {select:"MAX(info_stats.op_r_latency)", display:{width:170}},
@@ -369,106 +237,19 @@ define([
             {select:"SUM(info_stats.op_w_latency)", display:{width:170}},
             {select:"MAX(info_stats.op_w_latency)", display:{width:170}},
             {select:"MIN(info_stats.op_w_latency)", display:{width:170}}
-
         ],
-        "StatTable.ServerMonitoringInfo.sensor_stats" : [
-            {select:"COUNT(sensor_stats)", display:{width:150}},
-            {select:"sensor_stats.sensor", display:{width:150}},
-            {select:"sensor_stats.status", display:{width:150}},
-
-            {select:"sensor_stats.reading", display:{width:150}},
-            {select:"SUM(sensor_stats.reading)", display:{width:150}},
-            {select:"MAX(sensor_stats.reading)", display:{width:150}},
-            {select:"MIN(sensor_stats.reading)", display:{width:150}},
-
-            {select:"sensor_stats.unit", display:{width:150}},
-            {select:"sensor_stats.sensor_type", display:{width:150}}
-        ],
-        "StatTable.ServerMonitoringInfo.disk_usage_stats" : [
-            {select:"COUNT(disk_usage_stats)", display:{width:150}},
-            {select:"disk_usage_stats.disk_name", display:{width:150}},
-
-            {select:"disk_usage_stats.read_bytes", display:{width:150}},
-            {select:"SUM(disk_usage_stats.read_bytes)", display:{width:150}},
-            {select:"MAX(disk_usage_stats.read_bytes)", display:{width:150}},
-            {select:"MIN(disk_usage_stats.read_bytes)", display:{width:150}},
-
-            {select:"disk_usage_stats.write_bytes", display:{width:150}},
-            {select:"SUM(disk_usage_stats.write_bytes)", display:{width:150}},
-            {select:"MAX(disk_usage_stats.write_bytes)", display:{width:150}},
-            {select:"MIN(disk_usage_stats.write_bytes)", display:{width:150}}
-        ],
+        "StatTable.ServerMonitoringInfo.sensor_stats" : [],
+        "StatTable.ServerMonitoringInfo.disk_usage_stats" : [],
         "StatTable.ServerMonitoringSummary.network_info_stats" : [
-            {select:"COUNT(network_info_stats)", display:{width:170}},
-            {select:"network_info_stats.interface_name", display:{width:150}},
-
-            {select:"network_info.tx_bytes", display:{width:150}},
-            {select:"SUM(network_info.tx_bytes)", display:{width:150}},
-            {select:"MIN(network_info.tx_bytes)", display:{width:150}},
-            {select:"MAX(network_info.tx_bytes)", display:{width:150}},
-
-            {select:"network_info.tx_packets", display:{width:150}},
-            {select:"SUM(network_info.tx_packets)", display:{width:150}},
-            {select:"MIN(network_info.tx_packets)", display:{width:150}},
-            {select:"MAX(network_info.tx_packets)", display:{width:150}},
-
-            {select:"network_info.rx_bytes", display:{width:150}},
-            {select:"SUM(network_info.rx_bytes)", display:{width:150}},
-            {select:"MIN(network_info.rx_bytes)", display:{width:150}},
-            {select:"MAX(network_info.rx_bytes)", display:{width:150}},
-
-            {select:"network_info.rx_packets", display:{width:150}},
-            {select:"SUM(network_info.rx_packets)", display:{width:150}},
-            {select:"MIN(network_info.rx_packets)", display:{width:150}},
-            {select:"MAX(network_info.rx_packets)", display:{width:150}}
+            {select:"COUNT(network_info_stats)", display:{width:170}}
         ],
         "StatTable.ServerMonitoringSummary.resource_info_stats" : [
-            {select:"COUNT(resource_info_stats)", display:{width:150}},
-
-            {select:"resource_info_stats.cpu_usage_percentage", display:{width:150}},
-            {select:"SUM(resource_info_stats.cpu_usage_percentage)", display:{width:150}},
-            {select:"MIN(resource_info_stats.cpu_usage_percentage)", display:{width:150}},
-            {select:"MAX(resource_info_stats.cpu_usage_percentage)", display:{width:150}},
-
             {select:"resource_info_stats.mem_usage_mb", display:{width:170}},
             {select:"SUM(resource_info_stats.mem_usage_mb)", display:{width:170}},
             {select:"MIN(resource_info_stats.mem_usage_mb)", display:{width:170}},
-            {select:"MAX(resource_info_stats.mem_usage_mb)", display:{width:170}},
-
-            {select:"resource_info_stats.mem_usage_percent", display:{width:150}},
-            {select:"SUM(resource_info_stats.mem_usage_percent)", display:{width:150}},
-            {select:"MIN(resource_info_stats.mem_usage_percent)", display:{width:150}},
-            {select:"MAX(resource_info_stats.mem_usage_percent)", display:{width:150}}
+            {select:"MAX(resource_info_stats.mem_usage_mb)", display:{width:170}}
         ],
         "StatTable.ServerMonitoringInfo.file_system_view_stats.physical_disks" : [
-            {select:"COUNT(file_system_view_stats.physical_disks)", display:{width:150}},
-            {select:"file_system_view_stats.fs_name", display:{width:150}},
-            {select:"file_system_view_stats.mountpoint", display:{width:150}},
-            {select:"file_system_view_stats.type", display:{width:150}},
-
-            {select:"file_system_view_stats.size_kb", display:{width:150}},
-            {select:"SUM(file_system_view_stats.size_kb)", display:{width:150}},
-            {select:"MIN(file_system_view_stats.size_kb)", display:{width:150}},
-            {select:"MAX(file_system_view_stats.size_kb)", display:{width:150}},
-
-            {select:"file_system_view_stats.used_kb", display:{width:150}},
-            {select:"SUM(file_system_view_stats.used_kb)", display:{width:150}},
-            {select:"MIN(file_system_view_stats.used_kb)", display:{width:150}},
-            {select:"MAX(file_system_view_stats.used_kb)", display:{width:150}},
-
-            {select:"file_system_view_stats.available_kb", display:{width:150}},
-            {select:"SUM(file_system_view_stats.available_kb)", display:{width:150}},
-            {select:"MIN(file_system_view_stats.available_kb)", display:{width:150}},
-            {select:"MAX(file_system_view_stats.available_kb)", display:{width:150}},
-
-            {select:"file_system_view_stats.used_percentage", display:{width:150}},
-            {select:"SUM(file_system_view_stats.used_percentage)", display:{width:150}},
-            {select:"MIN(file_system_view_stats.used_percentage)", display:{width:150}},
-            {select:"MAX(file_system_view_stats.used_percentage)", display:{width:150}},
-
-
-            {select:"file_system_view_stats.physical_disks.disk_name", display:{width:150}},
-
             {select:"file_system_view_stats.physical_disks.disk_size_kb", display:{width:190}},
             {select:"SUM(file_system_view_stats.physical_disks.disk_size_kb)", display:{width:190}},
             {select:"MIN(file_system_view_stats.physical_disks.disk_size_kb)", display:{width:190}},
@@ -491,72 +272,13 @@ define([
         ],
 
         "StatTable.SandeshMessageStat.msg_info" : [
-            {select:"COUNT(msg_info)", display:{width:150}},
-            {select:"msg_info.type", display:{width:210}},
-            {select:"msg_info.level", display:{width:150}},
-
-            {select:"msg_info.messages", display:{width:150}},
-            {select:"SUM(msg_info.messages)", display:{width:150}},
-            {select:"MIN(msg_info.messages)", display:{width:150}},
-            {select:"MAX(msg_info.messages)", display:{width:150}},
-
-            {select:"msg_info.bytes", display:{width:150}},
-            {select:"SUM(msg_info.bytes)", display:{width:150}},
-            {select:"MIN(msg_info.bytes)", display:{width:150}},
-            {select:"MAX(msg_info.bytes)", display:{width:150}}
-
+            {select:"msg_info.type", display:{width:210}}
         ],
-        "StatTable.GeneratorDbStats.table_info" : [
-            {select:"COUNT(table_info)", display:{width:150}},
-            {select:"table_info.table_name", display:{width:150}},
-
-            {select:"table_info.reads", display:{width:150}},
-            {select:"SUM(table_info.reads)", display:{width:150}},
-            {select:"MIN(table_info.reads)", display:{width:150}},
-            {select:"MAX(table_info.reads)", display:{width:150}},
-
-            {select:"table_info.read_fails", display:{width:150}},
-            {select:"SUM(table_info.read_fails)", display:{width:150}},
-            {select:"MIN(table_info.read_fails)", display:{width:150}},
-            {select:"MAX(table_info.read_fails)", display:{width:150}},
-
-            {select:"table_info.writes", display:{width:150}},
-            {select:"SUM(table_info.writes)", display:{width:150}},
-            {select:"MIN(table_info.writes)", display:{width:150}},
-            {select:"MAX(table_info.writes)", display:{width:150}},
-
-            {select:"table_info.write_fails", display:{width:150}},
-            {select:"SUM(table_info.write_fails)", display:{width:150}},
-            {select:"MIN(table_info.write_fails)", display:{width:150}},
-            {select:"MAX(table_info.write_fails)", display:{width:150}}
-        ],
+        "StatTable.GeneratorDbStats.table_info" : [],
         "StatTable.GeneratorDbStats.statistics_table_info" : [
-            {select:"COUNT(statistics_table_info)", display:{width:150}},
-            {select:"statistics_table_info.table_name", display:{width:250}},
-
-            {select:"statistics_table_info.reads", display:{width:150}},
-            {select:"SUM(statistics_table_info.reads)", display:{width:150}},
-            {select:"MIN(statistics_table_info.reads)", display:{width:150}},
-            {select:"MAX(statistics_table_info.reads)", display:{width:150}},
-
-            {select:"statistics_table_info.read_fails", display:{width:150}},
-            {select:"SUM(statistics_table_info.read_fails)", display:{width:150}},
-            {select:"MIN(statistics_table_info.read_fails)", display:{width:150}},
-            {select:"MAX(statistics_table_info.read_fails)", display:{width:150}},
-
-            {select:"statistics_table_info.writes", display:{width:150}},
-            {select:"SUM(statistics_table_info.writes)", display:{width:150}},
-            {select:"MIN(statistics_table_info.writes)", display:{width:150}},
-            {select:"MAX(statistics_table_info.writes)", display:{width:150}},
-
-            {select:"statistics_table_info.write_fails", display:{width:150}},
-            {select:"SUM(statistics_table_info.write_fails)", display:{width:150}},
-            {select:"MIN(statistics_table_info.write_fails)", display:{width:150}},
-            {select:"MAX(statistics_table_info.write_fails)", display:{width:150}}
+            {select:"statistics_table_info.table_name", display:{width:250}}
         ],
         "StatTable.GeneratorDbStats.errors" : [
-            {select:"COUNT(errors)", display:{width:150}},
-
             {select:"errors.write_tablespace_fails", display:{width:180}},
             {select:"SUM(errors.write_tablespace_fails)", display:{width:200}},
             {select:"MIN(errors.write_tablespace_fails)", display:{width:200}},
@@ -593,44 +315,16 @@ define([
             {select:"MAX(errors.read_column_fails)", display:{width:180}}
         ],
         "StatTable.FieldNames.fields" : [
-            {select:"COUNT(fields)", display:{width:150}},
             {select:"fields.value", display:{width:500}}
         ],
-        "StatTable.FieldNames.fieldi" : [
-            {select:"COUNT(fieldi)", display:{width:150}},
-            {select:"fieldi.value", display:{width:150}},
-            {select:"SUM(fieldi.value)", display:{width:150}},
-            {select:"MIN(fieldi.value)", display:{width:150}},
-            {select:"MAX(fieldi.value)", display:{width:150}}
-        ],
+        "StatTable.FieldNames.fieldi" : [],
         "StatTable.QueryPerfInfo.query_stats" : [
-            {select:"COUNT(query_stats)", display:{width:150}},
-            {select:"table", display:{width:150}},
-
-            {select:"query_stats.time", display:{width:150}},
-            {select:"SUM(query_stats.time)", display:{width:150}},
-            {select:"MIN(query_stats.time)", display:{width:150}},
-            {select:"MAX(query_stats.time)", display:{width:150}},
-
             {select:"query_stats.rows", display:{width:120}},
-            {select:"SUM(query_stats.rows)", display:{width:150}},
-            {select:"MIN(query_stats.rows)", display:{width:150}},
-            {select:"MAX(query_stats.rows)", display:{width:150}},
 
             {select:"query_stats.qid", display:{width:280}},
             {select:"query_stats.where", display:{width:300}},
             {select:"query_stats.select", display:{width:300}},
             {select:"query_stats.post", display:{width:300}},
-
-            {select:"query_stats.time_span", display:{width:150}},
-            {select:"SUM(query_stats.time_span)", display:{width:150}},
-            {select:"MIN(query_stats.time_span)", display:{width:150}},
-            {select:"MAX(query_stats.time_span)", display:{width:150}},
-
-            {select:"query_stats.chunks", display:{width:150}},
-            {select:"SUM(query_stats.chunks)", display:{width:150}},
-            {select:"MIN(query_stats.chunks)", display:{width:150}},
-            {select:"MAX(query_stats.chunks)", display:{width:150}},
 
             {select:"query_stats.chunk_where_time", display:{width:170}},
             {select:"query_stats.chunk_select_time", display:{width:170}},
@@ -654,21 +348,10 @@ define([
             {select:"vn_stats.other_vn", display:{width:250}},
             {select:"vn_stats.vrouter", display:{width:120, title:"vRouter"}},
 
-            {select:"vn_stats.in_tpkts", display:{width:150}},
-            {select:"SUM(vn_stats.in_tpkts)", display:{width:150}},
-            {select:"MIN(vn_stats.in_tpkts)", display:{width:150}},
-            {select:"MAX(vn_stats.in_tpkts)", display:{width:150}},
-
             {select:"vn_stats.in_bytes", display:{width:120}},
             {select:"SUM(vn_stats.in_bytes)", display:{width:120}},
             {select:"MIN(vn_stats.in_bytes)", display:{width:120}},
             {select:"MAX(vn_stats.in_bytes)", display:{width:120}},
-
-
-            {select:"vn_stats.out_tpkts", display:{width:150}},
-            {select:"SUM(vn_stats.out_tpkts)", display:{width:150}},
-            {select:"MIN(vn_stats.out_tpkts)", display:{width:150}},
-            {select:"MAX(vn_stats.out_tpkts)", display:{width:150}},
 
             {select:"vn_stats.out_bytes", display:{width:120}},
             {select:"SUM(vn_stats.out_bytes)", display:{width:120}},
@@ -685,11 +368,6 @@ define([
             {select:"SUM(stats.request_time)", display:{width:280}},
             {select:"MIN(stats.request_time)", display:{width:280}},
             {select:"MAX(stats.request_time)", display:{width:280}},
-
-            {select:"stats.rows_deleted", display:{width:150}},
-            {select:"SUM(stats.rows_deleted)", display:{width:150}},
-            {select:"MIN(stats.rows_deleted)", display:{width:150}},
-            {select:"MAX(stats.rows_deleted)", display:{width:150}},
 
             {select:"stats.duration", display:{width:280}},
             {select:"SUM(stats.duration)", display:{width:280}},
@@ -716,28 +394,11 @@ define([
         ],
         "StatTable.ProtobufCollectorStats.tx_socket_stats" : [
             {select:"COUNT(tx_socket_stats)", display:{width:200}},
-            {select:"tx_socket_stats.average_blocked_duration", display:{width:150}},
-            {select:"tx_socket_stats.blocked_duration", display:{width:150}},
-
-            {select:"tx_socket_stats.bytes", display:{width:150}},
-            {select:"SUM(tx_socket_stats.bytes)", display:{width:150}},
-            {select:"MIN(tx_socket_stats.bytes)", display:{width:150}},
-            {select:"MAX(tx_socket_stats.bytes)", display:{width:150}},
-
-            {select:"tx_socket_stats.calls", display:{width:150}},
-            {select:"SUM(tx_socket_stats.calls)", display:{width:150}},
-            {select:"MIN(tx_socket_stats.calls)", display:{width:150}},
-            {select:"MAX(tx_socket_stats.calls)", display:{width:150}},
 
             {select:"tx_socket_stats.average_bytes", display:{width:180}},
             {select:"SUM(tx_socket_stats.average_bytes)", display:{width:180}},
             {select:"MIN(tx_socket_stats.average_bytes)", display:{width:180}},
             {select:"MAX(tx_socket_stats.average_bytes)", display:{width:180}},
-
-            {select:"tx_socket_stats.errors", display:{width:150}},
-            {select:"SUM(tx_socket_stats.errors)", display:{width:150}},
-            {select:"MIN(tx_socket_stats.errors)", display:{width:150}},
-            {select:"MAX(tx_socket_stats.errors)", display:{width:150}},
 
             {select:"tx_socket_stats.blocked_count", display:{width:180}},
             {select:"SUM(tx_socket_stats.blocked_count)", display:{width:180}},
@@ -749,25 +410,10 @@ define([
             {select:"rx_socket_stats.blocked_duration", display:{width:180}},
             {select:"rx_socket_stats.average_blocked_duration", display:{width:160}},
 
-            {select:"rx_socket_stats.bytes", display:{width:150}},
-            {select:"SUM(rx_socket_stats.bytes)", display:{width:150}},
-            {select:"MIN(rx_socket_stats.bytes)", display:{width:150}},
-            {select:"MAX(rx_socket_stats.bytes)", display:{width:150}},
-
-            {select:"rx_socket_stats.calls", display:{width:150}},
-            {select:"SUM(rx_socket_stats.calls)", display:{width:150}},
-            {select:"MIN(rx_socket_stats.calls)", display:{width:150}},
-            {select:"MAX(rx_socket_stats.calls)", display:{width:150}},
-
             {select:"rx_socket_stats.average_bytes", display:{width:180}},
             {select:"SUM(rx_socket_stats.average_bytes)", display:{width:180}},
             {select:"MIN(rx_socket_stats.average_bytes)", display:{width:180}},
             {select:"MAX(rx_socket_stats.average_bytes)", display:{width:180}},
-
-            {select:"rx_socket_stats.errors", display:{width:150}},
-            {select:"SUM(rx_socket_stats.errors)", display:{width:150}},
-            {select:"MIN(rx_socket_stats.errors)", display:{width:150}},
-            {select:"MAX(rx_socket_stats.errors)", display:{width:150}},
 
             {select:"rx_socket_stats.blocked_count", display:{width:180}},
             {select:"SUM(rx_socket_stats.blocked_count)", display:{width:180}},
@@ -784,16 +430,6 @@ define([
             {select:"MIN(rx_message_stats.messages)", display:{width:180}},
             {select:"MAX(rx_message_stats.messages)", display:{width:180}},
 
-            {select:"rx_message_stats.bytes", display:{width:150}},
-            {select:"SUM(rx_message_stats.bytes)", display:{width:150}},
-            {select:"MIN(rx_message_stats.bytes)", display:{width:150}},
-            {select:"MAX(rx_message_stats.bytes)", display:{width:150}},
-
-            {select:"rx_message_stats.errors", display:{width:150}},
-            {select:"SUM(rx_message_stats.errors)", display:{width:150}},
-            {select:"MIN(rx_message_stats.errors)", display:{width:150}},
-            {select:"MAX(rx_message_stats.errors)", display:{width:150}},
-
             {select:"rx_message_stats.last_timestamp", display:{width:180}},
             {select:"SUM(rx_message_stats.last_timestamp)", display:{width:180}},
             {select:"MIN(rx_message_stats.last_timestamp)", display:{width:180}},
@@ -801,58 +437,23 @@ define([
         ],
 
         "StatTable.ProtobufCollectorStats.db_table_info" : [
-            {select:"COUNT(db_table_info)", display:{width:150}},
-            {select:"db_table_info.table_name", display:{width:150}},
-
-            {select:"db_table_info.reads", display:{width:150}},
-            {select:"SUM(db_table_info.reads)", display:{width:150}},
-            {select:"MIN(db_table_info.reads)", display:{width:150}},
-            {select:"MAX(db_table_info.reads)", display:{width:150}},
-
-            {select:"db_table_info.read_fails", display:{width:150}},
-            {select:"SUM(db_table_info.read_fails)", display:{width:150}},
-            {select:"MIN(db_table_info.read_fails)", display:{width:150}},
-            {select:"MAX(db_table_info.read_fails)", display:{width:150}},
-
-            {select:"db_table_info.writes", display:{width:150}},
-            {select:"SUM(db_table_info.writes)", display:{width:150}},
-            {select:"MIN(db_table_info.writes)", display:{width:150}},
-            {select:"MAX(db_table_info.writes)", display:{width:150}},
-
-            {select:"db_table_info.write_fails", display:{width:150}},
             {select:"SUM(db_table_info.write_fails)", display:{width:180}},
             {select:"MIN(db_table_info.write_fails)", display:{width:180}},
             {select:"MAX(db_table_info.write_fails)", display:{width:180}}
 
         ],
         "StatTable.ProtobufCollectorStats.db_statistics_table_info" : [
-            {select:"COUNT(db_statistics_table_info)", display:{width:150}},
-            {select:"db_statistics_table_info.table_name", display:{width:150}},
-
-            {select:"db_statistics_table_info.reads", display:{width:150}},
-            {select:"SUM(db_statistics_table_info.reads)", display:{width:150}},
-            {select:"MIN(db_statistics_table_info.reads)", display:{width:150}},
-            {select:"MAX(db_statistics_table_info.reads)", display:{width:150}},
-
             {select:"db_statistics_table_info.read_fails", display:{width:180}},
             {select:"SUM(db_statistics_table_info.read_fails)", display:{width:180}},
             {select:"MIN(db_statistics_table_info.read_fails)", display:{width:180}},
             {select:"MAX(db_statistics_table_info.read_fails)", display:{width:180}},
 
-            {select:"db_statistics_table_info.writes", display:{width:150}},
-            {select:"SUM(db_statistics_table_info.writes)", display:{width:150}},
-            {select:"MIN(db_statistics_table_info.writes)", display:{width:150}},
-            {select:"MAX(db_statistics_table_info.writes)", display:{width:150}},
-
             {select:"db_statistics_table_info.write_fails", display:{width:180}},
             {select:"SUM(db_statistics_table_info.write_fails)", display:{width:180}},
             {select:"MIN(db_statistics_table_info.write_fails)", display:{width:180}},
             {select:"MAX(db_statistics_table_info.write_fails)", display:{width:180}}
-
         ],
         "StatTable.ProtobufCollectorStats.db_errors" : [
-            {select:"COUNT(db_errors)", display:{width:150}},
-
             {select:"db_errors.write_tablespace_fails", display:{width:190}},
             {select:"SUM(db_errors.write_tablespace_fails)", display:{width:190}},
             {select:"MIN(db_errors.write_tablespace_fails)", display:{width:190}},
@@ -889,251 +490,34 @@ define([
             {select:"MAX(db_errors.read_column_fails)", display:{width:190}},
         ],
         "StatTable.PFEHeapInfo.heap_info" : [
-            {select:"heap_info.name", display:{width:150}},
             {select:"COUNT(heap_info)", display:{width:120}},
-
-            {select:"heap_info.size", display:{width:150}},
-            {select:"SUM(heap_info.size)", display:{width:150}},
-            {select:"MIN(heap_info.size)", display:{width:150}},
-            {select:"MAX(heap_info.size)", display:{width:150}},
-
-            {select:"heap_info.allocated", display:{width:150}},
-            {select:"MIN(heap_info.allocated)", display:{width:150}},
-            {select:"SUM(heap_info.allocated)", display:{width:150}},
-            {select:"MAX(heap_info.allocated)", display:{width:150}},
-
-            {select:"heap_info.utilization", display:{width:150}},
-            {select:"SUM(heap_info.utilization)", display:{width:150}},
-            {select:"MIN(heap_info.utilization)", display:{width:150}},
-            {select:"MAX(heap_info.utilization)", display:{width:150}}
         ],
         "StatTable.npu_mem.stats" : [
-            {select:"COUNT(stats)", display:{width:120}},
-            {select:"stats.pfe_identifier", display:{width:150}},
-            {select:"stats.resource_name", display:{width:150}},
-
-            {select:"stats.size", display:{width:150}},
-            {select:"SUM(stats.size)", display:{width:150}},
-            {select:"MIN(stats.size)", display:{width:150}},
-            {select:"MAX(stats.size)", display:{width:150}},
-
-            {select:"stats.allocated", display:{width:150}},
-            {select:"SUM(stats.allocated)", display:{width:150}},
-            {select:"MIN(stats.allocated)", display:{width:150}},
-            {select:"MAX(stats.allocated)", display:{width:150}},
-
-            {select:"stats.utilization", display:{width:150}},
-            {select:"SUM(stats.utilization)", display:{width:150}},
-            {select:"MIN(stats.utilization)", display:{width:150}},
-            {select:"MAX(stats.utilization)", display:{width:150}},
+            {select:"COUNT(stats)", display:{width:120}}
         ],
         "StatTable.fabric_message.edges.class_stats.transmit_counts" : [
-            {select:"COUNT(edges)", display:{width:120}},
-            {select:"edges.src_type", display:{width:150}},
-            {select:"edges.src_slot", display:{width:150}},
-            {select:"edges.src_pfe", display:{width:150}},
-            {select:"edges.dst_type", display:{width:150}},
-            {select:"edges.dst_slot", display:{width:150}},
-            {select:"edges.dst_pfe", display:{width:150}},
-            {select:"edges.class_stats.priority", display:{width:150}},
-
-            {select:"edges.class_stats.transmit_counts.packets", display:{width:150}},
-            {select:"SUM(edges.class_stats.transmit_counts.packets)", display:{width:150}},
-            {select:"MIN(edges.class_stats.transmit_counts.packets)", display:{width:150}},
-            {select:"MAX(edges.class_stats.transmit_counts.packets)", display:{width:150}},
-
-            {select:"edges.class_stats.transmit_counts.pps", display:{width:150}},
-            {select:"SUM(edges.class_stats.transmit_counts.pps)", display:{width:150}},
-            {select:"MIN(edges.class_stats.transmit_counts.pps)", display:{width:150}},
-            {select:"MAX(edges.class_stats.transmit_counts.pps)", display:{width:150}},
-
-            {select:"edges.class_stats.transmit_counts.bytes", display:{width:150}},
-            {select:"SUM(edges.class_stats.transmit_counts.bytes)", display:{width:150}},
-            {select:"MIN(edges.class_stats.transmit_counts.bytes)", display:{width:150}},
-            {select:"MAX(edges.class_stats.transmit_counts.bytes)", display:{width:150}},
-
-            {select:"edges.class_stats.transmit_counts.bps", display:{width:150}},
-            {select:"SUM(edges.class_stats.transmit_counts.bps)", display:{width:150}},
-            {select:"MIN(edges.class_stats.transmit_counts.bps)", display:{width:150}},
-            {select:"MAX(edges.class_stats.transmit_counts.bps)", display:{width:150}},
-
-            {select:"edges.class_stats.transmit_counts.drop_packets", display:{width:150}},
-            {select:"SUM(edges.class_stats.transmit_counts.drop_packets)", display:{width:150}},
-            {select:"MIN(edges.class_stats.transmit_counts.drop_packets)", display:{width:150}},
-            {select:"MAX(edges.class_stats.transmit_counts.drop_packets)", display:{width:150}},
-
-            {select:"edges.class_stats.transmit_counts.drop_bytes", display:{width:150}},
-            {select:"SUM(edges.class_stats.transmit_counts.drop_bytes)", display:{width:150}},
-            {select:"MIN(edges.class_stats.transmit_counts.drop_bytes)", display:{width:150}},
-            {select:"MAX(edges.class_stats.transmit_counts.drop_bytes)", display:{width:150}},
-
-            {select:"edges.class_stats.transmit_counts.drop_bps", display:{width:150}},
-            {select:"SUM(edges.class_stats.transmit_counts.drop_bps)", display:{width:150}},
-            {select:"MIN(edges.class_stats.transmit_counts.drop_bps)", display:{width:150}},
-            {select:"MAX(edges.class_stats.transmit_counts.drop_bps)", display:{width:150}},
-
-            {select:"edges.class_stats.transmit_counts.drop_pps", display:{width:150}},
-            {select:"SUM(edges.class_stats.transmit_counts.drop_pps)", display:{width:150}},
-            {select:"MIN(edges.class_stats.transmit_counts.drop_pps)", display:{width:150}},
-            {select:"MAX(edges.class_stats.transmit_counts.drop_pps)", display:{width:150}},
-
-            {select:"edges.class_stats.transmit_counts.q_depth_avg", display:{width:150}},
-            {select:"SUM(edges.class_stats.transmit_counts.q_depth_avg)", display:{width:150}},
-            {select:"MIN(edges.class_stats.transmit_counts.q_depth_avg)", display:{width:150}},
-            {select:"MAX(edges.class_stats.transmit_counts.q_depth_avg)", display:{width:150}},
-
-            {select:"edges.class_stats.transmit_counts.q_depth_cur", display:{width:150}},
-            {select:"SUM(edges.class_stats.transmit_counts.q_depth_cur)", display:{width:150}},
-            {select:"MIN(edges.class_stats.transmit_counts.q_depth_cur)", display:{width:150}},
-            {select:"MAX(edges.class_stats.transmit_counts.q_depth_cur)", display:{width:150}},
-
-            {select:"edges.class_stats.transmit_counts.q_depth_peak", display:{width:150}},
-            {select:"SUM(edges.class_stats.transmit_counts.q_depth_peak)", display:{width:150}},
-            {select:"MIN(edges.class_stats.transmit_counts.q_depth_peak)", display:{width:150}},
-            {select:"MAX(edges.class_stats.transmit_counts.q_depth_peak)", display:{width:150}},
-
-            {select:"edges.class_stats.transmit_counts.q_depth_max", display:{width:150}},
-            {select:"SUM(edges.class_stats.transmit_counts.q_depth_max)", display:{width:150}},
-            {select:"MIN(edges.class_stats.transmit_counts.q_depth_max)", display:{width:150}},
-            {select:"MAX(edges.class_stats.transmit_counts.q_depth_max)", display:{width:150}}
-
+            {select:"COUNT(edges)", display:{width:120}}
         ],
         "StatTable.g_lsp_stats.lsp_records" : [
-            {select:"COUNT(lsp_records)", display:{width:120}},
-            {select:"system_name", display:{width:150}},
-            {select:"sensor_name", display:{width:150}},
-            {select:"lsp_records.name", display:{width:150}},
-
-            {select:"slot", display:{width:150}},
-            {select:"SUM(slot)", display:{width:150}},
-            {select:"MIN(slot)", display:{width:150}},
-            {select:"MAX(slot)", display:{width:150}},
-
-            {select:"timestamp", display:{width:150}},
-            {select:"SUM(timestamp)", display:{width:150}},
-            {select:"MIN(timestamp)", display:{width:150}},
-            {select:"MAX(timestamp)", display:{width:150}},
-
-            {select:"lsp_records.instance_identifier", display:{width:150}},
-            {select:"SUM(lsp_records.instance_identifier)", display:{width:150}},
-            {select:"MIN(lsp_records.instance_identifier)", display:{width:150}},
-            {select:"MAX(lsp_records.instance_identifier)", display:{width:150}},
-
-            {select:"lsp_records.counter_name", display:{width:150}},
-            {select:"SUM(lsp_records.counter_name)", display:{width:150}},
-            {select:"MIN(lsp_records.counter_name)", display:{width:150}},
-            {select:"MAX(lsp_records.counter_name)", display:{width:150}},
-
-            {select:"lsp_records.packets", display:{width:150}},
-            {select:"SUM(lsp_records.packets)", display:{width:150}},
-            {select:"MIN(lsp_records.packets)", display:{width:150}},
-            {select:"MAX(lsp_records.packets)", display:{width:150}},
-
-            {select:"lsp_records.packet_rates", display:{width:150}},
-            {select:"SUM(lsp_records.packet_rates)", display:{width:150}},
-            {select:"MIN(lsp_records.packet_rates)", display:{width:150}},
-            {select:"MAX(lsp_records.packet_rates)", display:{width:150}},
-
-            {select:"lsp_records.bytes", display:{width:150}},
-            {select:"SUM(lsp_records.bytes)", display:{width:150}},
-            {select:"MIN(lsp_records.bytes)", display:{width:150}},
-            {select:"MAX(lsp_records.bytes)", display:{width:150}},
-
-            {select:"lsp_records.byte_rates", display:{width:150}},
-            {select:"SUM(lsp_records.byte_rates)", display:{width:150}},
-            {select:"MIN(lsp_records.byte_rates)", display:{width:150}},
-            {select:"MAX(lsp_records.byte_rates)", display:{width:150}}
+            {select:"COUNT(lsp_records)", display:{width:120}}
         ],
         "StatTable.UFlowData.flow" : [
-            {select:"COUNT(flow)", display:{width:120}},
-
-            {select:"flow.pifindex", display:{width:150}},
-            {select:"SUM(flow.pifindex)", display:{width:150}},
-            {select:"MIN(flow.pifindex)", display:{width:150}},
-            {select:"MAX(flow.pifindex)", display:{width:150}},
-
-            {select:"flow.sport", display:{width:150}},
-            {select:"SUM(flow.sport)", display:{width:150}},
-            {select:"MIN(flow.sport)", display:{width:150}},
-            {select:"MAX(flow.sport)", display:{width:150}},
-
-            {select:"flow.dport", display:{width:150}},
-            {select:"SUM(flow.dport)", display:{width:150}},
-            {select:"MIN(flow.dport)", display:{width:150}},
-            {select:"MAX(flow.dport)", display:{width:150}},
-
-            {select:"flow.protocol", display:{width:150}},
-            {select:"SUM(flow.protocol)", display:{width:150}},
-            {select:"MIN(flow.protocol)", display:{width:150}},
-            {select:"MAX(flow.protocol)", display:{width:150}},
-
-            {select:"flow.sip", display:{width:150}},
-            {select:"flow.dip", display:{width:150}},
-            {select:"flow.vlan", display:{width:150}},
-            {select:"flow.flowtype", display:{width:150}},
-            {select:"flow.otherinfo", display:{width:150}}
+            {select:"COUNT(flow)", display:{width:120}}
         ],
         "StatTable.AlarmgenUpdate.o" : [
-            {select:"COUNT(o)", display:{width:120}},
-            {select:"instance", display:{width:150}},
-            {select:"table", display:{width:150}},
-            {select:"o.key", display:{width:150}},
-
-            {select:"partition", display:{width:150}},
-            {select:"SUM(partition)", display:{width:150}},
-            {select:"MIN(partition)", display:{width:150}},
-            {select:"MAX(partition)", display:{width:150}},
-
-            {select:"o.count", display:{width:150}},
-            {select:"SUM(o.count)", display:{width:150}},
-            {select:"MIN(o.count)", display:{width:150}},
-            {select:"MAX(o.count)", display:{width:150}}
+            {select:"COUNT(o)", display:{width:120}}
         ],
         "StatTable.AlarmgenUpdate.i" : [
-            {select:"COUNT(i)", display:{width:120}},
-            {select:"instance", display:{width:150}},
-            {select:"table", display:{width:150}},
-            {select:"i.generator", display:{width:150}},
-            {select:"i.collector", display:{width:150}},
-            {select:"i.type", display:{width:150}},
-
-            {select:"partition", display:{width:150}},
-            {select:"SUM(partition)", display:{width:150}},
-            {select:"MIN(partition)", display:{width:150}},
-            {select:"MAX(partition)", display:{width:150}},
-
-            {select:"i.count", display:{width:150}},
-            {select:"SUM(i.count)", display:{width:150}},
-            {select:"MIN(i.count)", display:{width:150}},
-            {select:"MAX(i.count)", display:{width:150}}
+            {select:"COUNT(i)", display:{width:120}}
         ],
 
         "StatTable.AlarmgenStatus.counters" : [
-            {select:"COUNT(counters)", display:{width:120}},
-            {select:"counters.instance", display:{width:150}},
-
-            {select:"counters.partitions", display:{width:150}},
-            {select:"SUM(counters.partitions)", display:{width:150}},
-            {select:"MIN(counters.partitions)", display:{width:150}},
-            {select:"MAX(counters.partitions)", display:{width:150}},
-
-            {select:"counters.keys", display:{width:150}},
-            {select:"SUM(counters.keys)", display:{width:150}},
-            {select:"MIN(counters.keys)", display:{width:150}},
-            {select:"MAX(counters.keys)", display:{width:150}},
-
-            {select:"counters.updates", display:{width:150}},
-            {select:"SUM(counters.updates)", display:{width:150}},
-            {select:"MIN(counters.updates)", display:{width:150}},
-            {select:"MAX(counters.updates)", display:{width:150}}
+            {select:"COUNT(counters)", display:{width:120}}
         ],
 
         "StatTable.UveLoadbalancer.virtual_ip_stats" : [
             {select:"COUNT(virtual_ip_stats)", display:{width:170}},
-            {select:"virtual_ip_stats.obj_name", display:{width:150}},
             {select:"virtual_ip_stats.uuid", display:{width:280}},
-            {select:"virtual_ip_stats.status", display:{width:150}},
-            {select:"virtual_ip_stats.vrouter", display:{width:150}},
 
             {select:"virtual_ip_stats.active_connections", display:{width:180}},
             {select:"SUM(virtual_ip_stats.active_connections)", display:{width:180}},
@@ -1160,16 +544,6 @@ define([
             {select:"MIN(virtual_ip_stats.total_sessions)", display:{width:180}},
             {select:"MAX(virtual_ip_stats.total_sessions)", display:{width:180}},
 
-            {select:"virtual_ip_stats.bytes_in", display:{width:150}},
-            {select:"SUM(virtual_ip_stats.bytes_in)", display:{width:150}},
-            {select:"MIN(virtual_ip_stats.bytes_in)", display:{width:150}},
-            {select:"MAX(virtual_ip_stats.bytes_in)", display:{width:150}},
-
-            {select:"virtual_ip_stats.bytes_out", display:{width:150}},
-            {select:"SUM(virtual_ip_stats.bytes_out)", display:{width:150}},
-            {select:"MIN(virtual_ip_stats.bytes_out)", display:{width:150}},
-            {select:"MAX(virtual_ip_stats.bytes_out)", display:{width:150}},
-
             {select:"virtual_ip_stats.connection_errors", display:{width:180}},
             {select:"SUM(virtual_ip_stats.connection_errors)", display:{width:180}},
             {select:"MIN(virtual_ip_stats.connection_errors)", display:{width:180}},
@@ -1182,10 +556,7 @@ define([
         ],
         "StatTable.UveLoadbalancer.listener_stats": [
             {select:"COUNT(listener_stats)", display:{width:170}},
-            {select:"listener_stats.obj_name", display:{width:150}},
             {select:"listener_stats.uuid", display:{width:280}},
-            {select:"listener_stats.status", display:{width:150}},
-            {select:"listener_stats.vrouter", display:{width:150}},
 
             {select:"listener_stats.active_connections", display:{width:180}},
             {select:"SUM(listener_stats.active_connections)", display:{width:180}},
@@ -1212,16 +583,6 @@ define([
             {select:"MIN(listener_stats.total_sessions)", display:{width:180}},
             {select:"MAX(listener_stats.total_sessions)", display:{width:180}},
 
-            {select:"listener_stats.bytes_in", display:{width:150}},
-            {select:"SUM(listener_stats.bytes_in)", display:{width:150}},
-            {select:"MIN(listener_stats.bytes_in)", display:{width:150}},
-            {select:"MAX(listener_stats.bytes_in)", display:{width:150}},
-
-            {select:"listener_stats.bytes_out", display:{width:150}},
-            {select:"SUM(listener_stats.bytes_out)", display:{width:150}},
-            {select:"MIN(listener_stats.bytes_out)", display:{width:150}},
-            {select:"MAX(listener_stats.bytes_out)", display:{width:150}},
-
             {select:"listener_stats.connection_errors", display:{width:180}},
             {select:"SUM(listener_stats.connection_errors)", display:{width:180}},
             {select:"MIN(listener_stats.connection_errors)", display:{width:180}},
@@ -1233,11 +594,7 @@ define([
             {select:"MAX(listener_stats.reponse_errors)", display:{width:180}},
         ],
         "StatTable.UveLoadbalancer.pool_stats" : [
-            {select:"COUNT(pool_stats)", display:{width:150}},
-            {select:"pool_stats.obj_name", display:{width:150}},
             {select:"pool_stats.uuid", display:{width:280}},
-            {select:"pool_stats.status", display:{width:150}},
-            {select:"pool_stats.vrouter", display:{width:150}},
 
             {select:"pool_stats.active_connections", display:{width:180}},
             {select:"SUM(pool_stats.active_connections)", display:{width:180}},
@@ -1264,16 +621,6 @@ define([
             {select:"MIN(pool_stats.total_sessions)", display:{width:180}},
             {select:"MAX(pool_stats.total_sessions)", display:{width:180}},
 
-            {select:"pool_stats.bytes_in", display:{width:150}},
-            {select:"SUM(pool_stats.bytes_in)", display:{width:150}},
-            {select:"MIN(pool_stats.bytes_in)", display:{width:150}},
-            {select:"MAX(pool_stats.bytes_in)", display:{width:150}},
-
-            {select:"pool_stats.bytes_out", display:{width:150}},
-            {select:"SUM(pool_stats.bytes_out)", display:{width:150}},
-            {select:"MIN(pool_stats.bytes_out)", display:{width:150}},
-            {select:"MAX(pool_stats.bytes_out)", display:{width:150}},
-
             {select:"pool_stats.connection_errors", display:{width:180}},
             {select:"SUM(pool_stats.connection_errors)", display:{width:180}},
             {select:"MIN(pool_stats.connection_errors)", display:{width:180}},
@@ -1286,10 +633,7 @@ define([
         ],
         "StatTable.UveLoadbalancer.member_stats": [
             {select:"COUNT(member_stats)", display:{width:170}},
-            {select:"member_stats.obj_name", display:{width:150}},
             {select:"member_stats.uuid", display:{width:280}},
-            {select:"member_stats.status", display:{width:150}},
-            {select:"member_stats.vrouter", display:{width:150}},
 
             {select:"member_stats.active_connections", display:{width:180}},
             {select:"SUM(member_stats.active_connections)", display:{width:180}},
@@ -1316,16 +660,6 @@ define([
             {select:"MIN(member_stats.total_sessions)", display:{width:180}},
             {select:"MAX(member_stats.total_sessions)", display:{width:180}},
 
-            {select:"member_stats.bytes_in", display:{width:150}},
-            {select:"SUM(member_stats.bytes_in)", display:{width:150}},
-            {select:"MIN(member_stats.bytes_in)", display:{width:150}},
-            {select:"MAX(member_stats.bytes_in)", display:{width:150}},
-
-            {select:"member_stats.bytes_out", display:{width:150}},
-            {select:"SUM(member_stats.bytes_out)", display:{width:150}},
-            {select:"MIN(member_stats.bytes_out)", display:{width:150}},
-            {select:"MAX(member_stats.bytes_out)", display:{width:150}},
-
             {select:"member_stats.connection_errors", display:{width:180}},
             {select:"SUM(member_stats.connection_errors)", display:{width:180}},
             {select:"MIN(member_stats.connection_errors)", display:{width:180}},
@@ -1338,8 +672,6 @@ define([
         ],
         "StatTable.NodeStatus.disk_usage_info": [
             {select:"COUNT(disk_usage_info)", display:{width:180}},
-            {select:"disk_usage_info.partition_type", display:{width:150}},
-            {select:"disk_usage_info.partition_name", display:{width:150}},
 
             {select:"disk_usage_info.partition_space_used_1k", display:{width:200}},
             {select:"SUM(disk_usage_info.partition_space_used_1k)", display:{width:240}},
@@ -1351,60 +683,9 @@ define([
             {select:"MIN(disk_usage_info.partition_space_available_1k)", display:{width:260}},
             {select:"MAX(disk_usage_info.partition_space_available_1k)", display:{width:260}}
         ],
-        "StatTable.UveVMInterfaceAgent.fip_diff_stats": [
-            {select:"COUNT(fip_diff_stats)", display:{width:150}},
-            {select:"virtual_network", display:{width:150}},
-            {select:"fip_diff_stats.other_vn", display:{width:150}},
-            {select:"fip_diff_stats.ip_address", display:{width:150}},
-
-            {select:"fip_diff_stats.in_pkts", display:{width:150}},
-            {select:"SUM(fip_diff_stats.in_pkts)", display:{width:150}},
-            {select:"MIN(fip_diff_stats.in_pkts)", display:{width:150}},
-            {select:"MAX(fip_diff_stats.in_pkts)", display:{width:150}},
-
-            {select:"fip_diff_stats.in_pkts", display:{width:150}},
-            {select:"SUM(fip_diff_stats.in_bytes)", display:{width:150}},
-            {select:"MIN(fip_diff_stats.in_bytes)", display:{width:150}},
-            {select:"MAX(fip_diff_stats.in_bytes)", display:{width:150}},
-
-            {select:"fip_diff_stats.out_pkts", display:{width:150}},
-            {select:"SUM(fip_diff_stats.out_pkts)", display:{width:150}},
-            {select:"MIN(fip_diff_stats.out_pkts)", display:{width:150}},
-            {select:"MAX(fip_diff_stats.out_pkts)", display:{width:150}},
-
-            {select:"fip_diff_stats.out_bytes", display:{width:150}},
-            {select:"SUM(fip_diff_stats.out_bytes)", display:{width:150}},
-            {select:"MIN(fip_diff_stats.out_bytes)", display:{width:150}},
-            {select:"MAX(fip_diff_stats.out_bytes)", display:{width:150}}
-        ],
+        "StatTable.UveVMInterfaceAgent.fip_diff_stats": [],
         "StatTable.UveVMInterfaceAgent.if_stats" : [
             {select:"COUNT(if_stats)", display:{width:180}},
-            {select:"virtual_network", display:{width:150}},
-            {select:"if_stats.other_vn", display:{width:150}},
-            {select:"if_stats.ip_address", display:{width:150}},
-
-            {select:"if_stats.in_pkts", display:{width:150}},
-            {select:"SUM(if_stats.in_pkts)", display:{width:150}},
-            {select:"MIN(if_stats.in_pkts)", display:{width:150}},
-            {select:"MAX(if_stats.in_pkts)", display:{width:150}},
-
-            {select:"if_stats.in_pkts", display:{width:150}},
-            {select:"SUM(if_stats.in_bytes)", display:{width:150}},
-            {select:"MIN(if_stats.in_bytes)", display:{width:150}},
-            {select:"MAX(if_stats.in_bytes)", display:{width:150}},
-
-            {select:"if_stats.out_pkts", display:{width:150}},
-            {select:"SUM(if_stats.out_pkts)", display:{width:150}},
-            {select:"MIN(if_stats.out_pkts)", display:{width:150}},
-            {select:"MAX(if_stats.out_pkts)", display:{width:150}},
-
-            {select:"if_stats.out_bytes", display:{width:150}},
-            {select:"SUM(if_stats.out_bytes)", display:{width:150}},
-            {select:"MIN(if_stats.out_bytes)", display:{width:150}},
-            {select:"MAX(if_stats.out_bytes)", display:{width:150}},
-
-            {select:"vm_name", display:{width:150}},
-            {select:"vm_uuid", display:{width:150}},
 
             {select:"if_stats.in_bw_usage", display:{width:180}},
             {select:"SUM(if_stats.in_bw_usage)", display:{width:180}},
@@ -1418,8 +699,6 @@ define([
         ],
 
         "StatTable.VrouterStatsAgent.flow_rate" : [
-            {select:"COUNT(flow_rate)", display:{width:150}},
-
             {select:"flow_rate.added_flows", display:{width:170}},
             {select:"SUM(flow_rate.added_flows)", display:{width:170}},
             {select:"MIN(flow_rate.added_flows)", display:{width:170}},
@@ -1452,8 +731,6 @@ define([
         ],
 
         "StatTable.AnalyticsApiStats.api_stats" : [
-            {select:"COUNT(api_stats)", display:{width:150}},
-            {select:"api_stats.operation_type", display:{width:150}},
             {select:"api_stats.remote_ip", display:{width:100}},
             {select:"api_stats.object_type", display:{width:100}},
             {select:"api_stats.request_url", display:{width:100}},
@@ -1471,8 +748,6 @@ define([
         ],
 
         "StatTable.VncApiStatsLog.api_stats" : [
-            {select:"COUNT(api_stats)", display:{width:150}},
-            {select:"api_stats.operation_type", display:{width:150}},
             {select:"api_stats.user", display:{width:100}},
             {select:"api_stats.useragent", display:{width:100}},
             {select:"api_stats.remote_ip", display:{width:100}},
@@ -1498,7 +773,6 @@ define([
         ],
 
         "StatTable.VrouterStatsAgent.phy_if_band" : [
-            {select:"COUNT(phy_if_band)", display:{width:150}},
             {select:"phy_if_band.name", display:{width:100}},
 
             {select:"phy_if_band.in_bandwidth_usage", display:{width:200}},
@@ -1694,520 +968,34 @@ define([
             {select:"MIN(egressRqeQueue.rqeBufferCount)", display:{width:200}},
             {select:"MAX(egressRqeQueue.rqeBufferCount)", display:{width:200}}
         ],
-        "StatTable.CollectorDbStats.cql_stats.errors": [
-            {select: "COUNT(cql_stats.errors)", display:{width:150}},
-            {select: "cql_stats.errors.connection_timeouts", display:{width:150}},
-            {select: "SUM(cql_stats.errors.connection_timeouts)", display:{width:150}},
-            {select: "MAX(cql_stats.errors.connection_timeouts)", display:{width:150}},
-            {select: "MIN(cql_stats.errors.connection_timeouts)", display:{width:150}},
-            {select: "cql_stats.errors.pending_request_timeouts", display:{width:150}},
-            {select: "SUM(cql_stats.errors.pending_request_timeouts)", display:{width:150}},
-            {select: "MAX(cql_stats.errors.pending_request_timeouts)", display:{width:150}},
-            {select: "MIN(cql_stats.errors.pending_request_timeouts)", display:{width:150}},
-            {select: "cql_stats.errors.request_timeouts", display:{width:150}},
-            {select: "SUM(cql_stats.errors.request_timeouts)", display:{width:150}},
-            {select: "MAX(cql_stats.errors.request_timeouts)", display:{width:150}},
-            {select: "MIN(cql_stats.errors.request_timeouts)", display:{width:150}}
-        ],
-        "StatTable.UveVMInterfaceAgent.flow_rate": [
-            {select: "COUNT(flow_rate)", display:{width:150}},
-            {select: "flow_rate.added_flows", display:{width:150}},
-            {select: "SUM(flow_rate.added_flows)", display:{width:150}},
-            {select: "MAX(flow_rate.added_flows)", display:{width:150}},
-            {select: "MIN(flow_rate.added_flows)", display:{width:150}},
-            {select: "flow_rate.max_flow_adds_per_second", display:{width:150}},
-            {select: "SUM(flow_rate.max_flow_adds_per_second)", display:{width:150}},
-            {select: "MAX(flow_rate.max_flow_adds_per_second)", display:{width:150}},
-            {select: "MIN(flow_rate.max_flow_adds_per_second)", display:{width:150}},
-            {select: "flow_rate.min_flow_adds_per_second", display:{width:150}},
-            {select: "SUM(flow_rate.min_flow_adds_per_second)", display:{width:150}},
-            {select: "MAX(flow_rate.min_flow_adds_per_second)", display:{width:150}},
-            {select: "MIN(flow_rate.min_flow_adds_per_second)", display:{width:150}},
-            {select: "flow_rate.deleted_flows", display:{width:150}},
-            {select: "SUM(flow_rate.deleted_flows)", display:{width:150}},
-            {select: "MAX(flow_rate.deleted_flows)", display:{width:150}},
-            {select: "MIN(flow_rate.deleted_flows)", display:{width:150}},
-            {select: "flow_rate.max_flow_deletes_per_second", display:{width:150}},
-            {select: "SUM(flow_rate.max_flow_deletes_per_second)", display:{width:150}},
-            {select: "MAX(flow_rate.max_flow_deletes_per_second)", display:{width:150}},
-            {select: "MIN(flow_rate.max_flow_deletes_per_second)", display:{width:150}},
-            {select: "flow_rate.min_flow_deletes_per_second", display:{width:150}},
-            {select: "SUM(flow_rate.min_flow_deletes_per_second)", display:{width:150}},
-            {select: "MAX(flow_rate.min_flow_deletes_per_second)", display:{width:150}},
-            {select: "MIN(flow_rate.min_flow_deletes_per_second)", display:{width:150}},
-            {select: "flow_rate.active_flows", display:{width:150}},
-            {select: "SUM(flow_rate.active_flows)", display:{width:150}},
-            {select: "MAX(flow_rate.active_flows)", display:{width:150}},
-            {select: "MIN(flow_rate.active_flows)", display:{width:150}},
-            {select: "virtual_network", display:{width:150}}
-        ],
-        "StatTable.CollectorDbStats.cql_stats.stats": [
-            {select: "COUNT(cql_stats.stats)", display:{width:150}},
-            {select: "cql_stats.stats.total_connections", display:{width:150}},
-            {select: "SUM(cql_stats.stats.total_connections)", display:{width:150}},
-            {select: "MAX(cql_stats.stats.total_connections)", display:{width:150}},
-            {select: "MIN(cql_stats.stats.total_connections)", display:{width:150}},
-            {select: "cql_stats.stats.available_connections", display:{width:150}},
-            {select: "SUM(cql_stats.stats.available_connections)", display:{width:150}},
-            {select: "MAX(cql_stats.stats.available_connections)", display:{width:150}},
-            {select: "MIN(cql_stats.stats.available_connections)", display:{width:150}},
-            {select: "cql_stats.stats.exceeded_pending_requests_water_mark", display:{width:150}},
-            {select: "SUM(cql_stats.stats.exceeded_pending_requests_water_mark)", display:{width:150}},
-            {select: "MAX(cql_stats.stats.exceeded_pending_requests_water_mark)", display:{width:150}},
-            {select: "MIN(cql_stats.stats.exceeded_pending_requests_water_mark)", display:{width:150}},
-            {select: "cql_stats.stats.exceeded_write_bytes_water_mark", display:{width:150}},
-            {select: "SUM(cql_stats.stats.exceeded_write_bytes_water_mark)", display:{width:150}},
-            {select: "MAX(cql_stats.stats.exceeded_write_bytes_water_mark)", display:{width:150}},
-            {select: "MIN(cql_stats.stats.exceeded_write_bytes_water_mark)", display:{width:150}}
-        ],
-        "StatTable.CollectorDbStats.cql_stats": [
-            {select: "COUNT(cql_stats)", display:{width:150}},
-            {select: "cql_stats.requests_one_minute_rate", display:{width:150}},
-            {select: "SUM(cql_stats.requests_one_minute_rate)", display:{width:150}},
-            {select: "MAX(cql_stats.requests_one_minute_rate)", display:{width:150}},
-            {select: "MIN(cql_stats.requests_one_minute_rate)", display:{width:150}}
-        ],
-        "StatTable.NodeStatus.process_mem_cpu_usage": [
-            {select: "COUNT(process_mem_cpu_usage)", display:{width:150}},
-            {select: "process_mem_cpu_usage.__key", display:{width:150}},
-            {select: "process_mem_cpu_usage.mem_virt", display:{width:150}},
-            {select: "SUM(process_mem_cpu_usage.mem_virt)", display:{width:150}},
-            {select: "MAX(process_mem_cpu_usage.mem_virt)", display:{width:150}},
-            {select: "MIN(process_mem_cpu_usage.mem_virt)", display:{width:150}},
-            {select: "process_mem_cpu_usage.cpu_share", display:{width:150}},
-            {select: "SUM(process_mem_cpu_usage.cpu_share)", display:{width:150}},
-            {select: "MAX(process_mem_cpu_usage.cpu_share)", display:{width:150}},
-            {select: "MIN(process_mem_cpu_usage.cpu_share)", display:{width:150}},
-            {select: "process_mem_cpu_usage.mem_res", display:{width:150}},
-            {select: "SUM(process_mem_cpu_usage.mem_res)", display:{width:150}},
-            {select: "MAX(process_mem_cpu_usage.mem_res)", display:{width:150}},
-            {select: "MIN(process_mem_cpu_usage.mem_res)", display:{width:150}}
-        ],
-        "StatTable.PeerStatsData.rx_update_stats": [
-            {select: "COUNT(rx_update_stats)", display:{width:150}},
-            {select: "rx_update_stats.total", display:{width:150}},
-            {select: "SUM(rx_update_stats.total)", display:{width:150}},
-            {select: "MAX(rx_update_stats.total)", display:{width:150}},
-            {select: "MIN(rx_update_stats.total)", display:{width:150}},
-            {select: "rx_update_stats.reach", display:{width:150}},
-            {select: "SUM(rx_update_stats.reach)", display:{width:150}},
-            {select: "MAX(rx_update_stats.reach)", display:{width:150}},
-            {select: "MIN(rx_update_stats.reach)", display:{width:150}},
-            {select: "rx_update_stats.unreach", display:{width:150}},
-            {select: "SUM(rx_update_stats.unreach)", display:{width:150}},
-            {select: "MAX(rx_update_stats.unreach)", display:{width:150}},
-            {select: "MIN(rx_update_stats.unreach)", display:{width:150}},
-            {select: "rx_update_stats.end_of_rib", display:{width:150}},
-            {select: "SUM(rx_update_stats.end_of_rib)", display:{width:150}},
-            {select: "MAX(rx_update_stats.end_of_rib)", display:{width:150}},
-            {select: "MIN(rx_update_stats.end_of_rib)", display:{width:150}}
-        ],
-        "StatTable.VrouterStatsAgent.phy_flow_rate": [
-            {select: "COUNT(phy_flow_rate)", display:{width:150}},
-            {select: "phy_flow_rate.__key", display:{width:150}},
-            {select: "phy_flow_rate.added_flows", display:{width:150}},
-            {select: "SUM(phy_flow_rate.added_flows)", display:{width:150}},
-            {select: "MAX(phy_flow_rate.added_flows)", display:{width:150}},
-            {select: "MIN(phy_flow_rate.added_flows)", display:{width:150}},
-            {select: "phy_flow_rate.max_flow_adds_per_second", display:{width:150}},
-            {select: "SUM(phy_flow_rate.max_flow_adds_per_second)", display:{width:150}},
-            {select: "MAX(phy_flow_rate.max_flow_adds_per_second)", display:{width:150}},
-            {select: "MIN(phy_flow_rate.max_flow_adds_per_second)", display:{width:150}},
-            {select: "phy_flow_rate.min_flow_adds_per_second", display:{width:150}},
-            {select: "SUM(phy_flow_rate.min_flow_adds_per_second)", display:{width:150}},
-            {select: "MAX(phy_flow_rate.min_flow_adds_per_second)", display:{width:150}},
-            {select: "MIN(phy_flow_rate.min_flow_adds_per_second)", display:{width:150}},
-            {select: "phy_flow_rate.deleted_flows", display:{width:150}},
-            {select: "SUM(phy_flow_rate.deleted_flows)", display:{width:150}},
-            {select: "MAX(phy_flow_rate.deleted_flows)", display:{width:150}},
-            {select: "MIN(phy_flow_rate.deleted_flows)", display:{width:150}},
-            {select: "phy_flow_rate.max_flow_deletes_per_second", display:{width:150}},
-            {select: "SUM(phy_flow_rate.max_flow_deletes_per_second)", display:{width:150}},
-            {select: "MAX(phy_flow_rate.max_flow_deletes_per_second)", display:{width:150}},
-            {select: "MIN(phy_flow_rate.max_flow_deletes_per_second)", display:{width:150}},
-            {select: "phy_flow_rate.min_flow_deletes_per_second", display:{width:150}},
-            {select: "SUM(phy_flow_rate.min_flow_deletes_per_second)", display:{width:150}},
-            {select: "MAX(phy_flow_rate.min_flow_deletes_per_second)", display:{width:150}},
-            {select: "MIN(phy_flow_rate.min_flow_deletes_per_second)", display:{width:150}},
-            {select: "phy_flow_rate.active_flows", display:{width:150}},
-            {select: "SUM(phy_flow_rate.active_flows)", display:{width:150}},
-            {select: "MAX(phy_flow_rate.active_flows)", display:{width:150}},
-            {select: "MIN(phy_flow_rate.active_flows)", display:{width:150}}
-        ],
-        "StatTable.NodeStatus.system_mem_usage": [
-            {select: "COUNT(system_mem_usage)", display:{width:150}},
-            {select: "system_mem_usage.total", display:{width:150}},
-            {select: "SUM(system_mem_usage.total)", display:{width:150}},
-            {select: "MAX(system_mem_usage.total)", display:{width:150}},
-            {select: "MIN(system_mem_usage.total)", display:{width:150}},
-            {select: "system_mem_usage.used", display:{width:150}},
-            {select: "SUM(system_mem_usage.used)", display:{width:150}},
-            {select: "MAX(system_mem_usage.used)", display:{width:150}},
-            {select: "MIN(system_mem_usage.used)", display:{width:150}},
-            {select: "system_mem_usage.free", display:{width:150}},
-            {select: "SUM(system_mem_usage.free)", display:{width:150}},
-            {select: "MAX(system_mem_usage.free)", display:{width:150}},
-            {select: "MIN(system_mem_usage.free)", display:{width:150}},
-            {select: "system_mem_usage.buffers", display:{width:150}},
-            {select: "SUM(system_mem_usage.buffers)", display:{width:150}},
-            {select: "MAX(system_mem_usage.buffers)", display:{width:150}},
-            {select: "MIN(system_mem_usage.buffers)", display:{width:150}},
-            {select: "system_mem_usage.cached", display:{width:150}},
-            {select: "SUM(system_mem_usage.cached)", display:{width:150}},
-            {select: "MAX(system_mem_usage.cached)", display:{width:150}},
-            {select: "MIN(system_mem_usage.cached)", display:{width:150}}
-        ],
-        "StatTable.NodeStatus.system_cpu_usage": [
-            {select: "COUNT(system_cpu_usage)", display:{width:150}},
-            {select: "system_cpu_usage.one_min_avg", display:{width:150}},
-            {select: "SUM(system_cpu_usage.one_min_avg)", display:{width:150}},
-            {select: "MAX(system_cpu_usage.one_min_avg)", display:{width:150}},
-            {select: "MIN(system_cpu_usage.one_min_avg)", display:{width:150}},
-            {select: "system_cpu_usage.five_min_avg", display:{width:150}},
-            {select: "SUM(system_cpu_usage.five_min_avg)", display:{width:150}},
-            {select: "MAX(system_cpu_usage.five_min_avg)", display:{width:150}},
-            {select: "MIN(system_cpu_usage.five_min_avg)", display:{width:150}},
-            {select: "system_cpu_usage.fifteen_min_avg", display:{width:150}},
-            {select: "SUM(system_cpu_usage.fifteen_min_avg)", display:{width:150}},
-            {select: "MAX(system_cpu_usage.fifteen_min_avg)", display:{width:150}},
-            {select: "MIN(system_cpu_usage.fifteen_min_avg)", display:{width:150}},
-            {select: "system_cpu_usage.cpu_share", display:{width:150}},
-            {select: "SUM(system_cpu_usage.cpu_share)", display:{width:150}},
-            {select: "MAX(system_cpu_usage.cpu_share)", display:{width:150}},
-            {select: "MIN(system_cpu_usage.cpu_share)", display:{width:150}}
-        ],
-        "StatTable.CollectorDbStats.table_info": [
-            {select: "COUNT(table_info)", display:{width:150}},
-            {select: "table_info.__key", display:{width:150}},
-            {select: "table_info.reads", display:{width:150}},
-            {select: "SUM(table_info.reads)", display:{width:150}},
-            {select: "MAX(table_info.reads)", display:{width:150}},
-            {select: "MIN(table_info.reads)", display:{width:150}},
-            {select: "table_info.read_fails", display:{width:150}},
-            {select: "SUM(table_info.read_fails)", display:{width:150}},
-            {select: "MAX(table_info.read_fails)", display:{width:150}},
-            {select: "MIN(table_info.read_fails)", display:{width:150}},
-            {select: "table_info.writes", display:{width:150}},
-            {select: "SUM(table_info.writes)", display:{width:150}},
-            {select: "MAX(table_info.writes)", display:{width:150}},
-            {select: "MIN(table_info.writes)", display:{width:150}},
-            {select: "table_info.write_fails", display:{width:150}},
-            {select: "SUM(table_info.write_fails)", display:{width:150}},
-            {select: "MAX(table_info.write_fails)", display:{width:150}},
-            {select: "MIN(table_info.write_fails)", display:{width:150}},
-            {select: "table_info.write_back_pressure_fails", display:{width:150}},
-            {select: "SUM(table_info.write_back_pressure_fails)", display:{width:150}},
-            {select: "MAX(table_info.write_back_pressure_fails)", display:{width:150}},
-            {select: "MIN(table_info.write_back_pressure_fails)", display:{width:150}}
-        ],
-        "StatTable.VrouterStatsAgent.drop_stats": [
-            {select: "COUNT(drop_stats)", display:{width:150}},
-            {select: "drop_stats.__key", display:{width:150}},
-            {select: "drop_stats.__value", display:{width:150}},
-            {select: "SUM(drop_stats.__value)", display:{width:150}},
-            {select: "MAX(drop_stats.__value)", display:{width:150}},
-            {select: "MIN(drop_stats.__value)", display:{width:150}}
-        ],
-        "StatTable.CassandraStatusData.thread_pool_stats": [
-            {select: "COUNT(thread_pool_stats)", display:{width:150}},
-            {select: "thread_pool_stats.pool_name", display:{width:150}},
-            {select: "thread_pool_stats.active", display:{width:150}},
-            {select: "SUM(thread_pool_stats.active)", display:{width:150}},
-            {select: "MAX(thread_pool_stats.active)", display:{width:150}},
-            {select: "MIN(thread_pool_stats.active)", display:{width:150}},
-            {select: "thread_pool_stats.pending", display:{width:150}},
-            {select: "SUM(thread_pool_stats.pending)", display:{width:150}},
-            {select: "MAX(thread_pool_stats.pending)", display:{width:150}},
-            {select: "MIN(thread_pool_stats.pending)", display:{width:150}},
-            {select: "thread_pool_stats.all_time_blocked", display:{width:150}},
-            {select: "SUM(thread_pool_stats.all_time_blocked)", display:{width:150}},
-            {select: "MAX(thread_pool_stats.all_time_blocked)", display:{width:150}},
-            {select: "MIN(thread_pool_stats.all_time_blocked)", display:{width:150}}
-        ],
-        "StatTable.VrouterStatsAgent.phy_if_stats": [
-            {select: "COUNT(phy_if_stats)", display:{width:150}},
-            {select: "phy_if_stats.__key", display:{width:150}},
-            {select: "phy_if_stats.in_pkts", display:{width:150}},
-            {select: "SUM(phy_if_stats.in_pkts)", display:{width:150}},
-            {select: "MAX(phy_if_stats.in_pkts)", display:{width:150}},
-            {select: "MIN(phy_if_stats.in_pkts)", display:{width:150}},
-            {select: "phy_if_stats.in_bytes", display:{width:150}},
-            {select: "SUM(phy_if_stats.in_bytes)", display:{width:150}},
-            {select: "MAX(phy_if_stats.in_bytes)", display:{width:150}},
-            {select: "MIN(phy_if_stats.in_bytes)", display:{width:150}},
-            {select: "phy_if_stats.out_pkts", display:{width:150}},
-            {select: "SUM(phy_if_stats.out_pkts)", display:{width:150}},
-            {select: "MAX(phy_if_stats.out_pkts)", display:{width:150}},
-            {select: "MIN(phy_if_stats.out_pkts)", display:{width:150}},
-            {select: "phy_if_stats.out_bytes", display:{width:150}},
-            {select: "SUM(phy_if_stats.out_bytes)", display:{width:150}},
-            {select: "MAX(phy_if_stats.out_bytes)", display:{width:150}},
-            {select: "MIN(phy_if_stats.out_bytes)", display:{width:150}}
-        ],
-        "StatTable.CollectorDbStats.errors": [
-            {select: "COUNT(errors)", display:{width:150}},
-            {select: "errors.write_tablespace_fails", display:{width:150}},
-            {select: "SUM(errors.write_tablespace_fails)", display:{width:150}},
-            {select: "MAX(errors.write_tablespace_fails)", display:{width:150}},
-            {select: "MIN(errors.write_tablespace_fails)", display:{width:150}},
-            {select: "errors.read_tablespace_fails", display:{width:150}},
-            {select: "SUM(errors.read_tablespace_fails)", display:{width:150}},
-            {select: "MAX(errors.read_tablespace_fails)", display:{width:150}},
-            {select: "MIN(errors.read_tablespace_fails)", display:{width:150}},
-            {select: "errors.write_table_fails", display:{width:150}},
-            {select: "SUM(errors.write_table_fails)", display:{width:150}},
-            {select: "MAX(errors.write_table_fails)", display:{width:150}},
-            {select: "MIN(errors.write_table_fails)", display:{width:150}},
-            {select: "errors.read_table_fails", display:{width:150}},
-            {select: "SUM(errors.read_table_fails)", display:{width:150}},
-            {select: "MAX(errors.read_table_fails)", display:{width:150}},
-            {select: "MIN(errors.read_table_fails)", display:{width:150}},
-            {select: "errors.write_column_fails", display:{width:150}},
-            {select: "SUM(errors.write_column_fails)", display:{width:150}},
-            {select: "MAX(errors.write_column_fails)", display:{width:150}},
-            {select: "MIN(errors.write_column_fails)", display:{width:150}},
-            {select: "errors.write_batch_column_fails", display:{width:150}},
-            {select: "SUM(errors.write_batch_column_fails)", display:{width:150}},
-            {select: "MAX(errors.write_batch_column_fails)", display:{width:150}},
-            {select: "MIN(errors.write_batch_column_fails)", display:{width:150}},
-            {select: "errors.read_column_fails", display:{width:150}},
-            {select: "SUM(errors.read_column_fails)", display:{width:150}},
-            {select: "MAX(errors.read_column_fails)", display:{width:150}},
-            {select: "MIN(errors.read_column_fails)", display:{width:150}}
-        ],
-        "StatTable.ModuleClientState.msg_type_diff": [
-            {select: "COUNT(msg_type_diff)", display:{width:150}},
-            {select: "msg_type_diff.__key", display:{width:150}},
-            {select: "msg_type_diff.messages_sent", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_sent)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_sent)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_sent)", display:{width:150}},
-            {select: "msg_type_diff.bytes_sent", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_sent)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_sent)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_sent)", display:{width:150}},
-            {select: "msg_type_diff.messages_received", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_received)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_received)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_received)", display:{width:150}},
-            {select: "msg_type_diff.bytes_received", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_received)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_received)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_received)", display:{width:150}},
-            {select: "msg_type_diff.messages_sent_dropped", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_sent_dropped)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_sent_dropped)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_sent_dropped)", display:{width:150}},
-            {select: "msg_type_diff.bytes_sent_dropped", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_sent_dropped)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_sent_dropped)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_sent_dropped)", display:{width:150}},
-            {select: "msg_type_diff.messages_received_dropped", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_received_dropped)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_received_dropped)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_received_dropped)", display:{width:150}},
-            {select: "msg_type_diff.bytes_received_dropped", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_received_dropped)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_received_dropped)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_received_dropped)", display:{width:150}},
-            {select: "msg_type_diff.messages_sent_dropped_no_queue", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_sent_dropped_no_queue)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_sent_dropped_no_queue)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_sent_dropped_no_queue)", display:{width:150}},
-            {select: "msg_type_diff.messages_sent_dropped_no_client", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_sent_dropped_no_client)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_sent_dropped_no_client)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_sent_dropped_no_client)", display:{width:150}},
-            {select: "msg_type_diff.messages_sent_dropped_no_session", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_sent_dropped_no_session)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_sent_dropped_no_session)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_sent_dropped_no_session)", display:{width:150}},
-            {select: "msg_type_diff.messages_sent_dropped_queue_level", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_sent_dropped_queue_level)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_sent_dropped_queue_level)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_sent_dropped_queue_level)", display:{width:150}},
-            {select: "msg_type_diff.messages_sent_dropped_client_send_failed", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_sent_dropped_client_send_failed)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_sent_dropped_client_send_failed)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_sent_dropped_client_send_failed)", display:{width:150}},
-            {select: "msg_type_diff.messages_sent_dropped_session_not_connected", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_sent_dropped_session_not_connected)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_sent_dropped_session_not_connected)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_sent_dropped_session_not_connected)", display:{width:150}},
-            {select: "msg_type_diff.messages_sent_dropped_header_write_failed", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_sent_dropped_header_write_failed)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_sent_dropped_header_write_failed)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_sent_dropped_header_write_failed)", display:{width:150}},
-            {select: "msg_type_diff.messages_sent_dropped_write_failed", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_sent_dropped_write_failed)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_sent_dropped_write_failed)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_sent_dropped_write_failed)", display:{width:150}},
-            {select: "msg_type_diff.messages_sent_dropped_wrong_client_sm_state", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_sent_dropped_wrong_client_sm_state)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_sent_dropped_wrong_client_sm_state)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_sent_dropped_wrong_client_sm_state)", display:{width:150}},
-            {select: "msg_type_diff.messages_sent_dropped_validation_failed", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_sent_dropped_validation_failed)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_sent_dropped_validation_failed)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_sent_dropped_validation_failed)", display:{width:150}},
-            {select: "msg_type_diff.messages_sent_dropped_rate_limited", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_sent_dropped_rate_limited)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_sent_dropped_rate_limited)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_sent_dropped_rate_limited)", display:{width:150}},
-            {select: "msg_type_diff.bytes_sent_dropped_no_queue", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_sent_dropped_no_queue)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_sent_dropped_no_queue)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_sent_dropped_no_queue)", display:{width:150}},
-            {select: "msg_type_diff.bytes_sent_dropped_no_client", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_sent_dropped_no_client)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_sent_dropped_no_client)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_sent_dropped_no_client)", display:{width:150}},
-            {select: "msg_type_diff.bytes_sent_dropped_no_session", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_sent_dropped_no_session)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_sent_dropped_no_session)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_sent_dropped_no_session)", display:{width:150}},
-            {select: "msg_type_diff.bytes_sent_dropped_queue_level", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_sent_dropped_queue_level)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_sent_dropped_queue_level)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_sent_dropped_queue_level)", display:{width:150}},
-            {select: "msg_type_diff.bytes_sent_dropped_client_send_failed", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_sent_dropped_client_send_failed)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_sent_dropped_client_send_failed)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_sent_dropped_client_send_failed)", display:{width:150}},
-            {select: "msg_type_diff.bytes_sent_dropped_session_not_connected", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_sent_dropped_session_not_connected)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_sent_dropped_session_not_connected)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_sent_dropped_session_not_connected)", display:{width:150}},
-            {select: "msg_type_diff.bytes_sent_dropped_header_write_failed", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_sent_dropped_header_write_failed)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_sent_dropped_header_write_failed)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_sent_dropped_header_write_failed)", display:{width:150}},
-            {select: "msg_type_diff.bytes_sent_dropped_write_failed", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_sent_dropped_write_failed)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_sent_dropped_write_failed)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_sent_dropped_write_failed)", display:{width:150}},
-            {select: "msg_type_diff.bytes_sent_dropped_wrong_client_sm_state", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_sent_dropped_wrong_client_sm_state)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_sent_dropped_wrong_client_sm_state)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_sent_dropped_wrong_client_sm_state)", display:{width:150}},
-            {select: "msg_type_diff.bytes_sent_dropped_validation_failed", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_sent_dropped_validation_failed)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_sent_dropped_validation_failed)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_sent_dropped_validation_failed)", display:{width:150}},
-            {select: "msg_type_diff.bytes_sent_dropped_rate_limited", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_sent_dropped_rate_limited)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_sent_dropped_rate_limited)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_sent_dropped_rate_limited)", display:{width:150}},
-            {select: "msg_type_diff.messages_received_dropped_no_queue", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_received_dropped_no_queue)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_received_dropped_no_queue)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_received_dropped_no_queue)", display:{width:150}},
-            {select: "msg_type_diff.messages_received_dropped_queue_level", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_received_dropped_queue_level)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_received_dropped_queue_level)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_received_dropped_queue_level)", display:{width:150}},
-            {select: "msg_type_diff.messages_received_dropped_create_failed", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_received_dropped_create_failed)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_received_dropped_create_failed)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_received_dropped_create_failed)", display:{width:150}},
-            {select: "msg_type_diff.messages_received_dropped_control_msg_failed", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_received_dropped_control_msg_failed)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_received_dropped_control_msg_failed)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_received_dropped_control_msg_failed)", display:{width:150}},
-            {select: "msg_type_diff.messages_received_dropped_decoding_failed", display:{width:150}},
-            {select: "SUM(msg_type_diff.messages_received_dropped_decoding_failed)", display:{width:150}},
-            {select: "MAX(msg_type_diff.messages_received_dropped_decoding_failed)", display:{width:150}},
-            {select: "MIN(msg_type_diff.messages_received_dropped_decoding_failed)", display:{width:150}},
-            {select: "msg_type_diff.bytes_received_dropped_no_queue", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_received_dropped_no_queue)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_received_dropped_no_queue)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_received_dropped_no_queue)", display:{width:150}},
-            {select: "msg_type_diff.bytes_received_dropped_queue_level", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_received_dropped_queue_level)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_received_dropped_queue_level)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_received_dropped_queue_level)", display:{width:150}},
-            {select: "msg_type_diff.bytes_received_dropped_create_failed", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_received_dropped_create_failed)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_received_dropped_create_failed)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_received_dropped_create_failed)", display:{width:150}},
-            {select: "msg_type_diff.bytes_received_dropped_control_msg_failed", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_received_dropped_control_msg_failed)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_received_dropped_control_msg_failed)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_received_dropped_control_msg_failed)", display:{width:150}},
-            {select: "msg_type_diff.bytes_received_dropped_decoding_failed", display:{width:150}},
-            {select: "SUM(msg_type_diff.bytes_received_dropped_decoding_failed)", display:{width:150}},
-            {select: "MAX(msg_type_diff.bytes_received_dropped_decoding_failed)", display:{width:150}},
-            {select: "MIN(msg_type_diff.bytes_received_dropped_decoding_failed)", display:{width:150}}
-        ],
-        "StatTable.CassandraStatusData.cassandra_compaction_task": [
-            {select: "COUNT(cassandra_compaction_task)", display:{width:150}},
-            {select: "cassandra_compaction_task.pending_compaction_tasks", display:{width:150}},
-            {select: "SUM(cassandra_compaction_task.pending_compaction_tasks)", display:{width:150}},
-            {select: "MAX(cassandra_compaction_task.pending_compaction_tasks)", display:{width:150}},
-            {select: "MIN(cassandra_compaction_task.pending_compaction_tasks)", display:{width:150}}
-        ],
-        "StatTable.CollectorDbStats.stats_info": [
-            {select: "COUNT(stats_info)", display:{width:150}},
-            {select: "stats_info.__key", display:{width:150}},
-            {select: "stats_info.reads", display:{width:150}},
-            {select: "SUM(stats_info.reads)", display:{width:150}},
-            {select: "MAX(stats_info.reads)", display:{width:150}},
-            {select: "MIN(stats_info.reads)", display:{width:150}},
-            {select: "stats_info.read_fails", display:{width:150}},
-            {select: "SUM(stats_info.read_fails)", display:{width:150}},
-            {select: "MAX(stats_info.read_fails)", display:{width:150}},
-            {select: "MIN(stats_info.read_fails)", display:{width:150}},
-            {select: "stats_info.writes", display:{width:150}},
-            {select: "SUM(stats_info.writes)", display:{width:150}},
-            {select: "MAX(stats_info.writes)", display:{width:150}},
-            {select: "MIN(stats_info.writes)", display:{width:150}},
-            {select: "stats_info.write_fails", display:{width:150}},
-            {select: "SUM(stats_info.write_fails)", display:{width:150}},
-            {select: "MAX(stats_info.write_fails)", display:{width:150}},
-            {select: "MIN(stats_info.write_fails)", display:{width:150}},
-            {select: "stats_info.write_back_pressure_fails", display:{width:150}},
-            {select: "SUM(stats_info.write_back_pressure_fails)", display:{width:150}},
-            {select: "MAX(stats_info.write_back_pressure_fails)", display:{width:150}},
-            {select: "MIN(stats_info.write_back_pressure_fails)", display:{width:150}}
-        ],
-        "StatTable.PeerStatsData.tx_update_stats": [
-            {select: "COUNT(tx_update_stats)", display:{width:150}},
-            {select: "tx_update_stats.total", display:{width:150}},
-            {select: "SUM(tx_update_stats.total)", display:{width:150}},
-            {select: "MAX(tx_update_stats.total)", display:{width:150}},
-            {select: "MIN(tx_update_stats.total)", display:{width:150}},
-            {select: "tx_update_stats.reach", display:{width:150}},
-            {select: "SUM(tx_update_stats.reach)", display:{width:150}},
-            {select: "MAX(tx_update_stats.reach)", display:{width:150}},
-            {select: "MIN(tx_update_stats.reach)", display:{width:150}},
-            {select: "tx_update_stats.unreach", display:{width:150}},
-            {select: "SUM(tx_update_stats.unreach)", display:{width:150}},
-            {select: "MAX(tx_update_stats.unreach)", display:{width:150}},
-            {select: "MIN(tx_update_stats.unreach)", display:{width:150}},
-            {select: "tx_update_stats.end_of_rib", display:{width:150}},
-            {select: "SUM(tx_update_stats.end_of_rib)", display:{width:150}},
-            {select: "MAX(tx_update_stats.end_of_rib)", display:{width:150}},
-            {select: "MIN(tx_update_stats.end_of_rib)", display:{width:150}}
-        ],
-        "StatTable.ModuleClientState.tx_msg_diff": [
-            {select: "COUNT(tx_msg_diff)", display:{width:150}},
-            {select: "tx_msg_diff.__key", display:{width:150}},
-            {select: "tx_msg_diff.__value", display:{width:150}},
-            {select: "SUM(tx_msg_diff.__value)", display:{width:150}},
-            {select: "MAX(tx_msg_diff.__value)", display:{width:150}},
-            {select: "MIN(tx_msg_diff.__value)", display:{width:150}}
-        ],
+        "StatTable.CollectorDbStats.cql_stats.errors": [],
+        "StatTable.UveVMInterfaceAgent.flow_rate": [],
+        "StatTable.CollectorDbStats.cql_stats.stats": [],
+        "StatTable.CollectorDbStats.cql_stats": [],
+        "StatTable.NodeStatus.process_mem_cpu_usage": [],
+        "StatTable.PeerStatsData.rx_update_stats": [],
+        "StatTable.VrouterStatsAgent.phy_flow_rate": [],
+        "StatTable.NodeStatus.system_mem_usage": [],
+        "StatTable.NodeStatus.system_cpu_usage": [],
+        "StatTable.CollectorDbStats.table_info": [],
+        "StatTable.VrouterStatsAgent.drop_stats": [],
+        "StatTable.CassandraStatusData.thread_pool_stats": [],
+        "StatTable.VrouterStatsAgent.phy_if_stats": [],
+        "StatTable.CollectorDbStats.errors": [],
+        "StatTable.ModuleClientState.msg_type_diff": [],
+        "StatTable.CassandraStatusData.cassandra_compaction_task": [],
+        "StatTable.CollectorDbStats.stats_info": [],
+        "StatTable.PeerStatsData.tx_update_stats": [],
+        "StatTable.ModuleClientState.tx_msg_diff": [],
         "defaultStatColumns": [
             {select:"T", display:{width:210, filterable:false}},
             {select:"T=", display:{width:210, filterable:false}},
-            {select:"UUID", display:{width:150}},
-            {select:"name", display:{width:150}},
             {select:"Source", display:{width:70}}
         ],
         "defaultObjectColumns": [
             {select: "MessageTS", display:{ width:210, filterable:false}},
-            {select: "ObjectId", display:{width:150, searchable: true, hide: true}},
-            {select: "Source", display:{width:150, searchable: true}},
+            {select: "ObjectId", display:{searchable: true, hide: true}},
+            {select: "Source", display:{searchable: true}},
             {select: "ModuleId", display:{width: 200, searchable:true}},
             {select: "Messagetype", display:{width:230, searchable:true}},
             {
@@ -2242,14 +1030,14 @@ define([
         ],
         "MessageTable": [
             {select: "MessageTS", display:{width:210, filterable:false}},
-            {select: "Source", display:{width:150, searchable: true}},
+            {select: "Source", display:{searchable: true}},
             {select: "NodeType", display:{width:100, searchable: true}},
             {select: "ModuleId", display:{width: 200, searchable:true}},
             {select: "Messagetype", display:{width:230, searchable:true}},
-            {select: "Keyword", display:{width:150, searchable:true}},
+            {select: "Keyword", display:{searchable:true}},
             {select: "Level", display:{width:100, searchable:true, formatter: function(r, c, v, cd, dc) { return qeUtils.getLevelName4Value(dc.Level); }}},
-            {select: "Category", display:{width: 150, searchable:true}},
-            {select: "Context", display:{width:150, searchable:true}},
+            {select: "Category", display:{searchable:true}},
+            {select: "Context", display:{searchable:true}},
             {
                 select: "Xmlmessage",
                 display:{
@@ -2272,7 +1060,7 @@ define([
                     exportConfig: {allow: true, stdFormatter: false}
                 }
             },
-            {select: "InstanceId", display:{width: 150, searchable:true}}
+            {select: "InstanceId", display:{searchable:true}}
         ],
         init: function() {
             this.SessionAnalyzerTable = this.FlowSeriesTable;
