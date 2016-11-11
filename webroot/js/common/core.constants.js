@@ -1239,7 +1239,6 @@ define([
             "AVG(sensor_stats.reading)": "inferred",
             "MIN(sensor_stats.reading)": "inferred",
             "MAX(sensor_stats.reading)": "inferred",
-            "PERCENTILES(sensor_stats.reading)": "inferred",
 
             // database usage
             "COUNT(database_usage)": "number",
@@ -1430,7 +1429,487 @@ define([
             "SUM(query_stats.enq_delay)": "milli-second",
             "MAX(query_stats.enq_delay)": "milli-second",
             "MIN(query_stats.enq_delay)": "milli-second",
-            "AVG(query_stats.enq_delay)": "milli-second"
+            "AVG(query_stats.enq_delay)": "milli-second",
+
+            // StatTable.PeerStatsData.rx_update_stats
+            "COUNT(rx_update_stats)": "number",
+
+            "rx_update_stats.total": "number",
+            "SUM(rx_update_stats.total)": "number",
+            "MAX(rx_update_stats.total)": "number",
+            "MIN(rx_update_stats.total)": "number",
+            "AVG(rx_update_stats.total)": "number",
+
+            "rx_update_stats.reach": "number",
+            "SUM(rx_update_stats.reach)": "number",
+            "MAX(rx_update_stats.reach)": "number",
+            "MIN(rx_update_stats.reach)": "number",
+            "AVG(rx_update_stats.reach)": "number",
+
+            "rx_update_stats.unreach": "number",
+            "SUM(rx_update_stats.unreach)": "number",
+            "MAX(rx_update_stats.unreach)": "number",
+            "MIN(rx_update_stats.unreach)": "number",
+            "AVG(rx_update_stats.unreach)": "number",
+
+            "rx_update_stats.end_of_rib": "number",
+            "SUM(rx_update_stats.end_of_rib)": "number",
+            "MAX(rx_update_stats.end_of_rib)": "number",
+            "MIN(rx_update_stats.end_of_rib)": "number",
+            "AVG(rx_update_stats.end_of_rib)": "number",
+
+            // StatTable.VrouterStatsAgent.phy_flow_rate
+            "COUNT(phy_flow_rate)": "number",
+
+            "phy_flow_rate.added_flows": "number",
+            "SUM(phy_flow_rate.added_flows)": "number",
+            "MAX(phy_flow_rate.added_flows)": "number",
+            "MIN(phy_flow_rate.added_flows)": "number",
+            "AVG(phy_flow_rate.added_flows)": "number",
+
+            "phy_flow_rate.max_flow_adds_per_second": "number",
+            "SUM(phy_flow_rate.max_flow_adds_per_second)": "number",
+            "MAX(phy_flow_rate.max_flow_adds_per_second)": "number",
+            "MIN(phy_flow_rate.max_flow_adds_per_second)": "number",
+            "AVG(phy_flow_rate.max_flow_adds_per_second)": "number",
+
+            "phy_flow_rate.min_flow_adds_per_second": "number",
+            "SUM(phy_flow_rate.min_flow_adds_per_second)": "number",
+            "MAX(phy_flow_rate.min_flow_adds_per_second)": "number",
+            "MIN(phy_flow_rate.min_flow_adds_per_second)": "number",
+            "AVG(phy_flow_rate.min_flow_adds_per_second)": "number",
+
+            "phy_flow_rate.deleted_flows": "number",
+            "SUM(phy_flow_rate.deleted_flows)": "number",
+            "MAX(phy_flow_rate.deleted_flows)": "number",
+            "MIN(phy_flow_rate.deleted_flows)": "number",
+            "AVG(phy_flow_rate.deleted_flows)": "number",
+
+            "phy_flow_rate.max_flow_deletes_per_second": "number",
+            "SUM(phy_flow_rate.max_flow_deletes_per_second)": "number",
+            "MAX(phy_flow_rate.max_flow_deletes_per_second)": "number",
+            "MIN(phy_flow_rate.max_flow_deletes_per_second)": "number",
+            "AVG(phy_flow_rate.max_flow_deletes_per_second)": "number",
+
+            "phy_flow_rate.min_flow_deletes_per_second": "number",
+            "SUM(phy_flow_rate.min_flow_deletes_per_second)": "number",
+            "MAX(phy_flow_rate.min_flow_deletes_per_second)": "number",
+            "MIN(phy_flow_rate.min_flow_deletes_per_second)": "number",
+            "AVG(phy_flow_rate.min_flow_deletes_per_second)": "number",
+
+            "phy_flow_rate.active_flows": "number",
+            "SUM(phy_flow_rate.active_flows)": "number",
+            "MAX(phy_flow_rate.active_flows)": "number",
+            "MIN(phy_flow_rate.active_flows)": "number",
+            "AVG(phy_flow_rate.active_flows)": "number",
+
+            // StatTable.NodeStatus.system_mem_usage
+            "COUNT(system_mem_usage)": "number",
+
+            "system_mem_usage.total": "kilo-byte",
+            "SUM(system_mem_usage.total)": "kilo-byte",
+            "MAX(system_mem_usage.total)": "kilo-byte",
+            "MIN(system_mem_usage.total)": "kilo-byte",
+            "AVG(system_mem_usage.total)": "kilo-byte",
+
+            "system_mem_usage.used": "kilo-byte",
+            "SUM(system_mem_usage.used)": "kilo-byte",
+            "MAX(system_mem_usage.used)": "kilo-byte",
+            "MIN(system_mem_usage.used)": "kilo-byte",
+            "AVG(system_mem_usage.used)": "kilo-byte",
+
+            "system_mem_usage.free": "kilo-byte",
+            "SUM(system_mem_usage.free)": "kilo-byte",
+            "MAX(system_mem_usage.free)": "kilo-byte",
+            "MIN(system_mem_usage.free)": "kilo-byte",
+            "AVG(system_mem_usage.free)": "kilo-byte",
+
+            "system_mem_usage.buffers": "kilo-byte",
+            "SUM(system_mem_usage.buffers)": "kilo-byte",
+            "MAX(system_mem_usage.buffers)": "kilo-byte",
+            "MIN(system_mem_usage.buffers)": "kilo-byte",
+            "AVG(system_mem_usage.buffers)": "kilo-byte",
+
+            "system_mem_usage.cached": "kilo-byte",
+            "SUM(system_mem_usage.cached)": "kilo-byte",
+            "MAX(system_mem_usage.cached)": "kilo-byte",
+            "MIN(system_mem_usage.cached)": "kilo-byte",
+            "AVG(system_mem_usage.cached)": "kilo-byte",
+
+            // StatTable.NodeStatus.system_cpu_usage
+            "COUNT(system_cpu_usage)": "number",
+
+            "system_cpu_usage.one_min_avg": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "SUM(system_cpu_usage.one_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MAX(system_cpu_usage.one_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MIN(system_cpu_usage.one_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "AVG(system_cpu_usage.one_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+
+            "system_cpu_usage.five_min_avg": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "SUM(system_cpu_usage.five_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MAX(system_cpu_usage.five_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MIN(system_cpu_usage.five_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "AVG(system_cpu_usage.five_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+
+            "system_cpu_usage.fifteen_min_avg": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "SUM(system_cpu_usage.fifteen_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MAX(system_cpu_usage.fifteen_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MIN(system_cpu_usage.fifteen_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "AVG(system_cpu_usage.fifteen_min_avg)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+
+            "system_cpu_usage.cpu_share": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "SUM(system_cpu_usage.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MAX(system_cpu_usage.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "MIN(system_cpu_usage.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+            "AVG(system_cpu_usage.cpu_share)": [{format: 'number', options: {formatSpecifier: '.3n'}}, {format: 'percentage'}],
+
+            // StatTable.VrouterStatsAgent.drop_stats
+            "COUNT(drop_stats)": "number",
+
+            "drop_stats.__value": "number",
+            "SUM(drop_stats.__value)": "number",
+            "MAX(drop_stats.__value)": "number",
+            "MIN(drop_stats.__value)": "number",
+            "AVG(drop_stats.__value)": "number",
+
+            // StatTable.VrouterStatsAgent.phy_if_stats
+            "COUNT(phy_if_stats)": "number",
+
+            "phy_if_stats.in_pkts": "number",
+            "SUM(phy_if_stats.in_pkts)": "number",
+            "MAX(phy_if_stats.in_pkts)": "number",
+            "MIN(phy_if_stats.in_pkts)": "number",
+            "AVG(phy_if_stats.in_pkts)": "number",
+
+            "phy_if_stats.in_bytes": "bytes",
+            "SUM(phy_if_stats.in_bytes)": "bytes",
+            "MAX(phy_if_stats.in_bytes)": "bytes",
+            "MIN(phy_if_stats.in_bytes)": "bytes",
+            "AVG(phy_if_stats.in_bytes)": "bytes",
+
+            "phy_if_stats.out_pkts": "number",
+            "SUM(phy_if_stats.out_pkts)": "number",
+            "MAX(phy_if_stats.out_pkts)": "number",
+            "MIN(phy_if_stats.out_pkts)": "number",
+            "AVG(phy_if_stats.out_pkts)": "number",
+
+            "phy_if_stats.out_bytes": "bytes",
+            "SUM(phy_if_stats.out_bytes)": "bytes",
+            "MAX(phy_if_stats.out_bytes)": "bytes",
+            "MIN(phy_if_stats.out_bytes)": "bytes",
+            "AVG(phy_if_stats.out_bytes)": "bytes",
+
+            // StatTable.ModuleClientState.msg_type_diff
+            "COUNT(msg_type_diff)": "number",
+
+            "msg_type_diff.messages_sent": "number",
+            "SUM(msg_type_diff.messages_sent)": "number",
+            "MAX(msg_type_diff.messages_sent)": "number",
+            "MIN(msg_type_diff.messages_sent)": "number",
+            "AVG(msg_type_diff.messages_sent)": "number",
+
+            "msg_type_diff.bytes_sent": "bytes",
+            "SUM(msg_type_diff.bytes_sent)": "bytes",
+            "MAX(msg_type_diff.bytes_sent)": "bytes",
+            "MIN(msg_type_diff.bytes_sent)": "bytes",
+            "AVG(msg_type_diff.bytes_sent)": "bytes",
+
+            "msg_type_diff.messages_received": "number",
+            "SUM(msg_type_diff.messages_received)": "number",
+            "MAX(msg_type_diff.messages_received)": "number",
+            "MIN(msg_type_diff.messages_received)": "number",
+            "AVG(msg_type_diff.messages_received)": "number",
+
+            "msg_type_diff.bytes_received": "bytes",
+            "SUM(msg_type_diff.bytes_received)": "bytes",
+            "MAX(msg_type_diff.bytes_received)": "bytes",
+            "MIN(msg_type_diff.bytes_received)": "bytes",
+            "AVG(msg_type_diff.bytes_received)": "bytes",
+
+            "msg_type_diff.messages_sent_dropped": "number",
+            "SUM(msg_type_diff.messages_sent_dropped)": "number",
+            "MAX(msg_type_diff.messages_sent_dropped)": "number",
+            "MIN(msg_type_diff.messages_sent_dropped)": "number",
+            "AVG(msg_type_diff.messages_sent_dropped)": "number",
+
+            "msg_type_diff.bytes_sent_dropped": "bytes",
+            "SUM(msg_type_diff.bytes_sent_dropped)": "bytes",
+            "MAX(msg_type_diff.bytes_sent_dropped)": "bytes",
+            "MIN(msg_type_diff.bytes_sent_dropped)": "bytes",
+            "AVG(msg_type_diff.bytes_sent_dropped)": "bytes",
+
+            "msg_type_diff.messages_received_dropped": "number",
+            "SUM(msg_type_diff.messages_received_dropped)": "number",
+            "MAX(msg_type_diff.messages_received_dropped)": "number",
+            "MIN(msg_type_diff.messages_received_dropped)": "number",
+            "AVG(msg_type_diff.messages_received_dropped)": "number",
+
+            "msg_type_diff.bytes_received_dropped": "bytes",
+            "SUM(msg_type_diff.bytes_received_dropped)": "bytes",
+            "MAX(msg_type_diff.bytes_received_dropped)": "bytes",
+            "MIN(msg_type_diff.bytes_received_dropped)": "bytes",
+            "AVG(msg_type_diff.bytes_received_dropped)": "bytes",
+
+            "msg_type_diff.messages_sent_dropped_no_queue": "number",
+            "SUM(msg_type_diff.messages_sent_dropped_no_queue)": "number",
+            "MAX(msg_type_diff.messages_sent_dropped_no_queue)": "number",
+            "MIN(msg_type_diff.messages_sent_dropped_no_queue)": "number",
+            "AVG(msg_type_diff.messages_sent_dropped_no_queue)": "number",
+
+            "msg_type_diff.messages_sent_dropped_no_client": "number",
+            "SUM(msg_type_diff.messages_sent_dropped_no_client)": "number",
+            "MAX(msg_type_diff.messages_sent_dropped_no_client)": "number",
+            "MIN(msg_type_diff.messages_sent_dropped_no_client)": "number",
+            "AVG(msg_type_diff.messages_sent_dropped_no_client)": "number",
+
+            "msg_type_diff.messages_sent_dropped_no_session": "number",
+            "SUM(msg_type_diff.messages_sent_dropped_no_session)": "number",
+            "MAX(msg_type_diff.messages_sent_dropped_no_session)": "number",
+            "MIN(msg_type_diff.messages_sent_dropped_no_session)": "number",
+            "AVG(msg_type_diff.messages_sent_dropped_no_session)": "number",
+
+            "msg_type_diff.messages_sent_dropped_queue_level": "number",
+            "SUM(msg_type_diff.messages_sent_dropped_queue_level)": "number",
+            "MAX(msg_type_diff.messages_sent_dropped_queue_level)": "number",
+            "MIN(msg_type_diff.messages_sent_dropped_queue_level)": "number",
+            "AVG(msg_type_diff.messages_sent_dropped_queue_level)": "number",
+
+            "msg_type_diff.messages_sent_dropped_client_send_failed": "number",
+            "SUM(msg_type_diff.messages_sent_dropped_client_send_failed)": "number",
+            "MAX(msg_type_diff.messages_sent_dropped_client_send_failed)": "number",
+            "MIN(msg_type_diff.messages_sent_dropped_client_send_failed)": "number",
+            "AVG(msg_type_diff.messages_sent_dropped_client_send_failed)": "number",
+
+            "msg_type_diff.messages_sent_dropped_session_not_connected": "number",
+            "SUM(msg_type_diff.messages_sent_dropped_session_not_connected)": "number",
+            "MAX(msg_type_diff.messages_sent_dropped_session_not_connected)": "number",
+            "MIN(msg_type_diff.messages_sent_dropped_session_not_connected)": "number",
+            "AVG(msg_type_diff.messages_sent_dropped_session_not_connected)": "number",
+
+            "msg_type_diff.messages_sent_dropped_header_write_failed": "number",
+            "SUM(msg_type_diff.messages_sent_dropped_header_write_failed)": "number",
+            "MAX(msg_type_diff.messages_sent_dropped_header_write_failed)": "number",
+            "MIN(msg_type_diff.messages_sent_dropped_header_write_failed)": "number",
+            "AVG(msg_type_diff.messages_sent_dropped_header_write_failed)": "number",
+
+            "msg_type_diff.messages_sent_dropped_write_failed": "number",
+            "SUM(msg_type_diff.messages_sent_dropped_write_failed)": "number",
+            "MAX(msg_type_diff.messages_sent_dropped_write_failed)": "number",
+            "MIN(msg_type_diff.messages_sent_dropped_write_failed)": "number",
+            "AVG(msg_type_diff.messages_sent_dropped_write_failed)": "number",
+
+            "msg_type_diff.messages_sent_dropped_wrong_client_sm_state": "number",
+            "SUM(msg_type_diff.messages_sent_dropped_wrong_client_sm_state)": "number",
+            "MAX(msg_type_diff.messages_sent_dropped_wrong_client_sm_state)": "number",
+            "MIN(msg_type_diff.messages_sent_dropped_wrong_client_sm_state)": "number",
+            "AVG(msg_type_diff.messages_sent_dropped_wrong_client_sm_state)": "number",
+
+            "msg_type_diff.messages_sent_dropped_validation_failed": "number",
+            "SUM(msg_type_diff.messages_sent_dropped_validation_failed)": "number",
+            "MAX(msg_type_diff.messages_sent_dropped_validation_failed)": "number",
+            "MIN(msg_type_diff.messages_sent_dropped_validation_failed)": "number",
+            "AVG(msg_type_diff.messages_sent_dropped_validation_failed)": "number",
+
+            "msg_type_diff.messages_sent_dropped_rate_limited": "number",
+            "SUM(msg_type_diff.messages_sent_dropped_rate_limited)": "number",
+            "MAX(msg_type_diff.messages_sent_dropped_rate_limited)": "number",
+            "MIN(msg_type_diff.messages_sent_dropped_rate_limited)": "number",
+            "AVG(msg_type_diff.messages_sent_dropped_rate_limited)": "number",
+
+            "msg_type_diff.bytes_sent_dropped_no_queue": "bytes",
+            "SUM(msg_type_diff.bytes_sent_dropped_no_queue)": "bytes",
+            "MAX(msg_type_diff.bytes_sent_dropped_no_queue)": "bytes",
+            "MIN(msg_type_diff.bytes_sent_dropped_no_queue)": "bytes",
+            "AVG(msg_type_diff.bytes_sent_dropped_no_queue)": "bytes",
+
+            "msg_type_diff.bytes_sent_dropped_no_client": "bytes",
+            "SUM(msg_type_diff.bytes_sent_dropped_no_client)": "bytes",
+            "MAX(msg_type_diff.bytes_sent_dropped_no_client)": "bytes",
+            "MIN(msg_type_diff.bytes_sent_dropped_no_client)": "bytes",
+            "AVG(msg_type_diff.bytes_sent_dropped_no_client)": "bytes",
+
+            "msg_type_diff.bytes_sent_dropped_no_session": "bytes",
+            "SUM(msg_type_diff.bytes_sent_dropped_no_session)": "bytes",
+            "MAX(msg_type_diff.bytes_sent_dropped_no_session)": "bytes",
+            "MIN(msg_type_diff.bytes_sent_dropped_no_session)": "bytes",
+            "AVG(msg_type_diff.bytes_sent_dropped_no_session)": "bytes",
+
+            "msg_type_diff.bytes_sent_dropped_queue_level": "bytes",
+            "SUM(msg_type_diff.bytes_sent_dropped_queue_level)": "bytes",
+            "MAX(msg_type_diff.bytes_sent_dropped_queue_level)": "bytes",
+            "MIN(msg_type_diff.bytes_sent_dropped_queue_level)": "bytes",
+            "AVG(msg_type_diff.bytes_sent_dropped_queue_level)": "bytes",
+
+            "msg_type_diff.bytes_sent_dropped_client_send_failed": "bytes",
+            "SUM(msg_type_diff.bytes_sent_dropped_client_send_failed)": "bytes",
+            "MAX(msg_type_diff.bytes_sent_dropped_client_send_failed)": "bytes",
+            "MIN(msg_type_diff.bytes_sent_dropped_client_send_failed)": "bytes",
+            "AVG(msg_type_diff.bytes_sent_dropped_client_send_failed)": "bytes",
+
+            "msg_type_diff.bytes_sent_dropped_session_not_connected": "bytes",
+            "SUM(msg_type_diff.bytes_sent_dropped_session_not_connected)": "bytes",
+            "MAX(msg_type_diff.bytes_sent_dropped_session_not_connected)": "bytes",
+            "MIN(msg_type_diff.bytes_sent_dropped_session_not_connected)": "bytes",
+            "AVG(msg_type_diff.bytes_sent_dropped_session_not_connected)": "bytes",
+
+            "msg_type_diff.bytes_sent_dropped_header_write_failed": "bytes",
+            "SUM(msg_type_diff.bytes_sent_dropped_header_write_failed)": "bytes",
+            "MAX(msg_type_diff.bytes_sent_dropped_header_write_failed)": "bytes",
+            "MIN(msg_type_diff.bytes_sent_dropped_header_write_failed)": "bytes",
+            "AVG(msg_type_diff.bytes_sent_dropped_header_write_failed)": "bytes",
+
+            "msg_type_diff.bytes_sent_dropped_write_failed": "bytes",
+            "SUM(msg_type_diff.bytes_sent_dropped_write_failed)": "bytes",
+            "MAX(msg_type_diff.bytes_sent_dropped_write_failed)": "bytes",
+            "MIN(msg_type_diff.bytes_sent_dropped_write_failed)": "bytes",
+            "AVG(msg_type_diff.bytes_sent_dropped_write_failed)": "bytes",
+
+            "msg_type_diff.bytes_sent_dropped_wrong_client_sm_state": "bytes",
+            "SUM(msg_type_diff.bytes_sent_dropped_wrong_client_sm_state)": "bytes",
+            "MAX(msg_type_diff.bytes_sent_dropped_wrong_client_sm_state)": "bytes",
+            "MIN(msg_type_diff.bytes_sent_dropped_wrong_client_sm_state)": "bytes",
+            "AVG(msg_type_diff.bytes_sent_dropped_wrong_client_sm_state)": "bytes",
+
+            "msg_type_diff.bytes_sent_dropped_validation_failed": "bytes",
+            "SUM(msg_type_diff.bytes_sent_dropped_validation_failed)": "bytes",
+            "MAX(msg_type_diff.bytes_sent_dropped_validation_failed)": "bytes",
+            "MIN(msg_type_diff.bytes_sent_dropped_validation_failed)": "bytes",
+            "AVG(msg_type_diff.bytes_sent_dropped_validation_failed)": "bytes",
+
+            "msg_type_diff.bytes_sent_dropped_rate_limited": "bytes",
+            "SUM(msg_type_diff.bytes_sent_dropped_rate_limited)": "bytes",
+            "MAX(msg_type_diff.bytes_sent_dropped_rate_limited)": "bytes",
+            "MIN(msg_type_diff.bytes_sent_dropped_rate_limited)": "bytes",
+            "AVG(msg_type_diff.bytes_sent_dropped_rate_limited)": "bytes",
+
+            "msg_type_diff.messages_received_dropped_no_queue": "number",
+            "SUM(msg_type_diff.messages_received_dropped_no_queue)": "number",
+            "MAX(msg_type_diff.messages_received_dropped_no_queue)": "number",
+            "MIN(msg_type_diff.messages_received_dropped_no_queue)": "number",
+            "AVG(msg_type_diff.messages_received_dropped_no_queue)": "number",
+
+            "msg_type_diff.messages_received_dropped_queue_level": "number",
+            "SUM(msg_type_diff.messages_received_dropped_queue_level)": "number",
+            "MAX(msg_type_diff.messages_received_dropped_queue_level)": "number",
+            "MIN(msg_type_diff.messages_received_dropped_queue_level)": "number",
+            "AVG(msg_type_diff.messages_received_dropped_queue_level)": "number",
+
+            "msg_type_diff.messages_received_dropped_create_failed": "number",
+            "SUM(msg_type_diff.messages_received_dropped_create_failed)": "number",
+            "MAX(msg_type_diff.messages_received_dropped_create_failed)": "number",
+            "MIN(msg_type_diff.messages_received_dropped_create_failed)": "number",
+            "AVG(msg_type_diff.messages_received_dropped_create_failed)": "number",
+
+            "msg_type_diff.messages_received_dropped_control_msg_failed": "number",
+            "SUM(msg_type_diff.messages_received_dropped_control_msg_failed)": "number",
+            "MAX(msg_type_diff.messages_received_dropped_control_msg_failed)": "number",
+            "MIN(msg_type_diff.messages_received_dropped_control_msg_failed)": "number",
+            "AVG(msg_type_diff.messages_received_dropped_control_msg_failed)": "number",
+
+            "msg_type_diff.messages_received_dropped_decoding_failed": "number",
+            "SUM(msg_type_diff.messages_received_dropped_decoding_failed)": "number",
+            "MAX(msg_type_diff.messages_received_dropped_decoding_failed)": "number",
+            "MIN(msg_type_diff.messages_received_dropped_decoding_failed)": "number",
+            "AVG(msg_type_diff.messages_received_dropped_decoding_failed)": "number",
+
+            "msg_type_diff.bytes_received_dropped_no_queue": "bytes",
+            "SUM(msg_type_diff.bytes_received_dropped_no_queue)": "bytes",
+            "MAX(msg_type_diff.bytes_received_dropped_no_queue)": "bytes",
+            "MIN(msg_type_diff.bytes_received_dropped_no_queue)": "bytes",
+            "AVG(msg_type_diff.bytes_received_dropped_no_queue)": "bytes",
+
+            "msg_type_diff.bytes_received_dropped_queue_level": "bytes",
+            "SUM(msg_type_diff.bytes_received_dropped_queue_level)": "bytes",
+            "MAX(msg_type_diff.bytes_received_dropped_queue_level)": "bytes",
+            "MIN(msg_type_diff.bytes_received_dropped_queue_level)": "bytes",
+            "AVG(msg_type_diff.bytes_received_dropped_queue_level)": "bytes",
+
+            "msg_type_diff.bytes_received_dropped_create_failed": "bytes",
+            "SUM(msg_type_diff.bytes_received_dropped_create_failed)": "bytes",
+            "MAX(msg_type_diff.bytes_received_dropped_create_failed)": "bytes",
+            "MIN(msg_type_diff.bytes_received_dropped_create_failed)": "bytes",
+            "AVG(msg_type_diff.bytes_received_dropped_create_failed)": "bytes",
+
+            "msg_type_diff.bytes_received_dropped_control_msg_failed": "bytes",
+            "SUM(msg_type_diff.bytes_received_dropped_control_msg_failed)": "bytes",
+            "MAX(msg_type_diff.bytes_received_dropped_control_msg_failed)": "bytes",
+            "MIN(msg_type_diff.bytes_received_dropped_control_msg_failed)": "bytes",
+            "AVG(msg_type_diff.bytes_received_dropped_control_msg_failed)": "bytes",
+
+            "msg_type_diff.bytes_received_dropped_decoding_failed": "bytes",
+            "SUM(msg_type_diff.bytes_received_dropped_decoding_failed)": "bytes",
+            "MAX(msg_type_diff.bytes_received_dropped_decoding_failed)": "bytes",
+            "MIN(msg_type_diff.bytes_received_dropped_decoding_failed)": "bytes",
+            "AVG(msg_type_diff.bytes_received_dropped_decoding_failed)": "bytes",
+
+            // StatTable.CollectorDbStats.stats_info
+            "COUNT(stats_info)": "number",
+
+            "stats_info.reads": "number",
+            "SUM(stats_info.reads)": "number",
+            "MAX(stats_info.reads)": "number",
+            "MIN(stats_info.reads)": "number",
+            "AVG(stats_info.reads)": "number",
+
+            "stats_info.read_fails": "number",
+            "SUM(stats_info.read_fails)": "number",
+            "MAX(stats_info.read_fails)": "number",
+            "MIN(stats_info.read_fails)": "number",
+            "AVG(stats_info.read_fails)": "number",
+
+            "stats_info.writes": "number",
+            "SUM(stats_info.writes)": "number",
+            "MAX(stats_info.writes)": "number",
+            "MIN(stats_info.writes)": "number",
+            "AVG(stats_info.writes)": "number",
+
+            "stats_info.write_fails": "number",
+            "SUM(stats_info.write_fails)": "number",
+            "MAX(stats_info.write_fails)": "number",
+            "MIN(stats_info.write_fails)": "number",
+            "AVG(stats_info.write_fails)": "number",
+
+            "stats_info.write_back_pressure_fails": "number",
+            "SUM(stats_info.write_back_pressure_fails)": "number",
+            "MAX(stats_info.write_back_pressure_fails)": "number",
+            "MIN(stats_info.write_back_pressure_fails)": "number",
+            "AVG(stats_info.write_back_pressure_fails)": "number",
+
+            // StatTable.PeerStatsData.tx_update_stats
+            "COUNT(tx_update_stats)": "number",
+
+            "tx_update_stats.total": "number",
+            "SUM(tx_update_stats.total)": "number",
+            "MAX(tx_update_stats.total)": "number",
+            "MIN(tx_update_stats.total)": "number",
+            "AVG(tx_update_stats.total)": "number",
+
+            "tx_update_stats.reach": "number",
+            "SUM(tx_update_stats.reach)": "number",
+            "MAX(tx_update_stats.reach)": "number",
+            "MIN(tx_update_stats.reach)": "number",
+            "AVG(tx_update_stats.reach)": "number",
+
+            "tx_update_stats.unreach": "number",
+            "SUM(tx_update_stats.unreach)": "number",
+            "MAX(tx_update_stats.unreach)": "number",
+            "MIN(tx_update_stats.unreach)": "number",
+            "AVG(tx_update_stats.unreach)": "number",
+
+            "tx_update_stats.end_of_rib": "number",
+            "SUM(tx_update_stats.end_of_rib)": "number",
+            "MAX(tx_update_stats.end_of_rib)": "number",
+            "MIN(tx_update_stats.end_of_rib)": "number",
+            "AVG(tx_update_stats.end_of_rib)": "number",
+
+            // StatTable.ModuleClientState.tx_msg_diff
+            "COUNT(tx_msg_diff)": "number",
+
+            "tx_msg_diff.__value": "number",
+            "SUM(tx_msg_diff.__value)": "number",
+            "MAX(tx_msg_diff.__value)": "number",
+            "MIN(tx_msg_diff.__value)": "number",
+            "AVG(tx_msg_diff.__value)": "number"
         };
 
         this.D3_COLOR_CATEGORY2 = [ "#1f77b4", "#2ca02c"];
