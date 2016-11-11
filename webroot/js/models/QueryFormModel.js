@@ -53,6 +53,7 @@ define([
         onChangeTime: function() {
             var self = this,
                 table_type = self.model().get('table_type')
+
             if (table_type === cowc.QE_STAT_TABLE_TYPE
                 || table_type === cowc.QE_OBJECT_TABLE_TYPE
                 || table_type === cowc.QE_FLOW_TABLE_TYPE) {
@@ -70,7 +71,10 @@ define([
                 }
                 this.setTableValues(setTableValuesCallbackFn, table_type)
             }
-            this.setTableFieldValues()
+            // use the timer trick to overcome a event firing sequence issue.
+            setTimeout(function() {
+                this.setTableFieldValues();
+            }.bind(this), 0);
         },
 
         setTableValues: function(setTableValuesCallbackFn, tabletype) {
