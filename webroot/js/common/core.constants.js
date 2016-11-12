@@ -1976,11 +1976,11 @@ define([
             var args = arguments;
             return cowu.getValueFromTemplate(args);
         };
-        this.DEFAULT_COLOR = '#adcfdc';
+        this.DEFAULT_COLOR = '#6f97ae';
         this.HTTP_STATUS_CODE_AUTHORIZATION_FAILURE = 401;
 
         //Node color schemes
-        this.SINGLE_NODE_COLOR = ['#adcfdc'];
+        this.SINGLE_NODE_COLOR = ['#6f97ae'];
         this.THREE_NODE_COLOR = ['#a8c0d1', '#6f97ae', '#617683'];
         this.FIVE_NODE_COLOR = ['#819eb5', '#6b8295', '#876f8a', '#b2a198', '#eccc9b'];
         this.FAILURE_COLOR = '#d95436';
