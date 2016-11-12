@@ -64,6 +64,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'joint'                       : coreWebDir + '/assets/joint/js/joint.clean',
         'joint.contrail'              : coreWebDir + '/js/common/joint.contrail',
 
+        'event-drops'                 : coreWebDir + '/assets/event-drops/js/eventDrops',
+
         'core-alarm-utils'            :  coreWebDir + '/js/common/core.alarms.utils',
         'core-alarm-parsers'          :  coreWebDir + '/js/common/core.alarms.parsers',
 
