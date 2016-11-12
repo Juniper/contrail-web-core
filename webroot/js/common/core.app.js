@@ -43,6 +43,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'jquery-dep-libs'             : coreWebDir + '/js/common/jquery.dep.libs',
         'nonamd-libs'                 : coreWebDir + '/js/common/nonamd.libs',
         //Files not in bundles
+        'widget-configmanager'        : coreWebDir + '/js/widget.configmanager',
         'gridstack'                   : coreWebDir + '/assets/gridstack/js/gridstack',
         'underscore'                  : coreWebDir + '/assets/underscore/underscore-min',
         'slickgrid-utils'             : coreWebDir + "/js/slickgrid-utils",

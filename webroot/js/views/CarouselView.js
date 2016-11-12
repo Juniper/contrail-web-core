@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
-define(['underscore', 'contrail-view'], function(_, ContrailView){
+define(['underscore', 'contrail-view','widget-configmanager'], function(_, ContrailView,widgetConfigManager){
     var CarouselView = ContrailView.extend({
         render: function(){
             var self = this,
@@ -167,7 +167,7 @@ define(['underscore', 'contrail-view'], function(_, ContrailView){
 
         switch(viewType){
             case 'GridStackView': {
-                title = getGridStackViewTitles(view.viewConfig.widgetCfgList);
+                title = getGridStackViewTitles(view.viewConfig);
                 break;
             }
         }
@@ -175,13 +175,20 @@ define(['underscore', 'contrail-view'], function(_, ContrailView){
         return title;
     }
 
-    function getGridStackViewTitles(listArr){
+    function getGridStackViewTitles(viewConfig) {
+        var widgetCfgList;
+        if(localStorage.getItem(viewConfig['elementId']) != null) {
+            var serializedData = localStorage.getItem(viewConfig['elementId']);
+            widgetCfgList = JSON.parse(serializedData);
+        }
         var title = [],
             lstIdx = 0,
+            listArr = ifNull(widgetCfgList,viewConfig.widgetCfgList);
             lstLen = listArr.length;
         for(lstIdx = 0; lstIdx < 3; lstIdx++){
-            if(getValueByJsonPath(listArr[lstIdx],'itemAttr;title',null))
-                title.push(listArr[lstIdx].itemAttr.title);
+            var currWidgetCfg = widgetConfigManager.get(listArr[lstIdx]['id'])();
+            if(getValueByJsonPath(currWidgetCfg,'itemAttr;title',null))
+                title.push(currWidgetCfg.itemAttr.title);
         }
         return title.toString().split(',').join('<br>');
     }

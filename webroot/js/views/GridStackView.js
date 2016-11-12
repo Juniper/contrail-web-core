@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
+ */
 define([
     'underscore',
     'backbone',
@@ -5,8 +8,9 @@ define([
     'gridstack',
     'contrail-list-model',
     'core-utils',
-    'chart-utils'
-], function (_, Backbone,ContrailView,gridstack, ContrailListModel,CoreUtils,chUtils) {
+    'chart-utils',
+    'widget-configmanager',
+], function (_, Backbone,ContrailView,gridstack, ContrailListModel,CoreUtils,chUtils,widgetConfigManager) {
     var cowu = new CoreUtils();
     var GridStackView = ContrailView.extend({
         initialize: function(options) {
@@ -14,6 +18,7 @@ define([
             self.widgets = [];
             self.widgetCfgList = cowu.getValueByJsonPath(options,'attributes;viewConfig;widgetCfgList',{});
             self.gridAttr = cowu.getValueByJsonPath(options,'attributes;viewConfig;gridAttr',{});
+            self.elementId = cowu.getValueByJsonPath(options,'attributes;viewConfig;elementId','');
             self.COLUMN_CNT = 2;
             self.VIRTUAL_COLUMNS = 2;
             //Decouple cellHieght from height assigned to widget
@@ -40,16 +45,41 @@ define([
                 $(ui.element[0]).trigger('resize');
             });
         },
+        saveGrid : function () {
+            var self = this;
+            var serializedData = _.map(self.$el.find('.grid-stack-item:visible'), function (el) {
+                el = $(el);
+                var node = el.data('_gridstack_node');
+                return {
+                    id: el.attr('data-widget-id'),
+                    x: node.x,
+                    y: node.y,
+                    width: node.width,
+                    height: node.height
+                };
+            }, this);
+            localStorage.setItem(self.elementId,JSON.stringify(serializedData));
+        },
         render: function() {
             var self = this;
+            //Check if there exists a saved preference for current gridStack id
+            if(localStorage.getItem(self.elementId) != null) {
+                var serializedData = localStorage.getItem(self.elementId);
+                self.widgetCfgList = JSON.parse(serializedData);
+            }
             for(var i=0;i < self.widgetCfgList.length;i++) {
-                var currWidgetCfg = self.widgetCfgList[i];
+                var currWidgetCfg = widgetConfigManager.get(self.widgetCfgList[i]['id'])();
                 self.add({
+                    widgetCfg: self.widgetCfgList[i],
                     modelCfg: currWidgetCfg['modelCfg'],
                     viewCfg: currWidgetCfg['viewCfg'],
-                    itemAttr: currWidgetCfg['itemAttr']
+                    itemAttr: $.extend({},currWidgetCfg['itemAttr'],self.widgetCfgList[i])
                 });
             }
+            //Listen for change events once gridStack is rendered else it's getting triggered even while adding widgets for the first time
+            self.$el.on('change',function(event,items) {
+                // self.saveGrid();
+            });
         },
         add: function(cfg) {
             var self = this;
@@ -57,19 +87,25 @@ define([
             var itemAttr = ifNull(cfg['itemAttr'],{});
             var defaultWidth = ifNull(self.gridAttr['defaultWidth'],1);
             var defaultHeight = ifNull(self.gridAttr['defaultHeight'],1)*self.CELL_HEIGHT_MULTIPLER;
+            var widgetCfg = cfg['widgetCfg'];
 
-            if(itemAttr['width'] != null) {
-                itemAttr['width'] = itemAttr['width']*defaultWidth;
-                $(currElem).attr('data-gs-width',itemAttr['width']);
-            }
-            if(itemAttr['height'] != null) {
-                itemAttr['height'] = itemAttr['height']*defaultHeight;
-                $(currElem).attr('data-gs-height',itemAttr['height']);
-            }
 
             var widgetCnt = self.widgets.length;
-            self.gridStack.addWidget(currElem,widgetCnt/self.COLUMN_CNT,(widgetCnt%self.COLUMN_CNT)/**self.VIRTUAL_COLUMNS*/,
-                ifNull(itemAttr['width'],defaultWidth),ifNull(itemAttr['height'],defaultHeight),true);
+            $(currElem).attr('data-widget-id',widgetCfg['id']);
+            if(localStorage.getItem(self.elementId) != null) {
+                self.gridStack.addWidget(currElem,itemAttr['x'],itemAttr['y'],itemAttr['width'],itemAttr['height']);
+            } else {
+                if(itemAttr['width'] != null) {
+                    itemAttr['width'] = itemAttr['width']*defaultWidth;
+                    $(currElem).attr('data-gs-width',itemAttr['width']);
+                }
+                if(itemAttr['height'] != null) {
+                    itemAttr['height'] = itemAttr['height']*defaultHeight;
+                    $(currElem).attr('data-gs-height',itemAttr['height']);
+                }
+                self.gridStack.addWidget(currElem,widgetCnt/self.COLUMN_CNT,(widgetCnt%self.COLUMN_CNT)/**self.VIRTUAL_COLUMNS*/,
+                    ifNull(itemAttr['width'],defaultWidth),ifNull(itemAttr['height'],defaultHeight),true);
+            }
             self.widgets.push(currElem);
             var modelCfg = cfg['modelCfg'];
             //Maintain a mapping of cacheId vs contrailListModel and if found,return that

@@ -43,6 +43,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'jquery-dep-libs'       : coreWebDir + '/js/common/jquery.dep.libs',
         'nonamd-libs'           : coreWebDir + '/js/common/nonamd.libs',
         //Files not in bundles
+        'widget-configmanager'        : coreWebDir + '/js/widget.configmanager',
+        'gridstack'                   : coreWebDir + '/assets/gridstack/js/gridstack',
         'underscore'            : coreWebDir + '/assets/underscore/underscore-min',
         'slickgrid-utils'       : coreWebDir + "/js/slickgrid-utils",
         'jquery'                : coreWebDir + '/assets/jquery/js/jquery.min',
@@ -59,6 +61,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'joint.layout.DirectedGraph'  : coreWebDir + '/assets/joint/js/joint.layout.DirectedGraph',
         'joint'                       : coreWebDir + '/assets/joint/js/joint.clean',
         'joint.contrail'              : coreWebDir + '/js/common/joint.contrail',
+
+        'event-drops'                 : coreWebDir + '/assets/event-drops/js/eventDrops',
 
         'core-alarm-utils'           :  coreWebDir + '/js/common/core.alarms.utils',
         'core-alarm-parsers'         :  coreWebDir + '/js/common/core.alarms.parsers',
