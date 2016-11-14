@@ -1380,12 +1380,16 @@ define([
             return obj;
         };
 
-        this.getAttributes4Schema = function(attributes, schema) {
-            var json = $.extend(true, {}, attributes),
-                schema = contrail.checkIfExist(schema['items']) ? schema['items']['properties'] : schema['properties'];
+        this.getAttributes4Schema = function(attributes, schema, schemaStart) {
+            var json = $.extend(true, {}, attributes);
 
+            if (!schemaStart) {
+                finalSchema = contrail.checkIfExist(schema['items']) ? schema['items']['properties'] : schema['properties'];
+            } else {
+                finalSchema = schemaStart;
+            }
             for(var key in json) {
-                if(!contrail.checkIfExist(schema[key])) {
+                if(!contrail.checkIfExist(finalSchema[key])) {
                     delete json[key];
                 }
             }
