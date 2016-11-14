@@ -59,7 +59,7 @@ define([
         renderChart: function (selector, viewConfig, chartDataModel) {
             var self = this,
                 modelData = chartDataModel.getItems(),
-                data = modelData.slice(0),
+                data = modelData.slice(0), //work with shallow copy
                 chartTemplate = contrail.getTemplate4Id(cowc.TMPL_CHART),
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
                 chartViewConfig, chartOptions, chartViewModel,
@@ -262,7 +262,8 @@ define([
         var lineChart;
         for(var i = 0; i < chartData.length; i++) {
             lineChart = chartData[i];
-            if (lineChart.length > 2) {
+            //Taking out first and last value as it may be incomplete sample.
+            if (lineChart.values.length > 2) {
                 lineChart['values'] = lineChart['values'].slice(1, -1);
             }
         }
