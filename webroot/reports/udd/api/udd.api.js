@@ -18,15 +18,18 @@ client.execute("SELECT keyspace_name FROM system.schema_keyspaces;", function(er
         var q1 = "CREATE KEYSPACE " + uddKeyspace + " WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 1};";
         var q2 = "CREATE TYPE config (  title text,  x int,  y int,  width int,  height int,);";
         var q3 = 'CREATE TYPE widget_view (  view text,  "viewPathPrefix" text,  model text,  "modelConfig" text,  "modelPathPrefix" text,);';
-        var q4 = 'CREATE TABLE user_widgets (  id uuid,  "userId" text,  "dashboardId" text,  "tabId" text,  "tabName" text, config frozen <config>,  "contentConfig" map<text, frozen <widget_view>>,  PRIMARY KEY(id));';
+        var q4 = 'CREATE TABLE user_widgets (  id uuid,  "userId" text,  "dashboardId" text,  "tabId" text, "tabCreationTime" text, "tabName" text, config frozen <config>,  "contentConfig" map<text, frozen <widget_view>>,  PRIMARY KEY(id));';
         var q5 = 'CREATE INDEX ON user_widgets ("userId");';
+        var q6 = 'CREATE INDEX ON user_widgets ("tabId");';
 
         client.execute(q1, function() {
             client = connectDB();
             client.execute(q2, function() {
                 client.execute(q3, function() {
                     client.execute(q4, function() {
-                        client.execute(q5, function() {});
+                        client.execute(q5, function() {
+                            client.execute(q6, function() {});
+                        });
                     });
                 });
             });
@@ -34,6 +37,34 @@ client.execute("SELECT keyspace_name FROM system.schema_keyspaces;", function(er
     } else {
         client = connectDB();
     }
+
+    /**
+     * This code is used to add new "tabCreationTime" column to existing tables.
+     * For the existing old tables, the defualt value for this new column will be
+     * the current time.
+     * 
+     * This code won't run for any new table created by the above code snippet.
+     * 
+     * Once the DB is stable (all existing tables have been augmented with new column),
+     * this code should be removed.
+     */
+    client.execute('select "tabCreationTime" from user_widgets', function(err) {
+        if (err.toLowerCase() === "undefined name tabcreationtime in selection clause") {
+            client.execute("select id from user_widgets", function(err, result) {
+                var addTabCreationTime = 'update user_widgets set "tabCreationTime" = ? where "id" = ?';
+                
+                _.forEach(result.rows, function(row) {
+                    client.execute(addTabCreationTime, [Date.now() + "", row.id], function(err) {
+                        if (err) {
+                            console.error(err);
+                        }
+                    });
+                });
+            });
+        } else if (err) {
+            console.error(err);
+        }
+    });
 });
 
 function connectDB() {
@@ -46,8 +77,8 @@ function createWidget(req, res) {
     w.id = req.param("id");
     w.userId = req.session.userid;
 
-    var upsertWidget = 'INSERT INTO user_widgets (id, "userId", "dashboardId", "tabId", "tabName", config, "contentConfig") VALUES (?, ?, ?, ?, ?, ?, ?);';
-    client.execute(upsertWidget, [w.id, w.userId, w.dashboardId, w.tabId, w.tabName, w.config, w.contentConfig], { prepare: true },
+    var upsertWidget = 'INSERT INTO user_widgets (id, "userId", "dashboardId", "tabId", "tabName", "tabCreationTime", config, "contentConfig") VALUES (?, ?, ?, ?, ?, ?, ?, ?);';
+    client.execute(upsertWidget, [w.id, w.userId, w.dashboardId, w.tabId, w.tabName, w.tabCreationTime + "", w.config, w.contentConfig], { prepare: true },
         function(error, result) {
             commonUtils.handleJSONResponse(null, res, { result: result, error: error });
         }
