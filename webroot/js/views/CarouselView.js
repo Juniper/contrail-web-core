@@ -185,7 +185,7 @@ define(['underscore', 'contrail-view','widget-configmanager'], function(_, Contr
             lstIdx = 0,
             listArr = ifNull(widgetCfgList,viewConfig.widgetCfgList);
             lstLen = listArr.length;
-        for(lstIdx = 0; lstIdx < 3; lstIdx++){
+        for(lstIdx = 0; lstIdx < lstLen; lstIdx++){
             var currWidgetCfg = widgetConfigManager.get(listArr[lstIdx]['id'])();
             if(getValueByJsonPath(currWidgetCfg,'itemAttr;title',null))
                 title.push(currWidgetCfg.itemAttr.title);
