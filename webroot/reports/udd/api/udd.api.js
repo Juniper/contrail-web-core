@@ -51,7 +51,8 @@ client.execute("SELECT keyspace_name FROM system.schema_keyspaces;", function(er
      * this code should be removed.
      */
     client.execute(['select "tabCreationTime" from', tableName].join(" "), function(err) {
-        if (err.message && err.message.toLowerCase() === "undefined name tabcreationtime in selection clause") {
+        var errorMsg = _.get(err, "message");
+        if (errorMsg && errorMsg.toLowerCase() === "undefined name tabcreationtime in selection clause") {
             client.execute(["alter table", tableName, 'add "tabCreationTime" text'].join(" "), function(err) {
                 if (!err) {
                     client.execute(["select id from", tableName].join(" "), function(err, result) {
