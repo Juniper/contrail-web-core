@@ -35,7 +35,7 @@ define([
             });
         },
         comparator: function (w) {
-            return w.attributes.tabName.toLowerCase();
+            return w.attributes.tabCreationTime;
         },
         parse: function(response) {
             var _res = response && response.result ? response.result.rows : [];
