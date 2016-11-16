@@ -11,7 +11,7 @@ var orch = require('../orchestration/orchestration.api');
 
 var orchModels = orch.getOrchestrationModels();
 
-var openstackNetworkApi = require('../orchestration/plugins/openstack/glance.api');
+var openstackNetworkApi = require('../orchestration/plugins/openstack/neutron.api');
 var cloudstackNetworkApi  =
     require('../orchestration/plugins/cloudstack/cloudstack.api');
 var noOrchestrationNetworkApi  =
