@@ -19,6 +19,7 @@ define([
             self.widgetCfgList = cowu.getValueByJsonPath(options,'attributes;viewConfig;widgetCfgList',{});
             self.gridAttr = cowu.getValueByJsonPath(options,'attributes;viewConfig;gridAttr',{});
             self.elementId = cowu.getValueByJsonPath(options,'attributes;viewConfig;elementId','');
+            self.movedWidgetCfg = cowu.getValueByJsonPath(options,'attributes;viewConfig;movedWidgetCfg',null);
             self.COLUMN_CNT = 2;
             self.VIRTUAL_COLUMNS = 2;
             //Decouple cellHieght from height assigned to widget
@@ -39,7 +40,7 @@ define([
                 animate:false,
                 acceptWidgets:'label'
             }).data('gridstack');
-            
+
             //Trigger resize on widgets on resizestop
             self.$el.on('resizestop',function(event,ui) {
                 $(ui.element[0]).trigger('resize');
@@ -62,10 +63,18 @@ define([
         },
         render: function() {
             var self = this;
+            self.tmpHeight = 0;
+            if(self.movedWidgetCfg) {
+                self.add(self.movedWidgetCfg, true);
+                self.movedWidgetCfg = null;
+            }
             //Check if there exists a saved preference for current gridStack id
             if(localStorage.getItem(self.elementId) != null) {
-                var serializedData = localStorage.getItem(self.elementId);
-                self.widgetCfgList = JSON.parse(serializedData);
+                var serializedData = localStorage.getItem(self.elementId),
+                    tmpData = JSON.parse(serializedData);
+                if(tmpData.length > 0){
+                    self.widgetCfgList = tmpData;
+                }
             }
             for(var i=0;i < self.widgetCfgList.length;i++) {
                 var currWidgetCfg = widgetConfigManager.get(self.widgetCfgList[i]['id'])();
@@ -78,21 +87,28 @@ define([
             }
             //Listen for change events once gridStack is rendered else it's getting triggered even while adding widgets for the first time
             self.$el.on('change',function(event,items) {
-                // self.saveGrid();
+                self.saveGrid();
             });
+            self.saveGrid();
+            self.$el.data('grid-stack-instance',self);
         },
-        add: function(cfg) {
+        add: function(cfg, isMoved) {
             var self = this;
             var currElem = $($('#gridstack-widget-template').text()).attr('data-gs-height',2);
             var itemAttr = ifNull(cfg['itemAttr'],{});
             var defaultWidth = ifNull(self.gridAttr['defaultWidth'],1);
             var defaultHeight = ifNull(self.gridAttr['defaultHeight'],1)*self.CELL_HEIGHT_MULTIPLER;
             var widgetCfg = cfg['widgetCfg'];
-
-
             var widgetCnt = self.widgets.length;
             $(currElem).attr('data-widget-id',widgetCfg['id']);
-            if(localStorage.getItem(self.elementId) != null) {
+            if(localStorage.getItem(self.elementId) != null || isMoved) {
+                if(isMoved){
+                    self.tmpHeight = itemAttr['height'];
+                    itemAttr['x'] = 0;
+                    delete itemAttr['y'];
+                }else if(self.tmpHeight > 0){
+                    itemAttr['y'] = itemAttr['y'] + self.tmpHeight;
+                }
                 self.gridStack.addWidget(currElem,itemAttr['x'],itemAttr['y'],itemAttr['width'],itemAttr['height']);
             } else {
                 if(itemAttr['width'] != null) {
@@ -123,6 +139,7 @@ define([
                 $(currElem).find('.item-content').addClass('drag-handle');
             }
             cfg['viewCfg'] = $.extend(true,{},chUtils.getDefaultViewConfig(viewType),cfg['viewCfg']);
+            $(currElem).data('data-cfg', cfg);
             self.renderView4Config($(currElem).find('.item-content'), modelCfg, cfg['viewCfg']);
         }
     });
