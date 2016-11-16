@@ -1212,6 +1212,7 @@ if (typeof document !== 'undefined' && document) {
                 require(['jquery'],function() {
                     $('.modal').remove();
                     $('.modal-backdrop').remove();
+                    $(".focus-config-backdrop").remove();
                 });
                 loadUtils.bindSignInListeners();
             },
