@@ -13,8 +13,6 @@ define([
     "text!core-basedir/reports/udd/config/default.config.json"
 ], function(_, Backbone, ko, cowc, ContrailModel, qeUtils, uddConstants, defaultConfig) {
     var oldConfigState = null, // a private property remembering the oldConfigState of this widget
-        dataModelChangeHandler = _.noop, // a private property holding visualization meta config
-                                         // model's handlers to data config model change event
         defaultConfigKeys = {
             VISUALIZATION_TYPES: "contentViews",
             DATA_SOURCE_TYPES: "dataSources",
@@ -180,6 +178,8 @@ define([
                     }
                 }, this);
 
+            this.dataModelChangeHandler = _.noop; // a property holding visualization meta config model's
+                                                  // handler for data config model change event
             require([
                 this.getConfigModelObj(modelConfig[uddConstants.subviewIDs.DATA_SOURCE]).path,
                 this.getConfigModelObj(modelConfig[uddConstants.subviewIDs.VISUALIZATION]).path
@@ -445,10 +445,12 @@ define([
                 attrs = this.attributes;
 
             if (dataConfigModel) {
-                // A new visualization meta config model is gonna take place,
-                // so unregister the current visualization meta config model's
-                // data model change event handler.
-                dataConfigModel.model().off("change", dataModelChangeHandler);
+                /**
+                 * A new visualization meta config model is gonna take place,
+                 * so unregister the current visualization meta config model's
+                 * data model change event handler.
+                 */
+                dataConfigModel.model().off("change", this.dataModelChangeHandler);
             }
 
             if (DataConfigModel) {
@@ -477,28 +479,45 @@ define([
             }
 
             if (ContentConfigModel) {
-                var currVisualMetaConfig = _.get(attrs, [
-                    uddConstants.raw.SUBVIEWS_CONFIG,
-                    uddConstants.subviewIDs.VISUAL_META,
-                    uddConstants.raw.SUBVIEW_MODEL_DATA
-                ]);
+                var currVisualMetaModel = _.get(attrs, [uddConstants.modelIDs.VISUAL_META]),
+                    currVisualMetaConfig = currVisualMetaModel ? currVisualMetaModel.toJSON() : _.get(attrs, [
+                            uddConstants.raw.SUBVIEWS_CONFIG,
+                            uddConstants.subviewIDs.VISUAL_META,
+                            uddConstants.raw.SUBVIEW_MODEL_DATA
+                        ]);
 
-                // Instantiate the new visulization meta config model
-                // and connect it to other models
+                /**
+                 * Instantiate the new visulization meta config model
+                 * and connect it to other models
+                 */
                 visualMetaConfigModel = new ContentConfigModel(currVisualMetaConfig);
-                dataModelChangeHandler = function(model) {
-                    visualMetaConfigModel.onDataModelChange(model);
+
+                this.dataModelChangeHandler = function(model) {
+                    /**
+                     * EXPLAINATION: "visualType" is an observable added to data source
+                     *     config model on the fly. It provides necessary info for UDD-specific
+                     *     form validation. Its value is synced with "Content View" dropdown.
+                     *     Ideally, when the dropdown value is changed, the content/visual-meta
+                     *     config model should be updated first. However, the event firing order
+                     *     does otherwise. Thus, the new data source config model change conflicts
+                     *     with the old content/visual-meta config model and, as a result, break
+                     *     the app. To avoid this problem, skip handling visualType change of data
+                     *     source config model.
+                     */
+                    if (!_.has(model.changed, "visualType")) {
+                        visualMetaConfigModel.onDataModelChange(model);
+                    }
                 };
 
                 // ALERT: Since the onDataModelChange event hanlder listens to Backbone's change event,
                 //        we should pass in the underlying Backbone model rather than the KnockBack model.
                 //        This will avoid an data update timing issue (the Backbone model is updated,
                 //        but the Knockback observables are not updated till next CPU tick.)
-                dataModelChangeHandler(dataConfigModel.model());
-                dataConfigModel.model().on("change", dataModelChangeHandler);
+                this.dataModelChangeHandler(dataConfigModel.model());
+                dataConfigModel.model().on("change", this.dataModelChangeHandler);
             }
 
-            // for some content views config may be missing <=== What?
+            // When widget is being initialized, this model will be empty
             this.set(uddConstants.modelIDs.VISUAL_META, visualMetaConfigModel);
 
             this.ready = true;

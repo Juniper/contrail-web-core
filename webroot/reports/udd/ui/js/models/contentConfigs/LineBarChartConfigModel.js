@@ -9,8 +9,8 @@ define([
 ], function(cowc, formValidationConfig, ContentConfigModel) {
 
     return ContentConfigModel.extend({
-        constructor: function() {
-            ContentConfigModel.prototype.constructor.apply(this, arguments);
+        constructor: function(modelConfig, modelRemoteDataConfig) {
+            ContentConfigModel.prototype.constructor.call(this, modelConfig, modelRemoteDataConfig);
             
             if (this.barLabel() === "") {
                 this.barValue.subscribe(function(newValue) {
