@@ -8,8 +8,12 @@ define([
 ], function(_, ContrailModel) {
 
     return ContrailModel.extend({
-        constructor: function() {
-            ContrailModel.prototype.constructor.apply(this, arguments);
+        constructor: function(modelConfig, modelRemoteDataConfig) {
+            /**
+             * Use contract defined by defaultConfig to sanitize modelConfig
+             */
+            modelConfig = this.normalizeModelConfig(modelConfig);
+            ContrailModel.prototype.constructor.call(this, modelConfig, modelRemoteDataConfig);
         },
         onDataModelChange: function() {},
 
@@ -23,6 +27,18 @@ define([
 
         getContentViewOptions: function() {
             return {};
+        },
+
+        normalizeModelConfig: function(modelConfig) {
+            if (this.defaultConfig) {
+                var picked = _.pick(modelConfig, function(propVal, propName) {
+                    return propName in this.defaultConfig;
+                }, this);
+
+                return picked;
+            } else {
+                return modelConfig;
+            }
         },
 
         timeSeries: function(fieldsString) {
