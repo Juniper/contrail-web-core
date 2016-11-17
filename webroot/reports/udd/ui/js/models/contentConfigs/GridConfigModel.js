@@ -24,7 +24,7 @@ define([
 
     return ContentConfigModel.extend({
         constructor: function(modelConfig, modelRemoteDataConfig) {
-            if ("visibleColumns" in modelConfig) {
+            if (_.isUndefined(modelConfig) || "visibleColumns" in modelConfig) {
                 this.isBrandNew = false;
             }
             ContentConfigModel.prototype.constructor.call(this, modelConfig, modelRemoteDataConfig);
