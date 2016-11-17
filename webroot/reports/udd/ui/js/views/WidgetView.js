@@ -292,7 +292,12 @@ define([
 
         clone: function() {
             var posMeta = ["x", "y", "width", "height"],
-                vmParams = ["editingTitle", "isReady", "step"],
+                vmParams = ["editingTitle", "isReady", "step"
+                    /** original solution for https://app.asana.com/0/162139934853695/206515470400258,
+                     *  disabled due to solution impact investigation
+                     
+                     , "canProceed"
+                     */],
                 widgetTileMeta = this.model.get(uddConstants.modelIDs.WIDGET_META).model().attributes, // positioning, title and other UI state flags
                 clonedWidgetConfig = this.model.toJSON(), // overall widget component config
                 tabId = clonedWidgetConfig.tabId,

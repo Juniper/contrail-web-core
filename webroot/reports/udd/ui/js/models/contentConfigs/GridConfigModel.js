@@ -12,9 +12,24 @@ define([
 ], function(_, coreConstants, uddConstants, qeUtils, qeGridConfig, ContentConfigModel) {
     var delimiter = ",";
 
+    /**
+     * Convert string value of the select field in a form to an array
+     *
+     * @param      {string}  selectStr  The value of select field in string format.
+     * @return     {string}             The coverted value in array format.
+     */
+    function getSelectArray(selectStr) {
+        return selectStr.replace(/\s+/g, "").split(delimiter);
+    }
+
     return ContentConfigModel.extend({
-        canUseSelectChange: false, // a flag indicating if the select field
-                                   // change can be used to update visible columns
+        constructor: function(modelConfig, modelRemoteDataConfig) {
+            if (!_.isUndefined(modelConfig) && "visibleColumns" in modelConfig) {
+                this.isBrandNew = false;
+            }
+            ContentConfigModel.prototype.constructor.call(this, modelConfig, modelRemoteDataConfig);
+        },
+        isBrandNew: true, // a flag indicating if this is a brand new GridView view
         defaultConfig: {
             gridTitle: "",
             tableName: "",
@@ -33,7 +48,11 @@ define([
                 }
             }
         },
-        // update fields dependent on data model
+        /**
+         * Update fields that depend on data source config view model
+         *
+         * @param      {object}  viewModel  The data source config view model.
+         */
         onDataModelChange: function(viewModel) {
             var tableName = viewModel.get("table_name"),
                 tableType = viewModel.get("table_type");
@@ -42,8 +61,7 @@ define([
                 return;
             }
 
-            var selectedFields = viewModel.get("select").replace(/\s+/g, ""),
-                selectedFieldArray = selectedFields.split(delimiter);
+            var selectedFieldArray = getSelectArray(viewModel.get("select"));
 
             this.tableName(tableName);
             this.tableType(tableType);
@@ -59,26 +77,30 @@ define([
             var columnsToShow = this.visibleColumns().split(delimiter),
                 newColumnsToShowByDefault = [];
 
-            /** 
-             * when data source config form's select field is updated,
-             * find and delete those removed DB fields from visible columns.
-             * Then, by default, add any new DB fields to the visible columns.
-             */
-            if (!_.isEmpty(viewModel.changed.select)) {
-                if (!this.canUseSelectChange && _.isUndefined(viewModel.previous("select"))) {
-                    // This takes advantage of the truth that
-                    // on widget initialization, select field will be updated once
-                    // based on server response. And this initialization change
-                    // should be omitted. The else-clause should be enabled for all following 
-                    // select field changes.
-                    this.canUseSelectChange = true;
-                } else {
-                    var invalidColumnsToRemove = _.difference(columnsToShow, selectedFieldArray);
+            if (this.isBrandNew) {
+                newColumnsToShowByDefault = [].concat(selectedFieldArray);
+                this.isBrandNew = false;
+            } else if (!_.isEmpty(viewModel.changed.select)) {
+                /** 
+                 * when data source config form's select field is updated,
+                 * find and delete those removed DB fields from visible columns.
+                 * Then, by default, add any new DB fields to the visible columns.
+                 */
 
-                    newColumnsToShowByDefault = _.difference(selectedFieldArray, columnsToShow);
+                var prevSelectedStr = viewModel.previous("select");
 
-                    // TODO: When Lodash@4.x.x is available, replace this whole line with _.pullAll(columnsToShow, invalidColumnsToRemove);
-                    columnsToShow = _.difference(columnsToShow, invalidColumnsToRemove);
+                /**
+                 * This takes advantage of the truth that on widget initialization,
+                 * select field will be updated once based on server response.
+                 * And this initialization change should be omitted. The following
+                 * select field changes should be used for updating.
+                 */
+                if (!_.isUndefined(prevSelectedStr)) {
+                    var prevSelectedArray = getSelectArray(prevSelectedStr);
+
+                    newColumnsToShowByDefault = _.difference(selectedFieldArray, prevSelectedArray);
+
+                    columnsToShow = _.intersection(columnsToShow, selectedFieldArray);
                 }
             }
 
