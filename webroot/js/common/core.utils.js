@@ -2029,6 +2029,15 @@ define([
             }
         };
 
+        self.getGridItemsForWidgetId = function(widgetId) {
+            var gridInst = $("[data-widget-id='" + widgetId + "']").find('.contrail-grid').data('contrailGrid');
+            var items = [];
+            if(gridInst != null) {
+                items = gridInst._dataView.getItems();
+            }
+            return items;
+        }
+
         /**
          * Takes input as an array of configs.
          * The first one is considered as primary req and the rest are added as
@@ -2119,14 +2128,16 @@ define([
             }
             var listModelConfig =  {
                 remote : primaryRemoteConfig,
-                cacheConfig:{}
+                cacheConfig:{
+                    cacheTimeout: 5*60*1000
+                }
             };
             if(vlRemoteList.length > 0) {
                 var vlRemoteConfig = {vlRemoteList:vlRemoteList};
                 listModelConfig['vlRemoteConfig'] = vlRemoteConfig;
             }
-            if (statsConfig['ucid'] != null) {
-                listModelConfig['cacheConfig']['ucid'] = statsConfig['ucid'];
+            if (statsConfig['modelId'] != null) {
+                listModelConfig['cacheConfig']['ucid'] = statsConfig['modelId'];
             }
             return listModelConfig;
         };

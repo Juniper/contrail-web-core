@@ -42,9 +42,22 @@ define([
                 animate:false,
                 acceptWidgets:'label'
             }).data('gridstack');
-
+            
+            self.$el.on('dragstart',function(event,ui) {
+                self.$el.find('.grid-stack-item').on('drag',function(event,ui) {
+                    $('.custom-grid-stack').addClass('show-borders');
+                });
+                $('.custom-grid-stack').addClass('show-borders');
+            });
+            self.$el.on('dragstop',function(event,ui) {
+                $('.custom-grid-stack').removeClass('show-borders');
+            });
+            self.$el.on('resizestart',function(event,ui) {
+                $('.custom-grid-stack').addClass('show-borders');
+            });
             //Trigger resize on widgets on resizestop
             self.$el.on('resizestop',function(event,ui) {
+                $('.custom-grid-stack').removeClass('show-borders');
                 $(ui.element[0]).trigger('resize');
             });
             //Listen for change events once gridStack is rendered else it's getting triggered even while adding widgets for the first time
@@ -134,14 +147,35 @@ define([
                     ifNull(itemAttr['width'],defaultWidth),ifNull(itemAttr['height'],defaultHeight),true);
             }
             self.widgets.push(currElem);
-            var modelCfg = cfg['modelCfg'];
+            var modelCfg = cfg['modelCfg'],model;
+            //Add cache Config
+            var modelId = cfg['modelCfg']['modelId'];
+            //if there exists a mapping of modelId in widgetConfigManager.modelInstMap, use it
             //Maintain a mapping of cacheId vs contrailListModel and if found,return that
-            if(cowu.getValueByJsonPath(cfg,'modelCfg;source') == 'STATTABLE') {
-                modelCfg = new ContrailListModel(cowu.getStatsModelConfig(modelCfg['config']));
+            var cachedModelObj = widgetConfigManager.modelInstMap[modelId];
+            var isCacheExpired = true;
+            if(cachedModelObj != null && 
+               (_.now() - cachedModelObj['time']) < cowc.INFRA_MODEL_CACHE_TIMEOUT * 1000) {
+                model = widgetConfigManager.modelInstMap[modelId]['model'];
+                if(model.errorList.length == 0) {
+                    isCacheExpired = false;
+                    model.loadedFromCache = true;
+                }
+            }
+            if(!isCacheExpired) {
+                model = widgetConfigManager.modelInstMap[modelId]['model'];
+            } else if(cowu.getValueByJsonPath(cfg,'modelCfg;source','').match(/STATTABLE|LOG|OBJECT/)) {
+                model = new ContrailListModel(cowu.getStatsModelConfig(modelCfg['config']));
             } else if(cowu.getValueByJsonPath(cfg,'modelCfg;listModel','') != '') {
-                modelCfg = modelCfg['listModel'];
+                model = modelCfg['listModel'];
             } else if(cowu.getValueByJsonPath(cfg,'modelCfg;_type') != 'contrailListModel' && modelCfg != null) {
-                modelCfg = new ContrailListModel(modelCfg);
+                model = new ContrailListModel(modelCfg['config']);
+            }
+            if(isCacheExpired) {
+                widgetConfigManager.modelInstMap[modelId] = {
+                    model: model,
+                    time: _.now()
+                };
             }
             var viewType = cowu.getValueByJsonPath(cfg,'viewCfg;view','');
             if(viewType.match(/eventDropsView/)) {
@@ -151,7 +185,7 @@ define([
             }
             cfg['viewCfg'] = $.extend(true,{},chUtils.getDefaultViewConfig(viewType),cfg['viewCfg']);
             $(currElem).data('data-cfg', cfg);
-            self.renderView4Config($(currElem).find('.item-content'), modelCfg, cfg['viewCfg']);
+            self.renderView4Config($(currElem).find('.item-content'), model, cfg['viewCfg']);
         }
     });
     return GridStackView;
