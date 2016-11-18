@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
-define(['underscore', 'contrail-view','widget-configmanager'], function(_, ContrailView,widgetConfigManager){
+define(['underscore', 'contrail-view', 'widget-configmanager'], function(_, ContrailView, widgetConfigManager){
     var CarouselView = ContrailView.extend({
         render: function(){
             var self = this,
@@ -43,10 +43,12 @@ define(['underscore', 'contrail-view','widget-configmanager'], function(_, Contr
 
             hideTitleCover(self.$el);
             if(currReq === 'prev' && self.prevTitle){
-                self.$el.find(".carousel-control-cover-left-story").show();
+                self.$el.find(".carousel-control-cover-left-story").css('display','block');
+                self.$el.find(".carousel-control-cover-left-story").css('display','-webkit-box');
                 self.$el.find(".carousel-control-cover-left").addClass('carousel-control-cover-height');
-            }else if(self.nextTitle){
-                self.$el.find(".carousel-control-cover-right-story").show();
+            }else if(currReq === 'next' && self.nextTitle){
+                self.$el.find(".carousel-control-cover-right-story").css('display','block');
+                self.$el.find(".carousel-control-cover-right-story").css('display','-webkit-box');
                 self.$el.find(".carousel-control-cover-right").addClass('carousel-control-cover-height');
             }
         },
@@ -102,7 +104,7 @@ define(['underscore', 'contrail-view','widget-configmanager'], function(_, Contr
         toggleCarouselIndicator(self.currIndex, self.prevIndex);
         setTitleCover(self, index);
         if(!doAnimate){
-            self.renderView4Config(self.viewPlaceHolder,  model, page);
+           renderView(self, page, model);
         }else{
             var slideDirection = ['left','right'];
 
@@ -113,12 +115,28 @@ define(['underscore', 'contrail-view','widget-configmanager'], function(_, Contr
                 self.$el.find(".carousel-content").remove();
                 self.$el.find(".carousel-inner").append($('<div class="carousel-content">'));
                 $("div.carousel-content").show("slide", { direction: slideDirection[1] }, 300, function(){
-                   self.renderView4Config(self.$el.find('.carousel-content'),  model, page, null, null, null, function(){
-                       self.prevIndex = self.currIndex;
-                   });
+                    renderView(self, page, model);
                 });
             });
         }
+    }
+
+    function renderView(self, page, model){
+        if(self.widCfg && Object.keys(self.widCfg).length > 0){
+            page.viewConfig.movedWidgetCfg = $.extend({}, self.widCfg);
+            self.widCfg = {};
+        }else if(!self.widCfg || Object.keys(self.widCfg).length === 0){
+            page.viewConfig.movedWidgetCfg = null;
+        }
+        self.renderView4Config(self.$el.find('.carousel-content'),  model, page, null, null, null, function(){
+            self.prevIndex = self.currIndex;
+            if(self.lastIndex > 1){
+                var grid = self.$el.find('.grid-stack').data('grid-stack-instance');
+                self.$el.find('.grid-stack').on('dragstart', function(event, ui){
+                    gridStackDragHandler(event, ui, grid, self)
+                });
+            }
+        });
     }
 
     function toggleCarouselIndicator(index, prevIndex){
@@ -153,8 +171,8 @@ define(['underscore', 'contrail-view','widget-configmanager'], function(_, Contr
                 self.prevTitle = getTitle(self.viewList[currIndex - 1].page);
                 self.nextTitle = getTitle(self.viewList[0].page);
             }else{
-                self.prevTitle = getTitle(self.viewList[currIndex + 1].page);
-                self.nextTitle = getTitle(self.viewList[currIndex - 1].page);
+                self.prevTitle = getTitle(self.viewList[currIndex - 1].page);
+                self.nextTitle = getTitle(self.viewList[currIndex + 1].page);
             }
         }
         self.$el.find(".carousel-control-cover-left-story").html(self.prevTitle);
@@ -185,12 +203,48 @@ define(['underscore', 'contrail-view','widget-configmanager'], function(_, Contr
             lstIdx = 0,
             listArr = ifNull(widgetCfgList,viewConfig.widgetCfgList);
             lstLen = listArr.length;
-        for(lstIdx = 0; lstIdx < 3; lstIdx++){
+        for(lstIdx = 0; lstIdx < lstLen; lstIdx++){
             var currWidgetCfg = widgetConfigManager.get(listArr[lstIdx]['id'])();
             if(getValueByJsonPath(currWidgetCfg,'itemAttr;title',null))
                 title.push(currWidgetCfg.itemAttr.title);
         }
         return title.toString().split(',').join('<br>');
+    }
+
+    function gridStackDragHandler(event, ui, grid, self){
+        var element = event.target,
+            containerLeft = self.$el.find(".carousel-inner").offset().left,
+            containerRight = containerLeft + self.$el.find(".carousel-inner").outerWidth();
+
+        $('.grid-stack-item').on('drag', function(event, ui){
+            var el =  $(this),
+                parentView = $('.carousel'),
+                parentViewWidth = parentView.width(),
+                parentViewLeft = parentView.offset().left,
+                parentViewRight = parentViewLeft + parentViewWidth,
+                elWidth = el.width(),
+                elLeft = el.offset().left,
+                elRight = elLeft + el.width(),
+                leftMov = Math.round(elWidth/2) <= Math.round(parentViewLeft - elLeft),
+                rightMov = Math.round(elRight - parentViewRight) >= Math.round(elWidth/2),
+                changeAndAdd = function(widget, dir){
+                    var widHeight = parseInt($(widget).attr('data-gs-height'), 10),
+                        widWidth = parseInt($(widget).attr('data-gs-width'), 10);
+                    self.widCfg = $(widget).data('data-cfg');
+                    self.widCfg.itemAttr['width'] = widWidth;
+                    self.widCfg.itemAttr['height'] = widHeight;
+                    grid.gridStack.removeWidget(widget);
+                    grid.saveGrid();
+                    self.slide(null, dir);
+                };
+
+            if(leftMov){
+                changeAndAdd(this,'prev');
+            }
+            if(rightMov){
+                changeAndAdd(this,'next');
+            }
+        });
     }
 
     return CarouselView;
