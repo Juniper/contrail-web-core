@@ -31,7 +31,7 @@
                 {{/if}}
             {{/if}}
             {{#if lockAttr}}
-                <span class="label-group-edit" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
+                <span class="pull-right" style="display:none;" data-bind="visible: {{lockAttr}}, event: { click: function() { toggleLockAttr('{{name}}') }}">
                     <i class="fa fa-pencil blue" data-bind="css: {'grey': locks().{{name}}_locked }"></i>
                 </span>
             {{/if}}
