@@ -1339,6 +1339,12 @@ define([
             else
                 return value;
         };
+        this.isNil = function(value) {
+            if ((null === value) || (undefined === value)) {
+                return true;
+            }
+            return false;
+        };
         this.formatTimeRange = function(timeRange) {
             var formattedTime = 'custom', timeInSecs;
             if(timeRange != null && timeRange != -1) {
