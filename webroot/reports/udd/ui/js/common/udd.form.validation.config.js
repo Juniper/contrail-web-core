@@ -25,6 +25,9 @@ define([
             "min": true,
             "max": true,
             "count": true
+        }, isDirty = {
+            "sport": true,
+            "dport": true
         };
 
     /**
@@ -133,7 +136,7 @@ define([
      * @return {string}           composed error message for a field
      */
     function getFieldErrorMsg(subject, predicate, object) {
-        return [subject, predicate, "selection of", object, "fields"].join(" ");
+        return [subject, predicate, "selection of", object, "field(s)"].join(" ");
     }
 
     /**
@@ -173,16 +176,16 @@ define([
     var viewRequiredFormInfo = getValidationSchema(defaultConfigJSON);
 
     /**
-     * A validator core. Determines if the value has all required fields.
+     * A validator core. Determines if the value has all required DB fields.
      *
      * @param      {string}    value               The value passed by Backbone Validation library
      * @param      {string}    attr                The attribute name passed by Backbone Validation library
      * @param      {object}    metrics             A configuration object that provides necessary info for the core,
-     *                                             it can have preprocessor to sanitize the raw value for the dataTypeNormalizer.
+     *                                             it can have a preprocessor to sanitize the raw value for the dataTypeNormalizer.
      * @param      {function}  dataTypeNormalizer  A data type normalizer that converts various data types to more generic data types.
-     * @return     {string}                        Empty string if has all required fields, error message otherwise.
+     * @return     {string}                        Empty string if the field has all required fields, error message otherwise.
      */
-    function hasAllRequiredFields(value, attr, metrics, dataTypeNormalizer) { // eslint-disable-line
+    function hasAllRequiredDBFields(value, attr, metrics, dataTypeNormalizer) { // eslint-disable-line
         var key = metrics.key,
             target = metrics.target,
             attrRequirements = _.get(viewRequiredFormInfo, [key, target, attr]);
@@ -209,6 +212,38 @@ define([
         }
     }
 
+    /**
+     * A validator core. Determines if the where clause must be used to specify selected unclear/dirty colums.
+     *
+     * @param      {string}  value    The value passed by Backbone Validation library
+     * @param      {string}  attr     The attribute name passed by Backbone Validation library
+     * @param      {object}  metrics  A configuration object that provides necessary info for the core.
+     * @return     {string}           Empty string if the field has all required fields, error message otherwise.
+     */
+    function shouldUseWhereAsGroupBy(value, attr, metrics) {
+        var key = metrics.key,
+            target = metrics.target,
+            attrRequirements = _.get(viewRequiredFormInfo, [key, target, attr]);
+
+        if (attrRequirements) {
+            if (attrRequirements.requiredByDirtyColumns) {
+                var selectedDirtyColumns = metrics.preprocess();
+
+                selectedDirtyColumns = _.takeWhile(selectedDirtyColumns, function(column) {
+                    return _.isEmpty(value) || value.replace(" = ", "=").indexOf(column + "=") === -1;
+                });
+
+                if (value.indexOf(") OR (") !== -1) {
+                    return getFieldErrorMsg(convertToLabel(key)[0], "rejects usage of OR for sanitizing");
+                } else if (!_.isEmpty(selectedDirtyColumns)) {
+                    return getFieldErrorMsg(convertToLabel(key)[0], "requires where-clause-sanitized", selectedDirtyColumns.join(", "));
+                }
+            }
+        }
+
+        return "";
+    }
+
     return {
         /**
          * This is a rulesets created for query form validation in UDD widget.
@@ -229,7 +264,7 @@ define([
                                 },
                                 columnMetaMap = computedState.ui_added_parameters.table_schema_column_names_map;
 
-                            return hasAllRequiredFields(value, attr, metrics, getDataTypeNormalizer(columnMetaMap));
+                            return hasAllRequiredDBFields(value, attr, metrics, getDataTypeNormalizer(columnMetaMap));
                         }
                     }
                 },
@@ -243,7 +278,35 @@ define([
                             }
                         };
 
-                        return hasAllRequiredFields(value, attr, metrics, normalizeTableType);
+                        return hasAllRequiredDBFields(value, attr, metrics, normalizeTableType);
+                    }
+                },
+                where: {
+                    fn: function(value, attr, computedState) { // eslint-disable-line
+                        if (computedState.ui_added_parameters) {
+                            var columnMetaMap = computedState.ui_added_parameters.table_schema_column_names_map,
+                                dirtyColumns = _.keys(_.pick(columnMetaMap, function(value) {
+                                    return value.datatype === "string" // In general, string columns are used to
+                                                                       // selectively group data entries
+                                        || value.datatype === "ipaddr" // For FlowSeriesTable, "sourceip" and "destip"
+                                                                       // use a data type other than string
+                                        || isDirty[value.name];        // For other columns that can't be determined by
+                                                                       // data type, create a dictionary. Such as for
+                                                                       // "sport" and "vport" in FlowSeriesTable
+                                })),
+                                metrics = {
+                                    target: computedState.dataSrcType,
+                                    key: computedState.visualType,
+                                    preprocess: function() {
+                                        return _.intersection(
+                                                dirtyColumns,
+                                                computedState.select.replace(/\s+/g, "").split(",")
+                                            );
+                                    }
+                                };
+
+                            return shouldUseWhereAsGroupBy(value, attr, metrics);
+                        }
                     }
                 }
             }
@@ -268,14 +331,30 @@ define([
         mixValidationRules: function(rulesets1, rulesets2) {
             var combinedValidations = {};
 
+            // find all common rulesets of rulesets1 and rulesets2, then combine them
             _.forEach(rulesets1, function(ruleset, rulesetName) {
                 if (!combinedValidations[rulesetName]) {
                     combinedValidations[rulesetName] = {};
                 }
 
+                // find all common rules under current ruleset and combine them
                 _.forEach(ruleset, function(rule, formProperty) {
                     combinedValidations[rulesetName][formProperty] = combine(rule, _.get(rulesets2, [rulesetName, formProperty], []));
                 });
+
+                // find all rules that are unique to rulesets2 and clone it onto combinedValidations
+                _.forEach(rulesets2[rulesetName], function(rule, formProperty) {
+                    if (!_.has(combinedValidations, [rulesetName, formProperty])) {
+                        combinedValidations[rulesetName][formProperty] = combine(rule, []);
+                    }
+                });
+            });
+
+            // find all rulesets that are unique to rulesets2 and clone it onto combinedValidations
+            _.forEach(rulesets2, function(ruleset, rulesetName) {
+                if (!combinedValidations[rulesetName]) {
+                    combinedValidations[rulesetName] = _.cloneDeep(ruleset);
+                }
             });
 
             return combinedValidations;
