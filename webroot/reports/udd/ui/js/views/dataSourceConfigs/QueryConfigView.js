@@ -2,6 +2,7 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 define([
+    "lodash",
     "knockout",
     "knockback",
     "validation",
@@ -10,8 +11,21 @@ define([
     "query-form-view",
     "core-basedir/reports/udd/ui/js/common/udd.constants",
     "core-basedir/reports/qe/ui/js/common/qe.utils"
-], function(ko, kb, kbValidation, coreConstants, coreLabelProcessor, QueryFormView, uddConstants, qeUtils) {
+], function(_, ko, kb, kbValidation, coreConstants, coreLabelProcessor, QueryFormView, uddConstants, qeUtils) {
+    var advancedFormFields = ["where", "filters"];
+
     var QueryConfigView = QueryFormView.extend({
+        initialize: function() {
+            this.listenTo(this.model.model(), "validated:invalid", function(model, errors) {
+                var invalidFields = _.keys(errors),
+                    invalidAdvanced = _.intersection(advancedFormFields, invalidFields);
+
+                if (!_.isEmpty(invalidAdvanced)
+                    && !model.show_advanced_options) {
+                    model.set("show_advanced_options", true);
+                }
+            });
+        },
         render: function() {
             this.renderView4Config(this.$el, this.model, this.getViewConfig(),
                 coreConstants.KEY_RUN_QUERY_VALIDATION, null, null,
@@ -19,10 +33,15 @@ define([
                     kb.applyBindings(this.model, this.$el[0]);
                     kbValidation.bind(this, {
                         valid: function(view, attr, selector) {
-                            view.$("[" + selector + "~='" + attr + "']").removeClass("invalid").trigger("change");
-                            // Trigger the "change" event to force ContrailModel to update the errors observable.
-                            // For example, check FormDropDown's template, it has a change event binding whose handler
-                            // is defined by ContrailModel and updates the errors observable.
+                            view.$("[" + selector + "~='" + attr + "']")
+                                .removeClass("invalid")
+                                .trigger("change")
+                                .trigger("focusout");
+                            // Trigger "change" and "focusout" events to
+                            // force ContrailModel update the errors observable.
+                            // For example, check FormDropDown's template,
+                            // it has a change event binding whose handler is defined
+                            // by ContrailModel and updates the errors observable.
                         }
                     });
                 }.bind(this));
