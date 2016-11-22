@@ -31,10 +31,13 @@
       "validations": {
         "QueryConfigView": {
           "select": {
-              "requiredFieldTypes": ["plottable"]
+            "requiredFieldTypes": ["plottable"]
           },
           "table_type": {
-              "rejectedFieldTypes": ["loggable.normal", "loggable.object"]
+            "rejectedFieldTypes": ["loggable.normal", "loggable.object"]
+          },
+          "where": {
+            "requiredByDirtyColumns": true
           }
         }
       }
@@ -54,10 +57,13 @@
       "validations": {
         "QueryConfigView": {
           "select": {
-              "requiredFieldTypes": ["plottable"]
+            "requiredFieldTypes": ["plottable"]
           },
           "table_type": {
-              "rejectedFieldTypes": ["loggable.normal", "loggable.object"]
+            "rejectedFieldTypes": ["loggable.normal", "loggable.object"]
+          },
+          "where": {
+            "requiredByDirtyColumns": true
           }
         }
       }
@@ -77,7 +83,7 @@
       "validations": {
         "QueryConfigView": {
           "table_type": {
-              "requiredFieldTypes": ["loggable.normal"]
+            "requiredFieldTypes": ["loggable.normal"]
           }
         }
       }
