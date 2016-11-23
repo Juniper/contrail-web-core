@@ -2490,3 +2490,55 @@
         <span class="fa fa-caret-down"></span></a>
     </div>
 </script>
+<script type="text/x-handlebars-template" id="tooltip-template">
+ <div class="nvtooltip xy-tooltip nv-pointer-events-none popover popover-tooltip popover-tooltip-no-icon" id="nvtooltip">
+    <div class="popover-title">
+        <p class="heading">{{{this.yAxisLabel}}}</p>
+        <p class="sub-heading">{{{this.subTitle}}}</p>
+    </div>
+    <div class="popover-content">
+        <div class="popover-tooltip-icon font-element">
+            <i class="false"></i>
+        </div>
+        <div class="popover-info">
+                <span  class="sub-heading"><span>{{{this.Time}}}</span>
+            <table>
+                       <tbody>
+                       {{#each this.tooltipData}}
+                       <tr><td class="legend-color-guide"><div
+                       style="background-color: {{{this.color}}};"></div></td>
+                       <td class="key">{{{this.values.name}}} :</td><td
+                       class="value">{{{this.values.y}}}</td></tr>
+                       {{/each}}
+                       </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+ </script>
+<script type="text/x-handlebars-template" id="tooltip-lineareachart-template">
+  <div class="nvtooltip xy-tooltip nv-pointer-events-none popover popover-tooltip popover-tooltip-no-icon" id="nvtooltip">
+    <div class="popover-title">
+        <p class="heading">{{{this.yAxisLabel}}}</p>
+        <p class="sub-heading">{{{this.subTitle}}}</p>
+    </div>
+    <div class="popover-content">
+        <div class="popover-tooltip-icon font-element">
+            <i class="false"></i>
+        </div>
+        <div class="popover-info">
+                <span  class="sub-heading">{{{this.Time}}}</span>
+            <table>
+                       <tbody>
+                        {{#each this.series}}
+                       <tr><td class="legend-color-guide"><div
+                       style="background-color: {{{this.color}}};"></div></td>
+                       <td class="key" style="">{{{this.key}}} :</td><td
+                       class="value">{{{this.value}}}</tr>
+                        {{/each}}
+                       </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+ </script>
