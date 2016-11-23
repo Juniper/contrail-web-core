@@ -160,9 +160,10 @@ define([
         this.COOKIE_CHART_SETTINGS = "chartData";
         this.NUM_OF_COLORS = "6";
         /* Color Settings - End */
-
         //stacked bar chart
         this.TMPL_CUSTOM_CHART_LEGEND = 'custom-chart-legend';
+        this.TOOLTIP_TEMPLATE = "tooltip-template";
+        this.TOOLTIP_LINEAREACHART_TEMPLATE = "tooltip-lineareachart-template";
 
         this.TMPL_NODE_DETAIL_SPARKLINE_BOX = 'node-details-sparkline-template';
         this.TMPL_NODE_DETAIL_INFOBOXES_BOX = 'node-details-infoboxes-template';
