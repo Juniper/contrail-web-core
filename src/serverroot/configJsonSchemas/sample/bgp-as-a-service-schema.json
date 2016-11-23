@@ -1,0 +1,280 @@
+{
+    "type": "object", 
+    "properties": {
+        "bgp-as-a-service": {
+            "type": "object", 
+            "properties": {
+                "bgpaas_session_attributes": {
+                    "required": "required", 
+                    "type": "object", 
+                    "properties": {
+                        "auth_data": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "key_type": {
+                                    "required": "true", 
+                                    "type": "string", 
+                                    "description": "Authentication type for this session. Currently only MD5 is supported."
+                                }, 
+                                "key_items": {
+                                    "items": {
+                                        "type": "object", 
+                                        "properties": {
+                                            "key_id": {
+                                                "type": "number"
+                                            }, 
+                                            "key": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }, 
+                                    "required": "true", 
+                                    "type": "array", 
+                                    "description": "Upto two keys can be specified. Currently only one key is supported."
+                                }
+                            }, 
+                            "description": "Authentication related configuration for this session like type, keys etc."
+                        }, 
+                        "admin_down": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "Administratively mark this session down."
+                        }, 
+                        "private_as_action": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "Remove or replace private ASes from AS Path attributes advertised to this session."
+                        }, 
+                        "as_override": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "To Be Added"
+                        }, 
+                        "bgp_router": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "When the parameters are uni-directional the bgp-router element specifies to which node the configuration applies. If missing the attributes apply to both ends of the session."
+                        }, 
+                        "passive": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "This is passive session. It will not initiated connection. This is not relavent when session attributes represent common part. It is recomended that it should not be set to true in current release."
+                        }, 
+                        "family_attributes": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "prefix_limit": {
+                                        "required": "optional", 
+                                        "type": "object", 
+                                        "properties": {
+                                            "maximum": {
+                                                "type": "number"
+                                            }
+                                        }, 
+                                        "description": "prefix-limit contains the maximum number of prefixes that are allowed to be received on the session for this address family."
+                                    }, 
+                                    "loop_count": {
+                                        "required": "optional", 
+                                        "type": "number", 
+                                        "description": "For routing loop detection, loop-count is the number of times the local bgp-routers AS is             allowed in the AS_PATH attribute."
+                                    }, 
+                                    "address_family": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Address family for which these parameters are applied."
+                                    }
+                                }
+                            }, 
+                            "required": "optional", 
+                            "type": "array", 
+                            "description": "Session attributes over ride per BGP address family. Attributes like address family, loop-count and prefix-limit."
+                        }, 
+                        "hold_time": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "A non-zero hold-time overrides the hold-time inherited from the bgp-router configuration. BGP hold time in seconds [0-65535], Max time to detect liveliness of peer."
+                        }, 
+                        "loop_count": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "For routing loop detection, loop-count is the number of times the local bgp-routers AS is             allowed in the AS_PATH attribute."
+                        }, 
+                        "address_families": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "family": {
+                                    "items": {
+                                        "type": "string"
+                                    }, 
+                                    "type": "array", 
+                                    "description": "BGP address families supported by contrail."
+                                }
+                            }, 
+                            "description": "BGP address families supported on this session."
+                        }
+                    }, 
+                    "description": "BGP peering session attributes."
+                }, 
+                "display_name": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "Display name user configured string(name) that can be updated any time. Used as openstack name."
+                }, 
+                "bgpaas_suppress_route_advertisement": {
+                    "required": "optional", 
+                    "type": "boolean", 
+                    "description": "True when server should not advertise any routes to the client i.e. the client has static routes (typically a default) configured."
+                }, 
+                "bgpaas_ipv4_mapped_ipv6_nexthop": {
+                    "required": "optional", 
+                    "type": "boolean", 
+                    "description": "True when client bgp implementation expects to receive a ipv4-mapped ipv6 address (as opposed to regular ipv6 address) as the bgp nexthop for ipv6 routes."
+                }, 
+                "parent_type": {
+                    "required": "required", 
+                    "type": "string", 
+                    "enum": [
+                        "project"
+                    ]
+                }, 
+                "perms2": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "owner": {
+                            "required": "true", 
+                            "type": "string", 
+                            "description": "Owner tenant of the object"
+                        }, 
+                        "owner_access": {
+                            "required": "true", 
+                            "type": "number", 
+                            "description": "Owner permissions of the object"
+                        }, 
+                        "global_access": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Globally(others) shared object and permissions for others of the object"
+                        }, 
+                        "share": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "tenant_access": {
+                                        "required": "true", 
+                                        "type": "number", 
+                                        "description": "Allowed permissions in sharing"
+                                    }, 
+                                    "tenant": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Name of tenant with whom the object is shared"
+                                    }
+                                }
+                            }, 
+                            "required": "optional", 
+                            "type": "array", 
+                            "description": "Selectively shared object, List of (tenant, permissions)"
+                        }
+                    }, 
+                    "description": "Permissions data for role based access."
+                }, 
+                "id_perms": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "enable": {
+                            "required": "true", 
+                            "type": "boolean", 
+                            "description": "Administratively Enable/Disable this object"
+                        }, 
+                        "description": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "User provided text"
+                        }, 
+                        "created": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "creator": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Id of tenant who created this object"
+                        }, 
+                        "user_visible": {
+                            "required": "system-only", 
+                            "type": "boolean", 
+                            "description": "System created internal objects will have this flag set and will not be visible"
+                        }, 
+                        "last_modified": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "permissions": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "owner": {
+                                    "type": "string"
+                                }, 
+                                "owner_access": {
+                                    "type": "number"
+                                }, 
+                                "other_access": {
+                                    "type": "number"
+                                }, 
+                                "group": {
+                                    "type": "string"
+                                }, 
+                                "group_access": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "No longer used, will be removed"
+                        }, 
+                        "uuid": {
+                            "required": "true", 
+                            "type": "object", 
+                            "properties": {
+                                "uuid_mslong": {
+                                    "type": "number"
+                                }, 
+                                "uuid_lslong": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "UUID of the object, system automatically allocates one if not provided"
+                        }
+                    }, 
+                    "description": "System maintained identity, time  and permissions data."
+                }, 
+                "virtual_machine_interface_refs": {
+                    "url": "/virtual-machine-interfaces", 
+                    "type": "array"
+                }, 
+                "bgpaas_ip_address": {
+                    "required": "required", 
+                    "type": "string", 
+                    "description": "Ip address of the BGP peer."
+                }, 
+                "autonomous_system": {
+                    "minimum": 1, 
+                    "required": "required", 
+                    "type": "number", 
+                    "maximum": 65534, 
+                    "description": "16 bit BGP Autonomous System number for the cluster."
+                }, 
+                "bgp_router_refs": {
+                    "url": "/bgp-routers", 
+                    "type": "array"
+                }
+            }
+        }
+    }
+}

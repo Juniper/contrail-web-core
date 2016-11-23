@@ -1,0 +1,229 @@
+{
+    "type": "object", 
+    "properties": {
+        "loadbalancer-pool": {
+            "type": "object", 
+            "properties": {
+                "display_name": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "Display name user configured string(name) that can be updated any time. Used as openstack name."
+                }, 
+                "service_appliance_set_refs": {
+                    "url": "/service-appliance-sets", 
+                    "type": "array"
+                }, 
+                "parent_type": {
+                    "required": "required", 
+                    "type": "string", 
+                    "enum": [
+                        "project"
+                    ]
+                }, 
+                "virtual_machine_interface_refs": {
+                    "url": "/virtual-machine-interfaces", 
+                    "type": "array"
+                }, 
+                "loadbalancer_pool_provider": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "Provider field selects backend provider of the LBaaS, Cloudadmin could offere different levels of service like gold, silver, bronze. Provided by  HA-proxy or various HW or SW appliances in the backend. Applicable to LBaaS V1"
+                }, 
+                "loadbalancer_listener_refs": {
+                    "url": "/loadbalancer-listeners", 
+                    "type": "array"
+                }, 
+                "perms2": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "owner": {
+                            "required": "true", 
+                            "type": "string", 
+                            "description": "Owner tenant of the object"
+                        }, 
+                        "owner_access": {
+                            "required": "true", 
+                            "type": "number", 
+                            "description": "Owner permissions of the object"
+                        }, 
+                        "global_access": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Globally(others) shared object and permissions for others of the object"
+                        }, 
+                        "share": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "tenant_access": {
+                                        "required": "true", 
+                                        "type": "number", 
+                                        "description": "Allowed permissions in sharing"
+                                    }, 
+                                    "tenant": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Name of tenant with whom the object is shared"
+                                    }
+                                }
+                            }, 
+                            "required": "optional", 
+                            "type": "array", 
+                            "description": "Selectively shared object, List of (tenant, permissions)"
+                        }
+                    }, 
+                    "description": "Permissions data for role based access."
+                }, 
+                "id_perms": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "enable": {
+                            "required": "true", 
+                            "type": "boolean", 
+                            "description": "Administratively Enable/Disable this object"
+                        }, 
+                        "description": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "User provided text"
+                        }, 
+                        "created": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "creator": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Id of tenant who created this object"
+                        }, 
+                        "user_visible": {
+                            "required": "system-only", 
+                            "type": "boolean", 
+                            "description": "System created internal objects will have this flag set and will not be visible"
+                        }, 
+                        "last_modified": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "permissions": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "owner": {
+                                    "type": "string"
+                                }, 
+                                "owner_access": {
+                                    "type": "number"
+                                }, 
+                                "other_access": {
+                                    "type": "number"
+                                }, 
+                                "group": {
+                                    "type": "string"
+                                }, 
+                                "group_access": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "No longer used, will be removed"
+                        }, 
+                        "uuid": {
+                            "required": "true", 
+                            "type": "object", 
+                            "properties": {
+                                "uuid_mslong": {
+                                    "type": "number"
+                                }, 
+                                "uuid_lslong": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "UUID of the object, system automatically allocates one if not provided"
+                        }
+                    }, 
+                    "description": "System maintained identity, time  and permissions data."
+                }, 
+                "loadbalancer_pool_properties": {
+                    "required": "required", 
+                    "type": "object", 
+                    "properties": {
+                        "status": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Operating status for this loadbalancer pool."
+                        }, 
+                        "protocol": {
+                            "required": "required", 
+                            "type": "string", 
+                            "description": "IP protocol string like http, https or tcp."
+                        }, 
+                        "subnet_id": {
+                            "required": "required", 
+                            "type": "string", 
+                            "description": "UUID of the subnet from where the members of the pool are reachable."
+                        }, 
+                        "session_persistence": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "Method for persistence. HTTP_COOKIE, SOURCE_IP or APP_COOKIE."
+                        }, 
+                        "admin_state": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "Administrative up or down"
+                        }, 
+                        "persistence_cookie_name": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "To Be Added"
+                        }, 
+                        "status_description": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Operating status description for this loadbalancer pool."
+                        }, 
+                        "loadbalancer_method": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "Load balancing method ROUND_ROBIN, LEAST_CONNECTIONS, or SOURCE_IP"
+                        }
+                    }, 
+                    "description": "Configuration for loabalancer pool like protocol, subnet, etc."
+                }, 
+                "service_instance_refs": {
+                    "url": "/service-instances", 
+                    "type": "array"
+                }, 
+                "loadbalancer_pool_custom_attributes": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "key_value_pair": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "value": {
+                                        "type": "string"
+                                    }, 
+                                    "key": {
+                                        "type": "string"
+                                    }
+                                }
+                            }, 
+                            "type": "array"
+                        }
+                    }, 
+                    "description": "Custom loadbalancer config, opaque to the system. Specified as list of Key:Value pairs. Applicable to LBaaS V1."
+                }, 
+                "loadbalancer_healthmonitor_refs": {
+                    "url": "/loadbalancer-healthmonitors", 
+                    "type": "array"
+                }
+            }
+        }
+    }
+}

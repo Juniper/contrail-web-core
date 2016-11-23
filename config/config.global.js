@@ -309,6 +309,8 @@ config.network.L2_enable = false;
  *****************************************************************************/
 config.getDomainsFromApiServer = false;
 
+config.jsonSchemaPath = "/usr/src/contrail/contrail-web-core/src/serverroot/configJsonSchemas";
+
 // Export this as a module.
 module.exports = config;
 

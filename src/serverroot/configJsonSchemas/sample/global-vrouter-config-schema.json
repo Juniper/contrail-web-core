@@ -1,0 +1,287 @@
+{
+    "type": "object", 
+    "properties": {
+        "global-vrouter-config": {
+            "type": "object", 
+            "properties": {
+                "ecmp_hashing_include_fields": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "destination_ip": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When false, do not use destination ip in the ECMP hash calculation"
+                        }, 
+                        "ip_protocol": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When false, do not use ip protocol in the ECMP hash calculation"
+                        }, 
+                        "source_ip": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When false, do not use source ip in the ECMP hash calculation"
+                        }, 
+                        "hashing_configured": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When True, Packet header fields used in calculating ECMP hash is decided by following flags"
+                        }, 
+                        "source_port": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When false, do not use source port in the ECMP hash calculation"
+                        }, 
+                        "destination_port": {
+                            "required": "optional", 
+                            "type": "boolean", 
+                            "description": "When false, do not use destination port in the ECMP hash calculation"
+                        }
+                    }, 
+                    "description": "ECMP hashing config at global level."
+                }, 
+                "flow_aging_timeout_list": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "flow_aging_timeout": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "timeout_in_seconds": {
+                                        "type": "number"
+                                    }, 
+                                    "protocol": {
+                                        "type": "string"
+                                    }, 
+                                    "port": {
+                                        "type": "number"
+                                    }
+                                }
+                            }, 
+                            "required": "optional", 
+                            "type": "array", 
+                            "description": "List of (ip protocol, port number, timeout in seconds)"
+                        }
+                    }, 
+                    "description": "Flow aging timeout per application (protocol, port) list."
+                }, 
+                "display_name": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "Display name user configured string(name) that can be updated any time. Used as openstack name."
+                }, 
+                "forwarding_mode": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "description": "Packet forwarding mode for this system L2-only, L3-only OR L2-L3. L2-L3 is default.", 
+                    "enum": [
+                        "l2_l3", 
+                        "l2", 
+                        "l3"
+                    ]
+                }, 
+                "parent_type": {
+                    "required": "required", 
+                    "type": "string", 
+                    "enum": [
+                        "global-system-config"
+                    ]
+                }, 
+                "flow_export_rate": {
+                    "required": "optional", 
+                    "type": "number", 
+                    "description": "Flow export rate is global config, rate at which each vrouter will sample and export flow records to analytics"
+                }, 
+                "linklocal_services": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "linklocal_service_entry": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "ip_fabric_service_ip": {
+                                        "items": {
+                                            "type": "string"
+                                        }, 
+                                        "required": "optional", 
+                                        "type": "array", 
+                                        "description": "Destination ip address to which link local traffic will forwarded"
+                                    }, 
+                                    "linklocal_service_name": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Name of the link local service. VM name resolution of this name will result in link local ip address"
+                                    }, 
+                                    "linklocal_service_ip": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "ip address of the link local service."
+                                    }, 
+                                    "ip_fabric_service_port": {
+                                        "required": "true", 
+                                        "type": "number", 
+                                        "description": "Destination TCP port number to which link local traffic will forwarded"
+                                    }, 
+                                    "ip_fabric_DNS_service_name": {
+                                        "required": "optional", 
+                                        "type": "string", 
+                                        "description": "DNS name to which link local service will be proxied"
+                                    }, 
+                                    "linklocal_service_port": {
+                                        "required": "true", 
+                                        "type": "number", 
+                                        "description": "Destination TCP port number of link local service"
+                                    }
+                                }
+                            }, 
+                            "required": "optional", 
+                            "type": "array", 
+                            "description": "List of link local services"
+                        }
+                    }, 
+                    "description": "Global services provided on link local subnet to the virtual machines."
+                }, 
+                "perms2": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "owner": {
+                            "required": "true", 
+                            "type": "string", 
+                            "description": "Owner tenant of the object"
+                        }, 
+                        "owner_access": {
+                            "required": "true", 
+                            "type": "number", 
+                            "description": "Owner permissions of the object"
+                        }, 
+                        "global_access": {
+                            "required": "optional", 
+                            "type": "number", 
+                            "description": "Globally(others) shared object and permissions for others of the object"
+                        }, 
+                        "share": {
+                            "items": {
+                                "type": "object", 
+                                "properties": {
+                                    "tenant_access": {
+                                        "required": "true", 
+                                        "type": "number", 
+                                        "description": "Allowed permissions in sharing"
+                                    }, 
+                                    "tenant": {
+                                        "required": "true", 
+                                        "type": "string", 
+                                        "description": "Name of tenant with whom the object is shared"
+                                    }
+                                }
+                            }, 
+                            "required": "optional", 
+                            "type": "array", 
+                            "description": "Selectively shared object, List of (tenant, permissions)"
+                        }
+                    }, 
+                    "description": "Permissions data for role based access."
+                }, 
+                "encapsulation_priorities": {
+                    "required": "optional", 
+                    "type": "object", 
+                    "properties": {
+                        "encapsulation": {
+                            "items": {
+                                "type": "string"
+                            }, 
+                            "required": "optional", 
+                            "type": "array", 
+                            "description": "Ordered list of encapsulation types to be used in priority"
+                        }
+                    }, 
+                    "description": "Ordered list of enapsulations that vrouter will use in priority order."
+                }, 
+                "id_perms": {
+                    "required": "system-only", 
+                    "type": "object", 
+                    "properties": {
+                        "enable": {
+                            "required": "true", 
+                            "type": "boolean", 
+                            "description": "Administratively Enable/Disable this object"
+                        }, 
+                        "description": {
+                            "required": "optional", 
+                            "type": "string", 
+                            "description": "User provided text"
+                        }, 
+                        "created": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "creator": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Id of tenant who created this object"
+                        }, 
+                        "user_visible": {
+                            "required": "system-only", 
+                            "type": "boolean", 
+                            "description": "System created internal objects will have this flag set and will not be visible"
+                        }, 
+                        "last_modified": {
+                            "required": "system-only", 
+                            "type": "string", 
+                            "description": "Time when this object was created"
+                        }, 
+                        "permissions": {
+                            "required": "optional", 
+                            "type": "object", 
+                            "properties": {
+                                "owner": {
+                                    "type": "string"
+                                }, 
+                                "owner_access": {
+                                    "type": "number"
+                                }, 
+                                "other_access": {
+                                    "type": "number"
+                                }, 
+                                "group": {
+                                    "type": "string"
+                                }, 
+                                "group_access": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "No longer used, will be removed"
+                        }, 
+                        "uuid": {
+                            "required": "true", 
+                            "type": "object", 
+                            "properties": {
+                                "uuid_mslong": {
+                                    "type": "number"
+                                }, 
+                                "uuid_lslong": {
+                                    "type": "number"
+                                }
+                            }, 
+                            "description": "UUID of the object, system automatically allocates one if not provided"
+                        }
+                    }, 
+                    "description": "System maintained identity, time  and permissions data."
+                }, 
+                "vxlan_network_identifier_mode": {
+                    "required": "optional", 
+                    "type": "string", 
+                    "enum": [
+                        "configured", 
+                        "automatic"
+                    ]
+                }
+            }
+        }
+    }
+}
