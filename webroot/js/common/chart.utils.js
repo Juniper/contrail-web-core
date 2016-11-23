@@ -135,6 +135,51 @@ define([
             }
             return true;
         },
+        defaultStackTooltipFn: function (tooltipData,yAxisFormatter,chartOptions) {
+              var tooltipData = tooltipData;
+              var strTime;
+              var hours;
+              var minutes;
+              tooltipData  = $.map(tooltipData,function(d){
+                    d.values['y'] = yAxisFormatter(d.values['y']);
+                    hours = d.values['date'].getHours();
+                    minutes = d.values['date'].getMinutes();
+                    minutes = ('0' + minutes).slice(-2);
+                    strTime = hours + ':' + minutes;
+                    d['Time']= strTime;
+                    return d;
+                });
+              var toolTipTemplate = contrail.getTemplate4Id(cowc.TOOLTIP_TEMPLATE);
+              return toolTipTemplate({
+                subTitle: chartOptions.subTitle,
+                yAxisLabel:chartOptions.yAxisLabel,
+                Time:tooltipData[0].Time,
+                tooltipData: tooltipData
+            });
+        },
+        defaultLineAreaTooltipFn: function (d,chartOptions, yAxisFormatter) {
+            var series = d.series;
+            if(yAxisFormatter != null){
+                series = $.map(series,function(d){
+                    d['value'] = yAxisFormatter(d['value']);
+                    return d;
+                });
+            }
+            else if (chartOptions.yFormatter) {
+                series = $.map(series,function(d){
+                    d['value'] = chartOptions.yFormatter(d['value']);
+                    return d;
+                });
+            }
+            var toolTipTemplate = contrail.getTemplate4Id('tooltip-lineareachart-template');
+            return toolTipTemplate({
+                subTitle: chartOptions.subTitle,
+                yAxisLabel:chartOptions.yAxisLabel,
+                Time:d.value,
+                series:series
+            });
+        },
+        
         getDefaultViewConfig: function(chartType) {
             var stackChartConfig = {
                     viewConfig: {
@@ -152,7 +197,8 @@ define([
                                 bottom: 15
                             },
                             yAxisOffset: 25,
-                            defaultZeroLineDisplay: true
+                            defaultZeroLineDisplay: true,
+                            tooltipFn: this.defaultLineAreaTooltipFn
                         }
                     }
                 };
@@ -200,7 +246,8 @@ define([
                             },
                             showLegend: false,
                             defaultZeroLineDisplay: true,
-                            legendView: LegendView
+                            legendView: LegendView,
+                            tooltipFn: this.defaultLineAreaTooltipFn
                         }
                     }
                 },
