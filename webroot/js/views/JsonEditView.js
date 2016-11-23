@@ -55,7 +55,7 @@ define([
             modelAttr = this.model.model().get('id');
             disableId = (modelAttr == null || modelAttr == '') ? false : true;
 
-            self.renderView4Config($("#" + modalId).find("#" + prefixId + "-form"), this.model, jsonEditViewConfig, smwc.KEY_CONFIGURE_VALIDATION, null, null, function() {
+            self.renderView4Config($("#" + modalId).find("#" + prefixId + "-form"), this.model, jsonEditViewConfig, "configureValidation", null, null, function() {
                 Knockback.applyBindings(self.model, document.getElementById(modalId));
             });
         }
