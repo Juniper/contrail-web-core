@@ -1295,7 +1295,6 @@ button#close-error-popup{
 }
 
 /* End - Event-drops CSS */
-
 /*
 color settings styles - begin
 */
@@ -1488,3 +1487,40 @@ color settings styles - begin
 /*
 color settings styles - end
 */
+/* Carousel custom tooltip CSS - Starts*/
+.custom-grid-stack-item .popover.popover-tooltip .popover-content {
+    margin-top: -74px;
+}
+.custom-grid-stack-item .popover.popover-tooltip, .stack-bar-chart-tooltip .popover.popover-tooltip{
+    width:auto;
+    min-width:initial;
+    max-width:initial;
+}
+.stack-bar-chart-tooltip .nvtooltip .popover-title p, .grid-stack-item .nvtooltip p{
+    text-align:left;
+    margin:0px;
+    padding:0px;
+}
+.stack-bar-chart-tooltip .nvtooltip .popover-info, .grid-stack-item .nvtooltip .popover-info{
+    font-weight:600;
+    font-family:'Open Sans';
+    font-size:12px;
+    color: #393939;
+    padding: 30px 5px 7px;
+}
+.stack-bar-chart-tooltip  .popover.popover-tooltip .popover-tooltip-icon{
+    margin-top:0px !important;
+    padding-bottom:40px !important;
+}
+.stack-bar-chart-tooltip .nvtooltip.popover.popover-tooltip .popover-title .sub-heading{
+    padding-right:25px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+.custom-grid-stack-item .grid-stack-item-content{
+    overflow:initial !important;
+}
+.stack-bar-chart-tooltip .nvtooltip {
+    background-color: rgba(255,255,255,.95)!important;
+}
+/* Carousel custom tooltip CSS - Ends*/
