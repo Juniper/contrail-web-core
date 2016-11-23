@@ -2469,24 +2469,55 @@
 <script type="text/x-handlebars-template" id="grid-tag-template">
     <span class='badge' style='background-color:{{bgcolor}}'>{{celltext}}</span>
 </script>
-<script type="text/x-handlebars-template" id="toolbar-options-template">
-    <div id="toolbar_options" class="hidden">
+<script type="text/x-handlebars-template" id="tooltip-template">
+<div class="nvtooltip xy-tooltip nv-pointer-events-none popover popover-tooltip popover-tooltip-no-icon" id="nvtooltip">
+    <div class="popover-title">
+        <p class="heading">{{{this.yAxisLabel}}}</p>
+        <p class="sub-heading">{{{this.subTitle}}}</p>
     </div>
-</script>
-<script type="text/x-handlebars-template" id="toolbar-settings">
-    <div class="btn-toolbar btn-toolbar-primary" id="toolbar_settings">
-        <a href="#"><i class="fa contrailGlyph-menu"></i></a>
+    <div class="popover-content">
+        <div class="popover-tooltip-icon font-element">
+            <i class="false"></i>
+        </div>
+        <div class="popover-info">
+                <span  class="sub-heading"><span>{{{this.Time}}}</span>
+            <table>
+                       <tbody>
+                       {{#each this.tooltipData}}
+                       <tr><td class="legend-color-guide"><div
+                       style="background-color: {{{this.color}}};"></div></td>
+                       <td class="key">{{{this.values.name}}} :</td><td
+                       class="value">{{{this.values.y}}}</td></tr>
+                       {{/each}}
+                       </tbody>
+            </table>
+        </div>
     </div>
-</script>
-
-<script type="text/x-handlebars-template" id="core-settings-color-template">
-    <div id="scheme">
-        <div id="palettes"></div>
+</div>
+ </script>
+ <script type="text/x-handlebars-template" id="tooltip-lineareachart-template">
+<div class="nvtooltip xy-tooltip nv-pointer-events-none popover popover-tooltip popover-tooltip-no-icon" id="nvtooltip">
+    <div class="popover-title">
+        <p class="heading">{{{this.yAxisLabel}}}</p>
+        <p class="sub-heading">{{{this.subTitle}}}</p>
     </div>
-</script>
-<script type="text/x-handlebars-template" id="core-settings-color-more-template">
-    <div class="text-center">
-        <a href="#" id="more_btn">More
-        <span class="fa fa-caret-down"></span></a>
+    <div class="popover-content">
+        <div class="popover-tooltip-icon font-element">
+            <i class="false"></i>
+        </div>
+        <div class="popover-info">
+                <span  class="sub-heading">{{{this.Time}}}</span>
+            <table>
+                       <tbody>
+                        {{#each this.series}}
+                       <tr><td class="legend-color-guide"><div
+                       style="background-color: {{{this.color}}};"></div></td>
+                       <td class="key" style="">{{{this.key}}} :</td><td
+                       class="value">{{{this.value}}}</tr>
+                        {{/each}}
+                       </tbody>
+            </table>
+        </div>
     </div>
-</script>
+</div>
+ </script>

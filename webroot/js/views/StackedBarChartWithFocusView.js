@@ -511,15 +511,22 @@ define([
                          }
                      })
                     //.style("fill", function(d) { return d.color; })
-                    .on("mouseover", function(d) {
+                    .on("mouseover", function(d, i, j) {
+                        var tooltipData = [],
+                            reverseParsedValues = cowu.getValueByJsonPath(chartView,'parsedValues',[]).reverse();
+                        $.each(reverseParsedValues, function (idx, obj) {
+                            obj['values'] = cowu.getValueByJsonPath(obj, 'values;'+i, {});
+                            tooltipData.push(obj);
+                        });
                         //if (chartView.sliceTooltip) {
                             var event = d3.event;
+                            var x = tooltipData;
                             //TODO parent div adjust need to be removed
                             //$(tooltipDiv).css({'width': '0px','height': '0px'});
                             tooltipDiv.transition()
                                 .duration(200)
                                 .style("opacity", 1);
-                            var tooltipHTML = tooltipFn(d, yAxisFormatter);
+                            var tooltipHTML = chUtils.defaultStackTooltipFn(tooltipData, yAxisFormatter, chartOptions);
                             tooltipDiv.html(tooltipHTML).style("border","none");
                             tooltipDiv.style("left", getToolTipXPos(event.pageX, $($(tooltipDiv)[0]).children('div').width()) + "px")
                                 .style("top", (event.pageY - 28) + "px")
