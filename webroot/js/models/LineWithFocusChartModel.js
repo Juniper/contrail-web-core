@@ -418,7 +418,11 @@ define([
                                 index: pointIndex,
                                 series: allData
                             })();
-
+                        if(chartOptions.tooltipFn) {
+                            interactiveLayer.tooltip.contentGenerator(function (obj) {
+                                return chartOptions.tooltipFn(obj,chartOptions,null);
+                            })
+                        }
                         interactiveLayer.renderGuideLine(pointXLocation);
                     });
 
@@ -455,7 +459,6 @@ define([
                         + 'M' + (4.5 * x) + ',' + (y + 8)
                         + 'V' + (2 * y - 8);
                 }
-
 
                 function updateBrushBG() {
                     if (!brush.empty()) brush.extent(brushExtent);

@@ -7,17 +7,39 @@ define([
     'underscore',
     'contrail-view',
     'contrail-list-model',
-    'legend-view'
-], function (_, ContrailView,  ContrailListModel, LegendView) {
+    'legend-view',
+    'core-constants',
+    'chart-utils'
+], function (_, ContrailView,  ContrailListModel, LegendView, cowc, chUtils) {
     var cfDataSource;
     var stackedBarChartWithFocusChartView = ContrailView.extend({
+        settingsChanged: function(newSettings) {
+            var self = this,
+                vc = self.attributes.viewConfig;
+            if(vc.hasOwnProperty("chartOptions")) {
+                vc.chartOptions["resetColor"] = true;
+                for(var key in newSettings) {
+                    if(key in vc.chartOptions) {
+                        vc.chartOptions[key] = newSettings[key];
+                    }
+                }
+            }
+            self.renderChart($(self.$el), vc, self.model);
+        },
 
         render: function () {
             var viewConfig = this.attributes.viewConfig,
                 ajaxConfig = viewConfig['ajaxConfig'],
                 self = this, deferredObj = $.Deferred(),
-                widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null;
-
+                widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
+                resizeId;
+            //settings
+            if (cowu.getValueByJsonPath(viewConfig, 'chartOptions;applySettings', true)) {
+                cowu.updateSettingsWithCookie(viewConfig);
+            }
+            self.tooltipDiv = d3.select("body").append("div")
+                            .attr("class", "stack-bar-chart-tooltip")
+                            .style("opacity", 0);
             cfDataSource = viewConfig.cfDataSource;
             if (self.model === null && viewConfig['modelConfig'] != null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
@@ -49,19 +71,28 @@ define([
                 $($(self.$el)).bind("refresh", function () {
                     self.renderChart($(self.$el), viewConfig, self.model);
                 });
+                var prevDimensions = chUtils.getDimensionsObj(self.$el);
 
-                var resizeFunction = function (e) {
+                self.resizeFunction = _.debounce(function (e) {
+                   $('.stack-bar-chart-tooltip').remove();
+                    if(!chUtils.isReRenderRequired({
+                        prevDimensions:prevDimensions,
+                        elem:self.$el})) {
+                        return;
+                    }
+                    prevDimensions = chUtils.getDimensionsObj(self.$el);
                     self.renderChart($(self.$el), viewConfig, self.model);
-                };
+                },cowc.THROTTLE_RESIZE_EVENT_TIME);
 
-                $(window)
-                    .off('resize', resizeFunction)
-                    .on('resize', resizeFunction);
-                self.renderChart($(self.$el), viewConfig, self.model);
+                window.addEventListener('resize',self.resizeFunction);
+                $(self.$el).parents('.custom-grid-stack-item').on('resize',self.resizeFunction);
             }
         },
 
         renderChart: function (selector, viewConfig, chartViewModel) {
+            if (!($(selector).is(':visible'))) {
+                return;
+            }
             var self = this;
             var data = chartViewModel.getFilteredItems();
             var chartTemplate = contrail.getTemplate4Id('core-stacked-bar-chart-template');
@@ -75,8 +106,11 @@ define([
             var brush = getValueByJsonPath(chartOptions,'brush',false);
             var xAxisLabel = getValueByJsonPath(chartOptions,'xAxisLabel',"Time");
             var yAxisLabel = getValueByJsonPath(chartOptions,'yAxisLabel',"Count");
+            var limit = getValueByJsonPath(chartOptions,'limit');
             var yField = getValueByJsonPath(chartOptions,'yField');
-            var totalHeight = getValueByJsonPath(chartOptions,'height',300);
+            var totalHeight = ($(selector).closest('.custom-grid-stack-item').length > 0 )? 
+                    $(selector).closest('.custom-grid-stack-item').height() - 50:
+                        chartOptions['height'];
             var customMargin = getValueByJsonPath(chartOptions,'margin',{});
             var xAxisOffset = getValueByJsonPath(chartOptions,'xAxisOffset',0); // in minutes
             var yAxisOffset = getValueByJsonPath(chartOptions,'yAxisOffset',0); //Percentage
@@ -90,23 +124,44 @@ define([
             var failureLabel = getValueByJsonPath(chartOptions,'failureLabel', cowc.FAILURE_LABEL);
             var tooltipFn = getValueByJsonPath(chartOptions,'tooltipFn', defaultTooltipFn);
             var colors = getValueByJsonPath(chartOptions,'colors', {yAxisLabel: cowc.DEFAULT_COLOR});
-            var yAxisFormatter = getValueByJsonPath(chartOptions,'yAxisFormatter',cowu.numberFormatter);
+            var yAxisFormatter = getValueByJsonPath(chartOptions,'yAxisFormatter');
             var onClickBar = getValueByJsonPath(chartOptions,'onClickBar',false);
+            var defaultZeroLineDisplay = getValueByJsonPath(chartOptions,'defaultZeroLineDisplay', false);
             var groupBy = chartOptions['groupBy'], groups = [], yAxisMaxValue;
-            chartOptions['timeRange'] =  getValueByJsonPath(self, 'model;queryJSON');
+            var resetColor = getValueByJsonPath(chartOptions,'resetColor',false);
+
+            //settings
+            if(typeof chartOptions["colors"] != 'function' && chartOptions['applySettings'] != false) {
+                chartOptions["colors"] = cowc.FIVE_NODE_COLOR;
+            }
+
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                data = viewConfig['parseFn'](data, chartViewModel);
+                data = viewConfig['parseFn'](data, chartOptions);
               //Need to check and remove the data.length condition because invalid for object
-            } else if (data != null && data.length > 0) {
+            } else {
+                if (data === null || data.length === 0 && defaultZeroLineDisplay){
+                    var start = Date.now() - (cowc.DEFAULT_CHART_DURATION * 60 * 60 * 1000),
+                        end = Date.now();
+                        chartOptions['timeRange'] = {'start_time': parseInt(start.toString()+'000'), 
+                                'end_time': parseInt(end.toString()+'000')};
+                }else{
+                    chartOptions['defaultZeroLineDisplay'] = false;
+                }
                 data = cowu.chartDataFormatter(data, chartOptions);
             }
+
+            var colorNodes = _.without(_.pluck(data, 'key'), failureLabel);
             self.parsedValues = data;
             self.parsedData = _.indexBy(data, 'key');
-            if (colors != null) {
+            if (colors != null && colorNodes[0] != 'DEFAULT') {
                 if (typeof colors == 'function') {
-                    self.colors = colors(_.without(_.pluck(data, 'key'), failureLabel));
+                    self.colors = colors(_.without(_.pluck(data, 'key'), failureLabel), resetColor);
                 } else if (typeof colors == 'object') {
                     self.colors = colors;
+                }
+            }else{
+                self.colors = {
+                        'DEFAULT':cowc.DEFAULT_COLOR
                 }
             }
            //converting the data to d3 stack api expected format
@@ -158,7 +213,7 @@ define([
             var overview,brush,brush2Main;
 
             // mathematical scales for the x and y axes
-            var x = d3.time.scale().range([0, width]);
+            var x = d3.time.scale().range([0, width - 10]);
 
             var y = d3.scale.linear().range([height, 0]);
 
@@ -198,22 +253,20 @@ define([
             //Add the axis labels
             var xaxisLabel = main.append("text")
                                 .attr("class", "axis-label")
-                                .attr("text-anchor", "end")
+                                .attr("text-anchor", "middle")
                                 .attr("x", width/2)
                                 .attr("y", height + 40)
                                 .text(xAxisLabel);
             var yaxisLabel = main.append("text")
                                 .attr("class", "axis-label")
-                                .attr("text-anchor", "end")
+                                .attr("text-anchor", "middle")
                                 .attr("y", -margin.left)
-                                .attr("x", -height/2)
+                                .attr("x", -totalHeight/2)
                                 .attr("dy", ".75em")
                                 .attr("dx", ".75em")
                                 .attr("transform", "rotate(-90)")
                                 .text(yAxisLabel);
-            var tooltipDiv = d3.select("body").append("div")
-                            .attr("class", "stack-bar-chart-tooltip")
-                            .style("opacity", 0);
+            var tooltipDiv = self.tooltipDiv;
             var formatTime = d3.time.format("%e %b %X");
             if(brush && addOverviewChart) {
                 overview = svg.append("g")
@@ -259,7 +312,7 @@ define([
                                   d3.time.minute.offset(dateExtent[1], xAxisOffset)];
                 }
             }
-            if(data == null || data.length == 0) {
+            if(data == null || data.length == 0 && !defaultZeroLineDisplay) {
                 var noDataTxt = main.append("g")
                                 .append("text")
                                 .attr("class","nvd3 nv-noData")
@@ -267,6 +320,7 @@ define([
                                 .attr("transform", "translate(" + width/2 + "," + height/2 + ")")
                                 .text(cowm.DATA_SUCCESS_EMPTY);
                 yExtent = [0,1];//Default y extent
+                yAxisMaxValue = 1;
             }
             x.domain(dateExtent);
             self.barPadding = 2; //Space between the bars
@@ -332,7 +386,7 @@ define([
             if (groupBy == null) {
                 showControls = false;
             }
-            if (showControls == true || showLegend == true) {
+            //if (showControls == true || showLegend == true) {
                 var colorsMap = self.colors,
                     nodeLegend = [],
                     legendData = [];
@@ -357,7 +411,7 @@ define([
                 }
                 var legendView = new LegendView({
                     el: $(selector),
-                    legendConfig: {
+                    viewConfig: {
                         showControls: showControls,
                         controlsData: [{label: 'Stacked', cssClass: 'stacked filled'},
                             {label: 'Grouped', cssClass: 'grouped'}],
@@ -365,6 +419,7 @@ define([
                         legendData: legendData
                     }
                 });
+                legendView.render();
                 //Bind the click handlers to legend
                 $(selector).find('.custom-chart-legend')
                     .find('div.square, div.circle')
@@ -380,7 +435,7 @@ define([
                             transitionStacked(self);
                         }
                     });
-            }
+            //}
             //Need to wait until the widget is rendered.
             setTimeout(updateFilteredCntInHeader,200);
             function getyAxisMaxValue(data, excludey0) {
@@ -410,6 +465,8 @@ define([
                 var yAxisFormatter = chartOptions['yAxisFormatter'];
                 yAxisMaxValue = getyAxisMaxValue(chartView.stackedData);
                 yAxisMaxValue = yAxisMaxValue + (yAxisOffset/100) * yAxisMaxValue;
+                if(yAxisMaxValue < 1)
+                    yAxisMaxValue = 1;
                 y.domain([0, yAxisMaxValue]);
                 chartView.yScale = y;
                 chartView.yAxis = yAxis;
@@ -438,21 +495,41 @@ define([
                         //return i * (width / chartView.stackedData[0].length);
                      })
                     .attr("y", function(d) {
-                         return y(d.y0) + y(d.y) - height;
+                        if(d.name != cowc.FAILURE_LABEL && d.total === 0){
+                            return Math.floor(height - yAxisMaxValue * 0.01);
+                        }else{
+                            return y(d.y0) + y(d.y) - height;
+                        }
                      })
                     .attr("height", function(d) {
-                        return height - y(d.y);
+                        if(d.name != cowc.FAILURE_LABEL && d.total === 0){
+                            return Math.ceil(yAxisMaxValue * 0.01);
+                        }else{
+                            return height - y(d.y);
+                        }
+                     })
+                     .attr("fill", function(d, i){
+                         if(d.name != cowc.FAILURE_LABEL && d.total === 0){
+                             return cowc.DEFAULT_COLOR;
+                         }
                      })
                     //.style("fill", function(d) { return d.color; })
-                    .on("mouseover", function(d) {
+                    .on("mouseover", function(d, i, j) {
+                        var tooltipData = [],
+                            reverseParsedValues = cowu.getValueByJsonPath(chartView,'parsedValues',[]).reverse();
+                        $.each(reverseParsedValues, function (idx, obj) {
+                            obj['values'] = cowu.getValueByJsonPath(obj, 'values;'+i, {});
+                            tooltipData.push(obj);
+                        });
                         //if (chartView.sliceTooltip) {
                             var event = d3.event;
+                            var x = tooltipData;
                             //TODO parent div adjust need to be removed
                             //$(tooltipDiv).css({'width': '0px','height': '0px'});
                             tooltipDiv.transition()
                                 .duration(200)
                                 .style("opacity", 1);
-                            var tooltipHTML = tooltipFn(d, yAxisFormatter);
+                            var tooltipHTML = chUtils.defaultStackTooltipFn(tooltipData, yAxisFormatter, chartOptions);
                             tooltipDiv.html(tooltipHTML).style("border","none");
                             tooltipDiv.style("left", getToolTipXPos(event.pageX, $($(tooltipDiv)[0]).children('div').width()) + "px")
                                 .style("top", (event.pageY - 28) + "px")
@@ -536,7 +613,9 @@ define([
                     colors: {
                         yAxisLabel: cowc.DEFAULT_COLOR
                     },
-                    yAxisFormatter: cowu.numberFormatter,
+                    yAxisFormatter: function (value) {
+                        return cowu.numberFormatter(value);
+                    },
                     onClickBar: false,
                     margin: {},
                     yField: null,
@@ -562,7 +641,7 @@ define([
                             label: 'Time',
                             value: time,
                         }, {
-                            label: yAxisLabel,
+                            label: limit != null ? d['name'] : yAxisLabel,
                             value: ifNull(y, '-')
                         }]
                     };
@@ -596,7 +675,9 @@ define([
             }
             function onclickBar(data) {
                 var xExtent = data.timestampExtent;
-                clearToolTip(false);
+                if(chartOptions.onClickBar != false){
+                    clearToolTip(false);
+                }
                 xExtent = xExtent.map(function(date){
                     return new Date(date).getTime(); //convert to millisecs
                 });

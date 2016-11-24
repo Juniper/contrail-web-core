@@ -204,7 +204,7 @@
  */
 .modal.contrail-modal {
     margin-left: 0 !important;
-    top: 0 !important;
+    top: 0;
     height: 100% !important;
     width: 100% !important;
 }
@@ -1131,3 +1131,76 @@ li {
 .group-detail-advanced-json {
     padding-left: 30px;
 }
+
+/* Start of Toolbar */
+#toolbar {
+    float:right;
+}
+.btn-toolbar a {
+    color:white;
+}
+.btn-toolbar {
+    height:20px;
+    width:20px;
+    border-radius: 4px;
+}
+.tool-item {
+    width:20px;
+    height:20px;
+}
+a.tool-item {
+    float:left;
+}
+a.tool-item{
+border-left: solid 1px #a9c0db;}
+a.tool-item:nth-child(1) {
+    border:none;
+}
+.tool-contrainer{
+    border-radius:4px;}
+.btn-toolbar{
+    border-radius:3px;
+    padding:5px}
+.tool-container{
+    background-color:#599AC9;}
+.btn-toolbar-primary.pressed, .tool-item.selected   {
+    background-color: #5189b1;
+}
+.btn-toolbar-primary:hover {
+    background-color: #a1c6db;
+}
+
+.btn-toolbar-primary, .tool-container {
+    background-color: #599ac9;
+}
+
+.tool-item {
+    padding: 6px;
+}
+.tool-item > .fa{
+    color:#ffffff;
+    font-size:20px;}
+.tool-container.tool-left .arrow{
+    border-color: transparent transparent transparent #599ac9;
+}
+.tool-vertical-top .tool-item:first-child:hover, .tool-vertical-bottom .tool-item:first-child:hover, .tool-right .tool-item:first-child:hover, .tool-left .tool-item:first-child:hover {
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-top-right-radius: 0px;
+}
+.tool-item:hover {
+    background:#9bbfd5;
+}
+
+.tool-vertical-top .tool-item:last-child:hover, .tool-vertical-bottom .tool-item:last-child:hover, .tool-right .tool-item:last-child:hover, .tool-left .tool-item:last-child:hover {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 0px;
+}
+
+#toolbar_section {
+    position: fixed;
+    margin-top: 4px;
+    z-index: 999;
+}
+/* End of Toolbar */

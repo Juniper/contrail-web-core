@@ -75,6 +75,41 @@ define([
                 }
             });
         };
+        this.createPopoverModal = function (options) {
+            var modalId = options['modalId'],
+                actions = [];
+            if ((contrail.checkIfExist(options['onCancel'])) && (contrail.checkIfFunction(options['onCancel']))) {
+                actions.push({
+                    id        : 'cancel',
+                    onclick   : function () {
+                        options['onCancel']();
+                    },
+                    onKeyupEsc: true
+                });
+            }
+            if ((contrail.checkIfExist(options['onSave'])) && (contrail.checkIfFunction(options['onSave']))) {
+                actions.push({
+                    id       : 'save',
+                    onclick: function () {
+                        options['onSave']();
+                        if ($('#' + modalId).find('.generic-delete-form').length > 0) {
+                            $('#' + modalId).find('.btn-primary.btnSave').hide();
+                        }
+                    },
+                    onKeyupEnter: true
+                });
+            }
+
+            $.contrailBootstrapPopover({
+                id: modalId,
+                className: options['className'],
+                title: options['title'],
+                body: options['body'],
+                actions: actions,
+                isBackdropReq: options['isBackdropReq'],
+                targetId: options['targetId']
+            });
+        };
         this.createModal = function (options) {
             var modalId = options['modalId'],
                 footer = [];
@@ -163,6 +198,53 @@ define([
                 }
             });
         };
+
+        this.updateColorSettingsWithCookie = function () {
+            var cookieColorScheme = JSON.parse(contrail.getCookie(cowc.COOKIE_COLOR_SCHEME));
+            if(cookieColorScheme && cookieColorScheme.color) {
+                var color = cookieColorScheme.color;
+                cowc.FIVE_NODE_COLOR = color.FIVE_NODE_COLOR;
+                cowc.THREE_NODE_COLOR = color.THREE_NODE_COLOR;
+                cowc.SINGLE_NODE_COLOR = color.SINGLE_NODE_COLOR;
+                cowc.DEFAULT_COLOR = color.SINGLE_NODE_COLOR;
+            }
+        };
+
+        this.updateSettingsWithCookie =  function (viewConfig) {
+            try {
+                this.updateColorSettingsWithCookie();
+                var cookieSettings = JSON.parse(contrail.getCookie(cowc.COOKIE_CHART_SETTINGS));
+                if(cookieSettings && viewConfig && viewConfig.chartOptions) {
+                    var isChartSettingsOverride = cowu.getValueByJsonPath(viewConfig, "chartOptions;isChartSettingsOverride", true);
+                    if(isChartSettingsOverride) {
+                        for(var key in cookieSettings) {
+                            viewConfig.chartOptions[key] = cookieSettings[key];
+                        }
+                    }
+                }
+            }
+            catch(e) {
+
+            }
+        };
+
+        this.updateMultiViewSettingsFromCookie = function() {
+            try {
+                var cookieSettings =
+                    JSON.parse(contrail.getCookie(cowc.COOKIE_CHART_SETTINGS));
+                if(cookieSettings) {
+                    for(var key in cookieSettings) {
+                        if(key == cowc.SHOW_MULTI_VIEWS) {
+                            cowc.ENABLE_CAROUSEL = cookieSettings[key];
+                            break;
+                        }
+                    }
+                }
+            }
+            catch(e){
+
+            }
+        }
 
         this.enableModalLoading = function (modalId) {
             $('#' + modalId).find('.modal-header h6').prepend('<i class="fa fa-spinner fa-spin margin-right-10 modal-loading-icon">');
@@ -723,7 +805,7 @@ define([
         /**
         * Get the value of a property inside a json object with a given path
         */
-        self.getValueByJsonPath = function(obj,pathStr,defValue,doClone) {
+        this.getValueByJsonPath = function(obj,pathStr,defValue,doClone) {
             try {
                 var currObj = obj;
                 var pathArr = pathStr.split(';');
@@ -742,7 +824,7 @@ define([
                         return $.extend(true,[],currObj);
                     }
                 } else if(typeof(currObj) == "object") {
-                    if(doClone == false) { 
+                    if(doClone == false) {
                         return currObj;
                     } else {
                         return $.extend(true,{},currObj);
@@ -752,7 +834,7 @@ define([
             } catch(e) {
                 return defValue;
             }
-}
+        }
 
         this.getValueByConfig = function(configValue, app, objectAccessor) {
             var templateGenerator = configValue.templateGenerator;
@@ -1083,6 +1165,30 @@ define([
             return $.map(arr, function (val) {
                 return val;
             });
+        };
+        this.notifySettingsChange = function(colorModel) {
+            var p = layoutHandler.getURLHashObj().p,
+            resources =
+                menuHandler.getMenuObjByHash(p).resources.resource;
+            for(var i=0; i<resources.length; i++ ) {
+                var className = resources[i].class;
+                if(className == undefined)
+                    continue;
+                var classIns = window[className];
+                if(classIns == undefined)
+                    continue
+                for(var tag in classIns) {
+                    if(classIns[tag].hasOwnProperty("viewMap")) {
+                        var viewMap = classIns[tag]["viewMap"]
+                        for(var view in viewMap) {
+                            if(typeof viewMap[view].settingsChanged ==
+                                "function") {
+                                viewMap[view].settingsChanged(colorModel);
+                            }
+                        }
+                    }
+                }
+            }
         };
 
         this.loadAlertsPopup = function(cfgObj) {
@@ -1456,8 +1562,14 @@ define([
          */
         this.bucketizeStats = function (stats, options) {
             var bucketSize = getValueByJsonPath(options, 'bucketSize', cowc.DEFAULT_BUCKET_DURATION),
-                insertEmptyBuckets = getValueByJsonPath(options, 'insertEmptyBuckets', true),
-                timeRange = getValueByJsonPath(options, 'timeRange'),
+                insertEmptyBuckets = getValueByJsonPath(options, 'insertEmptyBuckets', true);
+            if (options['timeRange'] == null) {
+                options['timeRange'] = cowu.getValueByJsonPath(stats, '0;queryJSON');
+            }
+            var timeRange = getValueByJsonPath(options, 'timeRange', {
+                    start_time: Date.now() * 1000 - (2 * 60 * 60 * 1000 * 1000), // converting to micros secs
+                    end_time: Date.now() * 1000
+                }),
                 stats = ifNull(stats, []);
             bucketSize = parseFloat(bucketSize) * 60 * 1000 * 1000 //Converting to micros seconds
             var timestampField = 'T';
@@ -1507,14 +1619,21 @@ define([
             var cf = crossfilter(response);
             var timeStampField = 'T',
                 parsedData = [], failureCheckFn = getValueByJsonPath(options, 'failureCheckFn'),
-                colors = getValueByJsonPath(options, 'colors'),
+                colors = getValueByJsonPath(options, 'colors',cowc.FIVE_NODE_COLOR),
                 groupBy = getValueByJsonPath(options, 'groupBy'),
                 yField = getValueByJsonPath(options, 'yField'),
                 yFieldOperation = getValueByJsonPath(options, 'yFieldOperation'),
                 failureLabel = getValueByJsonPath(options, 'failureLabel', cowc.FAILURE_LABEL),
-                yAxisLabel = getValueByJsonPath(options, 'yAxisLabel');
+                yAxisLabel = getValueByJsonPath(options, 'yAxisLabel'),
+                defaultZeroLineDisplay = getValueByJsonPath(options,'defaultZeroLineDisplay', false),
+                // limit is for requirements like top 5 records etc;
+                limit = getValueByJsonPath(options, 'limit'),
+                groupDim;
             if (response != null && getValueByJsonPath(response, '0;T') == null) {
                 timeStampField = 'T=';
+            }
+            if (groupBy != null) {
+                groupDim = cf.dimension(function(d) { return d[groupBy]});
             }
             //bucket size is in mins need to convert in to milli secs
             var buckets = cowu.bucketizeStats(response,{
@@ -1523,32 +1642,62 @@ define([
                 insertEmptyBuckets: getValueByJsonPath(options, 'insertEmptyBuckets', true)
             });
             var tsDim = cf.dimension(function(d) { return d[timeStampField]});
-            if (failureCheckFn != null && typeof failureCheckFn == 'function') {
+            if (failureCheckFn != null && typeof failureCheckFn == 'function'
+                && response.length > 0) {
                 parsedData.push({
                    key: failureLabel,
-                   color: cowc.FAILURE_COLOR,
+                   color: cowu.getValueByJsonPath(options, 'failureColor', cowc.FAILURE_COLOR),
                    values: []
                 });
             }
-            if (groupBy != null) {
-                var groupDim = cf.dimension(function(d) { return d[groupBy]});
+            if(response.length === 0 && defaultZeroLineDisplay && groupBy!=null){
+                parsedData.push({
+                    key: 'DEFAULT',
+                    color: cowc.DEFAULT_COLOR,
+                    values: []
+                });
+            }
+            if (limit != null) {
+                limit = parseInt(limit);
+                if (groupBy != null) {
+                    var grpMap = groupDim.group().all(),
+                        grpMapLen = grpMap.length;
+                    if (grpMapLen < limit) {
+                        limit = grpMapLen;
+                    }
+                }
+                parsedData.push({
+                    key: cowc.OTHERS,
+                    color: cowc.OTHERS_COLORS,
+                    values: []
+                });
+                for (var i = 0; i < limit; i++) {
+                    parsedData.push({
+                        key: i,
+                        color: colors[i],
+                        values: []
+                    });
+                }
+            } else if (groupBy != null) {
                 var groupByMap = groupDim.group().all(),
+                    groupByMap = _.sortBy(groupByMap, 'key'),
                     groupByMapLen = groupByMap.length,
                     groupByKeys = _.pluck(groupByMap, 'key');
                 if (colors != null && typeof colors == 'function') {
-                    colors = colors(groupByKeys);
+                    colors = colors(groupByKeys, options.resetColor);
                 }
                 for (var i = 0; i < groupByMapLen; i++) {
                     parsedData.push({
                         key: groupByMap[i]['key'],
-                        color: colors[groupByMap[i]['key']],
+                        color: (colors[groupByMap[i]['key']] == null)? colors[i % colors.length]
+                                : colors[groupByMap[i]['key']],
                         values: []
                     });
                 }
             } else {
                 parsedData.push({
                     key: yAxisLabel,
-                    color: cowc.DEFAULT_COLOR,
+                    color: $.isArray(cowc.DEFAULT_COLOR) ? cowc.DEFAULT_COLOR[0] : cowc.DEFAULT_COLOR,
                     values: []
                 });
             }
@@ -1585,6 +1734,18 @@ define([
                             groupByMap = groupByDimSum.top(Infinity);
                         }
                     }
+                    if (limit != null) {
+                        groupByMap = _.sortBy(groupByMap, 'value');
+                        groupByMap = groupByMap.reverse();
+                        var othersSum = _.pluck(groupByMap.slice(limit, groupByMap.length - 1), 'value').reduce(function (a, b) {
+                            return a + b;
+                        }, 0);
+                        groupByMap = groupByMap.slice(0, limit);
+                        groupByMap.push({
+                            key: cowc.OTHERS,
+                            value: othersSum
+                        });
+                    }
                     /*var missingKeys = _.difference(_.without(groupByKeys, failureLabel), _.pluck(groupByMap, 'key'));
                     $.each(missingKeys, function(idx, obj){
                         groupByMap.push({
@@ -1593,11 +1754,15 @@ define([
                         });
                     });*/
                     groupByMapLen = groupByMap.length;
+                    total = _.pluck(groupByMap, 'value').reduce(function (a, b) {
+                        return a + b;
+                    }, 0);
                     for (var j = 0; j < groupByMapLen; j++) {
                         var groupByObj = groupByMap[j],
                             groupByObjKey = groupByObj['key'],
-                            groupByObjVal = parseFloat(groupByObj['value']);
-                        total += groupByObjVal;
+                            groupByObjVal = parseFloat(groupByObj['value']),
+                            parseDataKey = groupByObjKey;
+                        //total += groupByObjVal;
                         if (failureCheckFn) {
                             var failureDim = groupDim.group().reduceSum(failureCheckFn),
                                 failureArr = failureDim.top(Infinity);
@@ -1612,21 +1777,34 @@ define([
                                 groupByObjVal -= parseInt(failedSliceCnt);
                             }
                         }
-                        parsedData[groupByObjKey].values.push({
+                        if (limit != null && groupByObjKey != cowc.OTHERS) {
+                            parseDataKey = j;
+                        }
+                        parsedData[parseDataKey].values.push({
                             date: new Date(ifNull(i, 0)/1000), //converting to milli secs
                             name: groupByObjKey,
                             timestampExtent: timestampExtent,
                             x: ifNull(i, 0)/1000,
                             y: groupByObjVal,
+                            failedSliceCnt:failedSliceCnt,
                             total: total
                         });
                     }
-                    if (failureCheckFn) {
+                    if (failureCheckFn && parsedData[failureLabel]) {
                         //Failure at bar level
                           parsedData[failureLabel].values.push({
                               date: new Date(i/1000),
+                              x: ifNull(i, 0)/1000,
                               y: failedBarCnt,
                               name: failureLabel,
+                              total: total,
+                          });
+                      } else if(response.length === 0 && defaultZeroLineDisplay && groupBy!=null){
+                          parsedData['DEFAULT'].values.push({
+                              date: new Date(i/1000),
+                              x: ifNull(i, 0)/1000,
+                              y: failedBarCnt,
+                              name: '',
                               total: total,
                           });
                       }
@@ -1642,13 +1820,331 @@ define([
                          date: new Date(ifNull(i, 0)/1000),
                          timestampExtent: timestampExtent,
                          name: yAxisLabel,
+                         x: ifNull(i, 0)/1000,
                          y: maxValue,
                          total: maxValue
                      });
                 }
             }
-            return _.values(parsedData);;
+            return _.values(parsedData);
+        };
+
+        this.parseDataForScatterChart = function(data,options) {
+            //Loop through and set the x, y and size field based on the chartOptions selected
+            var xField = getValueByJsonPath(options,'xField','x');
+            var yField = getValueByJsonPath(options,'yField','y');
+            var sizeField = getValueByJsonPath(options,'sizeField','size');
+            var ret =  [];
+            var clonedData = $.extend([],true,data);
+            $.each(clonedData,function(i,d){
+                var obj = $.extend({},true,d);
+                obj['x'] = getValueByJsonPath(obj,xField,0);
+                obj['y'] = getValueByJsonPath(obj,yField,0);
+                obj['size'] = getValueByJsonPath(obj,sizeField,0);
+                ret.push(obj);
+            });
+            return ret;
+        };
+
+        this.parsePercentilesData = function(data,options) {
+            var yFields = getValueByJsonPath(options,'yFields',[]);
+            var parsedData = [];
+            var colors = getValueByJsonPath(options,'colors',cowc.FIVE_NODE_COLOR);
+            $.each(yFields,function(i,yField){
+                var key = getLabelForPercentileYField(yField);
+                parsedData[yField] = {"key":key,"color":colors[i],values:[]};
+                var values = parsedData[yField]['values'];
+                $.each(data,function(j,d){
+                    values.push({x:parseInt(getValueByJsonPath(d,"T=",0))/1000,y:getValueByJsonPath(d,yField,0)});
+                });
+                parsedData[yField]['values'] = values;
+            });
+            return _.values(parsedData);
+        };
+        this.parseDataForLineChart = function(data,options) {
+            var yFields = getValueByJsonPath(options,'yFields',[]);
+            var yLabels = getValueByJsonPath(options,'yLabels',[]);
+            var parsedData = [];
+            var colors = getValueByJsonPath(options,'colors',cowc.FIVE_NODE_COLOR);
+            $.each(yFields,function(i,yField){
+                var key = getValueByJsonPath(yLabels,""+i,yField);
+                parsedData[yField] = {"key":key,"color":colors[i],values:[]};
+                var values = parsedData[yField]['values'];
+                $.each(data,function(j,d){
+                    values.push({x:parseInt(getValueByJsonPath(d,"T=",0))/1000,y:getValueByJsonPath(d,yField,0)});
+                });
+                parsedData[yField]['values'] = values;
+            });
+            return _.values(parsedData);
         }
+        this.parsePercentilesDataForStack = function (data,options) {
+            var yFields = getValueByJsonPath(options,'yFields',[]);
+            var parsedData = [];
+            var colors = getValueByJsonPath(options,'colors',cowc.FIVE_NODE_COLOR);
+            var parsedData = [];
+            $.each(yFields,function(i,yfield){
+                $.each(data,function(j,d){
+                   var itemData = $.extend(true,{},d);
+                   itemData['Source'] = yfield;
+                   itemData['percentileValue'] = getValueByJsonPath(d,yfield);
+                   parsedData.push(itemData);
+                });
+            });
+            return parsedData;
+        };
+        function getLabelForPercentileYField (key) {
+            var splits = key.split(';');
+            return splits[splits.length - 1] + "th Percentile";
+        }
+
+        this.parseLineBarChartWithFocus = function (data, options) {
+            var cf = crossfilter(data);
+            var buckets = cowu.bucketizeStats(data, {
+                bucketSize: 4});
+            var groupBy = getValueByJsonPath(options, 'groupBy', 'Source');
+            var y1Field = getValueByJsonPath(options, 'y1Field');
+            var y2Field = getValueByJsonPath(options, 'y2Field');
+            var y2FieldOperation = getValueByJsonPath(options, 'y2FieldOperation');
+            var y1FieldOperation = getValueByJsonPath(options, 'y1FieldOperation');
+            var y2AxisLabel = getValueByJsonPath(options, 'y2AxisLabel');
+            var y2AxisColor = getValueByJsonPath(options, 'y2AxisColor');
+            var colors = getValueByJsonPath(options, 'colors');
+            var resetColor = getValueByJsonPath(options,'resetColor',false);
+            var tsDim = cf.dimension(function (d) {return d.T});
+            var groupDim = cf.dimension(function (d) {return d[groupBy]});
+            var groupDimData = groupDim.group().all();
+            var groupDimKeys = _.pluck(groupDimData, 'key');
+            if (typeof colors == 'function') {
+               colors = colors(_.sortBy(groupDimKeys), resetColor);
+            }
+            var nodeMap = {}, chartData = [];
+            $.each(groupDimData, function (idx, obj) {
+                nodeMap[obj['key']] = {
+                    key: obj['key'],
+                    values: [],
+                    bar: true,
+                    color: colors[obj['key']] != null ? colors[obj['key']] : cowc.D3_COLOR_CATEGORY5[1]
+                };
+                chartData.push(nodeMap[obj['key']]);
+            });
+            var lineChartData = {
+                key: y2AxisLabel,
+                values: [],
+                color: y2AxisColor
+            }
+            for (var i in buckets) {
+                var timestampExtent = buckets[i]['timestampExtent'],
+                    y1Value = 0,
+                    y2Value = 0,
+                    groupCnt = {};
+                tsDim.filter(timestampExtent);
+                var sampleCnt = tsDim.top(Infinity).length;
+                groupDimData = groupDim.group().all();
+                groupDimData = _.sortBy(groupDimData, 'key');
+                $.each(groupDimData, function(idx, obj) {
+                    groupCnt[obj['key']] = obj['value'];
+                });
+                var y1FieldData = groupDim.group().reduceSum(function (d) {
+                    return d[y1Field];
+                });
+                var y2FieldData = groupDim.group().reduceSum(function (d) {
+                    return d[y2Field];
+                });
+                var y1DataArr = y1FieldData.top(Infinity);
+                var y2DataArr = y2FieldData.top(Infinity);
+                var y1DataArrLen = y1DataArr.length;
+                var y2DataArrLen = y2DataArr.length;
+
+                for (var j = 0; j < y1DataArrLen; j++) {
+                    var y1DataObj = y1DataArr[j];
+                    if (nodeMap[y1DataObj['key']] != null ) {
+                        y1Value = y1DataObj['value'];
+                        if (y1FieldOperation == 'average') {
+                            y1Value = y1DataObj['value']/groupCnt[y1DataObj['key']];
+                        }
+                        //avgResTime = avgResTime/1000; // converting to milli secs
+                        nodeMap[y1DataObj['key']]['values'].push({
+                            x: Math.round(i/1000),
+                            y: y1Value
+                        });
+                    }
+                }
+
+                for (var j = 0; j < y2DataArrLen; j++) {
+                    y2Value += y2DataArr[j]['value'];
+                }
+                if (y2FieldOperation == 'average') {
+                    y2Value = y2Value/sampleCnt;
+                }
+                lineChartData['values'].push({
+                    x: Math.round(i/1000),
+                    y: y2Value
+                });
+            }
+            chartData.push(lineChartData);
+            return chartData;
+        };
+        this.isGridStackWidget = function (selector) {
+            if ($(selector).parents('.grid-stack-item-content').length) {
+                return true;
+            }
+            return false;
+        }
+
+        self.parseAndMergeStats = function (response,primaryDS) {
+            var primaryData = primaryDS.getItems();
+            if(primaryData.length == 0) {
+                primaryDS.setData(response);
+                return;
+            }
+            if(response.length == 0) {
+                return;
+            }
+            //If both arrays are not having first element at same time
+            //remove one item accordingly
+            while (primaryData[0]['T='] != response[0]['T=']) {
+                if(primaryData[0]['T='] > response[0]['T=']) {
+                    response = response.slice(1,response.length-1);
+                } else {
+                    primaryData = primaryData.slice(1,primaryData.length-1);
+                }
+            }
+            var cnt = primaryData.length;
+            var responseKeys = _.keys(response[0]);
+            for (var i = 0; i < cnt ; i++) {
+//                primaryData[i]['T'] = primaryData[i]['T='];
+                for (var j = 0; j < responseKeys.length; j++) {
+                    if (response[i] != null && response[i][responseKeys[j]] != null) {
+                        primaryData[i][responseKeys[j]] =
+                            response[i][responseKeys[j]];
+                    } else if (i > 0){
+                        primaryData[i][responseKeys[j]] =
+                            primaryData[i-1][responseKeys[j]];
+                    }
+                }
+            }
+            primaryDS.updateData(primaryData);
+        };
+
+        self.getGridItemsForWidgetId = function(widgetId) {
+            var gridInst = $("[data-widget-id='" + widgetId + "']").find('.contrail-grid').data('contrailGrid');
+            var items = [];
+            if(gridInst != null) {
+                items = gridInst._dataView.getItems();
+            }
+            return items;
+        }
+
+        self.resetGridStackLayout = function(allPages) {
+            var gridStackId = $('.custom-grid-stack').attr('data-widget-id');
+            localStorage.removeItem(gridStackId);
+            var gridStackInst = $('.custom-grid-stack').data('grid-stack-instance')
+            if(gridStackInst != null ) {
+                gridStackInst.render()
+            }
+        };
+
+        /**
+         * Takes input as an array of configs.
+         * The first one is considered as primary req and the rest are added as
+         * vl config
+         */
+        self.getStatsModelConfig = function (config) {
+            if (!_.isArray(config)) {
+                config = [config];
+            }
+            var primaryRemoteConfig ;
+            var vlRemoteList = [];
+            for (var i = 0; i < config.length; i++) {
+                var statsConfig = config[i];
+                var postData = {
+                    "autoSort": true,
+                    "async": false,
+                    "formModelAttrs": {
+                      "table_type": "STAT",
+                      "query_prefix": "stat",
+                      "from_time": Date.now() - (2 * 60 * 60 * 1000),
+                      "from_time_utc": Date.now() - (2 * 60 * 60 * 1000),
+                      "to_time": Date.now(),
+                      "to_time_utc": Date.now(),
+                      "time_granularity_unit": "secs",
+                      "time_granularity": 150,
+                      "limit": "150000"
+                    }
+                };
+
+                if (statsConfig['table_name'] != null) {
+                    postData['formModelAttrs']['table_name'] = statsConfig['table_name'];
+                }
+                if (statsConfig['table_type'] != null) {
+                    postData['formModelAttrs']['table_type'] = statsConfig['table_type'];
+                }
+                if (statsConfig['select'] != null) {
+                    postData['formModelAttrs']['select'] = statsConfig['select'];
+                }
+                if (statsConfig['where'] != null) {
+                    postData['formModelAttrs']['where'] = statsConfig['where'];
+                }
+                if (statsConfig['time_granularity'] != null) {
+                    postData['formModelAttrs']['time_granularity'] = statsConfig['time_granularity'];
+                }
+                if (statsConfig['time_granularity_unit'] != null) {
+                    postData['formModelAttrs']['time_granularity_unit'] = statsConfig['time_granularity_unit'];
+                }
+
+                if(i == 0) {
+                    var remoteObj = {
+                            ajaxConfig : {
+                                url : "/api/qe/query",
+                                type: 'POST',
+                                data: JSON.stringify(postData)
+                            },
+                            dataParser : function (response) {
+                                var data = response['data'];
+                                if (response['queryJSON'] != null) {
+                                    data = _.map(data, function(obj) { 
+                                        return _.extend({}, obj, {queryJSON: response['queryJSON']});
+                                    });
+                                }
+                                if (statsConfig['parser'] != null && typeof statsConfig['parser'] == "function") {
+                                    data = statsConfig['parser'](data);
+                                }
+                                return data;
+                            }
+                        };
+                    primaryRemoteConfig = remoteObj;
+                } else {
+                    var vlRemoteObj = {
+                        getAjaxConfig: function() {
+                            return {
+                                url : "/api/qe/query",
+                                type: 'POST',
+                                data: JSON.stringify(postData)
+                            }
+                        },
+                        successCallback: function(response, contrailListModel) {
+                            var data = getValueByJsonPath(response,'data',[]);
+                            statsConfig['mergeFn'] (data,contrailListModel,'MAX(flow_rate.active_flows)');
+                        }
+                    };
+                    vlRemoteList.push (vlRemoteObj);
+                }
+            }
+            var listModelConfig =  {
+                remote : primaryRemoteConfig,
+                cacheConfig:{
+                    cacheTimeout: 5*60*1000
+                }
+            };
+            if(vlRemoteList.length > 0) {
+                var vlRemoteConfig = {vlRemoteList:vlRemoteList};
+                listModelConfig['vlRemoteConfig'] = vlRemoteConfig;
+            }
+            if (statsConfig['modelId'] != null) {
+                listModelConfig['cacheConfig']['ucid'] = statsConfig['modelId'];
+            }
+            return listModelConfig;
+        };
     };
 
     function filterXML(xmlString, is4SystemLogs) {

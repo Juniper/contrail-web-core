@@ -8,15 +8,34 @@ define([
     'core-basedir/js/models/LineBarWithFocusChartModel',
     'contrail-list-model',
     'nv.d3',
-    'chart-utils'
-], function (_, ContrailView, LineBarWithFocusChartModel, ContrailListModel, nv, chUtils) {
+    'chart-utils',
+    'core-constants'
+], function (_, ContrailView, LineBarWithFocusChartModel, ContrailListModel, nv, chUtils, cowc) {
     var LineBarWithFocusChartView = ContrailView.extend({
+        settingsChanged: function(newSettings) {
+            var self = this,
+                vc = self.attributes.viewConfig;
+            if(vc.hasOwnProperty("chartOptions")) {
+                vc.chartOptions["resetColor"] = true;
+                for(var key in newSettings) {
+                    if(key in vc.chartOptions) {
+                        vc.chartOptions[key] = newSettings[key];
+                    }
+                }
+                if(typeof vc.chartOptions["colors"] != 'function') {
+                    vc.chartOptions["colors"] = cowc.FIVE_NODE_COLOR;
+                }
+            }
+            self.renderChart($(self.$el), vc, self.model);
+        },
         render: function () {
             var viewConfig = this.attributes.viewConfig,
                 ajaxConfig = viewConfig['ajaxConfig'],
                 self = this, deferredObj = $.Deferred(),
                 selector = $(self.$el),
                 modelMap = contrail.handleIfNull(self.modelMap, {});
+            //settings
+            cowu.updateSettingsWithCookie(viewConfig);
 
             if (contrail.checkIfExist(viewConfig.modelKey) && contrail.checkIfExist(modelMap[viewConfig.modelKey])) {
                 self.model = modelMap[viewConfig.modelKey]
@@ -42,6 +61,19 @@ define([
                         self.updateChart(selector, viewConfig, self.model);
                     });
                 }
+                var prevDimensions = chUtils.getDimensionsObj(self.$el);
+                self.resizeFunction = _.debounce(function (e) {
+                    if(!chUtils.isReRenderRequired({
+                        prevDimensions:prevDimensions,
+                        elem:self.$el})) {
+                        return;
+                    }
+                    prevDimensions = chUtils.getDimensionsObj(self.$el);
+                     self.renderChart($(self.$el), viewConfig, self.model);
+                 },cowc.THROTTLE_RESIZE_EVENT_TIME);
+
+                $(self.$el).parents('.custom-grid-stack-item').on('resize',self.resizeFunction);
+
             }
         },
 
@@ -53,9 +85,11 @@ define([
                 chartViewConfig, chartOptions, chartViewModel;
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                data = viewConfig['parseFn'](data);
+                data = viewConfig['parseFn'](data, viewConfig['chartOptions']);
             }
-
+            if ($(selector).parents('.custom-grid-stack-item').length != 0) {
+                viewConfig['chartOptions']['height'] = $(selector).parents('.custom-grid-stack-item').height() - 20;
+            }
             chartViewConfig = self.getChartViewConfig(data, viewConfig.chartOptions);
             chartOptions = chartViewConfig['chartOptions'];
             //viewConfig.chartOptions = chartOptions;

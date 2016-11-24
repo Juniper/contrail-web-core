@@ -15,6 +15,14 @@ define([
     'jquery.multiselect.filter'
 ], function (_, Handlebars, ContrailView, ContrailListModel, GridFooterView) {
     var GridView = ContrailView.extend({
+        settingsChanged: function(newSettings) {
+            var self = this,
+                gridContainer = $(self.$el).data("contrailGrid");
+            if(gridContainer && gridContainer._dataView) {
+                gridContainer._dataView.refreshData();
+            }
+        },
+
         render: function () {
             var self = this,
                 viewConfig = self.attributes.viewConfig,
