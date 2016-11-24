@@ -8,6 +8,9 @@ define([
     var CoreConstants = function () {
         var self = this;
 
+        this.INFRA_MODEL_CACHE_TIMEOUT = 5 * 60;
+        this.ENABLE_CAROUSEL = false;
+        this.THROTTLE_RESIZE_EVENT_TIME = 500;
         this.TMPL_SUFFIX_ID = "-template";
         this.RESULTS_SUFFIX_ID = "-results";
         this.ERROR_SUFFIX_ID = "_error";
@@ -150,9 +153,20 @@ define([
         this.TMPL_LOADING_SPINNER = "core-loading-spinner-template";
         this.TMPL_NOT_FOUND_MESSAGE = "core-not-found-message-template";
         this.TMPL_INFOBOXES_VIEW = "core-infobox-template";
-
+        /* Color Settings - Begin */
+        this.TMPL_SETTINGS_COLOR_VIEW = "core-settings-color-template";
+        this.TMPL_SETTINGS_COLOR_MORE = "core-settings-color-more-template";
+        this.SETTINGS_COLOR_MODAL_ID = 'settings-color';
+        this.SETTINGS_COLOR_PREFIX_ID = 'cs';
+        this.SHOW_MULTI_VIEWS =  "showMultiViews";
+        this.COOKIE_COLOR_SCHEME = "color_scheme";
+        this.COOKIE_CHART_SETTINGS = "chartData";
+        this.NUM_OF_COLORS = "6";
+        /* Color Settings - End */
         //stacked bar chart
         this.TMPL_CUSTOM_CHART_LEGEND = 'custom-chart-legend';
+        this.TOOLTIP_TEMPLATE = "tooltip-template";
+        this.TOOLTIP_LINEAREACHART_TEMPLATE = "tooltip-lineareachart-template";
 
         this.TMPL_NODE_DETAIL_SPARKLINE_BOX = 'node-details-sparkline-template';
         this.TMPL_NODE_DETAIL_INFOBOXES_BOX = 'node-details-infoboxes-template';
@@ -227,6 +241,14 @@ define([
         this.DATA_REQUEST_STATE_SUCCESS_EMPTY = 'success-empty';
         this.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY = 'success-not-empty';
         this.DATA_REQUEST_STATE_INITIAL_EMPTY = 'inital-empty';
+
+        //Toolbar Constants
+        this.COLOR_PALETTE = 'color_palette';
+        this.CHART_SETTINGS = 'chart_settings';
+        this.COLOR_PALETTE_CLASS = 'contrailGlyph-palette';
+        this.CHART_SETTINGS_CLASS = 'fa-bar-chart-o';
+        this.SETTINGS_MODAL_ID = 'settings_modal';
+        this.SETTINGS_PREFIX_ID = 'toolbar_settings';
 
         // QE Constants - Start
         this.QE_TIMEOUT = 12000;
@@ -1974,15 +1996,19 @@ define([
             var args = arguments;
             return cowu.getValueFromTemplate(args);
         };
-        this.DEFAULT_COLOR = '#adcfdc';
+        this.DEFAULT_COLOR = '#6f97ae';
         this.HTTP_STATUS_CODE_AUTHORIZATION_FAILURE = 401;
 
         //Node color schemes
-        this.SINGLE_NODE_COLOR = ['#adcfdc'];
+        this.SINGLE_NODE_COLOR = ['#6f97ae'];
         this.THREE_NODE_COLOR = ['#a8c0d1', '#6f97ae', '#617683'];
-        this.FIVE_NODE_COLOR = ['#819eb5', '#6b8295', '#876f8a', '#b2a198', '#eccc9b'];
+        this.FIVE_NODE_COLOR = ['rgb(168,192,209)', 'rgb(111,151,174)', 'rgb(97,118,131)', 'rgb(185,213,232)', 'rgb(209,230,245)'];
         this.FAILURE_COLOR = '#d95436';
+        this.OTHERS_COLORS = 'rgb(177, 189, 197)';
+        
+        this.DEFAULT_CHART_DURATION = 2;
 
+        this.OTHERS = 'Others';
         this.FAILURE_LABEL = 'Failures';
 
         // Query Engine constants

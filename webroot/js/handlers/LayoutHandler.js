@@ -15,7 +15,7 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
             //reset the cache
             if(typeof(cowch) != "undefined")
                 cowch.reset();
-
+            cowu.updateMultiViewSettingsFromCookie();
             menuHandler.loadMenu(menuObj);
             menuHandler.handleSideMenu();
             self.onHashChange({}, cowhu.getState());

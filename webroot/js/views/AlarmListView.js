@@ -160,7 +160,9 @@ define([
                                         showLegend: false,
                                         showControls: false,
                                         groupBy: 'severity',
+                                        insertEmptyBuckets:false,
                                         yAxisFormatter: d3.format('d'),
+                                        applySettings: false,
                                         colors: {
                                             '0': '#dc6660',//Critical Red
                                             '1': '#dc6660',//Major Red
