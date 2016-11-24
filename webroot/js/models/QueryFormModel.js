@@ -6,12 +6,13 @@ define([
     'underscore',
     'backbone',
     'knockout',
+    "protocol",
     'contrail-model',
     'query-or-model',
     'query-and-model',
     'core-basedir/reports/qe/ui/js/common/qe.utils',
     'contrail-list-model',
-], function (_, Backbone, Knockout, ContrailModel, QueryOrModel, QueryAndModel, qeUtils, ContrailListModel) {
+], function (_, Backbone, Knockout, protocolUtils, ContrailModel, QueryOrModel, QueryAndModel, qeUtils, ContrailListModel) {
     var QueryFormModel = ContrailModel.extend({
         defaultSelectFields: [],
         disableSelectFields: [],
@@ -179,6 +180,12 @@ define([
                         dataType: "json"
                     }).done(function (resultJSON) {
                         var valueOptionList = {};
+
+                        if (_.includes(["FlowSeriesTable", "FlowRecordTable"], tableName)) {
+                            valueOptionList["protocol"] = [
+                                "TCP", "UDP", "ICMP"
+                            ];
+                        }
                         $.each(resultJSON.data, function(dataKey, dataValue) {
                             var nameOption = dataValue.name.split(':')[1];
 
@@ -381,6 +388,19 @@ define([
             var self = this,
                 formModelAttrs = this.toJSON(),
                 queryReqObj = {};
+
+            /**
+             * Analytics only understand protocol code.
+             * So convert protocol name in where clause.
+             */
+            if (formModelAttrs.where) {
+                var regex = /(protocol\s*=\s*)(UDP|TCP|ICMP)/g;
+
+                formModelAttrs.where = formModelAttrs.where.replace(regex,
+                    function(match, leftValue, protocolName) {
+                        return leftValue + protocolUtils.getProtocolCode(protocolName);
+                    });
+            }
 
             if(useOldTime != true) {
                 qeUtils.setUTCTimeObj(this.query_prefix(), formModelAttrs, serverCurrentTime);

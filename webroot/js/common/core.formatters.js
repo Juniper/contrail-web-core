@@ -4,8 +4,9 @@
 
 define([
     'underscore',
-    'moment'
-], function (_, moment) {
+    'moment',
+    "protocol"
+], function (_, moment, protocolUtils) {
     var predefinedUnits = {
         temperature: "C",
         rotationSpeed: "RPM"
@@ -150,7 +151,7 @@ define([
                 return (value == 0) ? 'EGRESS' : 'INGRESS';
             },
             'protocol': function (value, options) {
-                return getProtocolName(value)
+                return protocolUtils.getProtocolName(value)
             },
             'xml2json': function (value, options) {
                 var jsonValue = null;
