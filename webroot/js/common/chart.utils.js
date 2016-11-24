@@ -3,8 +3,9 @@
  */
 
 define([
-    'underscore'
-], function (_) {
+    'underscore',
+    'legend-view'
+], function (_,LegendView) {
     var chartUtils = {
         updateChartOnResize: function(selector,chart){
             if(selector != null && $(selector).is(':visible') && chart != null) {
@@ -113,6 +114,180 @@ define([
                 .on("mouseout", function(d) {
                     $('body').find('.nvtooltip').remove();
                 });
+        },
+        getDimensionsObj: function(elem) {
+            return {
+                width: $(window).width(),
+                height:$(window).height(),
+                elemWidth:$(elem).width(),
+                elemHeight:$(elem).height()
+            }
+        },
+        isReRenderRequired: function(cfg) {
+            var elem = cfg['elem'];
+            var prevDimensions = cfg['prevDimensions'];
+            // console.info("last Dimensions",prevDimensions['lastWidth'],prevDimensions['lastHeight'],
+            // prevDimensions['lastElemWidth'],prevDimensions['lastElemHeight']);
+            // console.info("current Dimensions",$(window).height(),$(window).width(),$(self.$el).width(),$(self.$el).height());
+            if(prevDimensions['width'] == $(window).width() && prevDimensions['height'] == $(window).height() &&
+                prevDimensions['elemWidth'] == $(self.$el).width() && prevDimensions['elemHeight'] == $(self.$el).height()) {
+                return false;
+            }
+            return true;
+        },
+        defaultStackTooltipFn: function (tooltipData,yAxisFormatter,chartOptions) {
+              var tooltipData = tooltipData;
+              var strTime;
+              var hours;
+              var minutes;
+              tooltipData  = $.map(tooltipData,function(d){ d.values['y'] = yAxisFormatter(d.values['y']);
+              if(d.dateTime){
+                  strTime = d.dateTime;
+                  d['Time']= strTime;
+              }
+              else{
+                hours = d.values['date'].getHours();
+                hours = ('0' + hours).slice(-2);
+                minutes = d.values['date'].getMinutes();
+                minutes = ('0' + minutes).slice(-2);
+                strTime = hours + ':' + minutes;
+                d['Time']= strTime;
+            }
+            return d;
+            });
+              var toolTipTemplate = contrail.getTemplate4Id(cowc.TOOLTIP_TEMPLATE);
+              return toolTipTemplate({
+                subTitle: chartOptions.subTitle,
+                yAxisLabel:chartOptions.yAxisLabel,
+                Time:tooltipData[0].Time,
+                tooltipData: tooltipData
+            });
+        },
+        defaultLineAreaTooltipFn: function (d,chartOptions, yAxisFormatter) {
+            var series = d.series;
+            if(yAxisFormatter != null){
+                series = $.map(series,function(d){
+                    d['value'] = yAxisFormatter(d['value']);
+                    return d;
+                });
+            }
+            else if (chartOptions.yFormatter) {
+                series = $.map(series,function(d){
+                    d['value'] = chartOptions.yFormatter(d['value']);
+                    return d;
+                });
+            }
+            var toolTipTemplate = contrail.getTemplate4Id(cowc.TOOLTIP_LINEAREACHART_TEMPLATE);
+            return toolTipTemplate({
+                subTitle: chartOptions.subTitle,
+                yAxisLabel:chartOptions.yAxisLabel,
+                Time:d.value,
+                series:series
+            });
+        },
+        getDefaultViewConfig: function(chartType) {
+            var stackChartConfig = {
+                    viewConfig: {
+                        class: 'mon-infra-chart chartMargin',
+                        chartOptions: {
+                            // bucketSize: this.STATS_BUCKET_DURATION,
+                            bucketSize: 2.5,
+                            showLegend: false,
+                            showControls: false,
+                            tickPadding: 8,
+                            margin: {
+                                left: 45,
+                                top: 20,
+                                right: 0,
+                                bottom: 15
+                            },
+                            yAxisOffset: 25,
+                            forceY: [0, 0.01],
+                            defaultZeroLineDisplay: true,
+                            tooltipFn: this.defaultLineAreaTooltipFn
+                        }
+                    }
+                };
+            var defaultViewConfigMap = {
+                 'StackedBarChartWithFocusView' : stackChartConfig,
+                 'StackedAreaChartView'         : stackChartConfig,
+                 "LineWithFocusChartView": {
+                    viewConfig: {
+                        class: 'mon-infra-chart chartMargin',
+                        parseFn: cowu.chartDataFormatter,
+                        chartOptions : {
+                            defaultDataStatusMessage: false,
+                            spliceAtBorders: false,
+                            brush: false,
+                            xAxisLabel: '',
+                            yAxisLabel: '',
+                            groupBy: 'Source',
+                            yField: '',
+                            yFieldOperation: 'average',
+                            // bucketSize: this.STATS_BUCKET_DURATION,
+                            bucketSize: 2.5,
+                            colors: {},
+                            onClickBar:false,
+                            title: '',
+                            axisLabelDistance : 0,
+                            margin: {
+                                left: 58,
+                                top: 20,
+                                right: 0,
+                                bottom: 20
+                            },
+                            tickPadding: 8,
+                            hideFocusChart: true,
+                            forceY: [0, 0.01],
+                            yFormatter : function(d){
+                                return d;
+                            },
+                            xFormatter: function(xValue, tickCnt) {
+                                var date = xValue > 1 ? new Date(xValue) : new Date();
+                                /*if (tickCnt != null) {
+                                var mins = date.getMinutes();
+                                date.setMinutes(Math.ceil(mins/15) * 15);
+                                }*/
+                                return d3.time.format('%H:%M')(date);
+                            },
+                            yTickFormat: function(value){
+                                return d3.format('.2f')(value);
+                            },
+                            showLegend: false,
+                            defaultZeroLineDisplay: true,
+                            legendView: LegendView,
+                            tooltipFn: this.defaultLineAreaTooltipFn
+                        }
+                    }
+                },
+                "ZoomScatterChartView" : {
+                      viewConfig: {
+                          loadChartInChunks: false,
+                          chartOptions: {
+                              sortFn:function(data){
+                                  return data.reverse();
+                              },
+                              doBucketize: true,
+                              xLabel: ctwl.TITLE_CPU,
+                              yLabel: 'Memory (MB)',
+                              xField: 'x',
+                              yField: 'y',
+                              sizeField: 'size',
+                              xTickCount: 5,
+                              yTickCount: 5,
+                              dataParser: cowu.parseDataForScatterChart,
+                              margin: {top:5},
+                              bubbleSizeFn: function(d) {
+                                   return d3.max(d,function(d) { return d.size;});
+                              },
+                          }
+                      }
+                  }
+            };
+            if(defaultViewConfigMap[chartType] != null) 
+                return defaultViewConfigMap[chartType]
+            else
+                return {};
         }
     };
 

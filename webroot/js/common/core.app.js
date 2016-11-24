@@ -43,7 +43,9 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'jquery-dep-libs'             : coreWebDir + '/js/common/jquery.dep.libs',
         'nonamd-libs'                 : coreWebDir + '/js/common/nonamd.libs',
         //Files not in bundles
+        'widget-configmanager'        : coreWebDir + '/js/widget.configmanager',
         'gridstack'                   : coreWebDir + '/assets/gridstack/js/gridstack',
+        'toolbar'                     : coreWebDir + '/assets/toolbar/js/jquery.toolbar',
         'underscore'                  : coreWebDir + '/assets/underscore/underscore-min',
         'slickgrid-utils'             : coreWebDir + "/js/slickgrid-utils",
         //'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
@@ -55,6 +57,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'vis-edge-model'              : coreWebDir + '/js/models/VisEdgeModel',
         'vis-tooltip-model'           : coreWebDir + '/js/models/VisTooltipModel',
         'gs-view'                     : coreWebDir + '/js/views/GridStackView',
+        'color-scheme'                : coreWebDir + '/js/color_schemes',
+        'palette'                     : coreWebDir + '/assets/palette/js/palette',
         'graph-view'                  : coreWebDir + '/js/views/GraphView',
         'contrail-graph-model'        : coreWebDir + '/js/models/ContrailGraphModel',
         'dagre'                       : coreWebDir + '/assets/joint/js/dagre',
@@ -63,6 +67,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'joint.layout.DirectedGraph'  : coreWebDir + '/assets/joint/js/joint.layout.DirectedGraph',
         'joint'                       : coreWebDir + '/assets/joint/js/joint.clean',
         'joint.contrail'              : coreWebDir + '/js/common/joint.contrail',
+
+        'event-drops'                 : coreWebDir + '/assets/event-drops/js/eventDrops',
 
         'core-alarm-utils'            :  coreWebDir + '/js/common/core.alarms.utils',
         'core-alarm-parsers'          :  coreWebDir + '/js/common/core.alarms.parsers',

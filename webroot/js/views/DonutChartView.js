@@ -10,6 +10,12 @@ define([
     'chart-utils'
 ], function (_, ContrailView, DonutChartModel, ContrailListModel, chUtils) {
     var DonutChartView = ContrailView.extend({
+        settingsChanged: function(colorModel) {
+            var self = this,
+                vc = self.attributes.viewConfig;
+            vc.resetColor = true;
+            self.renderChart($(self.$el), vc, self.model);
+        },
         render: function () {
             var self = this,
                 viewConfig = self.attributes.viewConfig,
@@ -19,6 +25,8 @@ define([
             if (self.model === null && viewConfig['modelConfig'] !== null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
             }
+            //settings
+            cowu.updateSettingsWithCookie(viewConfig);
 
             self.renderChart(selector, viewConfig, self.model);
 
@@ -36,13 +44,12 @@ define([
                         self.renderChart(selector, viewConfig, self.model);
                     });
                 }
-                var resizeFunction = function (e) {
-                    self.renderChart(selector, viewConfig, self.model);
-                };
+                self.resizeFunction = _.debounce(function (e) {
+                     self.renderChart($(self.$el), viewConfig, self.model);
+                 },cowc.THROTTLE_RESIZE_EVENT_TIME);
 
-                $(window)
-                    .off('resize', resizeFunction)
-                    .on('resize', resizeFunction);
+                $(window).on('resize',self.resizeFunction);
+
             }
         },
 
@@ -55,7 +62,9 @@ define([
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data);
             }
-
+            if ($(selector).parents('.custom-grid-stack-item').length != 0) {
+                viewConfig['chartOptions']['height'] = $(selector).parents('.custom-grid-stack-item').height() - 20;
+            }
             chartViewConfig = getChartViewConfig(data, viewConfig);
             chartOptions = chartViewConfig['chartOptions'];
             chartModel = new DonutChartModel(chartOptions);
@@ -65,7 +74,6 @@ define([
             if ($(selector).find("svg") != null) {
                 $(selector).empty();
             }
-
             $(selector).append(chartTemplate(chartOptions));
 
             //Store the chart object as a data attribute so that the chart can be updated dynamically
