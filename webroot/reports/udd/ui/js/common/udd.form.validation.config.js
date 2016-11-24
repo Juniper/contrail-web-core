@@ -227,16 +227,50 @@ define([
 
         if (attrRequirements) {
             if (attrRequirements.requiredByDirtyColumns) {
-                var selectedDirtyColumns = metrics.preprocess();
+                var context = metrics.preprocess(),
+                    dirtyColumnValueBag = {};
 
-                selectedDirtyColumns = _.takeWhile(selectedDirtyColumns, function(column) {
-                    return _.isEmpty(value) || value.replace(/\s*=\s*/g, "=").indexOf(column + "=") === -1;
-                });
+                if (_.isEmpty(context.whereClauseMap) && !_.isEmpty(context.selectedDirtyColumns)) {
+                    return getFieldErrorMsg(convertToLabel(key)[0],
+                        "requires where-clause-sanitized",
+                        context.selectedDirtyColumns.join(", "));
+                }
 
-                if (value.indexOf(") OR (") !== -1) {
-                    return getFieldErrorMsg(convertToLabel(key)[0], "rejects usage of OR for sanitizing");
-                } else if (!_.isEmpty(selectedDirtyColumns)) {
-                    return getFieldErrorMsg(convertToLabel(key)[0], "requires where-clause-sanitized", selectedDirtyColumns.join(", "));
+                for (var orClauseKey in context.whereClauseMap) {
+                    var orClause = context.whereClauseMap[orClauseKey],
+                        definedColumns = _.keys(orClause),
+                        missingDirtyColumns = _.difference(context.selectedDirtyColumns, definedColumns),
+                        definedDirtyColumns = _.intersection(context.selectedDirtyColumns, definedColumns);
+
+                    _.forEach(definedDirtyColumns, function(dirtyColumn) {
+                        if (dirtyColumnValueBag[dirtyColumn]) {
+                            dirtyColumnValueBag[dirtyColumn].push(orClause[dirtyColumn].value);
+                        } else {
+                            dirtyColumnValueBag[dirtyColumn] = [orClause[dirtyColumn].value];
+                        }
+                    });
+
+                    /**
+                     * Make sure that each OR clause defines conditions for selected dirty columns
+                     */
+                    if (!_.isEmpty(missingDirtyColumns)) {
+                        return getFieldErrorMsg(convertToLabel(key)[0],
+                            "has one or more OR clauses requiring where-clause-sanitized",
+                            missingDirtyColumns.join(", "));
+                    }
+                }
+
+                /**
+                 * Make sure that each OR clause uses the same condition for the same dirty column
+                 */
+                for (var dirtyColumn in dirtyColumnValueBag) {
+                    var values = dirtyColumnValueBag[dirtyColumn];
+
+                    if (_.uniq(values).length > 1) {
+                        return getFieldErrorMsg(convertToLabel(key)[0],
+                            "requires each OR clause to use the same value for",
+                            dirtyColumn);
+                    }
                 }
             }
         }
@@ -298,10 +332,33 @@ define([
                                     target: computedState.dataSrcType,
                                     key: computedState.visualType,
                                     preprocess: function() {
-                                        return _.intersection(
+                                        var orClauseCollection = computedState.where_or_clauses,
+                                            whereClauseMap = _.map(orClauseCollection.models, function(orClauseVM) {
+                                                var andClauseVMs = orClauseVM.attributes.and_clauses(),
+                                                    currentOrClauseMap = {};
+
+                                                _.forEach(andClauseVMs, function(andClauseVM) {
+                                                    var andClauseVal= andClauseVM.value()();
+
+                                                    if (andClauseVal) {
+                                                        currentOrClauseMap[andClauseVM.name()] = {
+                                                            operator: andClauseVM.operator(),
+                                                            value: andClauseVal
+                                                        };
+                                                    }
+                                                });
+
+                                                return currentOrClauseMap;
+                                            }),
+                                            selectedDirtyColumns = _.intersection(
                                                 dirtyColumns,
                                                 computedState.select.replace(/\s+/g, "").split(",")
                                             );
+
+                                        return {
+                                            whereClauseMap: whereClauseMap,
+                                            selectedDirtyColumns: selectedDirtyColumns
+                                        };
                                     }
                                 };
 
