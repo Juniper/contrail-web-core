@@ -95,7 +95,6 @@ define([
                     $(selector).closest('.custom-grid-stack-item').height() - 20:
                         cowu.getValueByJsonPath(chartOptions, 'height', 300);
 
-            chartOptions['timeRange'] =  getValueByJsonPath(self, 'model;queryJSON');
             var totalWidth = $(selector).find('.stacked-area-chart-container').width();
             var totalOverviewHeight = totalWidth * 0.1;
             var margin =  { top: 20, right: 20, bottom: totalOverviewHeight, left: 20 };
@@ -131,7 +130,7 @@ define([
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data, chartOptions);
               //Need to check and remove the data.length condition because invalid for object
-            } else if (data != null && data.length > 0) {
+            } else {
                 data = cowu.chartDataFormatter(data, chartOptions);
             }
             if (colors != null) {
@@ -167,7 +166,6 @@ define([
 
               //Format x-axis labels with custom function.
               chart.xAxis.tickFormat(function(d) { return d3.time.format('%H:%M')(new Date(d)) });
-
               //y-axis tickformatter
               chart.yAxis
                   .tickFormat(yAxisFormatter);
@@ -179,7 +177,10 @@ define([
                   }, []);
                   var yAxisMaxValue = d3.max(allObjs, function(d) { return d.total; });
                   domain[1] = yAxisMaxValue + (yAxisOffset/100) * yAxisMaxValue;
-                  chart.yDomain(domain);
+                  if (domain[1] == 0)
+                      chart.yDomain([0,1]);
+                  else
+                      chart.yDomain(domain);
               }
               //initialize the chart in the svg element
               chart.interpolate("monotone");
@@ -204,6 +205,7 @@ define([
                                   .style('font-size', '10px')
                                   .attr("transform", "rotate(-90)")
                                   .text(yAxisLabel);
+              chart.stacked.dispatch.on("areaClick.toggle", null);
               //Use the tooltip formatter if present
                if(chartOptions.tooltipFn) {
                    chart.interactiveLayer.tooltip.contentGenerator(function (obj) {
@@ -231,7 +233,7 @@ define([
                           label: failureLabel,
                           legend: [{
                               name: failureLabel,
-                              color: cowc.FAILURE_COLOR
+                              color: cowu.getValueByJsonPath(chartOptions, 'failureColor', cowc.FAILURE_COLOR),
                           }]
                       });
                   }

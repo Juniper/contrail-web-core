@@ -129,7 +129,6 @@ define([
             var defaultZeroLineDisplay = getValueByJsonPath(chartOptions,'defaultZeroLineDisplay', false);
             var groupBy = chartOptions['groupBy'], groups = [], yAxisMaxValue;
             var resetColor = getValueByJsonPath(chartOptions,'resetColor',false);
-            chartOptions['timeRange'] =  getValueByJsonPath(self, 'model;queryJSON');
             //settings
             if(typeof chartOptions["colors"] != 'function' && chartOptions['applySettings'] != false) {
                 chartOptions["colors"] = cowc.FIVE_NODE_COLOR;
@@ -139,7 +138,7 @@ define([
               //Need to check and remove the data.length condition because invalid for object
             } else {
                 if (data === null || data.length === 0 && defaultZeroLineDisplay){
-                    var start = Date.now() - (2 * 60 * 60 * 1000),
+                    var start = Date.now() - (cowc.DEFAULT_CHART_DURATION * 60 * 60 * 1000),
                         end = Date.now();
                         chartOptions['timeRange'] = {'start_time': parseInt(start.toString()+'000'), 
                                 'end_time': parseInt(end.toString()+'000')};
@@ -212,7 +211,7 @@ define([
             var overview,brush,brush2Main;
 
             // mathematical scales for the x and y axes
-            var x = d3.time.scale().range([0, width]);
+            var x = d3.time.scale().range([0, width - 10]);
 
             var y = d3.scale.linear().range([height, 0]);
 
@@ -677,7 +676,9 @@ define([
             }
             function onclickBar(data) {
                 var xExtent = data.timestampExtent;
-                clearToolTip(false);
+                if(chartOptions.onClickBar != false){
+                    clearToolTip(false);
+                }
                 xExtent = xExtent.map(function(date){
                     return new Date(date).getTime(); //convert to millisecs
                 });

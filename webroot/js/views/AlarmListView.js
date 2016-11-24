@@ -158,12 +158,13 @@ define([
                                         barWidth: 6,
                                         onClickBar : true,
                                         showLegend: false,
-                                        applySettings: false,
                                         yAxisLabel: "Alarms Count",
                                         showControls: false,
                                         groupBy: 'severity',
+                                        insertEmptyBuckets:false,
                                         yAxisFormatter: d3.format('d'),
                                         subTitle:"Severity",
+                                        applySettings: false,
                                         colors: {
                                             '0': '#dc6660',//Critical Red
                                             '1': '#dc6660',//Major Red

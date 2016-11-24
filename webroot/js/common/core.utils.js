@@ -216,8 +216,11 @@ define([
                 this.updateColorSettingsWithCookie();
                 var cookieSettings = JSON.parse(contrail.getCookie(cowc.COOKIE_CHART_SETTINGS));
                 if(cookieSettings && viewConfig && viewConfig.chartOptions) {
-                    for(var key in cookieSettings) {
-                        viewConfig.chartOptions[key] = cookieSettings[key];
+                    var isChartSettingsOverride = cowu.getValueByJsonPath(viewConfig, "chartOptions;isChartSettingsOverride", true);
+                    if(isChartSettingsOverride) {
+                        for(var key in cookieSettings) {
+                            viewConfig.chartOptions[key] = cookieSettings[key];
+                        }
                     }
                 }
             }
@@ -1558,8 +1561,14 @@ define([
          */
         this.bucketizeStats = function (stats, options) {
             var bucketSize = getValueByJsonPath(options, 'bucketSize', cowc.DEFAULT_BUCKET_DURATION),
-                insertEmptyBuckets = getValueByJsonPath(options, 'insertEmptyBuckets', true),
-                timeRange = getValueByJsonPath(options, 'timeRange'),
+                insertEmptyBuckets = getValueByJsonPath(options, 'insertEmptyBuckets', true);
+            if (options['timeRange'] == null) {
+                options['timeRange'] = cowu.getValueByJsonPath(stats, '0;queryJSON');
+            }
+            var timeRange = getValueByJsonPath(options, 'timeRange', {
+                    start_time: Date.now() * 1000 - (2 * 60 * 60 * 1000 * 1000), // converting to micros secs
+                    end_time: Date.now() * 1000
+                }),
                 stats = ifNull(stats, []);
             bucketSize = parseFloat(bucketSize) * 60 * 1000 * 1000 //Converting to micros seconds
             var timestampField = 'T';
@@ -1636,7 +1645,7 @@ define([
                 && response.length > 0) {
                 parsedData.push({
                    key: failureLabel,
-                   color: cowc.FAILURE_COLOR,
+                   color: cowu.getValueByJsonPath(options, 'failureColor', cowc.FAILURE_COLOR),
                    values: []
                 });
             }
@@ -1670,6 +1679,7 @@ define([
                 }
             } else if (groupBy != null) {
                 var groupByMap = groupDim.group().all(),
+                    groupByMap = _.sortBy(groupByMap, 'key'),
                     groupByMapLen = groupByMap.length,
                     groupByKeys = _.pluck(groupByMap, 'key');
                 if (colors != null && typeof colors == 'function') {
@@ -1686,7 +1696,7 @@ define([
             } else {
                 parsedData.push({
                     key: yAxisLabel,
-                    color: cowc.DEFAULT_COLOR,
+                    color: $.isArray(cowc.DEFAULT_COLOR) ? cowc.DEFAULT_COLOR[0] : cowc.DEFAULT_COLOR,
                     values: []
                 });
             }
@@ -1844,7 +1854,7 @@ define([
                 parsedData[yField] = {"key":key,"color":colors[i],values:[]};
                 var values = parsedData[yField]['values'];
                 $.each(data,function(j,d){
-                    values.push({x:getValueByJsonPath(d,"T="),y:getValueByJsonPath(d,yField,0)});
+                    values.push({x:parseInt(getValueByJsonPath(d,"T=",0))/1000,y:getValueByJsonPath(d,yField,0)});
                 });
                 parsedData[yField]['values'] = values;
             });
@@ -1860,7 +1870,7 @@ define([
                 parsedData[yField] = {"key":key,"color":colors[i],values:[]};
                 var values = parsedData[yField]['values'];
                 $.each(data,function(j,d){
-                    values.push({x:getValueByJsonPath(d,"T="),y:getValueByJsonPath(d,yField,0)});
+                    values.push({x:parseInt(getValueByJsonPath(d,"T=",0))/1000,y:getValueByJsonPath(d,yField,0)});
                 });
                 parsedData[yField]['values'] = values;
             });
@@ -2021,6 +2031,15 @@ define([
             primaryDS.updateData(primaryData);
         };
 
+        self.getGridItemsForWidgetId = function(widgetId) {
+            var gridInst = $("[data-widget-id='" + widgetId + "']").find('.contrail-grid').data('contrailGrid');
+            var items = [];
+            if(gridInst != null) {
+                items = gridInst._dataView.getItems();
+            }
+            return items;
+        }
+
         self.resetGridStackLayout = function(allPages) {
             var gridStackId = $('.custom-grid-stack').attr('data-widget-id');
             localStorage.removeItem(gridStackId);
@@ -2095,10 +2114,15 @@ define([
                                 data: JSON.stringify(postData)
                             },
                             dataParser : (statsConfig['parser'])? statsConfig['parser'] :
-                                                function (response) {
-                                                    var data = getValueByJsonPath(response,'data',[]);
-                                                    return data;
-                                                }
+                                function (response) {
+                                    var data = getValueByJsonPath(response,'data',[]);
+                                    if (response['queryJSON'] != null) {
+                                        data = _.map(data, function(obj) { 
+                                            return _.extend({}, obj, {queryJSON: response['queryJSON']});
+                                        });
+                                    }
+                                    return data;
+                                }
                         };
                     primaryRemoteConfig = remoteObj;
                 } else {
@@ -2113,6 +2137,11 @@ define([
                         dataParser : (statsConfig['parser'])? statsConfig['parser'] :
                             function (response) {
                                 var data = getValueByJsonPath(response,'data',[]);
+                                if (response['queryJSON'] != null) {
+                                    data = _.map(data, function(obj) { 
+                                        return _.extend({}, obj, {queryJSON: response['queryJSON']});
+                                    });
+                                }
                                 return data;
                             },
                         successCallback: (statsConfig['parser'])?
