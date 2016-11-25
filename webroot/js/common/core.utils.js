@@ -211,14 +211,37 @@ define([
         };
 
         this.updateSettingsWithCookie =  function (viewConfig) {
-            this.updateColorSettingsWithCookie();
-            var cookieSettings = JSON.parse(contrail.getCookie(cowc.COOKIE_CHART_SETTINGS));
-            if(cookieSettings && viewConfig && viewConfig.chartOptions) {
-                for(var key in cookieSettings) {
-                    viewConfig.chartOptions[key] = cookieSettings[key];
+            try {
+                this.updateColorSettingsWithCookie();
+                var cookieSettings = JSON.parse(contrail.getCookie(cowc.COOKIE_CHART_SETTINGS));
+                if(cookieSettings && viewConfig && viewConfig.chartOptions) {
+                    for(var key in cookieSettings) {
+                        viewConfig.chartOptions[key] = cookieSettings[key];
+                    }
                 }
             }
+            catch(e) {
+
+            }
         };
+
+        this.updateMultiViewSettingsFromCookie = function() {
+            try {
+                var cookieSettings =
+                    JSON.parse(contrail.getCookie(cowc.COOKIE_CHART_SETTINGS));
+                if(cookieSettings) {
+                    for(var key in cookieSettings) {
+                        if(key == cowc.SHOW_MULTI_VIEWS) {
+                            cowc.ENABLE_CAROUSEL = cookieSettings[key];
+                            break;
+                        }
+                    }
+                }
+            }
+            catch(e){
+
+            }
+        }
 
         this.enableModalLoading = function (modalId) {
             $('#' + modalId).find('.modal-header h6').prepend('<i class="fa fa-spinner fa-spin margin-right-10 modal-loading-icon">');
@@ -1995,6 +2018,15 @@ define([
                 }
             }
             primaryDS.updateData(primaryData);
+        };
+
+        self.resetGridStackLayout = function(allPages) {
+            var gridStackId = $('.custom-grid-stack').attr('data-widget-id');
+            localStorage.removeItem(gridStackId);
+            var gridStackInst = $('.custom-grid-stack').data('grid-stack-instance')
+            if(gridStackInst != null ) {
+                gridStackInst.render()
+            }
         };
 
         /**

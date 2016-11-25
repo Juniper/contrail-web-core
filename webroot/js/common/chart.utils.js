@@ -142,8 +142,8 @@ define([
                         chartOptions: {
                             // bucketSize: this.STATS_BUCKET_DURATION,
                             bucketSize: 2.5,
-                            showLegend: true,
-                            showControls: true,
+                            showLegend: false,
+                            showControls: false,
                             tickPadding: 8,
                             margin: {
                                 left: 45,

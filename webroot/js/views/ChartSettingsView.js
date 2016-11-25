@@ -24,6 +24,10 @@ define([
                 $("#showLegend input.ace-input").trigger('click');
                     return false;
                 });
+                $("#showMultiViews label.ace-lbl").click(function(){
+                    $("#showMultiViews input.ace-input").trigger('click');
+                        return false;
+                });
             });
 
             self.model.__kb.view_model.model().on('change:showControls',
@@ -35,6 +39,22 @@ define([
             self.model.__kb.view_model.model().on('change:showLegend',
                     function(model, newValue) {
                         cowu.notifySettingsChange({showLegend: newValue});
+                    }
+            );
+
+            self.model.__kb.view_model.model().on('change:showMultiViews',
+                    function(model, newValue) {
+                        var isCancel = getValueByJsonPath(model,
+                                "attributes;cancelFlow", false);
+                        cowc.ENABLE_CAROUSEL = newValue;
+                        contentHandler.loadContent(
+                                layoutHandler.getURLHashObj(),
+                                layoutHandler.getURLHashObj());
+                        if(!isCancel) {
+                            setTimeout(function(){
+                                $(".tool-container").addClass("show-tool-container");
+                            }, 500);
+                        }
                     }
             );
         }
@@ -54,10 +74,20 @@ define([
                             path: 'showControls',
                             dataBindValue: 'showControls',
                             templateId: cowc.TMPL_CHECKBOX_LABEL_RIGHT_VIEW,
-                            class: 'showicon col-xs-12'
+                            class: 'showicon col-xs-6'
+                        }
+                    }, {
+                        elementId: 'showMultiViews',
+                        view: 'FormCheckboxView',
+                        viewConfig: {
+                            label: 'More Charts',
+                            path: 'showMultiViews',
+                            dataBindValue: 'showMultiViews',
+                            templateId: cowc.TMPL_CHECKBOX_LABEL_RIGHT_VIEW,
+                            class: 'showicon col-xs-6'
                         }
                     }]
-                },{
+                }, {
                     columns: [{
                         elementId: 'showLegend',
                         view: 'FormCheckboxView',
@@ -66,7 +96,22 @@ define([
                             path: 'showLegend',
                             dataBindValue: 'showLegend',
                             templateId: cowc.TMPL_CHECKBOX_LABEL_RIGHT_VIEW,
-                            class: 'showicon col-xs-12'
+                            class: 'showicon col-xs-6'
+                        }
+                    }, {
+                        elementId: 'restoreLayout',
+                        view: 'FormButtonView',
+                        viewConfig: {
+                            label: 'Restore Layout',
+                            //path: 'restoreLayout',
+                            //dataBindValue: 'restoreLayout',
+                            //templateId: cowc.TMPL_CHECKBOX_LABEL_RIGHT_VIEW,
+                            class: 'col-xs-6',
+                            elementConfig:{
+                                "onClick": "function(){" +
+                                    "cowu.resetGridStackLayout();" +
+                                "}"
+                            }
                         }
                     }]
                 }]
