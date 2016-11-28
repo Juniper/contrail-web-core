@@ -52,7 +52,8 @@ function readFileAndReturnData (filePath, callback)
 function getJsonSchema (request, response, appData)
 {
     var id = validateId(request);
-    var schemaDir = commonUtils.getValueByJsonPath(config,"jsonSchemaPath","/usr/src/contrail/contrail-web-core/src/serverroot/configJsonSchemas/sample/");
+    var schemaDir = commonUtils.getValueByJsonPath(config,"jsonSchemaPath",
+            "/usr/src/contrail/contrail-web-core/src/serverroot/configJsonSchemas/sample/");
     var filePath = path.join(schemaDir, id + '-schema.json');
     readFileAndReturnData (filePath, function(error,data) {
         if (error) {
@@ -71,7 +72,9 @@ function getJsonSchema (request, response, appData)
  */
 function getObjectList (request, response, appData)
 {
-    var filePath = path.join(__dirname + '/../schemas/objectList.json');
+    var schemaDir = commonUtils.getValueByJsonPath(config,"jsonSchemaPath",
+            "/usr/src/contrail/contrail-web-core/src/serverroot/configJsonSchemas/sample/");
+    var filePath = path.join(schemaDir + '/objectList.json');
     readFileAndReturnData (filePath, function(error,data) {
         if (error) {
             commonUtils.handleJSONResponse(error, response, null);
@@ -89,12 +92,13 @@ function getObjectList (request, response, appData)
  */
 function getPropertiesForObject (request, response, appData)
 {
-    console.log("inside getPropertiesForObject");
     var id = validateId(request);
-    var filePath = path.join(__dirname+'/../schemas/', id + '-schema.json');
+    var schemaDir = commonUtils.getValueByJsonPath(config,"jsonSchemaPath",
+        "/usr/src/contrail/contrail-web-core/src/serverroot/configJsonSchemas/sample/");
+    var filePath = path.join(schemaDir, id + '-schema.json');
     fs.readFile(filePath, 'utf8', function (error,data) {
         if (error) {
-            console.log("inside getPropertiesForObject error");
+            console.log("Error getting properties for " + id);
             commonUtils.handleJSONResponse(error, response, null);
             return;
         }
@@ -104,7 +108,6 @@ function getPropertiesForObject (request, response, appData)
         for (key in objectProps) {
             properties.push(key);
         }
-        console.log("Properties",properties);
         commonUtils.handleJSONResponse(error, response, properties);
     });
 }
