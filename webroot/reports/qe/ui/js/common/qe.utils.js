@@ -8,6 +8,7 @@ define([
 ], function (_, moment) {
     var serializer = new XMLSerializer(),
         domParser = new DOMParser();
+    var maxCountInWhere = 100;
 
     function filterXML(xmlString, is4SystemLogs) {
         var xmlDoc = parseXML(xmlString);
@@ -411,6 +412,36 @@ define([
         return filterStr;
     }
 
+    function formatUIWhereClauseConfigByMember (whereClause, key, list) {
+        return formatUIWhereClauseConfigByAdmin(whereClause, key, list);
+    }
+
+    function formatUIWhereClauseConfigByAdmin (whereClause, key, list) {
+        if (cowu.isNil(list) || (!list.length)) {
+            return "(" + key + " = )";
+        }
+        var cnt = list.length;
+        if (cnt > maxCountInWhere) {
+            /* We do not blow out where Clause */
+            if (!cowu.isNil(whereClause)) {
+                return whereClause;
+            }
+            return "(" + key + " Starts with )";
+        }
+        var whereClause = "";
+        if (cnt > 0) {
+            for (var i = 0; i < cnt; i++) {
+                whereClause += "(" + key + " = " + list[i] + ")";
+                if ((cnt > 1) && (i < cnt - 1)) {
+                    whereClause += " OR ";
+                }
+            }
+        } else {
+            whereClause += "(" + key + " = )";
+        }
+        return whereClause;
+    }
+
     var qeTableJSON = {
         "MessageTable": {
             "select": "MessageTS, Type, Source, ModuleId, Messagetype, " +
@@ -425,6 +456,20 @@ define([
             "select": "Source, T, cpu_stats.cpu_one_min_avg, cpu_stats.rss," +
                 " name",
             "from_time_utc": "now-10m",
+            "to_time_utc": "now",
+            "where": []
+        },
+        "StatTable.UveVirtualNetworkAgent.vn_stats": {
+            "select": "SUM(vn_stats.in_bytes), SUM(vn_stats.out_bytes), SUM(vn_stats.in_tpkts)," +
+                " SUM(vn_stats.out_tpkts), name",
+            "from_time_utc": "now-60m",
+            "to_time_utc": "now",
+            "where": []
+        },
+        "StatTable.UveVMInterfaceAgent.if_stats": {
+            "select": "SUM(if_stats.in_bytes), SUM(if_stats.out_bytes), SUM(if_stats.in_pkts)," +
+                " SUM(if_stats.out_pkts), vm_uuid",
+            "from_time_utc": "now-60m",
             "to_time_utc": "now",
             "where": []
         }
@@ -869,6 +914,14 @@ define([
             if (!cowu.isNil(qObj.async)) {
                 qeQuery.async = qObj.async;
             }
+            qeQuery.chunk = 1;
+            if (!cowu.isNil(qObj.chunk)) {
+                qeQuery.chunk = qObj.chunk;
+            }
+            qeQuery.chunkSize = 10000;
+            if (!cowu.isNil(qObj.chunkSize)) {
+                qeQuery.chunkSize = qObj.chunkSize;
+            }
             if (!cowu.isNil(qObj.table)) {
                 qeModAttrs = qeTableJSON[qObj.table];
                 qeModAttrs.table_name = qObj.table;
@@ -928,7 +981,17 @@ define([
             }
             delete qeModAttrs.sort;
             qeQuery.formModelAttrs = qeModAttrs;
+            qeQuery.queryId = this.generateQueryUUID();
             return qeQuery;
+        },
+        formatUIWhereClauseConfigByUserRole: function(whereClause, key, list) {
+            var userRole = getValueByJsonPath(globalObj, "webServerInfo;role", []);
+            var isAdminRole = userRole.indexOf(globalObj.roles.ADMIN) > -1;
+            if (true == isAdminRole) {
+                return formatUIWhereClauseConfigByAdmin(whereClause, key, list);
+            } else {
+                return formatUIWhereClauseConfigByMember(whereClause, key, list);
+            }
         }
     };
 });

@@ -15,7 +15,7 @@ define([
         var listModelConfig = {
             remote : {
                 ajaxConfig : {
-                    url : cowc.URL_QUERY,
+                    url : cowc.URL_QE_QUERY,
                     type: "POST",
                     data: JSON.stringify(postData)
                 },
