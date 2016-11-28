@@ -10,22 +10,28 @@ define(
                 var self = this;
                 self.BUCKET_DURATION = 300000000;//5 MINS
 
-                self.getAlarmCounts = function (response) {
+                self.getAlarmCounts = function (response,parsed) {
                     var acked = 0, unacked = 0;
-                    if(response != null && _.keys(response).length > 0) {
-                         for(var currNodeType in response) {
-                             for(var i = 0; i < response[currNodeType].length; i++) {
-                                 var currItem = response[currNodeType][i];
-                                 if(currItem.value != null && currItem.value.UVEAlarms != null && currItem.value.UVEAlarms.alarms != null
-                                     && currItem.value.UVEAlarms.alarms.length > 0) {
-                                     for(var j=0; j < currItem.value.UVEAlarms.alarms.length; j++) {
-                                         var currObject = {};
-                                         var alarmInfo = currItem.value.UVEAlarms.alarms[j];
-                                         (alarmInfo.ack)? acked++ : unacked++;
+                    if(!parsed){
+                        if(response != null && _.keys(response).length > 0) {
+                             for(var currNodeType in response) {
+                                 for(var i = 0; i < response[currNodeType].length; i++) {
+                                     var currItem = response[currNodeType][i];
+                                     if(currItem.value != null && currItem.value.UVEAlarms != null && currItem.value.UVEAlarms.alarms != null
+                                         && currItem.value.UVEAlarms.alarms.length > 0) {
+                                         for(var j=0; j < currItem.value.UVEAlarms.alarms.length; j++) {
+                                             var currObject = {};
+                                             var alarmInfo = currItem.value.UVEAlarms.alarms[j];
+                                             (alarmInfo.ack)? acked++ : unacked++;
+                                         }
                                      }
                                  }
                              }
-                         }
+                        }
+                    } else {
+                        for(var i = 0; i < response.length; i++) {
+                            (response[i].ack)? acked++ : unacked++;
+                        }
                     }
                     return {acked:acked, unacked:unacked};
                 }
