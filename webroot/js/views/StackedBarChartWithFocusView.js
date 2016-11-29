@@ -34,7 +34,9 @@ define([
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
                 resizeId;
             //settings
-            cowu.updateSettingsWithCookie(viewConfig);
+            if (cowu.getValueByJsonPath(viewConfig, 'chartOptions;applySettings', true)) {
+                cowu.updateSettingsWithCookie(viewConfig);
+            }
             self.tooltipDiv = d3.select("body").append("div")
                             .attr("class", "stack-bar-chart-tooltip")
                             .style("opacity", 0);
@@ -518,6 +520,9 @@ define([
                             obj['values'] = cowu.getValueByJsonPath(obj, 'values;'+i, {});
                             tooltipData.push(obj);
                         });
+                        if (chartOptions.tooltipDataFormatter) {
+                            tooltipData = chartOptions.tooltipDataFormatter(tooltipData);
+                        }
                         //if (chartView.sliceTooltip) {
                             var event = d3.event;
                             var x = tooltipData;

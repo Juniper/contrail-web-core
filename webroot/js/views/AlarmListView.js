@@ -158,17 +158,31 @@ define([
                                         barWidth: 6,
                                         onClickBar : true,
                                         showLegend: false,
+                                        applySettings: false,
+                                        yAxisLabel: "Alarms Count",
                                         showControls: false,
                                         groupBy: 'severity',
                                         yAxisFormatter: d3.format('d'),
-                                        colors: {
+                                        subTitle:"Severity",
+                                        colorsAlarm: {
                                             '0': '#dc6660',//Critical Red
                                             '1': '#dc6660',//Major Red
                                             '2': '#ffbf87'//Minor Orange
                                         },
                                         brush: true,
-                                        tooltipFn: function (d) {
-                                            return d3.time.format("%e %b %X")(d.date) + "<br/>"  + d.y + " Alarm(s)"
+                                        tooltipDataFormatter: function (data) {
+                                            var newData = _.map(data, function (d){
+                                                d['key'] = cowc.SEVERITY_TO_TEXT_MAP[d['key']];
+                                                var value = d['values'];
+                                                var dateTime;
+                                                value['name'] = cowc.SEVERITY_TO_TEXT_MAP[value['name']];
+                                                d['dateTime'] = (value['date'].getMonth() + 1) + '/' + value['date'].getDate() + '/' +  value['date'].getFullYear()
+                                                                + " " + ('0'+value['date'].getHours()).slice(-2) + ':'
+                                                                + value['date'].getMinutes();
+                                                d['values'] = value;
+                                                return d;
+                                            });
+                                            return newData;
                                         }
                                     },
                                     cfDataSource : self.cfDataSource
