@@ -2052,13 +2052,11 @@ define([
                                 type: 'POST',
                                 data: JSON.stringify(postData)
                             },
-                            dataParser : function (response) {
-                                var data = response['data'];
-                                if (statsConfig['parser'] != null && typeof statsConfig['parser'] == "function") {
-                                    data = statsConfig['parser'](data);
-                                }
-                                return data;
-                            }
+                            dataParser : (statsConfig['parser'])? statsConfig['parser'] :
+                                                function (response) {
+                                                    var data = getValueByJsonPath(response,'data',[]);
+                                                    return data;
+                                                }
                         };
                     primaryRemoteConfig = remoteObj;
                 } else {
@@ -2070,10 +2068,19 @@ define([
                                 data: JSON.stringify(postData)
                             }
                         },
-                        successCallback: function(response, contrailListModel) {
-                            var data = getValueByJsonPath(response,'data',[]);
-                            statsConfig['mergeFn'] (data,contrailListModel,'MAX(flow_rate.active_flows)');
-                        }
+                        dataParser : (statsConfig['parser'])? statsConfig['parser'] :
+                            function (response) {
+                                var data = getValueByJsonPath(response,'data',[]);
+                                return data;
+                            },
+                        successCallback: (statsConfig['parser'])?
+                            function(data, contrailListModel) {
+                                statsConfig['mergeFn'] (data,contrailListModel);
+                            }:
+                                function(response, contrailListModel) {
+                                var data = getValueByJsonPath(response,'data',[]);
+                                statsConfig['mergeFn'] (data,contrailListModel);
+                            }
                     };
                     vlRemoteList.push (vlRemoteObj);
                 }
