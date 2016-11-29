@@ -34,7 +34,9 @@ define([
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
                 resizeId;
             //settings
-            cowu.updateSettingsWithCookie(viewConfig);
+            if (cowu.getValueByJsonPath(viewConfig, 'chartOptions;applySettings', true)) {
+                cowu.updateSettingsWithCookie(viewConfig);
+            }
             self.tooltipDiv = d3.select("body").append("div")
                             .attr("class", "stack-bar-chart-tooltip")
                             .style("opacity", 0);
@@ -129,7 +131,7 @@ define([
             var resetColor = getValueByJsonPath(chartOptions,'resetColor',false);
             chartOptions['timeRange'] =  getValueByJsonPath(self, 'model;queryJSON');
             //settings
-            if(typeof chartOptions["colors"] != 'function') {
+            if(typeof chartOptions["colors"] != 'function' && chartOptions['applySettings'] != false) {
                 chartOptions["colors"] = cowc.FIVE_NODE_COLOR;
             }
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
@@ -518,6 +520,9 @@ define([
                             obj['values'] = cowu.getValueByJsonPath(obj, 'values;'+i, {});
                             tooltipData.push(obj);
                         });
+                        if (chartOptions.tooltipDataFormatter) {
+                            tooltipData = chartOptions.tooltipDataFormatter(tooltipData);
+                        }
                         //if (chartView.sliceTooltip) {
                             var event = d3.event;
                             var x = tooltipData;

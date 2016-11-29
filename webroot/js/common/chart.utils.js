@@ -140,15 +140,21 @@ define([
               var strTime;
               var hours;
               var minutes;
-              tooltipData  = $.map(tooltipData,function(d){
-                    d.values['y'] = yAxisFormatter(d.values['y']);
-                    hours = d.values['date'].getHours();
-                    minutes = d.values['date'].getMinutes();
-                    minutes = ('0' + minutes).slice(-2);
-                    strTime = hours + ':' + minutes;
-                    d['Time']= strTime;
-                    return d;
-                });
+              tooltipData  = $.map(tooltipData,function(d){ d.values['y'] = yAxisFormatter(d.values['y']);
+              if(d.dateTime){
+                  strTime = d.dateTime;
+                  d['Time']= strTime;
+              }
+              else{
+                hours = d.values['date'].getHours();
+                hours = ('0' + hours).slice(-2);
+                minutes = d.values['date'].getMinutes();
+                minutes = ('0' + minutes).slice(-2);
+                strTime = hours + ':' + minutes;
+                d['Time']= strTime;
+            }
+            return d;
+            });
               var toolTipTemplate = contrail.getTemplate4Id(cowc.TOOLTIP_TEMPLATE);
               return toolTipTemplate({
                 subTitle: chartOptions.subTitle,
