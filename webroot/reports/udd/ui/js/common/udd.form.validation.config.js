@@ -237,26 +237,28 @@ define([
                 }
 
                 for (var orClauseKey in context.whereClauseMap) {
-                    var orClause = context.whereClauseMap[orClauseKey],
-                        definedColumns = _.keys(orClause),
-                        missingDirtyColumns = _.difference(context.selectedDirtyColumns, definedColumns),
-                        definedDirtyColumns = _.intersection(context.selectedDirtyColumns, definedColumns);
+                    if (context.whereClauseMap.hasOwnProperty(orClauseKey)) {
+                        var orClause = context.whereClauseMap[orClauseKey],
+                            definedColumns = _.keys(orClause),
+                            missingDirtyColumns = _.difference(context.selectedDirtyColumns, definedColumns),
+                            definedDirtyColumns = _.intersection(context.selectedDirtyColumns, definedColumns);
 
-                    _.forEach(definedDirtyColumns, function(dirtyColumn) {
-                        if (dirtyColumnValueBag[dirtyColumn]) {
-                            dirtyColumnValueBag[dirtyColumn].push(orClause[dirtyColumn].value);
-                        } else {
-                            dirtyColumnValueBag[dirtyColumn] = [orClause[dirtyColumn].value];
+                        _.forEach(definedDirtyColumns, function(dirtyColumn) {
+                            if (dirtyColumnValueBag[dirtyColumn]) {
+                                dirtyColumnValueBag[dirtyColumn].push(orClause[dirtyColumn].value);
+                            } else {
+                                dirtyColumnValueBag[dirtyColumn] = [orClause[dirtyColumn].value];
+                            }
+                        });
+
+                        /**
+                         * Make sure that each OR clause defines conditions for selected dirty columns
+                         */
+                        if (!_.isEmpty(missingDirtyColumns)) {
+                            return getFieldErrorMsg(convertToLabel(key)[0],
+                                "has one or more OR clauses requiring where-clause-sanitized",
+                                missingDirtyColumns.join(", "));
                         }
-                    });
-
-                    /**
-                     * Make sure that each OR clause defines conditions for selected dirty columns
-                     */
-                    if (!_.isEmpty(missingDirtyColumns)) {
-                        return getFieldErrorMsg(convertToLabel(key)[0],
-                            "has one or more OR clauses requiring where-clause-sanitized",
-                            missingDirtyColumns.join(", "));
                     }
                 }
 
@@ -326,30 +328,30 @@ define([
                                                                        // use a data type other than string
                                         || isDirty[value.name];        // For other columns that can't be determined by
                                                                        // data type, create a dictionary. Such as for
-                                                                       // "sport" and "vport" in FlowSeriesTable
+                                                                       // "sport" and "dport" in FlowSeriesTable
                                 })),
                                 metrics = {
                                     target: computedState.dataSrcType,
                                     key: computedState.visualType,
                                     preprocess: function() {
-                                        var orClauseCollection = computedState.where_or_clauses,
-                                            whereClauseMap = _.map(orClauseCollection.models, function(orClauseVM) {
-                                                var andClauseVMs = orClauseVM.attributes.and_clauses(),
+                                        var orClauses = computedState.where.split(/\s+OR\s+/),
+                                            whereClauseMap = _.omit(_.map(orClauses, function(orClause) {
+                                                var captured = /\((.*)\)/img.exec(orClause),
                                                     currentOrClauseMap = {};
 
-                                                _.forEach(andClauseVMs, function(andClauseVM) {
-                                                    var andClauseVal= andClauseVM.value()();
-
-                                                    if (andClauseVal) {
-                                                        currentOrClauseMap[andClauseVM.name()] = {
-                                                            operator: andClauseVM.operator(),
-                                                            value: andClauseVal
+                                                if (captured) {
+                                                    var andClauses = captured[1].split(/\s+AND\s+/);
+                                                    
+                                                    _.forEach(andClauses, function(andClause) {
+                                                        var pair = andClause.split(/\s+=\s+/);
+                                                        currentOrClauseMap[pair[0]] = {
+                                                            value: pair[1]
                                                         };
-                                                    }
-                                                });
+                                                    });
+                                                }
 
                                                 return currentOrClauseMap;
-                                            }),
+                                            }), _.isEmpty),
                                             selectedDirtyColumns = _.intersection(
                                                 dirtyColumns,
                                                 computedState.select.replace(/\s+/g, "").split(",")
