@@ -9,6 +9,7 @@ define(['underscore', 'contrail-view', 'widget-configmanager'], function(_, Cont
                 carouselTemplate = contrail.getTemplate4Id("carousal-view-template");
 
             self.viewList = viewConfig.pages;
+            self.enableCarousel = cowc.ENABLE_CAROUSEL;
             self.viewPlaceHolder = {};
             self.prevIndex = 0;
             self.prevTitle = null,
@@ -17,9 +18,13 @@ define(['underscore', 'contrail-view', 'widget-configmanager'], function(_, Cont
             self.lastIndex = viewConfig.pages.length;
 
             self.$el.html(carouselTemplate({pages:self.viewList}));
+            if(self.enableCarousel != true) {
+                self.$el.find('.custom-carousel-control').remove();
+            }
             self.viewPlaceHolder = self.$el.find(".carousel-content");
             activateView(self, self.currIndex, false);
-            if(self.lastIndex === 1){
+            if(self.lastIndex === 1 || self.enableCarousel != true){
+                self.$el.find(".carousel-inner").css("padding", "10px 0px 0px 0px");
                 self.$el.find(".carousel-control-cover-left").hide();
                 self.$el.find(".carousel-control-cover-right").hide();
                 self.$el.find(".carousel-indicators").hide();
@@ -88,6 +93,31 @@ define(['underscore', 'contrail-view', 'widget-configmanager'], function(_, Cont
             }
         },
 
+        toggleCarouselView: function(off) {
+            var self = this;
+            if(off){
+                self.currIndex = 0;
+                activateView(self, self.currIndex, false);
+                self.$el.find(".carousel-inner").css("padding", "10px 0px 0px 0px");
+                self.$el.find(".carousel-control-cover-left").hide();
+                self.$el.find(".carousel-control-cover-right").hide();
+                self.$el.find(".carousel-indicators").hide();
+            }else if(!off){
+                self.$el.find(".carousel-inner").css("padding", "10px 25px 0px 25px");
+                self.$el.find(".carousel-control-cover-left").show();
+                self.$el.find(".carousel-control-cover-right").show();
+                self.$el.find(".carousel-indicators").show();
+            }
+        },
+
+        resetCurrentPage: function(){
+            var self = this;
+            if(self.currPageId){
+                localStorage.removeItem(self.currPageId);
+                activateView(self, self.currIndex, true);
+            }
+        },
+
         events: {
             'click .custom-carousel-control-left': 'clickHandler',
             'click .custom-carousel-control-right': 'clickHandler',
@@ -101,9 +131,13 @@ define(['underscore', 'contrail-view', 'widget-configmanager'], function(_, Cont
         var page = self.viewList[index].page,
             model = ifNull(self.viewList[index].model, '');
 
+        self.currPageId = cowu.getValueByJsonPath(page,'viewConfig;elementId','');
         toggleCarouselIndicator(self.currIndex, self.prevIndex);
-        setTitleCover(self, index);
-        if(!doAnimate){
+        //Don't set titles when carousel is not enabled
+        if(self.enableCarousel == true) {
+            setTitleCover(self, index);
+        }
+        if(!doAnimate || self.enableCarousel == false){
            renderView(self, page, model);
         }else{
             var slideDirection = ['left','right'];

@@ -16,6 +16,7 @@ define([
         initialize: function(options) {
             var self = this;
             self.widgets = [];
+            //Ensure that the passed-on options are not modified, need to reset to default layout
             self.widgetCfgList = cowu.getValueByJsonPath(options,'attributes;viewConfig;widgetCfgList',{});
             self.gridAttr = cowu.getValueByJsonPath(options,'attributes;viewConfig;gridAttr',{});
             self.elementId = cowu.getValueByJsonPath(options,'attributes;viewConfig;elementId','');
@@ -29,6 +30,7 @@ define([
                 self.COLUMN_CNT = 12/self.gridAttr['defaultWidth'];
 
             self.$el.addClass('grid-stack grid-stack-12 custom-grid-stack');
+            self.$el.attr('data-widget-id',self.elementId);
             self.gridStack = $(self.$el).gridstack({
                 float:true,
                 handle:'.drag-handle',
@@ -45,6 +47,13 @@ define([
             self.$el.on('resizestop',function(event,ui) {
                 $(ui.element[0]).trigger('resize');
             });
+            //Listen for change events once gridStack is rendered else it's getting triggered even while adding widgets for the first time
+            self.$el.on('change',function(event,items) {
+                //Added to avoid saving to localStorage on resetLayout..as change event gets triggered even if we remove all widgets from gridstack
+                if(localStorage.getItem(self.elementId) != null) {
+                    self.saveGrid();
+                }
+            });
         },
         saveGrid : function () {
             var self = this;
@@ -59,36 +68,38 @@ define([
                     height: node.height
                 };
             }, this);
-            localStorage.setItem(self.elementId,JSON.stringify(serializedData));
+            if(serializedData.length > 0) {
+                localStorage.setItem(self.elementId,JSON.stringify(serializedData));
+            }
         },
         render: function() {
             var self = this;
+            //Clear all existing widgets
+            self.gridStack.removeAll();
+            self.widgets = [];
             self.tmpHeight = 0;
             if(self.movedWidgetCfg) {
                 self.add(self.movedWidgetCfg, true);
                 self.movedWidgetCfg = null;
             }
+            var widgetCfgList = self.widgetCfgList;
             //Check if there exists a saved preference for current gridStack id
             if(localStorage.getItem(self.elementId) != null) {
                 var serializedData = localStorage.getItem(self.elementId),
                     tmpData = JSON.parse(serializedData);
                 if(tmpData.length > 0){
-                    self.widgetCfgList = tmpData;
+                    widgetCfgList = tmpData;
                 }
             }
-            for(var i=0;i < self.widgetCfgList.length;i++) {
-                var currWidgetCfg = widgetConfigManager.get(self.widgetCfgList[i]['id'])();
+            for(var i=0;i < widgetCfgList.length;i++) {
+                var currWidgetCfg = widgetConfigManager.get(widgetCfgList[i]['id'])();
                 self.add({
-                    widgetCfg: self.widgetCfgList[i],
+                    widgetCfg: widgetCfgList[i],
                     modelCfg: currWidgetCfg['modelCfg'],
                     viewCfg: currWidgetCfg['viewCfg'],
-                    itemAttr: $.extend({},currWidgetCfg['itemAttr'],self.widgetCfgList[i])
+                    itemAttr: $.extend({},currWidgetCfg['itemAttr'],widgetCfgList[i])
                 });
             }
-            //Listen for change events once gridStack is rendered else it's getting triggered even while adding widgets for the first time
-            self.$el.on('change',function(event,items) {
-                self.saveGrid();
-            });
             self.saveGrid();
             self.$el.data('grid-stack-instance',self);
         },

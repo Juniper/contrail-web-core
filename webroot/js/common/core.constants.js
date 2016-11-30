@@ -8,6 +8,7 @@ define([
     var CoreConstants = function () {
         var self = this;
 
+        this.ENABLE_CAROUSEL = false;
         this.THROTTLE_RESIZE_EVENT_TIME = 500;
         this.TMPL_SUFFIX_ID = "-template";
         this.RESULTS_SUFFIX_ID = "-results";
@@ -156,6 +157,7 @@ define([
         this.TMPL_SETTINGS_COLOR_MORE = "core-settings-color-more-template";
         this.SETTINGS_COLOR_MODAL_ID = 'settings-color';
         this.SETTINGS_COLOR_PREFIX_ID = 'cs';
+        this.SHOW_MULTI_VIEWS =  "showMultiViews";
         this.COOKIE_COLOR_SCHEME = "color_scheme";
         this.COOKIE_CHART_SETTINGS = "chartData";
         this.NUM_OF_COLORS = "6";

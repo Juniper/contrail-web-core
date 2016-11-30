@@ -36,6 +36,7 @@ define([
                 hideOnClick: true
             }).data('toolbar');
             $(eleSettings).on('toolbarHidden', function(){
+                $(".tool-container").removeClass("show-tool-container");
                 $("#" + cowc.SETTINGS_MODAL_ID).modal("hide");
                 if(!isSaveClicked && cfgObj && cfgObj.model) {
                     cfgObj.model.onCancel();

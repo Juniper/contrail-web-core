@@ -1381,7 +1381,7 @@ color settings styles - begin
     border:none;
 }
 
-#showControls label.ace-lbl, #showLegend label.ace-lbl, #toolbar_settings_modal input.ace-input[type=checkbox]{
+#showControls label.ace-lbl, #showLegend label.ace-lbl, #showMultiViews label.ace-lbl, #toolbar_settings_modal input.ace-input[type=checkbox]{
     cursor:pointer;
 }
 
@@ -1483,6 +1483,27 @@ color settings styles - begin
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
     border-top-left-radius: 0px;
+}
+
+.show-tool-container {
+	display: block!important;
+	opacity: 1!important;
+	z-index:120!important;
+	top: 90px!important;
+	right:65px!important;
+	position: absolute!important;
+}
+
+#toolbar_settings_modal .section-content > .row > [class*="col-"] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+#toolbar_settings_modal .btn {
+    background: white;
+    color: #6482bd!important;
+    border-color: #6482bd!important;
+    padding: 0px 10px;
 }
 
 /*
