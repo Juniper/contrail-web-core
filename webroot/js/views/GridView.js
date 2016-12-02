@@ -473,13 +473,18 @@ define([
                                         if (!$(target).parents('.slick-row-master').next().hasClass('slick-row-detail') || $(target).parents('.slick-row-master').next().hasClass('slick-row-detail-state-fetching')) {
                                             $(target).parents('.slick-row-master').next('.slick-row-detail').remove();
                                             var cellSpaceColumn = 0,
-                                                cellSpaceRow = gridColumns.length - 1,
+                                                cellSpaceRow = 0,
                                                 fetchingCSSClass = (contrailListModel.isRequestInProgress() ? ' slick-row slick-row-detail-state-fetching' : '');
 
                                             //if (gridOptions.checkboxSelectable != false) {
                                             //    cellSpaceColumn++;
                                             //}
-
+                                            $.each(gridColumns,function(i,d){
+                                                if(d.hide == null || !d.hide){
+                                                    cellSpaceRow++; 
+                                                }
+                                            });
+                                            cellSpaceRow = cellSpaceRow - 1;
                                             $(target).parents('.slick-row-master').after(' \
                                                 <div class="ui-widget-content slick-row slick-row-detail' + fetchingCSSClass + '" data-cgrid="' + $(target).parents('.slick-row-master').data('cgrid') + '"> \
                                                     <div class="slick-cell l' + cellSpaceColumn + ' r' + cellSpaceRow + '"> \
