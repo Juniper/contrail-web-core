@@ -14,6 +14,14 @@ cp -af node_modules/ipv6/lib/browser/sprintf.js webroot/assets/ip/
 cp -af node_modules/ipv6/ipv6.js webroot/assets/ip/
 #End - copy javascript-ipv6 node module files for IPv4/v6 address manipulations/validations
 
+#Start - copy event drops files from node_module
+rm -rf webroot/assets/event-drops
+mkdir -p webroot/assets/event-drops/js
+mkdir -p webroot/assets/event-drops/css
+cp -af node_modules/event-drops/dist/eventDrops.js webroot/assets/event-drops/js
+cp -af node_modules/event-drops/dist/eventDrops.css webroot/assets/event-drops/css
+#End - copy  event drops files from node_module
+
 #Start - Copy d3/vnd3 files from $THIRD_PARTY
 rm -rf webroot/assets/d3-v3.5.6
 mkdir -p webroot/assets/d3-v3.5.6/js
@@ -91,6 +99,20 @@ cp -af ./$THIRD_PARTY/gridstack-v0.2.5/dist/gridstack.js webroot/assets/gridstac
 cp -af ./$THIRD_PARTY/gridstack-v0.2.5/dist/gridstack.css webroot/assets/gridstack/css/gridstack.css
 cp -af ./$THIRD_PARTY/gridstack-v0.2.5/dist/gridstack-extra.css webroot/assets/gridstack/css/gridstack-extra.css
 #End - Copy gridstack files from $THIRD_PARTY
+
+#Start - Copy palette files from $THIRD_PARTY
+rm -rf webroot/assets/palette
+mkdir -p webroot/assets/palette/js
+cp -af ./$THIRD_PARTY/palette.js-master/palette.js webroot/assets/palette/js/palette.js
+#End - Copy palette files from $THIRD_PARTY
+
+#Start - Copy toolbar files from $THIRD_PARTY
+rm -rf webroot/assets/toolbar
+mkdir -p webroot/assets/toolbar/js
+mkdir -p webroot/assets/toolbar/css
+cp -af ./$THIRD_PARTY/toolbar-v1.0.0/jquery.toolbar.js webroot/assets/toolbar/js/jquery.toolbar.js
+cp -af ./$THIRD_PARTY/toolbar-v1.0.0/jquery.toolbar.css webroot/assets/toolbar/css/jquery.toolbar.css
+#End - Copy toolbar files from $THIRD_PARTY
 
 #Start - Copy Bootstrap from $THIRD_PART
 #rm -rf webroot/assets/bootstrap

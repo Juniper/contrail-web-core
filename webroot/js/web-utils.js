@@ -557,7 +557,9 @@ function cellTemplateLinks(options) {
 //      statusBubble = getNodeStatusForSummaryPages(rowData,'summary');
         statusBubble = statusTemplate({color:rowData['color'], colorSevMap:cowc.COLOR_SEVERITY_MAP});
     }
-
+    if(options.tagColorMap){
+        cellText = contrail.getTemplate4Id('grid-tag-template')({bgcolor:options.tagColorMap[cellText], celltext:cellText});
+    }
     return contrail.format("{5}<span class='{1}' {0} {2} {4}>{3}</span>", nameStr, tooltipCls, titleStr, cellText, onclickAction, statusBubble);
 }
 

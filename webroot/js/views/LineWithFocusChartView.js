@@ -11,12 +11,33 @@ define([
     'chart-utils'
 ], function (_, ContrailView, LineWithFocusChartModel, ContrailListModel, nv, chUtils) {
     var LineWithFocusChartView = ContrailView.extend({
+        settingsChanged: function(newSettings) {
+            var self = this,
+                vc = self.attributes.viewConfig;
+            if(vc.hasOwnProperty("chartOptions")) {
+                vc.chartOptions["resetColor"] = true;
+                for(var key in newSettings) {
+                    if(key in vc.chartOptions) {
+                        vc.chartOptions[key] = newSettings[key];
+                    }
+                }
+                if(!vc.chartOptions.staticColor &&
+                    typeof vc.chartOptions["colors"] != 'function') {
+                    vc.chartOptions["colors"] = cowc.FIVE_NODE_COLOR;
+                }
+            }
+
+            self.renderChart($(self.$el), vc, self.model);
+        },
+
         render: function () {
             var viewConfig = this.attributes.viewConfig,
                 ajaxConfig = viewConfig['ajaxConfig'],
                 self = this, deferredObj = $.Deferred(),
                 selector = $(self.$el),
                 modelMap = contrail.handleIfNull(self.modelMap, {});
+            //settings
+            cowu.updateSettingsWithCookie(viewConfig);
 
             if (contrail.checkIfExist(viewConfig.modelKey) && contrail.checkIfExist(modelMap[viewConfig.modelKey])) {
                 self.model = modelMap[viewConfig.modelKey]
@@ -42,6 +63,17 @@ define([
                         self.updateChart(selector, viewConfig, self.model);
                     });
                 }
+                var prevDimensions = chUtils.getDimensionsObj(self.$el);
+                self.resizeFunction = _.debounce(function (e) {
+                    if(!chUtils.isReRenderRequired({
+                        prevDimensions:prevDimensions,
+                        elem:self.$el})) {
+                        return;
+                    }
+                     self.renderChart($(self.$el), viewConfig, self.model);
+                 },cowc.THROTTLE_RESIZE_EVENT_TIME);
+
+                $(self.$el).parents('.custom-grid-stack-item').on('resize',self.resizeFunction);
             }
         },
 
@@ -58,21 +90,9 @@ define([
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data, viewConfig['chartOptions']);
             }
-
-            //plot default line
-            if(data.length === 0 && defaultZeroLineDisplay){
-                var defData = {key:'', color:cowc.DEFAULT_COLOR, values:[]},
-                    start = Date.now() - (2 * 60 * 60 * 1000),
-                    end = Date.now();
-
-                defData.values.push({x:start, y:0.01, tooltip:false});
-                defData.values.push({x:start, y:0.01, tooltip:false});
-                defData.values.push({x:end, y:0.01, tooltip:false});
-                viewConfig.chartOptions.forceY = [0, 1];
-                viewConfig.chartOptions.defaultDataStatusMessage = false;
-                data.push(defData);
+            if ($(selector).parents('.custom-grid-stack-item').length != 0) {
+                viewConfig['chartOptions']['height'] = $(selector).parents('.custom-grid-stack-item').height() - 40;
             }
-
             chartViewConfig = self.getChartViewConfig(data, viewConfig);
             chartOptions = chartViewConfig['chartOptions'];
             chartViewModel = new LineWithFocusChartModel(chartOptions);
@@ -169,7 +189,10 @@ define([
             chartOptions['forceY'] = getForceYAxis(chartData, chartOptions);
 
             if (chartData.length > 0) {
-                spliceBorderPoints(chartData);
+                if (chartOptions['spliceAtBorders'] != false) {
+                    spliceBorderPoints(chartData);
+                }
+
                 var values = chartData[0].values,
                     brushExtent = null,
                     hideFocusChart = getValueByJsonPath(chartOptions,'hideFocusChart', false),
