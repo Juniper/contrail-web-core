@@ -5,8 +5,9 @@
 define([
     'underscore',
     'moment',
-    'handlebars'
-], function (_, moment, Handlebars) {
+    'handlebars',
+    'lodash'
+], function (_, moment, Handlebars, lodash) {
     var serializer = new XMLSerializer(),
         domParser = new DOMParser();
 
@@ -2198,6 +2199,199 @@ define([
             xmlNode.removeAttribute(attrArray[i]);
         }
     };
+    function getDeepDiffOfKey(updatedObj, oldObj, oldJson){
+        for(var i in updatedObj){
+            if(typeof updatedObj[i] === 'number' || typeof updatedObj[i] === 'string' || typeof updatedObj[i] === 'boolean'){
+                if(oldObj === undefined){
+                    if(updatedObj[i] === '' || updatedObj[i] === 0 || updatedObj[i] === false){
+                        delete updatedObj[i];
+                    }
+                }else{
+                    if(oldJson !== undefined && oldJson !== null){
+                        if(updatedObj[i] === oldObj[i] && !oldJson.hasOwnProperty(i)){
+                            delete updatedObj[i];
+                        }
+                        if(oldJson[i] === null){
+                            updatedObj[i] = null;
+                        }
+                    }else{
+                        if(updatedObj[i] === oldObj[i]){
+                            delete updatedObj[i];
+                        }
+                    }
+                }
+            }else if(typeof updatedObj[i] === 'object' && updatedObj[i] !== null && updatedObj[i].constructor !== Array){
+                if(oldJson !== undefined && oldJson !== null){
+                    getDeepDiffOfKey(updatedObj[i], oldObj[i], oldJson[i]);
+                }else{
+                    if(oldObj !== undefined){
+                        getDeepDiffOfKey(updatedObj[i], oldObj[i], undefined);
+                    }else{
+                        getDeepDiffOfKey(updatedObj[i], undefined, undefined);
+                    }
+                }
+                if(Object.keys(updatedObj[i]).length === 0){
+                    if(oldJson !== undefined && oldJson !== null){
+                        if(oldJson[i] === null ){
+                            updatedObj[i] = null;
+                        }else{
+                            delete updatedObj[i];
+                        }
+                    }else{
+                        delete updatedObj[i];
+                    }
+                }
+            }else if(updatedObj[i] !== null && updatedObj[i].constructor === Array){
+                if(updatedObj[i].length == 0){
+                        if(oldJson !== undefined && oldJson !== null){
+                            if(oldJson[i] !== undefined && oldJson[i] !== null){
+                                updatedObj[i] = oldJson[i];
+                            }
+                        }else{
+                            delete updatedObj[i];
+                        }
+                }else if(typeof updatedObj[i][0] === 'string'){
+                    if(oldObj !== undefined){
+                        if(updatedObj[i].length === oldObj[i].length){
+                            delete updatedObj[i]
+                        }else{
+                            var updatedVal = updatedObj[i].filter(function(n){ return n != ""});
+                            if(updatedVal.length == 0){
+                                delete updatedObj[i];
+                            }else{
+                                updatedObj[i] = updatedVal;
+                            }
+                        }
+                    }else{
+                        if(updatedObj[i].length === 0){
+                            delete updatedObj[i];
+                        }else{
+                          var updatedVal = updatedObj[i].filter(function(n){ return n != ""});
+                          if(updatedVal.length == 0){
+                              delete updatedObj[i];
+                          }else{
+                              updatedObj[i] = updatedVal;
+                          }
+                        }
+                    }
+                    
+                }else if(typeof updatedObj[i][0] === 'object' && updatedObj[i][0] !== null && updatedObj[i][0].constructor !== Array){
+                    for(var j = 0; j < updatedObj[i].length; j++){
+                        if(oldJson !== undefined && oldJson !== null){
+                            if(oldJson[i] !== undefined){
+                                getDeepDiffOfKey(updatedObj[i][j], oldObj[i][j], oldJson[i][j]);
+                            }else{
+                                getDeepDiffOfKey(updatedObj[i][j], oldObj[i][j], undefined);
+                            }
+                        }else{
+                            if(oldObj !== undefined){
+                                getDeepDiffOfKey(updatedObj[i][j], oldObj[i][j], undefined);
+                            }else{
+                                getDeepDiffOfKey(updatedObj[i][j], undefined, undefined);
+                            }
+                        }
+                        if(Object.keys(updatedObj[i][j]).length === 0){
+                            if(oldJson !== undefined){
+                                if(oldJson[i] !== undefined && oldJson[i] !== null){
+                                    if(oldJson[i][j] === null){
+                                        updatedObj[i][j] = null;
+                                    }else{
+                                        delete updatedObj[i][j];
+                                        updatedObj[i] = updatedObj[i].filter(function(n){ return n != undefined });
+                                    }
+                                }else{
+                                    delete updatedObj[i][j];
+                                    updatedObj[i] = updatedObj[i].filter(function(n){ return n != undefined });
+                                 }
+                            }else{
+                                delete updatedObj[i][j];
+                                updatedObj[i] = updatedObj[i].filter(function(n){ return n != undefined });
+                            }
+                        }
+                    }
+                    if(updatedObj[i].length == 0){
+                        if(oldJson !== undefined){
+                            if(oldJson[i].length === updatedObj[i].length){}
+                        }else{
+                            delete updatedObj[i];
+                        }
+                    }
+                }
+            }
+        }
+        return updatedObj;
+    };
+    function deepDiff(a, b, r, reversible, oldJson, enumKeys) {
+        lodash.each(a, function(v, k) {
+            if (r.hasOwnProperty(k) || (b[k] === v && enumKeys.indexOf(k) == -1)){
+                return;
+            }
+            var value;
+          if (lodash.isObject(v)) {
+              if (lodash.isArray(v)) {
+                if (v.length > 0 || b[k].length > 0) {
+                    var isSame = true; 
+                     if(v.length == b[k].length){
+                            for(var i =0; i < v.length ; i++){
+                                var found = false;
+                               for(var j=0; j< b[k].length;j++){
+                                   if(lodash.isEqual(v[i], b[k][j])){
+                                       found = true;
+                                       break;
+                                   }
+                               }  
+                               if(!found) {
+                                   isSame = false;
+                                   break;
+                               }
+                            }
+                            if(!isSame){
+                                value = b[k];
+                            }
+                        }else if(v.length > b[k].length || v.length < b[k].length){
+                            value = b[k];
+                        }
+                  }
+              } else {
+                 if(!lodash.isEqual(v,b[k])){
+                     if(oldJson !== undefined){
+                         var diff = getDeepDiffOfKey(b[k],v, oldJson[Object.keys(oldJson)[0]][k]);
+                     }else{
+                         if(k === 'perms2' || k === 'id_perms'){
+                             var diff = b[k];
+                         }else{
+                             var diff = getDeepDiffOfKey(b[k],v, oldJson);
+                         }
+                      }
+                     if(!lodash.isEqual(v,diff)){
+                         value = diff;
+                     }
+                 }
+              }
+          } else {
+              value = b[k]
+          }
+            if(value != undefined){
+                if(typeof value === 'object' && value.constructor !== Array && Object.keys(value).length == 0){
+                }else{
+                   r[k] = value;
+                }
+             }
+          });
 
+    };
+    lodash.mixin({
+        shallowDiff: function(a, b) {
+          return lodash.omit(a, function(v, k) {
+            return b[k] === v;
+          })
+        },
+        diff: function(a, b, reversible, oldJson, enumKeys) {
+          var r = {};
+          deepDiff(a, b, r, reversible, oldJson, enumKeys);
+          if(reversible) deepDiff(b, a, r, reversible, oldJson, enumKeys);
+          return r;
+        }
+   });
     return CoreUtils;
 });
