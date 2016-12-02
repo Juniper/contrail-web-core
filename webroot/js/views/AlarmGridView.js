@@ -389,7 +389,7 @@ define([
                         templateGeneratorConfig: {
                             columns: [
                                 {
-                                    class: 'row-fluid',
+                                    class: 'col-xs-7',
                                     rows: [
                                         {
                                             title: cowl.TITLE_ALARM_DETAILS,
