@@ -993,9 +993,12 @@ p.error, p.error-text {
     text-align:right;
 }
 
-.select2-default {
-    width: auto !important;
-}
+/*Fix for the select2 placeholder text truncating issue */
+.select2-container-multi .select2-choices .select2-search-field{
+    width: 100% ;
+    }
+.select2-container-multi .select2-choices .select2-search-choice+ .select2-search-field{
+    width: auto;}
 
 .table.detailsSub td{
     border:none;
