@@ -1518,9 +1518,7 @@ Stack area chart opacity
 .custom-grid-stack-item .nvd3.nv-stackedarea path.nv-area {
     fill-opacity: 1 !important;
 }
-
-/* Carousel custom tooltip CSS - Starts*/
-
+/* Custom tooltip CSS - Starts*/
 .custom-grid-stack-item .popover.popover-tooltip .popover-content {
     margin-top: -74px;
 }
@@ -1556,13 +1554,16 @@ Stack area chart opacity
 .stack-bar-chart-tooltip .nvtooltip {
     background-color: rgba(255,255,255,.95)!important;
 }
-/* Carousel custom tooltip CSS - Ends*/
+/* Custom tooltip CSS - Ends*/
 .custom-grid-stack > .custom-grid-stack-item > .grid-stack-item-content {
-	z-index: auto !important;
+    z-index: auto !important;
 }
 div.stack-bar-chart-tooltip > .popover.popover-tooltip {
-	opacity: 1;
+    opacity: 1;
 }
 .breadcrumb-item .select2-container .select2-choice > .select2-chosen{
     text-overflow:initial;
+}
+.carousel-control-cover-story{
+    z-index: 1;
 }
