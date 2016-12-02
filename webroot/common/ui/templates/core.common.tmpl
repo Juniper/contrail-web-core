@@ -861,7 +861,7 @@
     <div id="{{elementId}}" class="{{class}}" data-bind="{{#if viewConfig.[0].visible}} visible: {{viewConfig.[0].visible}} {{/if}}">
         {{#each viewConfig}}
             {{#if this.title}}
-                <h3 data-rootViewPath="{{dataRootViewPath}}" data-path="{{dataPath}}">{{this.title}} <span class="red pull-right" style="display:none;" data-bind="visible: errors().{{this.elementId}}_error()"> <i class="fa fa-exclamation-triangle red"></i></span></h3>
+                <h3 style="margin-left:15px;margin-right:15px;" data-rootViewPath="{{dataRootViewPath}}" data-path="{{dataPath}}">{{this.title}} <span class="red pull-right" style="display:none;" data-bind="visible: errors().{{this.elementId}}_error()"> <i class="fa fa-exclamation-triangle red"></i></span></h3>
             {{/if}}
             <div data-rootViewPath="{{dataRootViewPath}}" data-path="{{dataPath}}" id="{{this.elementId}}"> </div>
         {{/each}}
@@ -1698,7 +1698,7 @@
         <label style="margin:0">{{viewConfig.label}}</label>
     {{/IfCompare}}
     <div id="{{elementId}}" class="collection or-clause-collection row" data-bind="foreach: {{viewConfig.collection}}">
-        <div class="row or-clause" data-bind="css: 'or-clause-' + $index()">
+        <div class=" or-clause" data-bind="css: 'or-clause-' + $index()">
             <div class="row or-clause-header">
                 <p class="or-clause-text col-xs-10" data-bind="text: getOrClauseText()($data)"></p>
                 {{#each viewConfig.rowActions}}
@@ -1710,7 +1710,7 @@
             <div class="row">
                 {{#each viewConfig.rows}}
                     <div style="padding: 5px 5px 0 5px;">
-                        <div class="row">
+                        <div>
                             {{#each columns}}
                                 <div class="and-clause-collection data-cell-{{elementId}}" />
                             {{/each}}
