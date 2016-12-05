@@ -286,41 +286,41 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.contrail-tabs.ui-tabs .ui-state-default a i.contrail-tab-link-icon {
+.ui-tabs .contrail-tabs .ui-state-default a i.contrail-tab-link-icon {
     margin-right: 10px;
     font-weight: normal;
     font-size: 110%;
     display: inline-block;
 }
-.contrail-tabs.ui-tabs .ui-state-default i.fa-ellipsis-v {
+.ui-tabs .contrail-tabs .ui-state-default i.fa-ellipsis-v {
     display: none;
     font-size: 1.5em;
     padding: 9px 4px 5px 4px;
 }
-.contrail-tabs.ui-tabs li.ui-tabs-active i.fa-ellipsis-v {
+.ui-tabs .contrail-tabs li.ui-tabs-active i.fa-ellipsis-v {
     display: inline-block;
 }
-.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .link {
+.ui-tabs .contrail-tabs .contrail-tab-link-list .tab-add .link {
     position: absolute;
     padding: 8px;
 }
-.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .title-edit {
+.ui-tabs .contrail-tabs .contrail-tab-link-list .tab-add .title-edit {
     display: none;
     padding-top: 4px;
 }
-.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-add .title-edit > input {
+.ui-tabs .contrail-tabs .contrail-tab-link-list .tab-add .title-edit > input {
 }
-.contrail-tabs.ui-tabs .ui-tabs-nav li.pull-right {
+.ui-tabs .contrail-tabs .ui-tabs-nav li.pull-right {
     float: right;
     margin-top: 5px;
 }
-.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-menu {
+.ui-tabs .contrail-tabs .contrail-tab-link-list .tab-menu {
     padding: 8px;
 }
-.contrail-tabs.ui-tabs .contrail-tab-link-list .tab-menu .title-save {
+.ui-tabs .contrail-tabs .contrail-tab-link-list .tab-menu .title-save {
     margin-left: 16px;
 }
-.contrail-tabs.ui-tabs .ui-tabs-nav li a.contrail-tab-extra-link {
+.ui-tabs .contrail-tabs .ui-tabs-nav li a.contrail-tab-extra-link {
     font-weight: normal;
     font-size: 11px;
 }
@@ -333,29 +333,29 @@
     border: none;
     padding: 0;
 }
-.contrail-tabs-overcast.ui-tabs .ui-widget-header,
+.contrail-tabs-overcast.ui-tabs .contrail-tabs .ui-widget-header,
 .ui-tabs .ui-widget-header{
     border: none;
     background: none;
     background-color:#f9f9f9;
     border-bottom: 1px solid #eee;
 }
-.contrail-tabs-overcast.ui-tabs .ui-tabs-nav,
+.contrail-tabs-overcast.ui-tabs .contrail-tabs .ui-tabs-nav,
 .ui-tabs .ui-tabs-nav{
     margin: -4px -10px 10px -10px;
     padding: 1px;
 }
-.contrail-tabs-overcast.ui-tabs-panel.ui-widget-content,
+.contrail-tabs-overcast .contrail-tabs .ui-tabs-panel.ui-widget-content,
 .ui-tabs-panel.ui-widget-content {
     padding: 0;
 }
-.contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-tabs-active a,
+.contrail-tabs-overcast.ui-tabs .contrail-tabs .ui-tabs-nav li.ui-tabs-active a,
 .ui-tabs .ui-tabs-nav li.ui-tabs-active a,
-.contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-state-hover a,
+.contrail-tabs-overcast.ui-tabs .contrail-tabs .ui-tabs-nav li.ui-state-hover a,
 .ui-tabs .ui-tabs-nav li.ui-state-hover a,
-.contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-tabs-active .tab-edit-btn,
+.contrail-tabs-overcast.ui-tabs .contrail-tabs .ui-tabs-nav li.ui-tabs-active .tab-edit-btn,
 .ui-tabs .ui-tabs-nav li.ui-tabs-active .tab-edit-btn,
-.contrail-tabs-overcast.ui-tabs .ui-tabs-nav li.ui-state-hover .tab-edit-btn,
+.contrail-tabs-overcast.ui-tabs .contrail-tabs .ui-tabs-nav li.ui-state-hover .tab-edit-btn,
 .ui-tabs .ui-tabs-nav li.ui-state-hover .tab-edit-btn {
     color: #3182bd;
 }
@@ -372,16 +372,16 @@
   display: inline-block;
 }
 
-.contrail-tabs-overcast.ui-tabs .ui-state-default a,
+.contrail-tabs-overcast.ui-tabs .contrail-tabs .ui-state-default a,
 .ui-tabs .ui-state-default a,
-.contrail-tabs-overcast.ui-tabs .ui-state-default a:link,
+.contrail-tabs-overcast.ui-tabs .contrail-tabs .ui-state-default a:link,
 .ui-tabs .ui-state-default a:link,
-.contrail-tabs-overcast.ui-tabs .ui-state-default a:visited,
+.contrail-tabs-overcast.ui-tabs .contrail-tabs .ui-state-default a:visited,
 .ui-tabs .ui-state-default a:visited {
     color: #787878;
     text-decoration: none;
 }
-.contrail-tabs-overcast.ui-tabs .contrail-tabs-loading,
+.contrail-tabs-overcast.ui-tabs .contrail-tabs .contrail-tabs-loading,
 .ui-tabs .contrail-tabs-loading {
     margin-right: 5px;
 }

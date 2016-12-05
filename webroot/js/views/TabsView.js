@@ -54,10 +54,7 @@ define([
     initialize: function () {
       /**
        * Note: Current TabsView implementation keeps the same elementId for the container.
-       * contrailTabs gets initialized in the child elementId and parent elementId has bound function accessors internally
-       * to access the function on container elementId. Changing the child elementId now breaks the loading via URLHash as
-       * it uses child elementId. Todo: cleanup the TabsView implementation. Remove duplicate elementId, make contrailTabs
-       * functions directly accessible from parent(view) elementId.
+       * Todo: cleanup the TabsView implementation. Remove duplicate elementId. styles
        */
       this.selectors.tabs = "#" + this.attributes.elementId;
     },
@@ -100,7 +97,7 @@ define([
           }
       });
 
-      self.$(self.selectors.tabs).contrailTabs({
+      $(self.selectors.tabs).contrailTabs({
         active: activeTab,
         activate: function(event, ui) {
           var tabIndex = ui.newTab.index(),
@@ -154,13 +151,6 @@ define([
         theme: viewConfig.theme,
       });
 
-      //Adding accessor to contrailTabs initialized under container.
-      self.$el.tabs(function() {
-        return self.$(self.selectors.tabs).tabs;
-      });
-      self.$el.data("contrailTabs", function() {
-        return self.$(self.selectors.tabs).data("contrailTabs");
-      }());
     },
 
     _initTabMenu: function(tab) {
