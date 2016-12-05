@@ -166,9 +166,11 @@ define(['underscore', 'contrail-view', 'widget-configmanager'], function(_, Cont
             self.prevIndex = self.currIndex;
             if(self.lastIndex > 1){
                 var grid = self.$el.find('.grid-stack').data('grid-stack-instance');
-                self.$el.find('.grid-stack').on('dragstart', function(event, ui){
-                    gridStackDragHandler(event, ui, grid, self)
-                });
+                if(self.enableCarousel == true) {
+                    self.$el.find('.grid-stack').on('dragstart', function(event, ui){
+                        gridStackDragHandler(event, ui, grid, self)
+                    });
+                }
             }
         });
     }
@@ -259,6 +261,7 @@ define(['underscore', 'contrail-view', 'widget-configmanager'], function(_, Cont
                 elWidth = el.width(),
                 elLeft = el.offset().left,
                 elRight = elLeft + el.width(),
+                //If half-of-the-element has moved out of screen towards left
                 leftMov = Math.round(elWidth/2) <= Math.round(parentViewLeft - elLeft),
                 rightMov = Math.round(elRight - parentViewRight) >= Math.round(elWidth/2),
                 changeAndAdd = function(widget, dir){

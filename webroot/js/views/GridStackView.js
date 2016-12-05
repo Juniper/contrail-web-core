@@ -16,6 +16,7 @@ define([
         initialize: function(options) {
             var self = this;
             self.widgets = [];
+            self.doSaveLayout = true;
             //Ensure that the passed-on options are not modified, need to reset to default layout
             self.widgetCfgList = cowu.getValueByJsonPath(options,'attributes;viewConfig;widgetCfgList',{});
             self.gridAttr = cowu.getValueByJsonPath(options,'attributes;viewConfig;gridAttr',{});
@@ -51,6 +52,7 @@ define([
             });
             self.$el.on('dragstop',function(event,ui) {
                 $('.custom-grid-stack').removeClass('show-borders');
+                // self.saveGrid();
             });
             self.$el.on('resizestart',function(event,ui) {
                 $('.custom-grid-stack').addClass('show-borders');
@@ -64,15 +66,20 @@ define([
             self.$el.on('change',function(event,items) {
                 //Added to avoid saving to localStorage on resetLayout..as change event gets triggered even if we remove all widgets from gridstack
                 if(localStorage.getItem(self.elementId) != null) {
-                    self.saveGrid();
+                    if(self.doSaveLayout == true)
+                        self.saveGrid();
+                    if(self.doSaveLayout == false)
+                        self.doSaveLayout = true;
                 }
             });
         },
         saveGrid : function () {
             var self = this;
-            var serializedData = _.map(self.$el.find('.grid-stack-item:visible'), function (el) {
+            var serializedData = _.map(self.$el.find('.custom-grid-stack-item:visible'), function (el) {
                 el = $(el);
                 var node = el.data('_gridstack_node');
+                // console.assert(el.attr('data-widget-id') != null);
+                // console.assert(node.width != null || node.height != null, "Node width/height is null while serializing");
                 return {
                     id: el.attr('data-widget-id'),
                     x: node.x,
@@ -81,9 +88,7 @@ define([
                     height: node.height
                 };
             }, this);
-            if(serializedData.length > 0) {
-                localStorage.setItem(self.elementId,JSON.stringify(serializedData));
-            }
+            localStorage.setItem(self.elementId,JSON.stringify(serializedData));
         },
         render: function() {
             var self = this;
@@ -92,8 +97,8 @@ define([
             self.widgets = [];
             self.tmpHeight = 0;
             if(self.movedWidgetCfg) {
+                self.doSaveLayout = false;
                 self.add(self.movedWidgetCfg, true);
-                self.movedWidgetCfg = null;
             }
             var widgetCfgList = self.widgetCfgList;
             //Check if there exists a saved preference for current gridStack id
@@ -113,7 +118,11 @@ define([
                     itemAttr: $.extend({},currWidgetCfg['itemAttr'],widgetCfgList[i])
                 });
             }
-            self.saveGrid();
+            //Save the grid layout once gridstack view is rendered there are dropped widgets
+            // if(self.movedWidgetCfg) {
+                self.saveGrid();
+            //     self.movedWidgetCfg = null;
+            // }
             self.$el.data('grid-stack-instance',self);
         },
         add: function(cfg, isMoved) {
