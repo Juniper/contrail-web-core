@@ -15,6 +15,7 @@ define([ 'controlnode-viewconfig', 'vrouter-viewconfig',
         self.get = function(widgetId) {
             return widgetViewCfgMap[widgetId];
         }
+        self.modelInstMap = {};
     }
     return new widgetCfgManager();
 

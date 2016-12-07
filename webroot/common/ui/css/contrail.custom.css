@@ -1226,6 +1226,11 @@ button#close-error-popup{
     border: 0px solid #f2f2f2;
 }
 
+.custom-grid-stack.show-borders .custom-grid-stack-item {
+    border: 1px solid #f2f2f2;
+}
+
+
 /* Start - Event-drops css */
 /*.event-drops-tooltip {
     position: absolute;
