@@ -432,6 +432,13 @@ define([
                     dis.trigger('change');
                 });
 
+            /*it is required as losing disabled functionality with remote call*/
+            if(config.disabled === true) {
+                input.attr("disabled", "disabled");
+            } else {
+                input.removeAttr("disabled");
+            }
+
             if(contrail.checkIfExist(config.defaultValue)){
                 input.val(config.defaultValue);
             }
