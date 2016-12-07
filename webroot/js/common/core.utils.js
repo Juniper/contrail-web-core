@@ -2058,28 +2058,36 @@ define([
                       "limit": "150000"
                     }
                 };
-
-                if (statsConfig['table_name'] != null) {
-                    postData['formModelAttrs']['table_name'] = statsConfig['table_name'];
+                var remoteConfig ;
+                if (statsConfig['type'] != null && statsConfig['type'] == "non-stats-query") {
+                    if(statsConfig['remoteConfig']) {
+                        remoteConfig = statsConfig['remoteConfig'];
+                    }
+                } else {
+                    if (statsConfig['table_name'] != null) {
+                        postData['formModelAttrs']['table_name'] = statsConfig['table_name'];
+                    }
+                    if (statsConfig['table_type'] != null) {
+                        postData['formModelAttrs']['table_type'] = statsConfig['table_type'];
+                    }
+                    if (statsConfig['select'] != null) {
+                        postData['formModelAttrs']['select'] = statsConfig['select'];
+                    }
+                    if (statsConfig['where'] != null) {
+                        postData['formModelAttrs']['where'] = statsConfig['where'];
+                    }
+                    if (statsConfig['time_granularity'] != null) {
+                        postData['formModelAttrs']['time_granularity'] = statsConfig['time_granularity'];
+                    }
+                    if (statsConfig['time_granularity_unit'] != null) {
+                        postData['formModelAttrs']['time_granularity_unit'] = statsConfig['time_granularity_unit'];
+                    }
                 }
-                if (statsConfig['table_type'] != null) {
-                    postData['formModelAttrs']['table_type'] = statsConfig['table_type'];
-                }
-                if (statsConfig['select'] != null) {
-                    postData['formModelAttrs']['select'] = statsConfig['select'];
-                }
-                if (statsConfig['where'] != null) {
-                    postData['formModelAttrs']['where'] = statsConfig['where'];
-                }
-                if (statsConfig['time_granularity'] != null) {
-                    postData['formModelAttrs']['time_granularity'] = statsConfig['time_granularity'];
-                }
-                if (statsConfig['time_granularity_unit'] != null) {
-                    postData['formModelAttrs']['time_granularity_unit'] = statsConfig['time_granularity_unit'];
-                }
-
                 if(i == 0) {
-                    var remoteObj = {
+                    if (statsConfig['type'] != null && statsConfig['type'] == "non-stats-query"){
+                        primaryRemoteConfig = remoteConfig;
+                    } else {
+                        var remoteObj = {
                             ajaxConfig : {
                                 url : "/api/qe/query",
                                 type: 'POST',
@@ -2091,14 +2099,19 @@ define([
                                                     return data;
                                                 }
                         };
-                    primaryRemoteConfig = remoteObj;
+                        primaryRemoteConfig = remoteObj;
+                    }
                 } else {
                     var vlRemoteObj = {
-                        getAjaxConfig: function() {
-                            return {
-                                url : "/api/qe/query",
-                                type: 'POST',
-                                data: JSON.stringify(postData)
+                        getAjaxConfig: function(primaryResponse) {
+                            if(statsConfig['getAjaxConfig']) {
+                                return statsConfig['getAjaxConfig'](primaryResponse,postData);
+                            } else {
+                                return {
+                                    url : "/api/qe/query",
+                                    type: 'POST',
+                                    data: JSON.stringify(postData)
+                                }
                             }
                         },
                         dataParser : (statsConfig['parser'])? statsConfig['parser'] :
@@ -2106,13 +2119,10 @@ define([
                                 var data = getValueByJsonPath(response,'data',[]);
                                 return data;
                             },
-                        successCallback: (statsConfig['parser'])?
-                            function(data, contrailListModel) {
-                                statsConfig['mergeFn'] (data,contrailListModel);
-                            }:
-                                function(response, contrailListModel) {
-                                var data = getValueByJsonPath(response,'data',[]);
-                                statsConfig['mergeFn'] (data,contrailListModel);
+                        successCallback: function(data, contrailListModel) {
+                                if(statsConfig['mergeFn']){
+                                    statsConfig['mergeFn'] (data,contrailListModel);
+                                }
                             }
                     };
                     vlRemoteList.push (vlRemoteObj);
