@@ -1289,7 +1289,7 @@ if (typeof document !== 'undefined' && document) {
                         postData['domain'] = domain;
                     }
                     $.ajax({
-                        url: orchPrefix + '/authenticate',
+                        url: orchPrefix + '/authenticate' + '?built_at=' + built_at,
                         type: "POST",
                         data: JSON.stringify(postData),
                         contentType: "application/json; charset=utf-8",

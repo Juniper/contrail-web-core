@@ -11,6 +11,7 @@ messages.info = {};
 
 // Warnings
 messages.warn.invalid_mod_call = 'You can not call %s directly.';
+messages.warn.webui_upgraded = 'WebUI package is upgraded. Refresh browser.';
 
 // Errors
 messages.error.unexpected = 'An unexpected error occurred!';
