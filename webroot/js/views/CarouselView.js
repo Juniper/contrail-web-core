@@ -240,7 +240,7 @@ define(['underscore', 'contrail-view', 'widget-configmanager'], function(_, Cont
             listArr = ifNull(widgetCfgList,viewConfig.widgetCfgList);
             lstLen = listArr.length;
         for(lstIdx = 0; lstIdx < lstLen; lstIdx++){
-            var currWidgetCfg = widgetConfigManager.get(listArr[lstIdx]['id'])();
+            var currWidgetCfg = widgetConfigManager.get(listArr[lstIdx]['id'])(listArr[lstIdx]);
             if(getValueByJsonPath(currWidgetCfg,'itemAttr;title',null))
                 title.push(currWidgetCfg.itemAttr.title);
         }

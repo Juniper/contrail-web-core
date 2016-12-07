@@ -78,14 +78,17 @@ define([
             var serializedData = _.map(self.$el.find('.custom-grid-stack-item:visible'), function (el) {
                 el = $(el);
                 var node = el.data('_gridstack_node');
+                var itemAttr = (el.data('data-cfg') != null)? el.data('data-cfg').itemAttr: {};
                 // console.assert(el.attr('data-widget-id') != null);
                 // console.assert(node.width != null || node.height != null, "Node width/height is null while serializing");
                 return {
                     id: el.attr('data-widget-id'),
-                    x: node.x,
-                    y: node.y,
-                    width: node.width,
-                    height: node.height
+                    itemAttr: $.extend({
+                        x: node.x,
+                        y: node.y,
+                        width: node.width,
+                        height: node.height
+                        },itemAttr)
                 };
             }, this);
             localStorage.setItem(self.elementId,JSON.stringify(serializedData));
@@ -110,12 +113,13 @@ define([
                 }
             }
             for(var i=0;i < widgetCfgList.length;i++) {
-                var currWidgetCfg = widgetConfigManager.get(widgetCfgList[i]['id'])();
+                var currWidgetCfg = widgetConfigManager.get(widgetCfgList[i]['id'])(
+                        widgetCfgList[i]);
                 self.add({
                     widgetCfg: widgetCfgList[i],
                     modelCfg: currWidgetCfg['modelCfg'],
                     viewCfg: currWidgetCfg['viewCfg'],
-                    itemAttr: $.extend({},currWidgetCfg['itemAttr'],widgetCfgList[i])
+                    itemAttr: $.extend({},currWidgetCfg['itemAttr'],widgetCfgList[i]['itemAttr'])
                 });
             }
             //Save the grid layout once gridstack view is rendered there are dropped widgets
@@ -134,6 +138,7 @@ define([
             var widgetCfg = cfg['widgetCfg'];
             var widgetCnt = self.widgets.length;
             $(currElem).attr('data-widget-id',widgetCfg['id']);
+            $(currElem).data('data-cfg', cfg);
             if(localStorage.getItem(self.elementId) != null || isMoved) {
                 if(isMoved){
                     self.tmpHeight = itemAttr['height'];
@@ -193,7 +198,6 @@ define([
                 $(currElem).find('.item-content').addClass('drag-handle');
             }
             cfg['viewCfg'] = $.extend(true,{},chUtils.getDefaultViewConfig(viewType),cfg['viewCfg']);
-            $(currElem).data('data-cfg', cfg);
             self.renderView4Config($(currElem).find('.item-content'), model, cfg['viewCfg']);
         }
     });
