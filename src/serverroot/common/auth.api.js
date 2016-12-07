@@ -61,10 +61,22 @@ function createAuthKeyBySessionId (sessionId)
   * 2. public function
   */
 function doAuthenticate (req, res, appData, callback) {
-    getAuthMethod[req.session.loggedInOrchestrationMode].authenticate(req, res,
-                                                                      appData, function(err, data) {
-        callback(err, data);
-    });
+    var builtAtVersion = 0;
+    try {
+        builtAtVersion = parseInt(fs.readFileSync('.built_version'));
+    } catch(err) {
+        builtAtVersion = 0;
+    }
+    console.info('.built_version',req.param('built_at'),builtAtVersion);
+    //Check if WebUI is package is upgraded after UI is loaded on browser
+    if(req.param('built_at') != null && builtAtVersion != 0 && builtAtVersion != parseInt(req.param('built_at'))) {
+        callback("WebUI package is upgraded. Refresh browser");
+    } else {
+        getAuthMethod[req.session.loggedInOrchestrationMode].authenticate(req, res,
+                                                                        appData, function(err, data) {
+            callback(err, data);
+        });
+    }
 }
 
 function getTokenObj (authObj, callback)
