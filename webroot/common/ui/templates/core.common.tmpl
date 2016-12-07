@@ -861,7 +861,7 @@
     <div id="{{elementId}}" class="{{class}}" data-bind="{{#if viewConfig.[0].visible}} visible: {{viewConfig.[0].visible}} {{/if}}">
         {{#each viewConfig}}
             {{#if this.title}}
-                <h3 data-rootViewPath="{{dataRootViewPath}}" data-path="{{dataPath}}">{{this.title}} <span class="red pull-right" style="display:none;" data-bind="visible: errors().{{this.elementId}}_error()"> <i class="fa fa-exclamation-triangle red"></i></span></h3>
+                <h3 style="margin-left:15px;margin-right:15px;" data-rootViewPath="{{dataRootViewPath}}" data-path="{{dataPath}}">{{this.title}} <span class="red pull-right" style="display:none;" data-bind="visible: errors().{{this.elementId}}_error()"> <i class="fa fa-exclamation-triangle red"></i></span></h3>
             {{/if}}
             <div data-rootViewPath="{{dataRootViewPath}}" data-path="{{dataPath}}" id="{{this.elementId}}"> </div>
         {{/each}}
