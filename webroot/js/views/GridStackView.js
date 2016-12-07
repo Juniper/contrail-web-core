@@ -110,7 +110,8 @@ define([
                 }
             }
             for(var i=0;i < widgetCfgList.length;i++) {
-                var currWidgetCfg = widgetConfigManager.get(widgetCfgList[i]['id'])();
+                var currWidgetCfg = widgetConfigManager.get(widgetCfgList[i]['id'])(
+                        widgetCfgList[i]);
                 self.add({
                     widgetCfg: widgetCfgList[i],
                     modelCfg: currWidgetCfg['modelCfg'],
