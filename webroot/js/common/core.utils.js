@@ -1726,8 +1726,13 @@ define([
                             groupSumObj = _.indexBy(groupByDimSum.top(Infinity), 'key');
                             groupByMap = [];
                             for (var key in groupCountsObj) {
+                                var count = getValueByJsonPath(groupCountsObj, key+';value', 1);
+                                //To calculate average denominator should be non zero..
+                                if (count == 0) {
+                                    count = 1;
+                                }
                                 groupByMap.push({key: key,
-                                    value: getValueByJsonPath(groupSumObj, key+';value', 0)/getValueByJsonPath(groupCountsObj, key+';value', 1)});
+                                    value: getValueByJsonPath(groupSumObj, key+';value', 0)/count});
                             }
                         } else {
                             //Default is sum
