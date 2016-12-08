@@ -29,10 +29,19 @@ define([
             $.each(data,function(idx,obj) {
                 for(var i=0;i<infoChartCfg.length;i++) {
                     var currField = infoChartCfg[i]['field'];
+                    var excludeList = infoChartCfg[i]['excludeList'];
                     if(idx == 0) {
                         totalCntMap[currField] = 0;
                     }
-                    totalCntMap[currField] += obj[currField]
+                    if(excludeList != null) {
+                        var doExclude = _.find(excludeList,function(currFilter) {
+                                return obj[currFilter['key']] == currFilter['value'];
+                            });
+                        if(doExclude == null) 
+                            totalCntMap[currField] += obj[currField];
+                    } else {
+                        totalCntMap[currField] += obj[currField];
+                    }
                 }
             });
 
