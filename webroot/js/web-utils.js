@@ -242,11 +242,20 @@ function formatThroughput(bytes,noDecimal,maxPrecision) {
         return '-';
 }
 
-function formatBytes(bytes, noDecimal, maxPrecision, precision, bytePrefixes) {
+function formatBytes(bytes, noDecimal, maxPrecision, precision, bytePrefixes, bandwidth) {
+    var multiplier = 1024;
+    if (bandwidth) {
+        multiplier = 1000;
+    }
     if (!$.isNumeric(bytes))
         return '-';
-    if (bytes == 0)
-        return '0 B';
+    if (bytes == 0) {
+        if (bandwidth) {
+            return '0 bps';
+        } else {
+            return '0 B';
+        }
+    }
     var formatStr = '';
     var decimalDigits = 2;
     if ((maxPrecision != null) && (maxPrecision == true)) {
@@ -259,11 +268,13 @@ function formatBytes(bytes, noDecimal, maxPrecision, precision, bytePrefixes) {
     //Ensure that bytes is always positive
     bytes = parseInt(bytes);
     bytes = makePositive(bytes);
-    if(bytePrefixes == null) {
-        bytePrefixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB'];
+    if (bandwidth == true) {
+        bytePrefixes = ['bps', 'Kbps', 'Mbps', 'Gbps', 'Tbps', 'Pbps', 'Ebps', 'Zbps'];
+    } else if (bytePrefixes == null){
+            bytePrefixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB'];
     }
     $.each(bytePrefixes, function (idx, prefix) {
-        if (bytes < 1024) {
+        if (bytes < multiplier) {
             formatStr = contrail.format('{0} {1}', parseFloat(bytes.toFixed(decimalDigits)), prefix);
             return false;
         } else {
@@ -271,7 +282,7 @@ function formatBytes(bytes, noDecimal, maxPrecision, precision, bytePrefixes) {
             if (idx == (bytePrefixes.length - 1))
                 formatStr = contrail.format('{0} {1}', parseFloat(bytes.toFixed(decimalDigits)), prefix);
             else
-                bytes = bytes / 1024;
+                bytes = bytes / multiplier;
         }
     });
     return formatStr;
