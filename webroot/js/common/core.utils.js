@@ -2253,18 +2253,26 @@ define([
                     }
                 }
             }else if(updatedObj[i] !== null && updatedObj[i].constructor === Array){
+                if(updatedObj[i].length > 0){
+                    var updatedVal = updatedObj[i].filter(function(n){ return n != undefined});
+                    if(updatedVal.length == 0){
+                        updatedObj[i] = updatedVal;
+                    }
+                }
                 if(updatedObj[i].length == 0){
-                        if(oldJson !== undefined && oldJson !== null){
-                            if(oldJson[i] !== undefined && oldJson[i] !== null){
-                                updatedObj[i] = oldJson[i];
-                            }
-                        }else{
-                            delete updatedObj[i];
-                        }
-                }else if(typeof updatedObj[i][0] === 'string'){
+                       delete updatedObj[i];
+                }else if(typeof checkArrayContainsString(updatedObj[i]) === 'string'){
                     if(oldObj !== undefined){
                         if(updatedObj[i].length === oldObj[i].length){
-                            delete updatedObj[i]
+                            if(oldJson != undefined){
+                                if(updatedObj[i].length == oldJson[i].length){
+                                    updatedObj[i] = updatedObj[i];
+                                }else{
+                                    delete updatedObj[i];
+                                }
+                            }else{
+                                delete updatedObj[i];
+                            }
                         }else{
                             var updatedVal = updatedObj[i].filter(function(n){ return n != ""});
                             if(updatedVal.length == 0){
@@ -2285,52 +2293,78 @@ define([
                           }
                         }
                     }
-                    
-                }else if(typeof updatedObj[i][0] === 'object' && updatedObj[i][0] !== null && updatedObj[i][0].constructor !== Array){
+                }else if(typeof checkArrayContainsObject(updatedObj[i]) == 'object' && checkArrayContainsObject(updatedObj[i]) !== null && checkArrayContainsObject(updatedObj[i]).constructor !== Array){
                     for(var j = 0; j < updatedObj[i].length; j++){
-                        if(oldJson !== undefined && oldJson !== null){
-                            if(oldJson[i] !== undefined){
-                                getDeepDiffOfKey(updatedObj[i][j], oldObj[i][j], oldJson[i][j]);
+                            if(oldJson !== undefined && oldJson !== null){
+                                if(oldJson[i] !== undefined){
+                                    getDeepDiffOfKey(updatedObj[i][j], oldObj[i][j], oldJson[i][j]);
+                                }else{
+                                    getDeepDiffOfKey(updatedObj[i][j], oldObj[i][j], undefined);
+                                }
                             }else{
-                                getDeepDiffOfKey(updatedObj[i][j], oldObj[i][j], undefined);
+                                if(oldObj !== undefined){
+                                    getDeepDiffOfKey(updatedObj[i][j], oldObj[i][j], undefined);
+                                }else{
+                                    getDeepDiffOfKey(updatedObj[i][j], undefined, undefined);
+                                }
                             }
-                        }else{
-                            if(oldObj !== undefined){
-                                getDeepDiffOfKey(updatedObj[i][j], oldObj[i][j], undefined);
-                            }else{
-                                getDeepDiffOfKey(updatedObj[i][j], undefined, undefined);
-                            }
-                        }
-                        if(Object.keys(updatedObj[i][j]).length === 0){
-                            if(oldJson !== undefined){
-                                if(oldJson[i] !== undefined && oldJson[i] !== null){
-                                    if(oldJson[i][j] === null){
-                                        updatedObj[i][j] = null;
+                            if(updatedObj[i][j] != undefined){
+                                if(Object.keys(updatedObj[i][j]).length === 0 ){
+                                    if(oldJson !== undefined){
+                                        if(oldJson[i] !== undefined && oldJson[i] !== null){
+                                            if(oldJson[i][j] === null){
+                                                updatedObj[i][j] = null;
+                                            }else{
+                                                delete updatedObj[i][j];
+                                                updatedObj[i] = updatedObj[i].filter(function(n){ return n != undefined });
+                                            }
+                                        }else{
+                                            delete updatedObj[i][j];
+                                            updatedObj[i] = updatedObj[i].filter(function(n){ return n != undefined });
+                                         }
                                     }else{
                                         delete updatedObj[i][j];
                                         updatedObj[i] = updatedObj[i].filter(function(n){ return n != undefined });
                                     }
-                                }else{
-                                    delete updatedObj[i][j];
-                                    updatedObj[i] = updatedObj[i].filter(function(n){ return n != undefined });
-                                 }
-                            }else{
-                                delete updatedObj[i][j];
-                                updatedObj[i] = updatedObj[i].filter(function(n){ return n != undefined });
+                                }
                             }
                         }
-                    }
-                    if(updatedObj[i].length == 0){
-                        if(oldJson !== undefined){
-                            if(oldJson[i].length === updatedObj[i].length){}
-                        }else{
-                            delete updatedObj[i];
+                        updatedObj[i] = updatedObj[i].filter(function(n){ return n != undefined });
+                        if(updatedObj[i].length == 0){
+                            if(oldJson !== undefined){
+                                if(oldJson[i] !== undefined){
+                                    if(oldJson[i].length === updatedObj[i].length){}
+                                }else{
+                                    delete updatedObj[i];
+                                }
+                            }else{
+                                delete updatedObj[i];
+                            }
                         }
-                    }
                 }
             }
         }
         return updatedObj;
+    };
+    function checkArrayContainsObject(array){
+        var obj;
+        for(var i = 0; i < array.length; i++){
+            if(typeof array[i] == 'object' && array[i].constructor !== Array){
+                obj = array[i];
+                break;
+            }
+        }
+       return obj;
+    };
+    function checkArrayContainsString(array){
+        var str;
+        for(var i = 0; i < array.length; i++){
+            if(typeof array[i] == 'string' || typeof array[i] == 'number'){
+                str = array[i];
+                break;
+            }
+        }
+       return str;
     };
     function deepDiff(a, b, r, reversible, oldJson, enumKeys) {
         lodash.each(a, function(v, k) {
@@ -2341,26 +2375,44 @@ define([
           if (lodash.isObject(v)) {
               if (lodash.isArray(v)) {
                 if (v.length > 0 || b[k].length > 0) {
-                    var isSame = true; 
-                     if(v.length == b[k].length){
-                            for(var i =0; i < v.length ; i++){
-                                var found = false;
-                               for(var j=0; j< b[k].length;j++){
-                                   if(lodash.isEqual(v[i], b[k][j])){
-                                       found = true;
-                                       break;
-                                   }
-                               }  
-                               if(!found) {
-                                   isSame = false;
-                                   break;
-                               }
-                            }
-                            if(!isSame){
-                                value = b[k];
-                            }
+                    var isSame = true;
+                    if(v.length == b[k].length){
+                            if(oldJson !== undefined){
+                                 var diff = getDeepDiffOfKey(b[k],v, oldJson[Object.keys(oldJson)[0]][k]);
+                             }else{
+                                 var diff = getDeepDiffOfKey(b[k],v, undefined);
+                             }
+                             for(var i =0; i < v.length ; i++){
+                                 var found = false;
+                                for(var j=0; j< diff.length;j++){
+                                    if(lodash.isEqual(v[i], diff[j])){
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if(!found) {
+                                    isSame = false;
+                                    break;
+                                }
+                             }
+                             if(!isSame){
+                                 diff = diff.filter(function(n){ return n != "" });
+                                 value = diff;
+                             }
                         }else if(v.length > b[k].length || v.length < b[k].length){
-                            value = b[k];
+                            if(oldJson !== undefined){
+                                var diff = getDeepDiffOfKey(b[k],v, oldJson[Object.keys(oldJson)[0]][k]);
+                            }else{
+                                var diff = getDeepDiffOfKey(b[k],v, undefined);
+                            }
+                            var newVal = diff.filter(function(n){ return n != undefined });
+                            newVal = newVal.filter(function(n){ return n != "" });
+                            if(newVal.length != 0){
+                                value = newVal;
+                            }
+                            if(v.length != 0 && newVal.length == 0){
+                                value = newVal;
+                            }
                         }
                   }
               } else {
@@ -2388,6 +2440,9 @@ define([
                    r[k] = value;
                 }
              }
+            if(value === null){
+                r[k] = value;
+            }
           });
 
     };
