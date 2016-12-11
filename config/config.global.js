@@ -3,7 +3,21 @@
  */
 
 var config = {};
-
+var ipAddr = '';
+//ipAddr = '10.163.43.241';
+//ipAddr = '10.84.30.201';
+//ipAddr = 'nodec39';
+//ipAddr = 'nodec39';
+//ipAddr = '10.8';
+//ipAddr = '10.163.43.241'; //Ganges UI
+//ipAddr = 'nodec32'; //Server Manager
+//ipAddr = '10.84.14.38';
+//ipAddr = 'nodec39.englab.juniper.net';
+//ipAddr = 'nodeg40';
+ipAddr = 'nodeg3';
+//ipAddr = 'nodec37';
+//ipAddr = 'nodeg16';
+//ipAddr = '10.204.217.189';
 config.orchestration = {};
 /****************************************************************************
  * Specify Orchestration Model
@@ -13,6 +27,7 @@ config.orchestration = {};
  * If you do not want to specify any model, set it to 'none'
  *
  *****************************************************************************/
+//config.orchestration.Manager = 'vcenter';
 config.orchestration.Manager = 'openstack';
 
 /****************************************************************************
@@ -120,7 +135,7 @@ config.serviceEndPointTakePublicURL = true;
  *      if you do not want to specify then use ''
  *****************************************************************************/
 config.networkManager = {};
-config.networkManager.ip = '127.0.0.1';
+config.networkManager.ip = ipAddr;
 config.networkManager.port = '9696'
 config.networkManager.authProtocol = 'http';
 config.networkManager.apiVersion = [];
@@ -128,7 +143,7 @@ config.networkManager.strictSSL = false;
 config.networkManager.ca = '';
 
 config.imageManager = {};
-config.imageManager.ip = '127.0.0.1';
+config.imageManager.ip = ipAddr;
 config.imageManager.port = '9292';
 config.imageManager.authProtocol = 'http';
 config.imageManager.apiVersion = ['v1', 'v2'];
@@ -136,7 +151,7 @@ config.imageManager.strictSSL = false;
 config.imageManager.ca = '';
 
 config.computeManager = {};
-config.computeManager.ip = '127.0.0.1';
+config.computeManager.ip = ipAddr;
 config.computeManager.port = '8774';
 config.computeManager.authProtocol = 'http';
 config.computeManager.apiVersion = ['v1.1', 'v2'];
@@ -144,7 +159,7 @@ config.computeManager.strictSSL = false;
 config.computeManager.ca = '';
 
 config.identityManager = {};
-config.identityManager.ip = '127.0.0.1';
+config.identityManager.ip = ipAddr;
 config.identityManager.port = '5000';
 config.identityManager.authProtocol = 'http';
 /******************************************************************************
@@ -159,7 +174,7 @@ config.identityManager.strictSSL = false;
 config.identityManager.ca = '';
 
 config.storageManager = {};
-config.storageManager.ip = '127.0.0.1';
+config.storageManager.ip = ipAddr;
 config.storageManager.port = '8776';
 config.storageManager.authProtocol = 'http';
 config.storageManager.apiVersion = ['v1'];
@@ -168,7 +183,7 @@ config.storageManager.ca = '';
 
 // VNConfig API server and port.
 config.cnfg = {};
-config.cnfg.server_ip = '127.0.0.1';
+config.cnfg.server_ip = ipAddr;
 config.cnfg.server_port = '8082';
 config.cnfg.authProtocol = 'http';
 config.cnfg.strictSSL = false;
@@ -176,7 +191,7 @@ config.cnfg.ca = '';
 
 // Analytics API server and port.
 config.analytics = {};
-config.analytics.server_ip = '127.0.0.1';
+config.analytics.server_ip = ipAddr;
 config.analytics.server_port = '8081';
 config.analytics.authProtocol = 'http';
 config.analytics.strictSSL = false;
@@ -184,14 +199,14 @@ config.analytics.ca = '';
 
 // vcenter related parameters
 config.vcenter = {};
-config.vcenter.server_ip = '127.0.0.1';         //vCenter IP
+config.vcenter.server_ip = ipAddr;         //vCenter IP
 config.vcenter.server_port = '443';             //Port
 config.vcenter.authProtocol = 'https';          //http or https
 config.vcenter.datacenter = 'vcenter';          //datacenter name
 config.vcenter.dvsswitch = 'vswitch';           //dvsswitch name
 config.vcenter.strictSSL = false;               //Validate the certificate or ignore
 config.vcenter.ca = '';                         //specify the certificate key file
-config.vcenter.wsdl = '/usr/src/contrail/contrail-web-core/webroot/js/vim.wsdl';
+config.vcenter.wsdl = '/Users/vishnuvv/workspace/24May/contrail-web-core/webroot/js/vim.wsdl';
 
 /* Discovery Service */
 config.discoveryService = {};
@@ -212,8 +227,8 @@ config.files.download_path = '/tmp';
 
 /* Cassandra Server */
 config.cassandra = {};
-config.cassandra.server_ips = ['127.0.0.1'];
-config.cassandra.server_port = '9042';
+config.cassandra.server_ips = [ipAddr];
+config.cassandra.server_port = '9160';
 config.cassandra.enable_edit = false;
 
 /* KUE Job Scheduler */
@@ -263,8 +278,23 @@ config.favicon_file = '/usr/src/contrail/contrail-web-core/webroot/img/opencontr
 config.featurePkg = {};
 /* Add new feature Package Config details below */
 config.featurePkg.webController = {};
-config.featurePkg.webController.path = '/usr/src/contrail/contrail-web-controller';
+config.featurePkg.webController.path =
+'/Users/vishnuvv/workspace/24May/contrail-web-controller';
 config.featurePkg.webController.enable = true;
+
+/* Add new feature Package Config details below */
+config.featurePkg.serverManager = {};
+config.featurePkg.serverManager.path =
+'/Users/vishnuvv/workspace/24May/contrail-web-server-manager';
+config.featurePkg.serverManager.enable = false;
+
+
+/* Add new feature Package Config details below */
+config.featurePkg.webStorage = {};
+config.featurePkg.webStorage.path =
+'/Users/vishnuvv/workspace/24May/contrail-web-storage';
+config.featurePkg.webStorage.enable = false;
+
 
 /* Enable/disable Stat Query Links in Sidebar*/
 config.qe = {};
