@@ -16,7 +16,7 @@ define([
         initialize: function(options) {
             var self = this;
             self.widgets = [];
-            self.doSaveLayout = true;
+            self.doSaveLayout = false;
             //Ensure that the passed-on options are not modified, need to reset to default layout
             self.widgetCfgList = cowu.getValueByJsonPath(options,'attributes;viewConfig;widgetCfgList',{});
             self.gridAttr = cowu.getValueByJsonPath(options,'attributes;viewConfig;gridAttr',{});
@@ -48,6 +48,7 @@ define([
                 $('.custom-grid-stack').addClass('show-borders');
             });
             self.$el.on('dragstop',function(event,ui) {
+                self.doSaveLayout = true;
                 $('.custom-grid-stack').removeClass('show-borders');
                 // self.saveGrid();
             });
@@ -56,6 +57,7 @@ define([
             });
             //Trigger resize on widgets on resizestop
             self.$el.on('resizestop',function(event,ui) {
+                self.doSaveLayout = true;
                 $('.custom-grid-stack').removeClass('show-borders');
                 $(ui.element[0]).trigger('resize');
             });
@@ -65,8 +67,8 @@ define([
                 if(localStorage.getItem(self.elementId) != null) {
                     if(self.doSaveLayout == true)
                         self.saveGrid();
-                    if(self.doSaveLayout == false)
-                        self.doSaveLayout = true;
+                    if(self.doSaveLayout == true)
+                        self.doSaveLayout = false;
                 }
             });
         },
@@ -105,7 +107,7 @@ define([
             self.widgets = [];
             self.tmpHeight = 0;
             if(self.movedWidgetCfg) {
-                self.doSaveLayout = false;
+                // self.doSaveLayout = false;
                 self.add(self.movedWidgetCfg, true);
             }
             var widgetCfgList = self.widgetCfgList;
