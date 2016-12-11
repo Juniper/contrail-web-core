@@ -16,6 +16,7 @@ define([
         initialize: function(options) {
             var self = this;
             self.widgets = [];
+            self.doSaveLayout = false;
             //Ensure that the passed-on options are not modified, need to reset to default layout
             self.widgetCfgList = cowu.getValueByJsonPath(options,'attributes;viewConfig;widgetCfgList',{});
             self.gridAttr = cowu.getValueByJsonPath(options,'attributes;viewConfig;gridAttr',{});
@@ -50,6 +51,7 @@ define([
                 $('.custom-grid-stack').addClass('show-borders');
             });
             self.$el.on('dragstop',function(event,ui) {
+                self.doSaveLayout = true;
                 $('.custom-grid-stack').removeClass('show-borders');
             });
             self.$el.on('resizestart',function(event,ui) {
@@ -57,6 +59,7 @@ define([
             });
             //Trigger resize on widgets on resizestop
             self.$el.on('resizestop',function(event,ui) {
+                self.doSaveLayout = true;
                 $('.custom-grid-stack').removeClass('show-borders');
                 $(ui.element[0]).trigger('resize');
             });
@@ -64,7 +67,10 @@ define([
             self.$el.on('change',function(event,items) {
                 //Added to avoid saving to localStorage on resetLayout..as change event gets triggered even if we remove all widgets from gridstack
                 if(localStorage.getItem(self.elementId) != null) {
-                    self.saveGrid();
+                    if(self.doSaveLayout == true)
+                        self.saveGrid();
+                    if(self.doSaveLayout == true)
+                        self.doSaveLayout = false;
                 }
             });
         },
@@ -92,6 +98,7 @@ define([
             self.widgets = [];
             self.tmpHeight = 0;
             if(self.movedWidgetCfg) {
+                // self.doSaveLayout = false;
                 self.add(self.movedWidgetCfg, true);
                 self.movedWidgetCfg = null;
             }
