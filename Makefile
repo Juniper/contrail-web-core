@@ -73,6 +73,7 @@ package:
 	cp -a webroot/html/login-error.tmpl webroot/html/login-error.html
 	./generate-files.sh 'prod-env' $(REPO)
 	./dev-install.sh
+	rm -f built_version
 	# build the minified, unified files.
 	./build-files.sh "prod-env" $(REPO)
 	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env true
@@ -100,6 +101,7 @@ dev-env:
 	if [ ! -d ../$(CONTROLLER) ]; then make fetch-schema; fi
 	./generate-files.sh "dev-env" $(REPO)
 	./dev-install.sh
+	rm -f built_version
 	./prod-dev.sh webroot/html/dashboard.html dev_env prod_env true
 	./prod-dev.sh webroot/html/login.html dev_env prod_env true
 	./prod-dev.sh webroot/html/login-error.html dev_env prod_env true
@@ -117,6 +119,7 @@ prod-env:
 	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
 	./generate-files.sh "dev-env" $(REPO)
 	./dev-install.sh
+	rm -f built_version
 	# build the minified, unified files.
 	./build-files.sh "prod-env" $(REPO)
 	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env true
@@ -136,12 +139,14 @@ endif
 	./chrome-extension.sh
 
 clear-cache-dev:
+	rm -f built_version
 	./prod-dev.sh webroot/html/dashboard.html dev_env prod_env false
 	./prod-dev.sh webroot/html/login.html dev_env prod_env false
 	./prod-dev.sh webroot/html/login-error.html dev_env prod_env false
 	make make-ln
 
 clear-cache-prod:
+	rm -f built_version
 	./prod-dev.sh webroot/html/dashboard.html prod_env dev_env false
 	./prod-dev.sh webroot/html/login.html prod_env dev_env false
 	./prod-dev.sh webroot/html/login-error.html prod_env dev_env false
