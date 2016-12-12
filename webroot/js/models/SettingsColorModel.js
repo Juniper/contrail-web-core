@@ -64,6 +64,7 @@
                               FIVE_NODE_COLOR   : userColors
                           };
               }
+              window.colorSettingsUpdated = _.now();
               contrail.setCookie(cowc.COOKIE_COLOR_SCHEME, JSON.stringify({name: selectedScheme, color: colorObj}));
           },
 

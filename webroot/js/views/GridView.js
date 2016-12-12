@@ -19,7 +19,7 @@ define([
             var self = this,
                 gridContainer = $(self.$el).data("contrailGrid");
             if(gridContainer && gridContainer._dataView) {
-                gridContainer._dataView.refreshData();
+                gridContainer._grid.invalidate();
             }
         },
 

@@ -171,7 +171,7 @@ define([
             } else if(cowu.getValueByJsonPath(cfg,'modelCfg;_type') != 'contrailListModel' && modelCfg != null) {
                 model = new ContrailListModel(modelCfg['config']);
             }
-            if(isCacheExpired) {
+            if(isCacheExpired && modelId != null) {
                 widgetConfigManager.modelInstMap[modelId] = {
                     model: model,
                     time: _.now()

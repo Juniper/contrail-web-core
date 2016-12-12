@@ -202,6 +202,7 @@ define([
                                 bottom: 15
                             },
                             yAxisOffset: 25,
+                            forceY: [0, 0.01],
                             defaultZeroLineDisplay: true,
                             tooltipFn: this.defaultLineAreaTooltipFn
                         }
@@ -215,6 +216,8 @@ define([
                         class: 'mon-infra-chart chartMargin',
                         parseFn: cowu.chartDataFormatter,
                         chartOptions : {
+                            defaultDataStatusMessage: false,
+                            spliceAtBorders: false,
                             brush: false,
                             xAxisLabel: '',
                             yAxisLabel: '',
@@ -224,6 +227,7 @@ define([
                             // bucketSize: this.STATS_BUCKET_DURATION,
                             bucketSize: 2.5,
                             colors: {},
+                            onClickBar:false,
                             title: '',
                             axisLabelDistance : 0,
                             margin: {
@@ -234,16 +238,12 @@ define([
                             },
                             tickPadding: 8,
                             hideFocusChart: true,
-                            forceY: false,
+                            forceY: [0, 0.01],
                             yFormatter : function(d){
                                 return d;
                             },
                             xFormatter: function(xValue, tickCnt) {
                                 var date = xValue > 1 ? new Date(xValue) : new Date();
-                                if (tickCnt != null) {
-                                var mins = date.getMinutes();
-                                date.setMinutes(Math.ceil(mins/15) * 15);
-                                }
                                 return d3.time.format('%H:%M')(date);
                             },
                             yTickFormat: function(value){
