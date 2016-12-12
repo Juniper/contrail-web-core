@@ -1620,6 +1620,7 @@ define([
             var cf = crossfilter(response);
             var timeStampField = 'T',
                 parsedData = [], failureCheckFn = getValueByJsonPath(options, 'failureCheckFn'),
+                substractFailures = getValueByJsonPath(options, 'substractFailures'),
                 colors = getValueByJsonPath(options, 'colors',cowc.FIVE_NODE_COLOR),
                 groupBy = getValueByJsonPath(options, 'groupBy'),
                 yField = getValueByJsonPath(options, 'yField'),
@@ -1780,7 +1781,12 @@ define([
                                 // total failure in this bar(or bucket)
                                 failedBarCnt += failedSliceCnt;
                                 //Subtracting the failures from total records
-                                groupByObjVal -= parseInt(failedSliceCnt);
+                                if (substractFailures == false) {
+                                    total += failedBarCnt;
+                                } else {
+                                    groupByObjVal -= parseInt(failedSliceCnt);
+                                }
+
                             }
                         }
                         if (limit != null && groupByObjKey != cowc.OTHERS) {
@@ -2046,8 +2052,8 @@ define([
         }
 
         self.resetGridStackLayout = function(allPages) {
-            var gridStackId = $('.custom-grid-stack').attr('data-widget-id');
-            localStorage.removeItem(gridStackId);
+            //var gridStackId = $('.custom-grid-stack').attr('data-widget-id');
+            localStorage.clear();
             var gridStackInst = $('.custom-grid-stack').data('grid-stack-instance')
             if(gridStackInst != null ) {
                 gridStackInst.render()
