@@ -103,7 +103,14 @@ define([
         render: function() {
             var self = this;
             //Clear all existing widgets
-            self.gridStack.removeAll();
+            //self.gridStack.removeAll();
+            _.each(self.$el.find('.custom-grid-stack-item:visible'), function (el) {
+                try {
+                    self.gridStack.remove_widget($(el));
+                } catch(e) {
+                    console.info('Error in removing widget');
+                }
+            });
             self.widgets = [];
             self.tmpHeight = 0;
             if(self.movedWidgetCfg) {
