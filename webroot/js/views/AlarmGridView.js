@@ -404,6 +404,7 @@ define([
                                                 },
                                                 {
                                                     key: 'T',
+                                                    label:'Time',
                                                     templateGenerator: 'TextGenerator',
                                                     templateGeneratorConfig: {
                                                         formatter: 'timestampFormatter'
