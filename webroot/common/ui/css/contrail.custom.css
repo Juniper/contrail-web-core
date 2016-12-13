@@ -1373,7 +1373,9 @@ color settings styles - begin
 .modal-popover {
     margin: 0px!important;
 }
-
+#settings_modal{
+    height:auto!important;
+}
 #settings_modal .modal-header .modal-footer {
     border: none;
     padding: 8px 0px 0px 0px;
@@ -1509,7 +1511,6 @@ color settings styles - begin
     border-color: #6482bd!important;
     padding: 0px 10px;
 }
-
 /*
 color settings styles - end
 */
