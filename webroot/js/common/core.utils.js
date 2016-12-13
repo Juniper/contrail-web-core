@@ -1592,6 +1592,7 @@ define([
             }
             var range = d3.range(minMaxTS[0], minMaxTS[1], bucketSize);
             var xBucketScale = d3.scale.quantize().domain(minMaxTS).range(range);
+            var lastbucketTimestamp = range[range.length - 1];
             var buckets = {};
             if (insertEmptyBuckets) {
                 var rangeLen = range.length;
@@ -1613,6 +1614,7 @@ define([
 
                 buckets[xBucket]['data'].push(obj);
             });
+            delete buckets[lastbucketTimestamp];
             return buckets;
         };
 
