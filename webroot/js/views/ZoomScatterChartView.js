@@ -776,7 +776,9 @@ define([
                     if(getValueByJsonPath(d,'children',[]).length == 1) {
                         d = d['children'][0];
                     }
-                    clickCB(d);
+                    if(_.isFunction(clickCB)) {
+                        clickCB(d);
+                    }
                 }
             });
     }
