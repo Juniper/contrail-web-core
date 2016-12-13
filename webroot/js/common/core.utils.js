@@ -1699,7 +1699,8 @@ define([
             } else {
                 parsedData.push({
                     key: yAxisLabel,
-                    color: $.isArray(cowc.DEFAULT_COLOR) ? cowc.DEFAULT_COLOR[0] : cowc.DEFAULT_COLOR,
+                    color: (colors != null)?  ($.isArray(colors) ? colors[0] : colors) :
+                                    ($.isArray(cowc.DEFAULT_COLOR) ? cowc.DEFAULT_COLOR[0] : cowc.DEFAULT_COLOR),
                     values: []
                 });
             }
