@@ -49,7 +49,7 @@ define([
     'mon-infra-log-list-model',
     'mon-infra-alert-list-view',
     'mon-infra-alert-grid-view',
-    'mon-infra-log-list-view',
+    "core-basedir/js/views/LogListView",
     'mon-infra-sysinfo-view',
     'mon-infra-dashboard-view'
 

@@ -1540,11 +1540,11 @@ define([
 
             //Todo when data has "T=", we should group series by using respective CLASS field.
             for (var i = 0; i < data.length; i++) {
-                if (_.isUndefined(data[i]["T="]) && _.isUndefined(data[i]["T"])) {
+                if (_.isUndefined(data[i]["T="]) && _.isUndefined(data[i].T)) {
                     //Record has empty timestamp; return whatever is on series now.
                     return series;
                 }
-                var timeStamp = Math.floor(data[i]["T="] || data[i]["T"] / 1000);
+                var timeStamp = Math.floor((data[i]["T="] || data[i].T) / 1000);
 
                 _.each(config.dataFields, function (dataField, seriesIndex) {
                     if (i === 0) {

@@ -620,6 +620,17 @@
     top: 23px;
     background-color: #fff;
 }
+
+.popover.popover-tooltip .popover-tooltip-icon .fa-arrows-h {
+    position: relative;
+    top: -5px;
+}
+
+.popover.popover-tooltip .popover-tooltip-icon .fa-arrows-h {
+    position: relative;
+    top: -5px;
+}
+
 .popover.popover-tooltip .popover-content {
     border: none;
     box-shadow: none;

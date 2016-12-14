@@ -80,6 +80,7 @@ define([
         this.JSON_EDITOR_MODE_FORM = "form";
         this.JSON_EDITOR_MODE_TEXT = "text";
 
+        this.TMPL_LOG_LIST = "logList-template";
         this.TMPL_2ROW_CONTENT_VIEW = "core-2-row-content-template";
         this.TMPL_2COLUMN_1ROW_2ROW_CONTENT_VIEW = "core-2-column-1-row-2row-content-template";
         //anlytics node template
