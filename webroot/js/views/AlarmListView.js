@@ -163,6 +163,7 @@ define([
                                         groupBy: 'severity',
                                         insertEmptyBuckets:false,
                                         yAxisFormatter: d3.format('d'),
+                                        stripLastBucket: false,
                                         applySettings: false,
                                         colors: {
                                             '0': '#dc6660',//Critical Red
