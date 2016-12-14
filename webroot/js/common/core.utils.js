@@ -1612,7 +1612,9 @@ define([
 
                 buckets[xBucket]['data'].push(obj);
             });
-            delete buckets[lastbucketTimestamp];
+            if(options.stripLastBucket){
+                delete buckets[lastbucketTimestamp];
+            }
             return buckets;
         };
 
@@ -1641,7 +1643,8 @@ define([
             var buckets = cowu.bucketizeStats(response,{
                 bucketSize: getValueByJsonPath(options, 'bucketSize'),
                 timeRange: getValueByJsonPath(options, 'timeRange'),
-                insertEmptyBuckets: getValueByJsonPath(options, 'insertEmptyBuckets', true)
+                insertEmptyBuckets: getValueByJsonPath(options, 'insertEmptyBuckets', true),
+                stripLastBucket: getValueByJsonPath(options, 'stripLastBucket', true)
             });
             var tsDim = cf.dimension(function(d) { return d[timeStampField]});
             if (failureCheckFn != null && typeof failureCheckFn == 'function'

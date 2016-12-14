@@ -164,6 +164,7 @@ define([
                                         insertEmptyBuckets:false,
                                         yAxisFormatter: d3.format('d'),
                                         subTitle:"Severity",
+                                        stripLastBucket: false,
                                         applySettings: false,
                                         colors: {
                                             '0': '#dc6660',//Critical Red
