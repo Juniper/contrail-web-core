@@ -1568,3 +1568,6 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
 .carousel-control-cover-story{
     z-index: 1;
 }
+.breadcrumb-item .select2-container .select2-choice > .select2-chosen{
+    text-overflow:initial;
+}
