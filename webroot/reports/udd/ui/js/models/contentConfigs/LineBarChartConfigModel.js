@@ -111,7 +111,7 @@ define([
                 parseFn: this.chartDataParser.bind(this),
                 chartOptions: {
                     axisLabelDistance: 5,
-                    height: 300,
+                    height: 288,
                     y1AxisLabel: this.barLabel(),
                     y2AxisLabel: this.lineLabel(),
                     colors: [this.barColor(), this.lineColor()],

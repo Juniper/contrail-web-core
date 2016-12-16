@@ -20,7 +20,7 @@ define([
                 elementId = self.attributes.elementId,
                 queryPageTmpl = contrail.getTemplate4Id(coreConstants.TMPL_QUERY_PAGE),
                 consoleLogsModel = new NodeConsoleLogsModel(),
-                queryFormId = cowc.QE_HASH_ELEMENT_PREFIX + cowc.CONSOLE_LOGS_PREFIX + cowc.QE_FORM_SUFFIX;
+                queryFormId = coreConstants.QE_HASH_ELEMENT_PREFIX + coreConstants.CONSOLE_LOGS_PREFIX + coreConstants.QE_FORM_SUFFIX;
 
             hostname = viewConfig.hostname;
             nodeType = viewConfig.nodeType;
@@ -28,7 +28,7 @@ define([
             consoleLogsModel.hostname(hostname);
             self.model = consoleLogsModel;
 
-            self.$el.append(queryPageTmpl({queryPrefix: cowc.CONSOLE_LOGS_PREFIX }));
+            self.$el.append(queryPageTmpl({queryPrefix: coreConstants.CONSOLE_LOGS_PREFIX }));
 
             self.renderView4Config($(self.$el).find(queryFormId), this.model, self.getViewConfig(), null, null, modelMap, function () {
                 self.model.showErrorAttr(elementId, false);
@@ -51,7 +51,7 @@ define([
                                 }
                             );
             $.ajax({
-                url:cowc.TENANT_API_URL,
+                url:coreConstants.TENANT_API_URL,
                 type:'post',
                 data:postData,
                 dataType:'json'
@@ -124,7 +124,7 @@ define([
         },
 
         getLogLevelValueFromLogLevel : function (logLevel) {
-            var qeLevels = cowc.QE_LOG_LEVELS;
+            var qeLevels = coreConstants.QE_LOG_LEVELS;
             $.each(qeLevels, function(key,levelObj) {
                 if(levelObj.name == logLevel) {
                     return levelObj.value;
@@ -136,7 +136,7 @@ define([
             var self = this,
                 modelMap = contrail.handleIfNull(self.modelMap, {}),
                 queryFormModel = self.model,
-                queryResultId = cowc.QE_HASH_ELEMENT_PREFIX + cowc.CONSOLE_LOGS_PREFIX + cowc.QE_RESULTS_SUFFIX,
+                queryResultId = coreConstants.QE_HASH_ELEMENT_PREFIX + coreConstants.CONSOLE_LOGS_PREFIX + coreConstants.QE_RESULTS_SUFFIX,
                 queryResultTabId = cowl.QE_SYSTEM_LOGS_TAB_ID;
 
             formatQueryParams(queryFormModel);
@@ -152,11 +152,11 @@ define([
                 }
 
                 queryRequestPostData = queryFormModel.getQueryRequestPostData(serverCurrentTime);
-                queryRequestPostData.chunkSize = cowc.QE_RESULT_CHUNK_SIZE_10K;
+                queryRequestPostData.chunkSize = coreConstants.QE_RESULT_CHUNK_SIZE_10K;
                 self.renderView4Config($(queryResultId), queryFormModel,
                     getQueryResultTabViewConfig(queryRequestPostData, queryResultTabId), null, null, modelMap,
                     function() {
-                        var queryResultListModel = modelMap[cowc.UMID_QUERY_RESULT_LIST_MODEL];
+                        var queryResultListModel = modelMap[coreConstants.UMID_QUERY_RESULT_LIST_MODEL];
 
                         queryResultListModel.onAllRequestsComplete.subscribe(function () {
                             queryFormModel.is_request_in_progress(false);
@@ -188,7 +188,7 @@ define([
                                     elementId: 'time_range', view: "FormDropdownView",
                                     viewConfig: {
                                         path: 'time_range', dataBindValue: 'time_range', class: "col-xs-2",
-                                        elementConfig: {dataTextField: "text", dataValueField: "id", data: cowc.TIMERANGE_DROPDOWN_VALUES}}
+                                        elementConfig: {dataTextField: "text", dataValueField: "id", data: coreConstants.TIMERANGE_DROPDOWN_VALUES}}
                                 },
                                 {
                                     elementId: 'from_time', view: "FormDateTimePickerView",
@@ -233,13 +233,13 @@ define([
                                                     var ret = [{text:'All',value:'All'}];
                                                     var catList = [];
                                                     if (nodeType == monitorInfraConstants.CONTROL_NODE){
-                                                        catList = ifNull(response[monitorInfraConstants.UVEModuleIds['CONTROLNODE']], []);
+                                                        catList = ifNull(response[coreConstants.UVEModuleIds['CONTROLNODE']], []);
                                                     } else if (nodeType == monitorInfraConstants.COMPUTE_NODE) {
-                                                        catList = ifNull(response[monitorInfraConstants.UVEModuleIds['VROUTER_AGENT']], []);
+                                                        catList = ifNull(response[coreConstants.UVEModuleIds['VROUTER_AGENT']], []);
                                                     } else if (nodeType == monitorInfraConstants.ANALYTICS_NODE) {
-                                                        catList = ifNull(response[monitorInfraConstants.UVEModuleIds['COLLECTOR']], []);
+                                                        catList = ifNull(response[coreConstants.UVEModuleIds['COLLECTOR']], []);
                                                     } else if (nodeType == monitorInfraConstants.CONFIG_NODE) {
-                                                        catList = ifNull(response[monitorInfraConstants.UVEModuleIds['APISERVER']], []);
+                                                        catList = ifNull(response[coreConstants.UVEModuleIds['APISERVER']], []);
                                                     }
                                                     $.each(catList, function (key, value) {
                                                         if(key != '')
@@ -267,11 +267,11 @@ define([
                                 },
                                 {
                                     elementId: 'log_level', view: "FormDropdownView",
-                                    viewConfig: { path: 'log_level', dataBindValue: 'log_level', class: "col-xs-2", elementConfig: {dataTextField: "name", dataValueField: "value", data: cowc.QE_LOG_LEVELS}}
+                                    viewConfig: { path: 'log_level', dataBindValue: 'log_level', class: "col-xs-2", elementConfig: {dataTextField: "name", dataValueField: "value", data: coreConstants.QE_LOG_LEVELS}}
                                 },
                                 {
                                     elementId: 'limit', view: "FormDropdownView",
-                                    viewConfig: { path: 'limit', dataBindValue: 'limit', class: "col-xs-2", elementConfig: {dataTextField: "text", dataValueField: "id", data:cowc.CONSOLE_LOGS_LIMITS}}
+                                    viewConfig: { path: 'limit', dataBindValue: 'limit', class: "col-xs-2", elementConfig: {dataTextField: "text", dataValueField: "id", data:coreConstants.CONSOLE_LOGS_LIMITS}}
                                 }
                             ]
                         },
@@ -335,14 +335,14 @@ define([
         }
         if(nodeType == monitorInfraConstants.CONTROL_NODE) {
             if(msgType != ''){
-                model.where ('(ModuleId=' + monitorInfraConstants.UVEModuleIds['CONTROLNODE']
+                model.where ('(ModuleId=' + coreConstants.UVEModuleIds['CONTROLNODE']
                     + ' AND Source='+ hostname +' AND Messagetype='+ msgType +')');
             } else {
-                model.where( '(ModuleId=' + monitorInfraConstants.UVEModuleIds['CONTROLNODE']
+                model.where( '(ModuleId=' + coreConstants.UVEModuleIds['CONTROLNODE']
                     + ' AND Source='+ hostname +')' );
             }
         } else if (nodeType == monitorInfraConstants.COMPUTE_NODE) {
-            var moduleId = monitorInfraConstants.UVEModuleIds['VROUTER_AGENT'];
+            var moduleId = coreConstants.UVEModuleIds['VROUTER_AGENT'];
             var msgType = model.log_type();
             var hostname = model.hostname();
             //TODO check if the below is needed
@@ -357,34 +357,34 @@ define([
             }
         } else if (nodeType == monitorInfraConstants.CONFIG_NODE) {
             if(msgType != ''){
-                model.where( '(ModuleId=' + monitorInfraConstants.UVEModuleIds['SCHEMA']
+                model.where( '(ModuleId=' + coreConstants.UVEModuleIds['SCHEMA']
                     + ' AND Source='+hostname+' AND Messagetype='+ msgType
-                    +') OR (ModuleId=' + monitorInfraConstants.UVEModuleIds['APISERVER']
+                    +') OR (ModuleId=' + coreConstants.UVEModuleIds['APISERVER']
                     + ' AND Source='+hostname+' AND Messagetype='+ msgType
-                    +') OR (ModuleId=' + monitorInfraConstants.UVEModuleIds['SERVICE_MONITOR']
+                    +') OR (ModuleId=' + coreConstants.UVEModuleIds['SERVICE_MONITOR']
                     + ' AND Source='+hostname+' AND Messagetype='+ msgType
-                    +') OR (ModuleId=' + monitorInfraConstants.UVEModuleIds['DISCOVERY_SERVICE']
+                    +') OR (ModuleId=' + coreConstants.UVEModuleIds['DISCOVERY_SERVICE']
                     + ' AND Source='+hostname+' AND Messagetype='+ msgType +')');
             } else {
-                model.where( '(ModuleId=' + monitorInfraConstants.UVEModuleIds['SCHEMA']
+                model.where( '(ModuleId=' + coreConstants.UVEModuleIds['SCHEMA']
                     + ' AND Source='+hostname+') OR (ModuleId='
-                    + monitorInfraConstants.UVEModuleIds['APISERVER']
+                    + coreConstants.UVEModuleIds['APISERVER']
                     + ' AND Source='+hostname+') OR (ModuleId='
-                    + monitorInfraConstants.UVEModuleIds['SERVICE_MONITOR']
+                    + coreConstants.UVEModuleIds['SERVICE_MONITOR']
                     + ' AND Source='+hostname+') OR (ModuleId='
-                    + monitorInfraConstants.UVEModuleIds['DISCOVERY_SERVICE']
+                    + coreConstants.UVEModuleIds['DISCOVERY_SERVICE']
                     + ' AND Source='+hostname+')' );
             }
         } else if (nodeType == monitorInfraConstants.ANALYTICS_NODE) {
             if(msgType != ''){
-                model.where( '(ModuleId=' + monitorInfraConstants.UVEModuleIds['OPSERVER']
+                model.where( '(ModuleId=' + coreConstants.UVEModuleIds['OPSERVER']
                     + ' AND Source='+hostname+' AND Messagetype='+ msgType
-                    +') OR (ModuleId=' + monitorInfraConstants.UVEModuleIds['COLLECTOR']
+                    +') OR (ModuleId=' + coreConstants.UVEModuleIds['COLLECTOR']
                     + ' AND Source='+hostname+' AND Messagetype='+ msgType +')' );
             } else {
-                model.where( '(ModuleId=' + monitorInfraConstants.UVEModuleIds['OPSERVER']
+                model.where( '(ModuleId=' + coreConstants.UVEModuleIds['OPSERVER']
                     + ' AND Source='+hostname+') OR (ModuleId='
-                    + monitorInfraConstants.UVEModuleIds['COLLECTOR']
+                    + coreConstants.UVEModuleIds['COLLECTOR']
                     + ' AND Source='+hostname+')');
             }
         }
@@ -398,7 +398,7 @@ define([
             elementId: queryResultTabId,
             view: "TabsView",
             viewConfig: {
-                theme: cowc.TAB_THEME_WIDGET_CLASSIC,
+                theme: coreConstants.TAB_THEME_WIDGET_CLASSIC,
                 tabs: [getQueryResultGridViewConfig(queryRequestPostData)]
             }
         };
@@ -417,7 +417,7 @@ define([
                 queryRequestPostData: queryRequestPostData,
                 gridOptions: {
                     titleText: cowl.TITLE_SYSTEM_LOGS,
-                    queryQueueUrl: cowc.URL_QUERY_LOG_QUEUE,
+                    queryQueueUrl: coreConstants.URL_QUERY_LOG_QUEUE,
                     queryQueueTitle: cowl.TITLE_LOG
                 }
             }

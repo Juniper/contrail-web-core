@@ -6,8 +6,9 @@ define([
     'underscore',
     'moment',
     'handlebars',
-    'lodash'
-], function (_, moment, Handlebars, lodash) {
+    'lodash',
+    "core-constants"
+], function (_, moment, Handlebars, lodash, cowc) {
     var serializer = new XMLSerializer(),
         domParser = new DOMParser();
 
@@ -1540,11 +1541,11 @@ define([
 
             //Todo when data has "T=", we should group series by using respective CLASS field.
             for (var i = 0; i < data.length; i++) {
-                if (_.isUndefined(data[i]["T="]) && _.isUndefined(data[i]["T"])) {
+                if (_.isUndefined(data[i]["T="]) && _.isUndefined(data[i].T)) {
                     //Record has empty timestamp; return whatever is on series now.
                     return series;
                 }
-                var timeStamp = Math.floor(data[i]["T="] || data[i]["T"] / 1000);
+                var timeStamp = Math.floor((data[i]["T="] || data[i].T) / 1000);
 
                 _.each(config.dataFields, function (dataField, seriesIndex) {
                     if (i === 0) {
@@ -1555,6 +1556,91 @@ define([
             }
             return series;
         };
+
+        this.logsParser = function (data) {
+            if (!data || data.length === 0 || !_.isString(data[0].Xmlmessage) || !_.isNumber(data[0].MessageTS)) {
+                return [];
+            }
+
+            var UVEModuleIds = cowc.UVEModuleIds,
+                retArr = $.map(data, function(obj) {
+                    obj.message = window.cowu.formatXML2JSON(obj.Xmlmessage);
+
+                    _.forEach(obj.message, function(value, key, obj) {
+                        obj[key] = value.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\\"/g, "\"");
+                    });
+
+                    obj.timeStr = window.diffDates(new window.XDate(obj.MessageTS / 1000), new window.XDate());
+
+                    if (obj.Source === null) {
+                        obj.moduleId = window.contrail.format("{0}", obj.ModuleId);
+                    } else {
+                        obj.moduleId = window.contrail.format("{0} ({1})", obj.ModuleId, obj.Source);
+                    }
+
+                    obj.link = {
+                        q: {
+                            view: "details",
+                            focusedElement: {
+                                node: obj.Source,
+                                tab: "details",
+                            }
+                        }
+                    };
+
+                    switch(obj.ModuleId) {
+                        case UVEModuleIds.DISCOVERY_SERVICE:
+                        case UVEModuleIds.SERVICE_MONITOR:
+                        case UVEModuleIds.SCHEMA:
+                        case UVEModuleIds.CONFIG_NODE:
+                            obj.link = _.merge(obj.link, {
+                                p: "mon_infra_config",
+                                q: {
+                                    type: "configNode"
+                                },
+                            });
+                            break;
+                        case UVEModuleIds.COLLECTOR:
+                        case UVEModuleIds.OPSERVER:
+                        case UVEModuleIds.QUERYENGINE:
+                            obj.link = _.merge(obj.link, {
+                                p: "mon_infra_config",
+                                q: {
+                                    type: "configNode"
+                                },
+                            });
+                            break;
+                        case UVEModuleIds.VROUTER_AGENT:
+                            obj.link = _.merge(obj.link, {
+                                p: "mon_infra_vrouter",
+                                q: {
+                                    type: "vRouter"
+                                },
+                            });
+                            break;
+                        case UVEModuleIds.CONTROLNODE:
+                            obj.link = _.merge(obj.link, {
+                                p: "mon_infra_control",
+                                q: {
+                                    type: "controlNode"
+                                },
+                            });
+                            break;
+                        case UVEModuleIds.DATABASE:
+                            obj.link = _.merge(obj.link, {
+                                p: "mon_infra_database",
+                                q: {
+                                    type: "dbNode"
+                                },
+                            });
+                            break;
+                    }
+                    return obj;
+                });
+
+            return retArr;
+        };
+
         /**
          * This function bucketize the given data as per the
          * bucket duration parameter

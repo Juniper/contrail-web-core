@@ -32,7 +32,7 @@ define([], function() {
                 {"id": 3600, "text": "Last 1 Hr"},
                 {"id": 21600, "text": "Last 6 Hrs"}
             ],
-            gridPageSizeList: [8, 12, 16, 20]
+            gridPageSizeList: [6, 12, 16, 20]
         }
     };
 });
