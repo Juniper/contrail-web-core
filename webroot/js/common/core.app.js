@@ -91,7 +91,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'json-edit-view'              : coreWebDir + '/js/views/JsonEditView',
         'jquery-ui'                   : coreWebDir + '/assets/jquery-ui/js/jquery-ui.min',
         'schema-model'                : coreWebDir + '/js/models/SchemaModel',
-        'view-config-generator'       : coreWebDir + '/js/common/view.config.generator',
+        'json-validator'              : coreWebDir + '/js/common/json.validator',
         'iframe-view'                 : coreWebDir + '/js/views/IframeView',
         'jdorn-jsoneditor'            : coreWebDir + '/assets/jdorn-jsoneditor/js/jdorn-jsoneditor',
         'jquery-linedtextarea'        : coreWebDir + '/assets/jquery-linedtextarea/js/jquery-linedtextarea',
