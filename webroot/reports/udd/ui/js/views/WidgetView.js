@@ -6,17 +6,18 @@
  */
 
 define([
+    "jquery",
     "lodash",
     "knockout",
     "knockback",
     "core-constants",
     "contrail-view",
     "core-basedir/reports/udd/ui/js/common/udd.constants"
-], function(_, ko, kb, cowc, ContrailView, uddConstants) {
+], function($, _, ko, kb, cowc, ContrailView, uddConstants) {
     var delimiter = ",",
         // extract visible column IDs from GridView's ColumnPicker
         columnIdExtractor = _.flow(_.map, _.partialRight(_.pluck, "value")),
-        // debounced event handler which saves visible column changes back to server/DB
+        // debounced event handler which saves visible column change back to server/DB
         persistVisibleColChange = _.debounce(function(view, event) {
             var $columnPickerTrigger = view.$el.find("#columnPicker"),
                 $columnPickerPanel = $(event.originalEvent.delegateTarget),
@@ -38,6 +39,16 @@ define([
                 $columnPickerPanel.data("toggle", "tooltip").tooltip({
                     title: invalidMsg + ". " + window.cowm.INVALID_DATA_NOT_SAVED
                 }).tooltip("show");
+            }
+        }, 500),
+        // debounced event handler which saves page size change back to server/DB
+        persistPageSizeChange = _.debounce(function(view, event) {
+            var $container = $(event.target).closest(".slick-pager-sizes"),
+                visualMetaVM = view.model.get(uddConstants.modelIDs.VISUAL_META);
+
+            if ($container.length !== 0) {
+                visualMetaVM.pageSize(event.val);
+                this.model.save();
             }
         }, 500);
 
@@ -132,10 +143,12 @@ define([
                 var subviewModelCollection = view.model.get(uddConstants.modelIDs.VIEWS_MODEL_COLLECTION);
                 
                 if (subviewModelCollection.contentView() === "GridView") {
-                    // for GridView, add a event listener to persist visible columns change on backend.
-                    element.off(".persistColChange")
-                        .on("multiselectclick.persistColChange multiselectoptgrouptoggle.persistColChange",
-                            persistVisibleColChange.bind(self, view));
+                    // for GridView, add a event listener to persist visible columns change
+                    // and page size change on backend.
+                    element.off(".persistGridViewChange")
+                        .on("multiselectclick.persistGridViewChange multiselectoptgrouptoggle.persistGridViewChange",
+                            persistVisibleColChange.bind(self, view))
+                        .on("change.persistGridViewChange", persistPageSizeChange.bind(self, view));
                 }
             });
         },

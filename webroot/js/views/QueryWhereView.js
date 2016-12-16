@@ -36,6 +36,7 @@ define([
                                 .height($(self.$el).find('[name="where"]').get(0).scrollHeight - 5);
 
                             $("#" + modalId).modal('hide');
+                            self.$el.find("[name='where']").trigger("focusout");
                         },
                         error: function (error) {
                             cowu.disableModalLoading(modalId, function () {

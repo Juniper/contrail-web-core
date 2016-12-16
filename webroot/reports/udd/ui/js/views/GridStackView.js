@@ -21,10 +21,10 @@ define([
                 removeTimeout: 100,
                 acceptWidgets: ".grid-stack-item",
                 handle: ".panel-heading",
-                verticalMargin: 8,
-                cellHeight: 60,
+                verticalMargin: 4,
+                cellHeight: 61,
                 minWidth: 1,
-                minHeight: 6,
+                minHeight: 5,
             }, this.attributes.viewConfig);
 
             this.template = window.contrail.getTemplate4Id("udd-layout-template");

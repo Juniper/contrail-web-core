@@ -9,7 +9,7 @@ define([
     'mon-infra-log-list-model',
     'mon-infra-node-list-model',
     'mon-infra-alert-list-view',
-    'mon-infra-log-list-view',
+    "core-basedir/js/views/LogListView",
     'mon-infra-sysinfo-view'
 ], function(_,Backbone,InfoboxesView,
         LogListModel,NodeListModel,
@@ -43,10 +43,16 @@ define([
             sysInfoView.render();
             //Delay the logs ajax request such that node-model's ajax requests are issued first
             setTimeout(function() {
-                var logListView = new LogListView({
-                    el: $(contentContainer).find('#logs-box'),
-                    model: new LogListModel()
+                var $logsBox = $(contentContainer).find("#logs-box"),
+                    logListView = new LogListView({
+                        el: $logsBox.find(".widget-body .widget-main"),
+                        model: new LogListModel()
+                    });
+
+                $logsBox.find(".widget-header").initWidgetHeader({
+                    title: "Logs"
                 });
+
                 logListView.render();
             },100);
         },

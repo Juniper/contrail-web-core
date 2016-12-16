@@ -19,7 +19,6 @@ define([
     "core-basedir/reports/udd/ui/js/models/dataSourceConfigs/QueryConfigModel",
     "core-basedir/reports/udd/ui/js/views/BaseContentConfigView",
     "core-basedir/reports/udd/ui/js/views/GridStackView",
-    "core-basedir/reports/udd/ui/js/views/LogsView",
     "core-basedir/reports/udd/ui/js/views/UDDashboardView",
     "core-basedir/reports/udd/ui/js/views/WidgetView",
     "core-basedir/reports/udd/ui/js/views/contentConfigs/GridConfigView",
