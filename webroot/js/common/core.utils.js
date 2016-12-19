@@ -1855,8 +1855,9 @@ define([
             var yFields = getValueByJsonPath(options,'yFields',[]);
             var parsedData = [];
             var colors = getValueByJsonPath(options,'colors',cowc.FIVE_NODE_COLOR);
+            var yLabels = getValueByJsonPath(options,'yLabels', []);
             $.each(yFields,function(i,yField){
-                var key = getLabelForPercentileYField(yField);
+                var key = yLabels[i] != null ? yLabels[i]: getLabelForPercentileYField(yField);
                 parsedData[yField] = {"key":key,"color":colors[i],values:[]};
                 var values = parsedData[yField]['values'];
                 $.each(data,function(j,d){
@@ -1944,6 +1945,9 @@ define([
                     groupCnt = {};
                 tsDim.filter(timestampExtent);
                 var sampleCnt = tsDim.top(Infinity).length;
+                if (sampleCnt == 0) {
+                    sampleCnt = 1;
+                }
                 groupDimData = groupDim.group().all();
                 groupDimData = _.sortBy(groupDimData, 'key');
                 $.each(groupDimData, function(idx, obj) {
