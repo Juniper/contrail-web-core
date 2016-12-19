@@ -1563,3 +1563,6 @@ Stack area chart opacity
 div.stack-bar-chart-tooltip > .popover.popover-tooltip {
 	opacity: 1;
 }
+.breadcrumb-item .select2-container .select2-choice > .select2-chosen{
+    text-overflow:initial;
+}
