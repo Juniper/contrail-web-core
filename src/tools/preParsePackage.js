@@ -13,8 +13,9 @@ var path = require('path');
 if ('prod-env' == args[0]) {
     var pkg = args[1].split(',');
     /* pkg[0] -> pkg path , pkg[1] -> pkg name */
-    parsePkg.readAndProcessPkgXMLFiles(path.normalize(pkg[0]), (pkg[1] == undefined) ? null :
-                                       pkg[1]);
+
+    parsePkg.readAndProcessPkgXMLFiles(path.resolve(path.normalize(pkg[0])),
+                                       (pkg[1] == undefined) ? null : pkg[1]);
 } else {
     parsePkg.deleteAllAutoGenFiles(function() {
         var pkgList = args[1];

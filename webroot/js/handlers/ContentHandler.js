@@ -93,6 +93,14 @@ define(['underscore'], function (_) {
                         currPageHash = "mon_infra_dashboard";
                     } else if ($.inArray(globalObj['roles']['TENANT'], webServerInfo['role']) > -1) {
                         currPageHash = "mon_networking_dashboard";
+                    } else if (webServerInfo.featurePkg.introspect) {
+                        if (null == contrailIntrospectProcess) {
+                            contrailIntrospectProcess = "control";
+                        }
+                        if (null != contrailIntrospectSandeshXML) {
+                            contrailIntrospectProcess = "xml";
+                        }
+                        currPageHash = "setting_introspect_" + contrailIntrospectProcess;
                     }
                 }
                 var currMenuObj = menuHandler.getMenuObjByHash(currPageHash);
