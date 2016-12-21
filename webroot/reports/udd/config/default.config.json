@@ -68,11 +68,11 @@
         }
       }
     },
-    "LogsView": {
+    "LogListView": {
       "label": "Logs",
       "contentView": {
-        "view": "LogsView",
-        "viewPathPrefix": "reports/udd/ui/js/views/"
+        "view": "LogListView",
+        "viewPathPrefix": "js/views/"
       },
       "contentConfigView": {
         "view": "LogsConfigView",

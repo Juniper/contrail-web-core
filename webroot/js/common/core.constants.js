@@ -80,6 +80,7 @@ define([
         this.JSON_EDITOR_MODE_FORM = "form";
         this.JSON_EDITOR_MODE_TEXT = "text";
 
+        this.TMPL_LOG_LIST = "logList-template";
         this.TMPL_2ROW_CONTENT_VIEW = "core-2-row-content-template";
         this.TMPL_2COLUMN_1ROW_2ROW_CONTENT_VIEW = "core-2-column-1-row-2row-content-template";
         //anlytics node template
@@ -380,6 +381,23 @@ define([
             hrs: 60 * 60 * 1000,
             days: 24 * 60 * 60 * 1000
         };
+
+        this.UVEModuleIds = {
+                VROUTER_AGENT       : 'contrail-vrouter-agent',
+                CONTROLNODE         : 'contrail-control',
+                COLLECTOR           : 'contrail-collector',
+                OPSERVER            : 'contrail-analytics-api',
+                QUERYENGINE         : 'contrail-query-engine',
+                APISERVER           : 'contrail-api',
+                DISCOVERY_SERVICE   : 'contrail-discovery',
+                SERVICE_MONITOR     : 'contrail-svc-monitor',
+                SCHEMA              : 'contrail-schema',
+                ANALYTICS_NODEMGR   : 'contrail-analytics-nodemgr',
+                CONFIG_NODE         : 'ConfigNode',
+                IFMAP               : 'ifmap',
+                DATABASE            : 'contrail-database',
+                KAFKA               : 'kafka'
+        }
 
         this.OPERATOR_CODES = {
             1: '=',

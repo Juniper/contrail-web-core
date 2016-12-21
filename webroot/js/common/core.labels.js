@@ -346,7 +346,6 @@ define([
         this.GRID_ENTRY_WITH_DETAILS = "With Collapsible Details";
 
         /* UDD Labels */
-        this.TMPL_LOG_LIST = 'logList-template';
         this.TITLE_UDD_DEFAULT_DASHBOARD = 'udd0';
         this.TITLE_UDD_DATA_SOURCE = 'Data Source';
         this.TITLE_UDD_VISUAL_META_VIEW = 'Content View';

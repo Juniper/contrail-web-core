@@ -84,7 +84,7 @@ define([
                 parseFn: this.chartDataParser.bind(this),
                 chartOptions: {
                     axisLabelDistance: 5,
-                    height: 300,
+                    height: 288,
                     yAxisLabel: this.yAxisLabel(),
                     colors: [this.color()],
                     forceY: [0, 10],

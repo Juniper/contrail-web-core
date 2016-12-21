@@ -143,7 +143,6 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'mon-infra-log-list-model'    : coreWebDir + '/js/models/LogListModel',
             'mon-infra-alert-list-view'   : coreWebDir + '/js/views/AlertListView',
             'mon-infra-alert-grid-view'   : coreWebDir + '/js/views/AlertGridView',
-            'mon-infra-log-list-view'     : coreWebDir + '/js/views/LogListView',
             'mon-infra-sysinfo-view'      : coreWebDir + '/js/views/SystemInfoView',
             'mon-infra-dashboard-view'    : coreWebDir + '/js/views/MonitorInfraDashboardView',
             //End - core-bundle aliases
@@ -471,7 +470,7 @@ var coreBundles = {
             'mon-infra-log-list-model',
             'mon-infra-alert-list-view',
             'mon-infra-alert-grid-view',
-            'mon-infra-log-list-view',
+            "core-basedir/js/views/LogListView",
             'mon-infra-sysinfo-view',
             'mon-infra-dashboard-view'
         ],
@@ -563,7 +562,6 @@ var coreBundles = {
             "core-basedir/reports/udd/ui/js/views/dataSourceConfigs/QueryConfigView",
             "core-basedir/reports/udd/ui/js/views/BaseContentConfigView",
             "core-basedir/reports/udd/ui/js/views/GridStackView",
-            "core-basedir/reports/udd/ui/js/views/LogsView",
             "core-basedir/reports/udd/ui/js/views/UDDashboardView",
             "core-basedir/reports/udd/ui/js/views/WidgetView",
         ]

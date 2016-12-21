@@ -2,8 +2,12 @@
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
 
+.grid-stack {
+  margin-top: -5px;
+}
+
 .grid-stack .grid-stack-item.widget {
-  padding: 0 4px;
+  padding: 0 2px;
 }
 
 .grid-stack .grid-stack-item.widget.focus-config {
@@ -27,7 +31,6 @@
   border-radius: 0;
 }
 
-.grid-stack-item.widget .panel .panel-heading,
 .grid-stack-item.widget .panel .panel-footer {
   height: 36px;
   min-height: 36px;
@@ -35,8 +38,9 @@
 
 .grid-stack-item.widget .panel .panel-heading {
   position: relative;
-  padding-left: 8px;
-  padding-right: 8px;
+  height: 27px;
+  min-height: 27px;
+  padding: 3px 8px;
 }
 
 .grid-stack-item.widget .panel .panel-heading .title-group {
@@ -108,7 +112,7 @@
 
 .grid-stack-item.widget .panel .panel-body {
   flex: 1;
-  padding: 8px;
+  padding: 0 8px;
   overflow: auto;
 }
 

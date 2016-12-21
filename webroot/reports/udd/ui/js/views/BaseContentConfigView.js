@@ -1,9 +1,7 @@
 /*
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
-/*
- * Configuration View for customizing LogsView
- */
+
 define([
     "knockout",
     "knockback",
