@@ -7,6 +7,7 @@ WEBUISERVER = contrail-web-core
 WEBUICLIENT = contrail-web-controller
 WEBUITHIRDPARTY = contrail-webui-third-party
 THIRD_PARTY='../contrail-webui-third-party'
+WEBCONTROLLERREPO = ../contrail-web-controller,webController
 
 $(WEBUISERVER):
 	if [ ! -d ../$(WEBUISERVER) ]; then git clone git@github.com:Juniper/contrail-web-core.git ../$(WEBUISERVER); else cd ../$(WEBUISERVER) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
@@ -96,6 +97,15 @@ prod-env:
 	make make-ln
 	# For test files, we will setting the env file with current environment.
 	./unit-test.sh set-env "prod"
+
+chrome-extension:
+ifndef REPO
+	./generate-files.sh 'prod-env' $(WEBCONTROLLERREPO)
+else
+	./generate-files.sh 'prod-env' $(REPO)
+endif
+	./dev-install.sh
+	./chrome-extension.sh
 
 clear-cache-dev:
 	./prod-dev.sh webroot/html/dashboard.html dev_env prod_env false

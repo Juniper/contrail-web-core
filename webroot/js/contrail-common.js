@@ -178,7 +178,7 @@ define([
                         contentType;
                 }
             } else {
-                methodType == "GET";
+                methodType = "GET";
             }
             ajaxConfig.dataType = (dataType == null) ? "json" : dataType;
             ajaxConfig.type = methodType;

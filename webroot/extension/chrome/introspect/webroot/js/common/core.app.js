@@ -13,14 +13,11 @@ globalObj['loadedScripts'] = [];
 globalObj['initFeatureAppDefObjMap'] = {};
 globalObj['siteMap'] = {};
 globalObj['siteMapSearchStrings'] = [];
-/* The below flag signifies while communicating with http introspect, should we go through proxy or
- * not
- */
-var loadIntrospectViaProxy = true;
-
-var FEATURE_PCK_WEB_CONTROLLER = "webController",
-    FEATURE_PCK_WEB_STORAGE = "webStorage",
-    FEATURE_PCK_WEB_SERVER_MANAGER = "serverManager";
+var contrailIntrospectIP = null;
+var contrailIntrospectProcess = null;
+var contrailIntrospectSandeshXML = null;
+var FEATURE_PCK_WEB_CONTROLLER = "webController";
+var loadIntrospectViaProxy = false;
 
 function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
     /**
@@ -32,7 +29,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
      * eg: use 'core-srcdir/js/views/GridView' as path to access GridView source instead of minified.
      */
     var coreWebDir = coreBaseDir + coreBuildDir;
-    if (typeof(window) !== "undefined") {
+    if ("undefined" !== typeof(window)) {
         window.coreWebDir = coreWebDir;
     }
     if(env == null)
@@ -43,69 +40,19 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'core-srcdir'                 : coreBaseDir,
         'core-basedir'                : coreWebDir,
         //Bundles
-        'thirdparty-libs'             : coreWebDir + '/js/common/thirdparty.libs',
         'contrail-core-views'         : coreWebDir + '/js/common/contrail.core.views',
-        'chart-libs'                  : coreWebDir + '/js/common/chart.libs',
         'core-bundle'                 : coreWebDir + '/js/common/core.bundle',
-        'global-libs'                 : coreWebDir + '/js/common/global-libs',
         'jquery-dep-libs'             : coreWebDir + '/js/common/jquery.dep.libs',
         'nonamd-libs'                 : coreWebDir + '/js/common/nonamd.libs',
         //Files not in bundles
-        'widget-configmanager'        : coreWebDir + '/js/widget.configmanager',
-        'gridstack'                   : coreWebDir + '/assets/gridstack/js/gridstack',
-        'toolbar'                     : coreWebDir + '/assets/toolbar/js/jquery.toolbar',
         'underscore'                  : coreWebDir + '/assets/underscore/underscore-min',
-        'slickgrid-utils'             : coreWebDir + "/js/slickgrid-utils",
         //'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
         //'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.9.1.min',
         'jquery'                      : coreWebDir + '/assets/jquery/js/jquery.min',
         'contrail-load'               : coreWebDir + '/js/contrail-load',
-        'vis'                         : coreWebDir + '/assets/vis-v4.9.0/js/vis.min',
-        'vis-node-model'              : coreWebDir + '/js/models/VisNodeModel',
-        'vis-edge-model'              : coreWebDir + '/js/models/VisEdgeModel',
-        'vis-tooltip-model'           : coreWebDir + '/js/models/VisTooltipModel',
-        'gs-view'                     : coreWebDir + '/js/views/GridStackView',
-        'color-scheme'                : coreWebDir + '/js/color_schemes',
-        'palette'                     : coreWebDir + '/assets/palette/js/palette',
-        'graph-view'                  : coreWebDir + '/js/views/GraphView',
-        'contrail-graph-model'        : coreWebDir + '/js/models/ContrailGraphModel',
-        'dagre'                       : coreWebDir + '/assets/joint/js/dagre',
-        'geometry'                    : coreWebDir + '/assets/joint/js/geometry',
-        'vectorizer'                  : coreWebDir + '/assets/joint/js/vectorizer',
-        'joint.layout.DirectedGraph'  : coreWebDir + '/assets/joint/js/joint.layout.DirectedGraph',
-        'joint'                       : coreWebDir + '/assets/joint/js/joint.clean',
-        'joint.contrail'              : coreWebDir + '/js/common/joint.contrail',
-
-        'event-drops'                 : coreWebDir + '/assets/event-drops/js/eventDrops',
-
-        'core-alarm-utils'            :  coreWebDir + '/js/common/core.alarms.utils',
-        'core-alarm-parsers'          :  coreWebDir + '/js/common/core.alarms.parsers',
-
-        'query-form-view'             : coreWebDir + '/js/views/QueryFormView',
-        'contrail-vis-view'           : coreWebDir + '/js/views/ContrailVisView',
-        'contrail-config-model'       : coreWebDir + '/js/models/ContrailConfigModel',
-
-        'query-form-model'            : coreWebDir + '/js/models/QueryFormModel',
-        'query-or-model'              : coreWebDir + '/js/models/QueryOrModel',
-        'query-and-model'             : coreWebDir + '/js/models/QueryAndModel',
-        'contrail-vis-model'          : coreWebDir + '/js/models/ContrailVisModel',
-
-        'loginwindow-model'           : coreWebDir + '/js/models/LoginWindowModel',
         'xml2json'                    : coreWebDir + '/assets/jquery/js/xml2json',
-
-        'json-editor'                 : coreWebDir + '/assets/jsoneditor/js/jsoneditor.min',
-        'ajv'                         : coreWebDir + '/assets/ajv/ajv.min',
-        'json-model'                  : coreWebDir + "/js/models/JsonModel",
-        'json-edit-view'              : coreWebDir + '/js/views/JsonEditView',
         'jquery-ui'                   : coreWebDir + '/assets/jquery-ui/js/jquery-ui.min',
-        'schema-model'                : coreWebDir + '/js/models/SchemaModel',
-        'json-validator'              : coreWebDir + '/js/common/json.validator',
         'iframe-view'                 : coreWebDir + '/js/views/IframeView',
-        'jdorn-jsoneditor'            : coreWebDir + '/assets/jdorn-jsoneditor/js/jdorn-jsoneditor',
-        'jquery-linedtextarea'        : coreWebDir + '/assets/jquery-linedtextarea/js/jquery-linedtextarea',
-        'qe-module'                   : coreWebDir + '/reports/qe/ui/js/qe.module',
-        'udd-module'                  : coreWebDir + '/reports/udd/ui/js/udd.module',
-        'legend-view'                 : coreWebDir + '/js/views/LegendView',
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -120,9 +67,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'core-labels'                 : coreWebDir + '/js/common/core.labels',
             'core-messages'               : coreWebDir + '/js/common/core.messages',
             'core-views-default-config'   : coreWebDir + '/js/common/core.views.default.config',
-            'chart-utils'                 : coreWebDir + "/js/common/chart.utils",
             'contrail-remote-data-handler': coreWebDir + '/js/handlers/ContrailRemoteDataHandler',
-            'cf-datasource'               : coreWebDir + '/js/common/cf.datasource',
             'contrail-view'               : coreWebDir + '/js/views/ContrailView',
             'contrail-model'              : coreWebDir + '/js/models/ContrailModel',
             'contrail-view-model'         : coreWebDir + '/js/models/ContrailViewModel',
@@ -139,13 +84,6 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'help-handler'                : coreWebDir + '/js/handlers/HelpHandler',
             'content-handler'             : coreWebDir + '/js/handlers/ContentHandler',
             'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd',
-            'mon-infra-node-list-model'   : coreWebDir + '/js/models/NodeListModel',
-            'mon-infra-log-list-model'    : coreWebDir + '/js/models/LogListModel',
-            'mon-infra-alert-list-view'   : coreWebDir + '/js/views/AlertListView',
-            'mon-infra-alert-grid-view'   : coreWebDir + '/js/views/AlertGridView',
-            'mon-infra-log-list-view'     : coreWebDir + '/js/views/LogListView',
-            'mon-infra-sysinfo-view'      : coreWebDir + '/js/views/SystemInfoView',
-            'mon-infra-dashboard-view'    : coreWebDir + '/js/views/MonitorInfraDashboardView',
             //End - core-bundle aliases
             //Start - jquery.dep.libs aliases
             'jquery.xml2json'            : coreWebDir + '/assets/jquery/js/jquery.xml2json',
@@ -162,14 +100,12 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'jquery.multiselect'        : coreWebDir + "/assets/jquery-ui/js/jquery.multiselect",
             'jquery.multiselect.filter' : coreWebDir + "/assets/jquery-ui/js/jquery.multiselect.filter",
             'jquery.steps.min'          : coreWebDir + "/assets/jquery/js/jquery.steps.min",
-            'jquery.panzoom'            : coreWebDir + "/assets/jquery/js/jquery.panzoom.min",
             'jquery.event.drag'         : coreWebDir + "/assets/slickgrid/js/jquery.event.drag-2.2",
             'jquery.datetimepicker'     : coreWebDir + "/assets/datetimepicker/js/jquery.datetimepicker",
             //End - jquery.dep.libs aliases
             //Start - thirdparty-libs aliases
             'handlebars'                : coreWebDir + "/assets/handlebars/handlebars",
             'core-handlebars-utils'     : coreWebDir + "/js/common/core.handlebars.utils",
-
             'slick.grid'                : coreWebDir + "/assets/slickgrid/js/slick.grid",
             'slick.checkboxselectcolumn': coreWebDir + '/assets/slickgrid/js/slick.checkboxselectcolumn',
             'slick.groupmetadata'       : coreWebDir + "/assets/slickgrid/js/slick.groupitemmetadataprovider",
@@ -183,22 +119,12 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             //End - chart-libs aliases
             //Start - nonamd-libs aliases
             'web-utils'                 : coreWebDir + "/js/web-utils",
-            'analyzer-utils'            : coreWebDir + "/js/analyzer-utils",
             'config_global'             : coreWebDir + "/js/config_global",
             'contrail-layout'           : coreWebDir + '/js/contrail-layout',
             'contrail-common'           : coreWebDir + "/js/contrail-common",
-            'uuid'                      : coreWebDir + "/js/uuid",
             'protocol'                  : coreWebDir + "/js/protocol",
-            'jsbn-combined'             : coreWebDir + "/assets/ip/jsbn-combined",
-            'xdate'                     : coreWebDir + "/assets/xdate/js/xdate",
-            'sprintf'                   : coreWebDir + "/assets/ip/sprintf",
-            'ipv6'                      : coreWebDir + "/assets/ip/ipv6",
             'jsonpath'                  : coreWebDir + '/assets/jsonpath/js/jsonpath-0.8.0',
             //End - nonamd-libs aliases
-
-            'infoboxes'                   : coreWebDir + '/js/views/InfoboxesView',
-            'barchart-cf'                 : coreWebDir + '/js/views/BarChartView',
-            'storage-init'                : 'empty:'
 
         };
         //Merge common (for both prod & dev) alias
@@ -232,9 +158,6 @@ var coreAppShim =  {
     },
     'jquery' : {
         exports: 'jQuery'
-    },
-    'gridstack' :{
-        deps:['jquery-ui']
     },
     'jquery.multiselect' : {
         deps: ['jquery-ui'],
@@ -318,14 +241,8 @@ var coreAppShim =  {
     'jquery-dep-libs' : {
         deps: ['jquery-ui']
     },
-    'slickgrid-utils': {
-        deps: ['jquery','slick.grid','slick.dataview']
-    },
     'core-contrail-form-elements': {
         deps: ['jquery-ui']
-    },
-    'chart-utils': {
-        deps: ['jquery']
     },
     'web-utils': {
         deps: ['jquery','knockout']
@@ -342,29 +259,14 @@ var coreAppShim =  {
     'select2-utils': {
         deps: ['jquery']
     },
-    'ipv6' : {
-        deps: ['sprintf','jsbn-combined']
-    },
     'backbone': {
         deps: ['lodash'],
         exports: 'Backbone'
-    },
-    'joint': {
-        deps: ['geometry', 'vectorizer', 'backbone'],
-        exports: 'joint',
-        init: function (geometry, vectorizer) {
-            this.g = geometry;
-            this.V = vectorizer;
-        }
     },
     'underscore' : {
         init: function() {
             _.noConflict();
         }
-    },
-    'vis': {
-        deps: ['jquery'],
-        exports: 'vis'
     },
     'knockout': {
         deps: ['jquery']
@@ -375,12 +277,6 @@ var coreAppShim =  {
     'bezier': {
         deps: ['jquery']
     },
-    'joint.layout.DirectedGraph': {
-        deps: ['joint']
-    },
-    'joint.contrail': {
-        deps: ['joint.layout.DirectedGraph']
-    },
     'contrail-model': {
         deps: ['knockback']
     },
@@ -388,187 +284,6 @@ var coreAppShim =  {
         deps: ['contrail-remote-data-handler']
     }
 };
-
-var coreBundles = {
-        //chart-libs,thirdparty-libs,contrail-core-views are loaded lazily
-        'chart-libs'        : [
-            'd3',
-            'nv.d3'
-        ],
-        'thirdparty-libs'   : [
-            'slick.grid',
-            'slick.checkboxselectcolumn',
-            'slick.groupmetadata',
-            'slick.rowselectionmodel',
-            'slick.enhancementpager',
-            'jsbn-combined',
-            'sprintf',
-            'ipv6',
-            'xdate',
-        ],
-        'jquery-dep-libs': [
-            'jquery.xml2json',
-            'jquery.json',
-            'bootstrap',
-            'select2',
-            'slick.core',
-            'slick.dataview',
-            'jquery.timer',
-            'jquery.ui.touch-punch',
-            'jquery.validate',
-            'jquery.tristate',
-            'jquery.multiselect',
-            'jquery.multiselect.filter',
-            'jquery.steps.min',
-            'jquery.panzoom',
-            'jquery.event.drag',
-            'jquery.datetimepicker'
-        ],
-        'core-bundle'       : [
-            'underscore',
-            'moment',
-            'handlebars',
-            'core-handlebars-utils',
-            'core-utils',
-            'core-hash-utils',
-            'core-constants',
-            'core-formatters',
-            'core-cache',
-            'core-labels',
-            'core-messages',
-            'core-views-default-config',
-            'contrail-common',
-            'core-contrail-form-elements',
-            'chart-utils',
-            'text!core-basedir/common/ui/templates/core.common.tmpl',
-            'core-basedir/js/common/graph.utils',
-            'contrail-remote-data-handler',
-            'cf-datasource',
-            'contrail-view',
-            'contrail-model',
-            'contrail-view-model',
-            'contrail-list-model',
-            'contrail-element',
-            'lodash',
-            'crossfilter',
-            'text',
-            'layout-handler',
-            'menu-handler',
-            'help-handler',
-            'content-handler',
-            'validation',
-            'core-basedir/js/views/BarChartInfoView',
-            'core-basedir/js/views/BreadcrumbDropdownView',
-            'core-basedir/js/views/BreadcrumbTextView',
-            'core-basedir/js/views/ChartView',
-            'core-basedir/js/views/ControlPanelView',
-            'core-basedir/js/views/InfoboxesView',
-            'core-basedir/js/views/SectionView',
-            'core-basedir/js/views/WidgetView',
-            'core-basedir/js/views/ZoomScatterChartView',
-            //Dashboard
-            'mon-infra-node-list-model',
-            'mon-infra-log-list-model',
-            'mon-infra-alert-list-view',
-            'mon-infra-alert-grid-view',
-            'mon-infra-log-list-view',
-            'mon-infra-sysinfo-view',
-            'mon-infra-dashboard-view'
-        ],
-        'contrail-core-views': [
-            'core-basedir/js/views/GridView',
-            'core-basedir/js/views/AccordianView',
-            'core-basedir/js/views/DetailsView',
-            'core-basedir/js/views/DonutChartView',
-            'core-basedir/js/views/FormAutoCompleteTextBoxView',
-            'core-basedir/js/views/FormButtonView',
-            'core-basedir/js/views/FormCheckboxView',
-            'core-basedir/js/views/FormCollectionView',
-            'core-basedir/js/views/FormComboboxView',
-            'core-basedir/js/views/FormCompositeView',
-            'core-basedir/js/views/FormDateTimePickerView',
-            'core-basedir/js/views/FormDropdownView',
-            'core-basedir/js/views/FormEditableGridView',
-            'core-basedir/js/views/FormGridView',
-            'core-basedir/js/views/FormHierarchicalDropdownView',
-            'core-basedir/js/views/FormInputView',
-            'core-basedir/js/views/FormMultiselectView',
-            'core-basedir/js/views/FormNumericTextboxView',
-            'core-basedir/js/views/FormRadioButtonView',
-            'core-basedir/js/views/FormTextAreaView',
-            'core-basedir/js/views/FormTextView',
-            'core-basedir/js/views/GridFooterView',
-            'core-basedir/js/views/HeatChartView',
-            'core-basedir/js/views/HorizontalBarChartView',
-            'core-basedir/js/views/LineBarWithFocusChartView',
-            'core-basedir/js/views/LineWithFocusChartView',
-            'core-basedir/js/views/LoginWindowView',
-            'core-basedir/js/views/MultiBarChartView',
-            'core-basedir/js/views/BarChartView',
-            'core-basedir/js/views/MultiDonutChartView',
-            'core-basedir/js/views/NodeConsoleLogsView',
-            'core-basedir/js/views/QueryFilterView',
-            'core-basedir/js/views/QueryResultGridView',
-            'core-basedir/js/views/QueryResultLineChartView',
-            'core-basedir/js/views/QuerySelectView',
-            'core-basedir/js/views/QueryWhereView',
-            'core-basedir/js/views/SparklineView',
-            'core-basedir/js/views/TabsView',
-            'core-basedir/js/views/WizardView'
-        ],
-        'nonamd-libs': [
-            'web-utils',
-            'analyzer-utils',
-            'config_global',
-            'contrail-layout',
-            'uuid',
-            'protocol',
-            'xdate',
-            'ipv6',
-            'jsonpath'
-        ],
-        'qe-module': [
-            "core-basedir/reports/qe/ui/templates/qe.tmpl",
-            'core-basedir/reports/qe/ui/js/common/qe.utils',
-            'core-basedir/reports/qe/ui/js/common/qe.parsers',
-            'core-basedir/reports/qe/ui/js/common/qe.grid.config',
-            'core-basedir/reports/qe/ui/js/common/qe.model.config',
-            'core-basedir/reports/qe/ui/js/views/QueryEngineView',
-            'core-basedir/reports/qe/ui/js/views/QueryQueueView',
-            'core-basedir/reports/qe/ui/js/views/QueryTextView',
-            'core-basedir/reports/qe/ui/js/views/ObjectLogsFormView',
-            'core-basedir/reports/qe/ui/js/views/SystemLogsFormView',
-            'core-basedir/reports/qe/ui/js/views/StatQueryFormView',
-            'core-basedir/reports/qe/ui/js/models/ContrailListModelGroup',
-            'core-basedir/reports/qe/ui/js/models/ObjectLogsFormModel',
-            'core-basedir/reports/qe/ui/js/models/StatQueryFormModel',
-            'core-basedir/reports/qe/ui/js/models/SystemLogsFormModel',
-        ],
-        'udd-module': [
-            "core-basedir/reports/udd/ui/templates/udd.tmpl",
-            "core-basedir/reports/udd/ui/js/common/udd.form.validation.config",
-            "core-basedir/reports/udd/ui/js/common/udd.constants",
-            "core-basedir/reports/udd/ui/js/models/contentConfigs/GridConfigModel",
-            "core-basedir/reports/udd/ui/js/models/contentConfigs/LineBarChartConfigModel",
-            "core-basedir/reports/udd/ui/js/models/contentConfigs/LineChartConfigModel",
-            "core-basedir/reports/udd/ui/js/models/contentConfigs/LogsConfigModel",
-            "core-basedir/reports/udd/ui/js/models/dataSourceConfigs/QueryConfigModel",
-            "core-basedir/reports/udd/ui/js/models/ContentConfigModel",
-            "core-basedir/reports/udd/ui/js/models/WidgetModel",
-            "core-basedir/reports/udd/ui/js/models/WidgetsCollection",
-            "core-basedir/reports/udd/ui/js/views/contentConfigs/GridConfigView",
-            "core-basedir/reports/udd/ui/js/views/contentConfigs/LineBarChartConfigView",
-            "core-basedir/reports/udd/ui/js/views/contentConfigs/LineChartConfigView",
-            "core-basedir/reports/udd/ui/js/views/contentConfigs/LogsConfigView",
-            "core-basedir/reports/udd/ui/js/views/dataSourceConfigs/QueryConfigView",
-            "core-basedir/reports/udd/ui/js/views/BaseContentConfigView",
-            "core-basedir/reports/udd/ui/js/views/GridStackView",
-            "core-basedir/reports/udd/ui/js/views/LogsView",
-            "core-basedir/reports/udd/ui/js/views/UDDashboardView",
-            "core-basedir/reports/udd/ui/js/views/WidgetView",
-        ]
-    };
-
 
 function initBackboneValidation() {
     require(['validation'],function(kbValidation) {
@@ -948,37 +663,77 @@ function initCustomKOBindings(Knockout) {
     });
 };
 
-function loadGohanUI() {
-    sessionStorage.setItem('gohan_contrail',true);
-    sessionStorage.setItem('tenant',JSON.stringify(loadUtils.getCookie('project')));
-    $('#alarms-popup-link').hide();
-    $('#nav-search').hide();
-    require(['iframe-view'],function(IframeView) {
-        var iframeView = new IframeView({
-            el:$("#main-container"),
-            url:"./gohan.html"
-        });
-        iframeView.render();
-    });
-};
-
-function changeRegion (e)
-{
-    var oldRegion = contrail.getCookie('region');
-    var region = e.added.text;
-    if ((null != region) && (oldRegion != region) &&
-        ('null' != region) && ('undefined' != region)) {
-        contrail.setCookie('region', region);
-        if(region == "All Regions") {
-            //To indicate that gohanUI is being embedded in contrailUI
-            sessionStorage.setItem('gohan_contrail',true);
-            loadGohanUI();
-            return;
+function setIntrospectCookie (ip, nodeType, callback) {
+    chrome.cookies.get({url: "http://127.0.0.1", name: "contrailIntrospectIP"},
+                       function(cookie) {
+        if ((null != cookie) && (null != cookie.value)) {
+            var introspectIpCookie = cookie.value;
+            var ipArr = introspectIpCookie.split(":");
+            /* Always put the last used IP to the top list */
+            var idx = ipArr.indexOf(ip);
+            if (-1 == idx) {
+                introspectIpCookie = ip + ":" + introspectIpCookie;
+            } else {
+                ipArr.splice(0, 0, ipArr.splice(idx, 1)[0]);
+                introspectIpCookie = ipArr.join(":");
+            }
+            chrome.cookies.set({url: "http://127.0.0.1", name: "contrailIntrospectIP",
+                                value: introspectIpCookie}, function(cookie) {
+                chrome.cookies.set({url: "http://127.0.0.1", name: "contrailIntrospectNodeType",
+                                   value: nodeType}, function(cookie) {
+                    if (null != callback) {
+                        callback(introspectIpCookie);
+                    }
+                });
+            });
+        } else {
+            chrome.cookies.set({url: "http://127.0.0.1", name: "contrailIntrospectIP",
+                                value: ip}, function(cookie) {
+                chrome.cookies.set({url: "http://127.0.0.1", name: "contrailIntrospectNodeType",
+                                   value: nodeType}, function(cookie) {
+                    if (null != callback) {
+                        callback(ip);
+                    }
+                });
+            });
         }
-        /* And issue logout request */
-        loadUtils.logout()
-    }
+    });
 }
+
+function getIntrospectCookie (callback) {
+    chrome.cookies.get({url: "http://127.0.0.1", name: "contrailIntrospectIP"},
+                        function(ipCookie) {
+        chrome.cookies.get({url: "http://127.0.0.1", name: "contrailIntrospectNodeType"},
+                           function(nodeTypeCookie) {
+            var introIP = null;
+            var introNodeType = null;
+            if ((null != ipCookie) && ("" != ipCookie.value)) {
+                introIP = ipCookie.value;
+            }
+            if ((null != nodeTypeCookie) && ("" != nodeTypeCookie.value)) {
+                introNodeType = nodeTypeCookie.value;
+            }
+            callback({introIP: introIP, introNodeType: introNodeType});
+            return;
+        });
+    });
+}
+
+function readXMLFileFromLocal() {
+    var xFile = $('#xml_sandesh_file')[0].files[0];
+    if (xFile) {
+        var fRead = new FileReader();
+        fRead.onload = function (e) {
+            var contents = e.target.result;
+            contrailIntrospectSandeshXML = contents;
+            return contents;
+        };
+        fRead.readAsText(xFile);
+        return fRead;
+    } else {
+        alert("Failed to load file.");
+    }
+};
 
 /**
  * This file is also require-d during build script.
@@ -995,23 +750,19 @@ if (typeof document !== 'undefined' && document) {
     globalObj['env'] =  document.querySelector('script[data-env]') && document.querySelector('script[data-env]').getAttribute('data-env');
 
     var bundles = {};
-    if (globalObj['env'] == 'prod') {
-        globalObj['buildBaseDir'] = 'dist';
-        bundles = coreBundles;
-    } else {
-        // defaultBaseDir = defaultBaseDir.slice(0, -1);
-        globalObj['buildBaseDir'] = '';
-    }
+    globalObj['buildBaseDir'] = '';
 
     var coreBaseDir = defaultBaseDir, ctBaseDir = defaultBaseDir,
         smBaseDir = defaultBaseDir, strgBaseDir = defaultBaseDir,
-        pkgBaseDir = defaultBaseDir;
+        pkgBaseDir = "./contrail-web-controller/webroot";
 
+    globalObj['buildBaseDir'] = "/.";
+    coreBaseDir = "./contrail-web-core/webroot";
+    ctBaseDir = "./contrail-web-controller/webroot";
     var webServerInfoDefObj;
     requirejs.config({
         bundles:bundles,
-        baseUrl: coreBaseDir,
-        urlArgs: 'built_at=' + built_at,
+        baseUrl: ".",
         paths: getCoreAppPaths(coreBaseDir, globalObj['buildBaseDir']),
         map: coreAppMap,
         shim: coreAppShim,
@@ -1030,7 +781,7 @@ if (typeof document !== 'undefined' && document) {
         for (var key in featurePackages) {
             if(globalObj['initFeatureAppDefObjMap'][key] == null) {
                 if(featurePackages[key] &&
-                        [FEATURE_PCK_WEB_CONTROLLER,FEATURE_PCK_WEB_SERVER_MANAGER,FEATURE_PCK_WEB_STORAGE].indexOf(key) > -1) {
+                        [FEATURE_PCK_WEB_CONTROLLER].indexOf(key) > -1) {
                     globalObj['initFeatureAppDefObjMap'][key] = $.Deferred();
                     featureAppDefObjList.push(globalObj['initFeatureAppDefObjMap'][key]);
                 }
@@ -1040,33 +791,13 @@ if (typeof document !== 'undefined' && document) {
                 if(globalObj['loadedScripts'].indexOf(ctrlUrl) == -1) {
                     loadUtils.getScript(ctrlUrl);
                 }
-            } else if (featurePackages[key] && key == FEATURE_PCK_WEB_SERVER_MANAGER) {
-                var smUrl = smBaseDir + '/common/ui/js/sm.app.js';
-                if(globalObj['loadedScripts'].indexOf(smUrl) == -1) {
-                    //Post-Authentication
-                    webServerInfoDefObj.done(function() {
-                        //Need to remove "slickgrid-utils" once all grids are moved to GridView
-                        require(['core-bundle','jquery-dep-libs','nonamd-libs'],function() {
-                            require(['slickgrid-utils'],function() {
-                                loadUtils.getScript(smUrl);
-                            });
-                        });
-                    });
-                }
-            }  else if (featurePackages[key] && key == FEATURE_PCK_WEB_STORAGE) {
-                var strgUrl = strgBaseDir + '/common/ui/js/storage.app.js';
-                if(globalObj['loadedScripts'].indexOf(strgUrl) == -1) {
-                    loadUtils.getScript(strgUrl);
-                }
             }
         }
 
         $.when.apply(window, featureAppDefObjList).done(function () {
             //Ensure d3 and nv.d3 are available before loading any particular feature
             //d3 and nv.d3 are not necessary for loading menu and layout
-            require(['chart-utils'],function() {
                 globalObj['featureAppDefObj'].resolve();
-            });
         });
     };
 
@@ -1083,12 +814,16 @@ if (typeof document !== 'undefined' && document) {
     //Even with URL as <https://localhost:8143>,pathname is returning as "/"
     //Strip-offf the trailing /
     orchPrefix = orchPrefix.replace(/\/$/,'');
+    var idxIndex = orchPrefix.indexOf("index.html");
+    if (idxIndex > -1) {
+        orchPrefix = orchPrefix.slice(0, idxIndex - 1);
+    }
 
     (function() {
         var menuXMLLoadDefObj,layoutHandlerLoadDefObj,featurePkgs;
         loadUtils = {
             getScript: function(url, callback) {
-                var scriptPath = url + '?built_at=' + built_at;
+                var scriptPath = url;
                 globalObj['loadedScripts'].push(url);
                 return $.ajax({
                     type: "GET",
@@ -1109,114 +844,83 @@ if (typeof document !== 'undefined' && document) {
                             return unescape(y);
                     }
                 }
-                return false;
+                return null;
+            },
+            setValuesToPortComboBox: function(callback) {
+                $('#process').contrailCombobox({
+                    dataValueField: 'id',
+                    dataTextField: 'text',
+                    dataSource: {
+                        type: 'local',
+                        data: [
+                            {id: 8083, text: 'control'},
+                            {id: 8085, text: 'vrouter'},
+                            {id: 8089, text: 'analytics'},
+                            {id: 8084, text: 'config'}
+                        ]
+                    }
+                });
+                getIntrospectCookie(function(cookieObj) {
+                    var ipList = [];
+                    var ipCookie = cookieObj.introIP;
+                    if (null != ipCookie) {
+                        var ips = ipCookie.split(":");
+                        var len = ips.length;
+                        for (var i = 0; i < len; i++) {
+                            ipList.push({id: ips[i], text: ips[i]});
+                        }
+                    }
+                    $("#ip_address").contrailCombobox({
+                        dataValueField: 'id',
+                        dataTextField: 'text',
+                        dataSource: {
+                            type: 'local',
+                            data: ipList
+                        }
+                    });
+                    if (len > 0) {
+                        $("#ip_address").data().contrailCombobox.value(ipList[0].id);
+                    }
+                    var nodeTypeCookie = (null != cookieObj.introNodeType) ? cookieObj.introNodeType
+                        : "control";
+                    if (null != nodeTypeCookie) {
+                        $("#process").data().contrailCombobox.value(nodeTypeCookie);
+                    }
+                    callback();
+                });
             },
             postAuthenticate: function(response) {
-                require(['jquery'],function() {
-                    //To fetch alarmtypes
-                    require(['core-alarm-utils'],function() {});
-                    $('#signin-container').empty();
-                    //If #content-container already exists,just show it
-                    if($('#content-container').length == 0) {
-                        $('#app-container').html($('#app-container-tmpl').text());
-                        $('#app-container').removeClass('hide');
-                    } else
-                        $('#app-container').removeClass('hide');
+                require(['jquery', 'jquery-dep-libs','nonamd-libs'],function() {
+                    getIntrospectCookie(function(cookieObj) {
+                        if (null != cookieObj) {
+                            contrailIntrospectIP = cookieObj.introIP;
+                        }
+                        $('#signin-container').empty();
+                        //If #content-container already exists,just show it
+                        if($('#content-container').length == 0) {
+                            $('#app-container').html($('#app-container-tmpl').text());
+                            $('#app-container').removeClass('hide');
+                        } else {
+                            $('#app-container').removeClass('hide');
+                        }
                         //Reset content-container
                         $('#content-container').html('');
-                    $.ajaxSetup({
-                        beforeSend: function (xhr, settings) {
-                            if (globalObj['webServerInfo'] != null && globalObj['webServerInfo']['loggedInOrchestrationMode'] != null)
-                                xhr.setRequestHeader("x-orchestrationmode", globalObj['webServerInfo']['loggedInOrchestrationMode']);
-                            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-                            xhr.setRequestHeader("X-CSRF-Token", globalObj['webServerInfo']['_csrf']);
-                        }
-                    });
-                    globalObj['webServerInfo'] = loadUtils.parseWebServerInfo(response);
-
-                    //For Region drop-down
-                    require(['jquery', 'jquery-dep-libs','nonamd-libs'], function() {
-                        var regionList =
-                            globalObj.webServerInfo.regionList;
-                        var cnt = 0;
-                        if (null != regionList) {
-                            cnt = regionList.length;
-                        }
-                        var ddRegionList = [];
-                        for (var i = 0; i < cnt; i++) {
-                            ddRegionList.push({id: regionList[i], text: regionList[i]});
-                        }
-                        var isServiceEndPointFromConfig =
-                            globalObj.webServerInfo.serviceEndPointFromConfig;
-                        if ((cnt > 0) && (false == isServiceEndPointFromConfig)) {
-                            $('#regionDD').contrailDropdown({dataTextField:"text",
-                                                            dataValueField:"id",
-                                                            width: '100px',
-                                                            change: changeRegion});
-                            $('#regionDD').data("contrailDropdown").setData(ddRegionList);
-                            // if(loadUtils.getCookie('region') != "All Regions")
-                            $("#regionDD").data("contrailDropdown").value(loadUtils.getCookie('region'));
-                            if(globalObj['webServerInfo']['cgcEnabled'] == true) {
-                                //Fetch tokens for gohanUI
-                                $.ajax({
-                                    type: "POST",
-                                    url: '/gohan_contrail_auth/tokens'
-                                }).done(function(response,textStatus,xhr) {
-                                    var jsonObj = {};
-                                    jsonObj[loadUtils.getCookie('project')] = response;
-                                    sessionStorage.setItem('scopedToken',JSON.stringify(jsonObj));
-                                });
-                            }
-                            //Trigger change handler while setting default value
-                            if(loadUtils.getCookie('region') == "All Regions") {
-                                loadGohanUI();
-                            }
-                        }
-                    });
-                    webServerInfoDefObj.resolve();
-
-                    if (loadUtils.getCookie('username') != null) {
-                        $('#user_info').text(loadUtils.getCookie('username'));
-                    }
-                    $('#user-profile').removeClass('hidden');
-                    loadUtils.bindAppListeners();
-
-                    $.when.apply(window,[menuXMLLoadDefObj,layoutHandlerLoadDefObj]).done(function(menuXML) {
-                        if(globalObj['featureAppDefObj'] == null)
-                            globalObj['featureAppDefObj'] = $.Deferred();
-                        require(['core-bundle'],function() {
-                            if(loadUtils.getCookie('region') != "All Regions")
+                        globalObj['webServerInfo'] = response;
+                        $.when.apply(window, [menuXMLLoadDefObj,
+                                     layoutHandlerLoadDefObj]).done(function(menuXML) {
+                            if(globalObj['featureAppDefObj'] == null)
+                                globalObj['featureAppDefObj'] = $.Deferred();
+                            require(['core-bundle'], function() {
+                                document.getElementById("dashboard_sdn_logo").onclick= loadUtils.reload;
                                 layoutHandler.load(menuXML);
+                            });
                         });
                     });
                 });
             },
-            onAuthenticationReq: function(loadCfg) {
-                document.getElementById('signin-container').innerHTML = document.getElementById('signin-container-tmpl').innerHTML;
-                require(['jquery','jquery-dep-libs'], function() {
-                    var isRegionsFromConfig = false;
-                    if (null != loadCfg) {
-                        isRegionsFromConfig = loadCfg.isRegionListFromConfig;
-                        configRegionList = loadCfg.configRegionList;
-                    }
-                    var regionList = [];
-                    if (true == isRegionsFromConfig) {
-                        for (var key in configRegionList) {
-                            regionList.push({id: key, text: key});
-                        }
-                        $('#region_id_cont').show();
-                        $("#region_id").select2({placeholder: "Select the Region",
-                                                data: regionList,
-                                                width: "283px"})
-                        var cookieRegion = loadUtils.getCookie('region');
-                        if (regionList.length > 0) {
-                            if (null == cookieRegion) {
-                                cookieRegion = regionList[0]['key'];
-                            }
-                            $("#region_id").select2("val", cookieRegion);
-                        }
-                    }
-                });
+            onAuthenticationReq: function() {
+                document.getElementById('signin-container').innerHTML =
+                    document.getElementById('signin-container-tmpl').innerHTML;
                 var appContEl = document.getElementById('app-container');
                 if(appContEl.classList) {
                     appContEl.classList.add('hide');
@@ -1229,11 +933,14 @@ if (typeof document !== 'undefined' && document) {
                     $('.modal-backdrop').remove();
                     $(".focus-config-backdrop").remove();
                 });
-                loadUtils.bindSignInListeners();
+                //require(['core-bundle','jquery-dep-libs','nonamd-libs', 'core-utils', 'core-hash-utils'],function() {
+                this.setValuesToPortComboBox(function() {
+                    loadUtils.bindSignInListeners();
+                });
             },
             fetchMenu: function(menuXMLLoadDefObj) {
                 $.ajax({
-                    url: orchPrefix + '/menu',
+                    url: orchPrefix + 'menu.xml',
                     type: "GET",
                     dataType: "xml"
                 }).done(function (response,textStatus,xhr) {
@@ -1241,15 +948,49 @@ if (typeof document !== 'undefined' && document) {
                     menuXMLLoadDefObj.resolve(menuXML);
                 }).fail(function(response) {
                     console.info(response);
-                    loadUtils.onAuthenticationReq(null);
+                    loadUtils.onAuthenticationReq();
                 });
             },
+            getAuthResp: function(callback) {
+                var response = {};
+                var url = window.location.toString();
+                var isAuthenticated = false;
+                response = {
+                    featurePkg: {webController: true, introspect: true},
+                    featurePkgsInfo: {webController: {enable: true},
+                                      introspect: {enable: true},
+                    },
+                    insecureAccess: true,
+                    reloaded: false
+                };
+                isAuthenticated = false;
+                var idx = url.indexOf("#p=setting_introspect_");
+                if (idx > -1) {
+                    isAuthenticated = true;
+                    if ((url.indexOf("#p=setting_introspect_xml") > 0) &&
+                        (null == contrailIntrospectSandeshXML)) {
+                        isAuthenticated = false;
+                        var href = window.location.href;
+                        window.location.href = href.substring(0, idx);
+                        response.reloaded = true;
+                    }
+                }
+                response.isAuthenticated = isAuthenticated;
+                if (null != callback) {
+                    callback(response);
+                } else {
+                    return response;
+                }
+            },
             isAuthenticated: function() {
-                Ajax.request(orchPrefix + '/isauthenticated',"GET",null,function(response) {
-                    if(response != null && response.isAuthenticated == true) {
+                loadUtils.getAuthResp(function(response) {
+                    if (true === response.reloaded) {
+                        return;
+                    }
+                    if (false != response.isAuthenticated) {
                         loadUtils.postAuthenticate(response);
                     } else {
-                        loadUtils.onAuthenticationReq(response);
+                        loadUtils.onAuthenticationReq();
                     }
                     featurePkgs = response['featurePkg'];
                     require(['jquery'],function() {
@@ -1265,9 +1006,30 @@ if (typeof document !== 'undefined' && document) {
                     });
                 });
             },
+            loadXMLSandeshFile: function(event) {
+                var xmlFilePath = $('#xml_sandesh_file').val();
+                if (xmlFilePath == '') {
+                    alert("Please select a xml file.");
+                    return false;
+                } else {
+                    var fileType = xmlFilePath.substring(xmlFilePath.lastIndexOf(".") + 1);
+                    if (fileType.toLowerCase() != "xml") {
+                        alert("Please select .xml file only.");
+                        return false;
+                    }
+                }
+                var fileName = xmlFilePath.substring(xmlFilePath.lastIndexOf("\\") + 1);
+                $("#localFilePath").val(fileName);
+            },
+            reload: function() {
+                var url = window.location.toString();
+                var idx = url.indexOf("#p=setting_introspect_");
+                var href = window.location.href;
+                window.location.href = href.substring(0, idx)
+            },
             bindSignInListeners: function() {
                 document.getElementById('signin').onclick = loadUtils.authenticate;
-                // $('#signin').click(authenticate);
+                document.getElementById("xml_sandesh_file").onchange = loadUtils.loadXMLSandeshFile;
                 require(['jquery'],function() {
                     $('body').off('keypress.signInEnter').on('keypress.signInEnter', '.login-container', function(args) {
                         if (args.keyCode == 13) {
@@ -1282,34 +1044,30 @@ if (typeof document !== 'undefined' && document) {
                 // $('#logout').click(logout);
             },
             authenticate: function() {
-                require(['jquery'],function() {
-                    //Compares client UTC time with the server UTC time and display alert if mismatch exceeds the threshold
-                    var postData = {
-                        username: $("[name='username']").val(),
-                        password: $("[name='password']").val()
-                    };
-                    var regionName = $("[name='regionname']").val();
-                    if ((null != regionName) && (regionName.length > 0)) {
-                        postData['regionname'] = regionName;
-                    }
-                    var domain = $("[name='domain']").val();
-                    if ((null != domain) && (domain.length > 0)) {
-                        postData['domain'] = domain;
-                    }
-                    $.ajax({
-                        url: orchPrefix + '/authenticate',
-                        type: "POST",
-                        data: JSON.stringify(postData),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json"
-                    }).done(function (response) {
-                        if(response != null && response.isAuthenticated == true) {
+                var xmlFilePath = $("#localFilePath").val();
+                if ((null != xmlFilePath) && (xmlFilePath.length > 0)) {
+                    $.when(
+                        readXMLFileFromLocal()
+                    ).done(function (xmlResponse) {
+                        loadUtils.getAuthResp(function(response) {
                             loadUtils.postAuthenticate(response);
-                        } else {
-                            //Display login-error message
-                            $('#login-error strong').text(response['msg']);
-                            $('#login-error').removeClass('hide');
-                        }
+                        });
+                    });
+                    return;
+                }
+                require(['jquery'],function() {
+                    contrailIntrospectIP = $("#ip_address").data().contrailCombobox.value();
+                    contrailIntrospectProcess = $("#process").data().contrailCombobox.text()
+                    if ((null == contrailIntrospectIP) || (!contrailIntrospectIP.length)) {
+                        //Display login-error message
+                        $('#login-error strong').text("Error");
+                        $('#login-error').removeClass('hide');
+                        return;
+                    }
+                    setIntrospectCookie(contrailIntrospectIP, contrailIntrospectProcess, function() {
+                        loadUtils.getAuthResp(function(response) {
+                            loadUtils.postAuthenticate(response);
+                        });
                     });
                 });
             },
@@ -1323,31 +1081,11 @@ if (typeof document !== 'undefined' && document) {
                     type: "GET",
                     dataType: "json"
                 }).done(function (response) {
-                    loadUtils.onAuthenticationReq(response);
+                    loadUtils.onAuthenticationReq();
                 });
-            },
-            parseWebServerInfo: function(webServerInfo) {
-                if (webServerInfo['serverUTCTime'] != null) {
-                    webServerInfo['timeDiffInMillisecs'] = webServerInfo['serverUTCTime'] - new Date().getTime();
-                    if (Math.abs(webServerInfo['timeDiffInMillisecs']) > globalObj['timeStampTolerance']) {
-                        if (webServerInfo['timeDiffInMillisecs'] > 0) {
-                            globalAlerts.push({
-                                msg: infraAlertMsgs['TIMESTAMP_MISMATCH_BEHIND'].format(diffDates(new XDate(), new XDate(webServerInfo['serverUTCTime']), 'rounded')),
-                                sevLevel: sevLevels['INFO']
-                            });
-                        } else {
-                            globalAlerts.push({
-                                msg: infraAlertMsgs['TIMESTAMP_MISMATCH_AHEAD'].format(diffDates(new XDate(webServerInfo['serverUTCTime']), new XDate(), 'rounded')),
-                                sevLevel: sevLevels['INFO']
-                            });
-                        }
-                    }
-                }
-                return webServerInfo;
             }
         }
         //Check if the session is authenticated
-        loadUtils.isAuthenticated();
         require(['jquery'],function() {
             require(['core-bundle','nonamd-libs'],function() {
             });
@@ -1364,7 +1102,6 @@ if (typeof document !== 'undefined' && document) {
                     if (globalObj['webServerInfo'] != null && globalObj['webServerInfo']['loggedInOrchestrationMode'] != null)
                         xhr.setRequestHeader("x-orchestrationmode", globalObj['webServerInfo']['loggedInOrchestrationMode']);
                     xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-                    xhr.setRequestHeader("X-CSRF-Token", loadUtils.getCookie('_csrf'));
                 },
                 error: function (xhr, e) {
                     //ajaxDefErrorHandler(xhr);
@@ -1372,7 +1109,6 @@ if (typeof document !== 'undefined' && document) {
             });
             loadUtils.fetchMenu(menuXMLLoadDefObj);
 
-            require(['chart-libs'],function() {});
             require(['jquery-dep-libs'],function() {});
             globalObj['layoutDefObj'] = $.Deferred();
 
@@ -1400,6 +1136,7 @@ if (typeof document !== 'undefined' && document) {
                             initCustomKOBindings(window.ko);
                             layoutHandler = new LayoutHandler();
                             layoutHandlerLoadDefObj.resolve();
+                            loadUtils.isAuthenticated();
 
                             // helpHandler.init();
                         });
