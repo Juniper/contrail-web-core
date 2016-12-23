@@ -136,16 +136,16 @@ define([
                                     allow: false
                                   }
                               },
-                              {
-                                  field: 'severity',
-                                  name: 'Severity',
-                                  hide:true
-                              },
-                              {
-                                  field: 'ack',
-                                  name: 'Acknowledged',
-                                  hide:true
-                              },
+//                              {
+//                                  field: 'severity',
+//                                  name: 'Severity',
+//                                  hide:true
+//                              },
+//                              {
+//                                  field: 'ack',
+//                                  name: 'Acknowledged',
+//                                  hide:true
+//                              },
                               {
                                   field: 'T',
                                   name: 'Time',
