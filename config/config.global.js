@@ -3,6 +3,7 @@
  */
 
 var config = {};
+var ipAddr = 'nodeg3.englab.juniper.net';
 
 config.orchestration = {};
 /****************************************************************************
@@ -120,7 +121,7 @@ config.serviceEndPointTakePublicURL = true;
  *      if you do not want to specify then use ''
  *****************************************************************************/
 config.networkManager = {};
-config.networkManager.ip = '127.0.0.1';
+config.networkManager.ip = ipAddr;
 config.networkManager.port = '9696'
 config.networkManager.authProtocol = 'http';
 config.networkManager.apiVersion = [];
@@ -128,7 +129,7 @@ config.networkManager.strictSSL = false;
 config.networkManager.ca = '';
 
 config.imageManager = {};
-config.imageManager.ip = '127.0.0.1';
+config.imageManager.ip = ipAddr;
 config.imageManager.port = '9292';
 config.imageManager.authProtocol = 'http';
 config.imageManager.apiVersion = ['v1', 'v2'];
@@ -136,7 +137,7 @@ config.imageManager.strictSSL = false;
 config.imageManager.ca = '';
 
 config.computeManager = {};
-config.computeManager.ip = '127.0.0.1';
+config.computeManager.ip = ipAddr;
 config.computeManager.port = '8774';
 config.computeManager.authProtocol = 'http';
 config.computeManager.apiVersion = ['v1.1', 'v2'];
@@ -144,7 +145,7 @@ config.computeManager.strictSSL = false;
 config.computeManager.ca = '';
 
 config.identityManager = {};
-config.identityManager.ip = '127.0.0.1';
+config.identityManager.ip = ipAddr;
 config.identityManager.port = '5000';
 config.identityManager.authProtocol = 'http';
 /******************************************************************************
@@ -159,7 +160,7 @@ config.identityManager.strictSSL = false;
 config.identityManager.ca = '';
 
 config.storageManager = {};
-config.storageManager.ip = '127.0.0.1';
+config.storageManager.ip = ipAddr;
 config.storageManager.port = '8776';
 config.storageManager.authProtocol = 'http';
 config.storageManager.apiVersion = ['v1'];
@@ -168,7 +169,7 @@ config.storageManager.ca = '';
 
 // VNConfig API server and port.
 config.cnfg = {};
-config.cnfg.server_ip = ['127.0.0.1'];
+config.cnfg.server_ip = ipAddr;
 config.cnfg.server_port = '8082';
 config.cnfg.authProtocol = 'http';
 config.cnfg.strictSSL = false;
@@ -177,7 +178,8 @@ config.cnfg.statusURL = "/global-system-configs";
 
 // Analytics API server and port.
 config.analytics = {};
-config.analytics.server_ip = ['127.0.0.1'];
+
+config.analytics.server_ip = ipAddr;
 config.analytics.server_port = '8081';
 config.analytics.authProtocol = 'http';
 config.analytics.strictSSL = false;
@@ -207,7 +209,7 @@ config.vcenter.wsdl = '/usr/src/contrail/contrail-web-core/webroot/js/vim.wsdl';
 /* Job Server */
 config.jobServer = {};
 config.jobServer.server_ip = '127.0.0.1';
-config.jobServer.server_port = '3000';
+config.jobServer.server_port = '9001';
 
 /* Upload/Download Directory */
 config.files = {};
@@ -215,13 +217,13 @@ config.files.download_path = '/tmp';
 
 /* Cassandra Server */
 config.cassandra = {};
-config.cassandra.server_ips = ['127.0.0.1'];
+config.cassandra.server_ips = [ipAddr];
 config.cassandra.server_port = '9042';
 config.cassandra.enable_edit = false;
 
 /* KUE Job Scheduler */
 config.kue = {};
-config.kue.ui_port = '3002'
+config.kue.ui_port = '9003'
 
 /* IP List to listen on */
 config.webui_addresses = ['0.0.0.0'];
@@ -234,10 +236,10 @@ config.webui_addresses = ['0.0.0.0'];
 config.insecure_access = false;
 
 // HTTP port for NodeJS Server.
-config.http_port = '8080';
+config.http_port = '7080';
 
 // HTTPS port for NodeJS Server.
-config.https_port = '8143';
+config.https_port = '7143';
 
 // Activate/Deactivate Login.
 config.require_auth = false;
@@ -255,7 +257,7 @@ config.redisDBIndex = 3;
 config.CONTRAIL_SERVICE_RETRY_TIME = 300000; //5 minutes
 
 /* WebUI Redis Server */
-config.redis_server_port = '6379';
+config.redis_server_port = '6399';
 config.redis_server_ip = '127.0.0.1';
 config.redis_dump_file = '/var/lib/redis/dump-webui.rdb';
 config.redis_password = '';
@@ -269,7 +271,7 @@ config.favicon_file = '/usr/src/contrail/contrail-web-core/webroot/img/opencontr
 config.featurePkg = {};
 /* Add new feature Package Config details below */
 config.featurePkg.webController = {};
-config.featurePkg.webController.path = '/usr/src/contrail/contrail-web-controller';
+config.featurePkg.webController.path = '/homes/rajivks/github/contrail-web-controller';
 config.featurePkg.webController.enable = true;
 
 /* Enable/disable Stat Query Links in Sidebar*/
@@ -315,7 +317,7 @@ config.network.L2_enable = false;
  *****************************************************************************/
 config.getDomainsFromApiServer = false;
 
-config.jsonSchemaPath = "/usr/src/contrail/contrail-web-core/src/serverroot/configJsonSchemas";
+config.jsonSchemaPath = "/homes/rajivks/github/contrail-web-core/src/serverroot/configJsonSchemas/sample";
 
 // Export this as a module.
 module.exports = config;
