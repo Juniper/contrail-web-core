@@ -1,5 +1,5 @@
 ({
-    cssIn: './../built/css/contrail-all.css',
-    out: './../built/css/contrail-all.min.css',
+    cssIn: './../common/ui/css/contrail.unified.css',
+    out: './../common/ui/css/contrail.unified.min.css',
     optimizeCss: 'default'
 })

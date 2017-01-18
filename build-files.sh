@@ -46,7 +46,7 @@ REPO="webCore"
 $node_exec $build_conf_generator $REPO $core_build_file
 $node_exec $rjs_bin -o $core_build_file
 
-#$node_exec $rjs_bin -o $build_path/core.css.build.js
+$node_exec $rjs_bin -o $build_path/core.css.build.js
 
 echo "Post Build additional changes: "
 # Manually moving following views due to error in minification. will use the source file for now.
