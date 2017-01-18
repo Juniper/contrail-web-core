@@ -64,7 +64,6 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'vis-node-model'              : coreWebDir + '/js/models/VisNodeModel',
         'vis-edge-model'              : coreWebDir + '/js/models/VisEdgeModel',
         'vis-tooltip-model'           : coreWebDir + '/js/models/VisTooltipModel',
-        'gs-view'                     : coreWebDir + '/js/views/GridStackView',
         'color-scheme'                : coreWebDir + '/js/color_schemes',
         'palette'                     : coreWebDir + '/assets/palette/js/palette',
         'graph-view'                  : coreWebDir + '/js/views/GraphView',
@@ -104,8 +103,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'jdorn-jsoneditor'            : coreWebDir + '/assets/jdorn-jsoneditor/js/jdorn-jsoneditor',
         'jquery-linedtextarea'        : coreWebDir + '/assets/jquery-linedtextarea/js/jquery-linedtextarea',
         'qe-module'                   : coreWebDir + '/reports/qe/ui/js/qe.module',
-        'udd-module'                  : coreWebDir + '/reports/udd/ui/js/udd.module',
-        'legend-view'                 : coreWebDir + '/js/views/LegendView',
+        'udd-module'                  : coreWebDir + '/reports/udd/ui/js/udd.module'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -197,7 +195,15 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
 
             'infoboxes'                   : coreWebDir + '/js/views/InfoboxesView',
             'barchart-cf'                 : coreWebDir + '/js/views/BarChartView',
-            'storage-init'                : 'empty:'
+            'storage-init'                : 'empty:',
+            'legend-view'                 : coreWebDir + '/js/views/LegendView',
+            'gs-view'                     : coreWebDir + '/js/views/GridStackView',
+            'controlnode-viewconfig'      : 'empty:',
+            'vrouter-viewconfig'          : 'empty:',
+            'databasenode-viewconfig'     : 'empty:',
+            'analyticsnode-viewconfig'    : 'empty:',
+            'confignode-viewconfig'       : 'empty:',
+            'monitor-infra-viewconfig'    : 'empty:'
 
         };
         //Merge common (for both prod & dev) alias
@@ -231,9 +237,6 @@ var coreAppShim =  {
     },
     'jquery' : {
         exports: 'jQuery'
-    },
-    'gridstack' :{
-        deps:['jquery-ui']
     },
     'jquery.multiselect' : {
         deps: ['jquery-ui'],
@@ -385,6 +388,9 @@ var coreAppShim =  {
     },
     'contrail-list-model': {
         deps: ['contrail-remote-data-handler']
+    },
+    'gridstack' :{
+        deps:['jquery-ui']
     }
 };
 
@@ -513,7 +519,14 @@ var coreBundles = {
             'core-basedir/js/views/QueryWhereView',
             'core-basedir/js/views/SparklineView',
             'core-basedir/js/views/TabsView',
-            'core-basedir/js/views/WizardView'
+            'core-basedir/js/views/WizardView',
+            'gs-view',
+            'legend-view',
+            'core-basedir/js/views/CarouselView',
+            'core-basedir/js/views/PercentileTextView',
+            'core-basedir/js/views/ToolbarView',
+            'core-basedir/js/views/StackedBarChartWithFocusView',
+            'core-basedir/js/views/StackedAreaChartView'
         ],
         'nonamd-libs': [
             'web-utils',

@@ -41,6 +41,13 @@ define([
     'core-basedir/js/views/SparklineView',
     'core-basedir/js/views/TabsView',
     'core-basedir/js/views/WizardView',
+    'gs-view',
+    'legend-view',
+    'core-basedir/js/views/CarouselView',
+    'core-basedir/js/views/PercentileTextView',
+    'core-basedir/js/views/ToolbarView',
+    'core-basedir/js/views/StackedBarChartWithFocusView',
+    'core-basedir/js/views/StackedAreaChartView'
         ], function() {});
 
 
