@@ -2225,6 +2225,29 @@ function handleAuthenToAuthorizeError(err, req, callback)
     }
 }
 
+function HTMLEntityEncoding(srcString) {
+    if (!srcString) {
+        return srcString;
+    }
+
+    var encoder = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#x27",
+        "/": "&#2F"
+    };
+
+    var retStr = srcString.replace(/./g, function(letter) {
+        var encoded = encoder[letter];
+
+        return encoded || letter;
+    });
+
+    return retStr;
+}
+
 exports.filterJsonKeysWithNullValues = filterJsonKeysWithNullValues;
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
@@ -2285,4 +2308,5 @@ exports.findAllPathsInEdgeGraph = findAllPathsInEdgeGraph;
 exports.isSubArray = isSubArray;
 exports.getValueByJsonPath = getValueByJsonPath;
 exports.handleAuthenToAuthorizeError = handleAuthenToAuthorizeError;
+exports.HTMLEntityEncoding = HTMLEntityEncoding;
 
