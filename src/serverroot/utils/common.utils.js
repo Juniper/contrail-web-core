@@ -2061,6 +2061,28 @@ function getValueByJsonPath(obj,pathStr,defValue) {
     }
 }
 
+function htmlEntityEncoding(srcString) {
+    if (!srcString) {
+        return srcString;
+    }
+
+    var encoder = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#x27;"
+    };
+
+    var retStr = srcString.replace(/./g, function(letter) {
+        var encoded = encoder[letter];
+
+        return encoded || letter;
+    });
+
+    return retStr;
+}
+
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
 exports.createJSONByUVEResponse = createJSONByUVEResponse;
@@ -2119,3 +2141,4 @@ exports.getIPRangeLen = getIPRangeLen;
 exports.findAllPathsInEdgeGraph = findAllPathsInEdgeGraph;
 exports.isSubArray = isSubArray;
 exports.getValueByJsonPath = getValueByJsonPath;
+exports.htmlEntityEncoding = htmlEntityEncoding;
