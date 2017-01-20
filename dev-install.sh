@@ -18,8 +18,8 @@ cp -af node_modules/ipv6/ipv6.js webroot/assets/ip/
 rm -rf webroot/assets/event-drops
 mkdir -p webroot/assets/event-drops/js
 mkdir -p webroot/assets/event-drops/css
-cp -af node_modules/event-drops/dist/eventDrops.js webroot/assets/event-drops/js
-cp -af node_modules/event-drops/dist/eventDrops.css webroot/assets/event-drops/css
+cp -af ./$THIRD_PARTY/event-drops-v0.3.0/js/eventDrops.js webroot/assets/event-drops/js
+cp -af ./$THIRD_PARTY/event-drops-v0.3.0/css/eventDrops.css webroot/assets/event-drops/css
 #End - copy  event drops files from node_module
 
 #Start - Copy d3/vnd3 files from $THIRD_PARTY
