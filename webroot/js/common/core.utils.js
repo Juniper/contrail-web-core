@@ -14,16 +14,12 @@ define([
 
     var CoreUtils = function () {
         var self = this;
-        this.getAlarmsFromAnalytics = true;
         //Setting the sevLevels used to display the node colors
-        if(this.getAlarmsFromAnalytics) {
-            // sevLevels = cowc.SEV_LEVELS;
-            sevLevels = {
-                CRITICAL : 0, //Red
-                ERROR    : 1, //Red
-                WARNING  : 2 //Orange
-            };
-        }
+        sevLevels = {
+            CRITICAL : 0, //Red
+            ERROR    : 1, //Red
+            WARNING  : 2 //Orange
+        };
         this.renderGrid = function (elementId, gridConfig) {
             $(elementId).contrailGrid($.extend(true, {
                 header: {
@@ -1209,75 +1205,15 @@ define([
                         $("#" + modalId).modal('hide');
                     }
                 }
-            if(!self.getAlarmsFromAnalytics) {
-                modalConfig['title'] = 'Alerts';
-            }
             cowu.createModal(modalConfig);
 
-            if(cfgObj.model == null && !self.getAlarmsFromAnalytics) {
-                require(['mon-infra-node-list-model','monitor-infra-parsers',
-                    'monitor-infra-constants','monitor-infra-utils'],
-                    function(NodeListModel,MonitorInfraParsers,MonitorInfraConstants,
-                        MonitorInfraUtils) {
-                        if(typeof(monitorInfraConstants) == 'undefined') {
-                            monitorInfraConstants = new MonitorInfraConstants();
-                        }
-                        if(typeof(monitorInfraUtils) == 'undefined') {
-                            monitorInfraUtils = new MonitorInfraUtils();
-                        }
-                        if(typeof(monitorInfraParsers) == 'undefined') {
-                            monitorInfraParsers = new MonitorInfraParsers();
-                        }
-                        var nodeListModel = new NodeListModel();
-                        var nodeListModelResources = [];
-                        //Register node List models
-                        if(ctwu != null)
-                            nodeListModelResources = nodeListModelResources.concat(ctwu.getNodeListModelsForAlerts());
-                        if(contrail.checkIfExist(globalObj.webServerInfo.featurePkg.webStorage) && globalObj.webServerInfo.featurePkg.webStorage == true)
-                            nodeListModelResources = nodeListModelResources.concat(swu.getNodeListModelsForAlerts());
-                        if(self.getAlarmsFromAnalytics) {
-                            require(['js/views/AlarmGridView'], function(AlarmGridView) {
-                                var alarmGridView = new AlarmGridView({
-                                    el:$("#" + modalId).find('#' + formId),
-                                    viewConfig:{}
-                                });
-                                alarmGridView.render();
-                            });
-                        } else {
-                            require(nodeListModelResources,function() {
-                                $.each(arguments,function(idx,currListModel) {
-                                    nodeListModel.addListModel(new currListModel());
-                                    cfgObj.model = nodeListModel.getAlertListModel();
-                                    require(['mon-infra-alert-grid-view'], function(AlertGridView) {
-                                        var alertGridView = new AlertGridView({
-                                            el:$("#" + modalId).find('#' + formId),
-                                            model:cfgObj.model
-                                        });
-                                        alertGridView.render();
-                                    });
-                                });
-                            });
-                        }
-                    });
-            } else {
-                if(self.getAlarmsFromAnalytics) {
-                    require(['js/views/AlarmGridView'], function(AlarmGridView) {
-                        var alarmGridView = new AlarmGridView({
-                            el:$("#" + modalId).find('#' + formId),
-                            viewConfig:{}
-                        });
-                        alarmGridView.render();
-                    });
-                } else {
-                    require(['mon-infra-alert-grid-view'], function(AlertGridView) {
-                        var alertGridView = new AlertGridView({
-                            el:$("#" + modalId).find('#' + formId),
-                            model:cfgObj.model
-                        });
-                        alertGridView.render();
-                    });
-                }
-            }
+            require(['js/views/AlarmGridView'], function(AlarmGridView) {
+                var alarmGridView = new AlarmGridView({
+                    el:$("#" + modalId).find('#' + formId),
+                    viewConfig:{}
+                });
+                alarmGridView.render();
+            });
         };
 
         this.delete_cookie = function(name) {
