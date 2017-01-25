@@ -42,12 +42,6 @@ define(['underscore'], function (_) {
                 }
             });
 
-            //Intialize the alarm flag
-            var isMonAlarmsEnabled =
-                getValueByJsonPath(optFeatureList, 'mon_alarms', true);
-            if (false == isMonAlarmsEnabled) {
-                cowu.getAlarmsFromAnalytics = false;
-            }
         }
 
         //Filter the menu items based
