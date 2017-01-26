@@ -105,7 +105,7 @@ define([
             //self.gridStack.removeAll();
             _.each(self.$el.find('.custom-grid-stack-item:visible'), function (el) {
                 try {
-                    self.gridStack.remove_widget($(el));
+                    self.gridStack.removeWidget($(el));
                 } catch(e) {
                     console.info('Error in removing widget');
                 }
