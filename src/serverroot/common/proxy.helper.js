@@ -7,7 +7,7 @@
   *     - Helper functions for Proxy API
   */
 
-var discoveryClientApi = require('./discoveryclient.api');
+var contrailService = require('../jobs/core/contrailservice.api');
 var redisUtils  = require('../utils/redis.utils');
 var commonUtils = require('../utils/common.utils');
 var config      = process.mainModule.exports.config;
@@ -108,45 +108,22 @@ function isOpOrApiServer (request, proxyHost, proxyPort)
 
 function isServerByType (serverType, proxyHost, proxyPort)
 {
-    var isDiscEnabled =
-        commonUtils.getValueByJsonPath(config, 'discoveryService;enable', true);
-    if (true == isDiscEnabled) {
-        var discServList = discoveryClientApi.getServiceRespDataList();
-        var servers =
-            commonUtils.getValueByJsonPath(discServList,
-                                           serverType + ';data;' + serverType,
-                                           []);
-        var cnt = servers.length;
-        for (var i = 0; i < cnt; i++) {
-            var server = servers[i];
-            var pubId =
-                commonUtils.getValueByJsonPath(server, '@publisher-id', null);
-            var ipAddr =
-                commonUtils.getValueByJsonPath(server, 'ip-address', null);
-            var portByDisc = commonUtils.getValueByJsonPath(server, 'port',
-                                                            null);
-            if (((pubId == proxyHost) || (ipAddr == proxyHost)) &&
-                (portByDisc == proxyPort)) {
-                return true;
-            }
-        }
-    } else { //If not found from discovery fetch from the config and try to match
-        var key;
-        switch (serverType) {
-        case global.DEFAULT_CONTRAIL_API_IDENTIFIER:
-            key = 'cnfg';
-            break;
-        case global.DEFAULT_CONTRAIL_ANALYTICS_IDENTIFIER:
-            key = 'analytics';
-            break;
-        default:
-            key = null;
-        }
-        serverPort =
-            commonUtils.getValueByJsonPath(config, key + ';server_port', null);
-        var serverIp =
-            commonUtils.getValueByJsonPath(config, key + ';server_ip', null);
-        if ((serverIp == proxyHost) && (serverPort == proxyPort)) {
+    var contrailServList = contrailService.getActiveServiceRespDataList();
+    var servers =
+        commonUtils.getValueByJsonPath(contrailServList,
+                                       serverType + ';data;' + serverType,
+                                       []);
+    var cnt = servers.length;
+    for (var i = 0; i < cnt; i++) {
+        var server = servers[i];
+        var pubId =
+            commonUtils.getValueByJsonPath(server, '@publisher-id', null);
+        var ipAddr =
+            commonUtils.getValueByJsonPath(server, 'ip-address', null);
+        var portByDisc = commonUtils.getValueByJsonPath(server, 'port',
+                                                        null);
+        if (((pubId == proxyHost) || (ipAddr == proxyHost)) &&
+            (portByDisc == proxyPort)) {
             return true;
         }
     }

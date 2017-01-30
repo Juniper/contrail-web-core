@@ -59,7 +59,7 @@ var express = require('express')
     , async = require('async')
     , os = require('os')
     , commonUtils = require('./src/serverroot/utils/common.utils')
-    , discClient = require('./src/serverroot/common/discoveryclient.api')
+    , contrailServ = require('./src/serverroot/jobs/core/contrailservice.api')
     , assert = require('assert')
     , jsonPath = require('JSONPath').eval
     , helmet = require('helmet')
@@ -80,9 +80,6 @@ var RedisStore = require('connect-redis')(express);
 
 var store;
 var myIdentity = global.service.MAINSEREVR;
-var discServEnable = ((null != config.discoveryService) &&
-                      (null != config.discoveryService.enable)) ?
-                      config.discoveryService.enable : true;
 
 var sessEvent = new eventEmitter();
 var csrfInvalidEvent = new eventEmitter();
@@ -429,8 +426,9 @@ function startWebCluster ()
             process.setMaxListeners(0);
             registerFeatureLists();
             redisSub.createRedisClientAndSubscribeMsg(function() {
-                discClient.sendWebServerReadyMessage();
             });
+            contrailServ.getContrailServices();
+            contrailServ.startWatchContrailServiceRetryList();
             /* All the config should be set before this line */
             startServer();
         });
@@ -646,6 +644,5 @@ function clusterWorkerInit (callback)
 startWebCluster();
 
 exports.myIdentity = myIdentity;
-exports.discServEnable = discServEnable;
 exports.pkgList = pkgList;
 

@@ -14,7 +14,7 @@ var redis = require("redis")
     , commonUtils = require('../../utils/common.utils')
     , eventEmitter = require('events').EventEmitter
     , async = require('async')
-    , discServ = require('./discoveryservice.api')
+    , contrailServ = require('./contrailservice.api')
     , UUID = require('uuid-js')
     , jobUtils = require('../../common/jobs.utils')
 	, messages = require('../../common/messages');
@@ -410,28 +410,8 @@ function createJobAtInit (jobObj)
 function createJobByMsgObj (msg)
 {
     var msgJSON = JSON.parse(msg.toString());
-    switch (msgJSON['jobType']) {
-    case global.STR_MAIN_WEB_SERVER_READY:
-        if (true == process.mainModule.exports['discServEnable']) {
-            /* The main webServer is ready now, now start discovery service 
-             * subscription
-             */
-            console.log("WEB Server Ready! Send DISC ");
-            discServ.createRedisClientAndStartSubscribeToDiscoveryService(global.service.MAINSEREVR);
-        }
-        break;
-
-    case global.STR_DISC_SUBSCRIBE_MSG:
-        logutils.logger.debug("We got on-demand discovery SUB message for " +
-                              "serverType " + msgJSON['serverType']);
-        discServ.subscribeDiscoveryServiceOnDemand(msgJSON['serverType']);
-        break;
-
-    default:
-        createJob(msgJSON.jobName, msgJSON.jobName, msgJSON.jobPriority,
-                  msgJSON.firstRunDelay, msgJSON.runCount, msgJSON.data);
-        break;
-    }
+    createJob(msgJSON.jobName, msgJSON.jobName, msgJSON.jobPriority,
+        msgJSON.firstRunDelay, msgJSON.runCount, msgJSON.data);
 }
 
 function getChannelkeyByHashUrl (lookupHash, myHash, url)
