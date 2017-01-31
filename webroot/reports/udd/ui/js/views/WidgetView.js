@@ -298,7 +298,7 @@ define([
                 widgetTileMeta = this.model.get(uddConstants.modelIDs.WIDGET_META).model().attributes, // positioning, title and other UI state flags
                 clonedWidgetConfig = this.model.toJSON(), // overall widget component config
                 tabId = clonedWidgetConfig.tabId,
-                collection = this.rootView.model.tabModels[tabId]; // the collection holding this widget
+                collection = this.rootView.model.tabModels[tabId].collection; // the collection holding this widget
 
             // parse the raw initial state of a widget
             this.model.parse(clonedWidgetConfig);

@@ -31,6 +31,9 @@ define([
   });
 
   var TabsView = ContrailView.extend({
+    HTMLClass: {
+      droppableHover: "ui-droppable-hover",
+    },
     selectors: {
       tabEdit: ".contrail-tab-link-list .tab-edit-btn",
       linkList: ".contrail-tab-link-list",
@@ -40,6 +43,7 @@ define([
       addLink: ".contrail-tab-link-list .tab-add .link",
       titleEdit: ".popover .tab-menu input.title-updated",
       tabPanel: ".ui-tabs-panel",
+      dragToDrop: ".drag-to-drop"
     },
 
     events: {
@@ -143,6 +147,47 @@ define([
         },
 
         create: function(event, ui) {
+          if (viewConfig.dragToReorder && ui.tab.length > 0) {
+            var $tabLinks = $(ui.tab[0]).closest(self.selectors.linkList);
+
+              $tabLinks.sortable({
+                items: "> [role='tab']",
+                update: function() {
+                  var serializedTabLinks = $tabLinks.sortable("serialize", {
+                    key: "UUID",
+                    attribute: "aria-labelledby",
+                    expression: /([0-9A-Z\-]+)[-]/
+                  });
+
+                  if (viewConfig.dragToReorderHandler) {
+                    viewConfig.dragToReorderHandler(serializedTabLinks);
+                  }
+                }
+              });
+          }
+
+          if (viewConfig.dragToDrop && ui.tab.length > 0) {
+            var $tabLinks = $(ui.tab[0]).closest(self.selectors.linkList);
+
+            $tabLinks.find("[role=tab]:not(.ui-droppable):not(pull-right)").each(function() {
+              $(this).droppable({
+                accept: self.selectors.dragToDrop,
+                tolerance: "pointer",
+                drop: function(event, ui) {
+                  viewConfig.dragToDropHandler(event, ui);
+                  $(event.target).removeClass(self.HTMLClass.droppableHover);
+                },
+                over: function(event, ui) {
+                  console.log(event, ui);
+                  $(event.target).addClass(self.HTMLClass.droppableHover);
+                },
+                out: function(event) {
+                  $(event.target).removeClass(self.HTMLClass.droppableHover);
+                }
+              });
+            });
+          }
+
           var tab = self.tabs[ui.tab.index()];
 
           if (!tab._rendered) self.renderTab(tab);
@@ -193,10 +238,10 @@ define([
       self.$(self.selectors.tabs + " li:eq(" + tabIndex + ")").remove();
       $("#" + panelId).remove();
       self.tabs.splice(tabIndex, 1);
-      self.$(self.selectors.tabs).data("contrailTabs").refresh();
+      self.$el.data("contrailTabs").refresh();
 
       if (self.tabs.length === 0 && !self.attributes.viewConfig.extendable) {
-        self.$(self.selectors.tabs).hide();
+        self.$el.hide();
       }
 
       if (tab.tabConfig && contrail.checkIfFunction(tab.tabConfig.onRemoveTab)) {
@@ -212,7 +257,7 @@ define([
         childElId = tab[cowc.KEY_ELEMENT_ID];
       tab._rendered = true;
 
-      self.$(self.selectors.tabs).show();
+      self.$el.show();
 
       self.renderView4Config(self.$("#" + childElId), tab.model || self.model, tab,
         validation, lockEditingByDefault, modelMap,
@@ -239,17 +284,17 @@ define([
 
         if (tabIndex >= 0) {
           // activate existing tab
-          self.$(self.selectors.tabs).data("contrailTabs").activateTab(tabIndex);
+          self.$el.data("contrailTabs").activateTab(tabIndex);
         } else {
           self.$(self.selectors.linkList).append(tabLinkTemplate([tabViewConfig]));
-          self.$(self.selectors.tabs).append(tabContentTemplate([tabViewConfig]));
+          self.$el.append(tabContentTemplate([tabViewConfig]));
           self.tabs.push(tabViewConfig);
 
           if (tabViewConfig.tabConfig.editable) {
             newIndex = _.sortedIndex(_.without(self.tabs, tabViewConfig), tabViewConfig, self._tabSortIteratee);
             tabsRefreshed = self.moveTab(self.tabs.length - 1, newIndex);
           }
-          if (!tabsRefreshed) self.$(self.selectors.tabs).data("contrailTabs").refresh();
+          if (!tabsRefreshed) self.$el.data("contrailTabs").refresh();
 
           if (contrail.checkIfKeyExistInObject(true, tabViewConfig, "tabConfig.renderOnActivate") &&
             tabViewConfig.tabConfig.renderOnActivate === true) {
@@ -265,7 +310,7 @@ define([
             activateTabIndex = activateTab;
           }
           if (!_.isUndefined(activateTabIndex)) {
-            self.$(self.selectors.tabs).data("contrailTabs").activateTab(activateTabIndex);
+            self.$el.data("contrailTabs").activateTab(activateTabIndex);
           }
         }
       });
@@ -282,10 +327,10 @@ define([
       panels.splice(to, 0, panels.splice(from, 1)[0]);
       panels.detach();
       self.$(self.selectors.linkList).append(links);
-      self.$(self.selectors.tabs).append(panels);
+      self.$el.append(panels);
 
       self.tabs.splice(to, 0, self.tabs.splice(from, 1)[0]);
-      self.$(self.selectors.tabs).data("contrailTabs").refresh();
+      self.$el.data("contrailTabs").refresh();
       return true;
     },
 
@@ -357,7 +402,23 @@ define([
         self.attributes.viewConfig.onAdd.bind(self)(title);
       }
       setTimeout(function() {
-        self.$(self.selectors.linkList).append(addBlock);
+        self.$(self.selectors.linkList).append(addBlock)
+          .find("[role=tab]:not(.ui-droppable):not(pull-right)")
+          .droppable({
+            accept: self.selectors.dragToDrop,
+            tolerance: "pointer",
+            drop: function(event, ui) {
+              self.attributes.viewConfig.dragToDropHandler(event, ui);
+              $(event.target).removeClass(self.HTMLClass.droppableHover);
+            },
+            over: function(event, ui) {
+              console.log(event, ui);
+              $(event.target).addClass(self.HTMLClass.droppableHover);
+            },
+            out: function(event) {
+              $(event.target).removeClass(self.HTMLClass.droppableHover);
+            }
+          });
       });
     },
 

@@ -398,7 +398,8 @@ define([
                         "dashboardId",
                         "tabId",
                         "tabName",
-                        "tabCreationTime"
+                        "tabCreationTime",
+                        "customizedTabListOrder"
                     ]),
                     _.zipObject(
                         [

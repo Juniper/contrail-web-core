@@ -38,7 +38,7 @@ define([
             detailedEntry: true,
             visibleColumns: "",
             availableColumns: [],
-            pageSize: 8
+            pageSize: _.get(uddConstants.uddWidget.gridPageSizeList, 0)
         },
 
         validations: {
@@ -95,7 +95,7 @@ define([
                  * And this initialization change should be omitted. The following
                  * select field changes should be used for updating.
                  */
-                if (!_.isUndefined(prevSelectedStr)) {
+                if (!_.isUndefined(prevSelectedStr) && !_.isNull(prevSelectedStr)) {
                     var prevSelectedArray = getSelectArray(prevSelectedStr);
 
                     newColumnsToShowByDefault = _.difference(selectedFieldArray, prevSelectedArray);

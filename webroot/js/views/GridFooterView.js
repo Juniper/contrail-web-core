@@ -53,7 +53,8 @@ define([
             $.each(data.pageSizeSelect, function (key, val) {
                 returnData.push({
                     id: val,
-                    text: String(val) + ' Records'
+                    text: String(val) + ' Records',
+                    value: val
                 });
             });
             return returnData;
@@ -78,7 +79,7 @@ define([
 
             csgCurrentPageDropDown = footerContainer.find('.csg-current-page').contrailDropdown({
                 placeholder: 'Select..',
-                data: [{id: 0, text: 'Page 1'}],
+                data: [{id: 0, text: 'Page 1', value: "0"}],
                 change: function (e) {
                     dataView.setPagingOptions({pageNum: e.val});
                     csgCurrentPageDropDown.value(String(e.val));
