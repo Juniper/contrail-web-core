@@ -3,7 +3,6 @@
 #
 # Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
 #
-
 THIRD_PARTY='../contrail-webui-third-party'
 
 #Start - copy javascript-ipv6 node module files for IPv4/v6 address manipulations/validations
@@ -306,6 +305,14 @@ cp -af ./$THIRD_PARTY/jquery-linedtextarea.css webroot/assets/jquery-linedtextar
 
 #Start - Merging All CSS files
 rm -f webroot/css/contrail.unified.css
+#Loop through files in webroot/common/ui/scss and and running through sass compiler and move them to webroot/common/ui/css 
+for cssFile in `find webroot/common/ui/scss -name '*.scss' -not -name '*.unified.scss'`
+do
+    outputFile=${cssFile##*/}
+    outputFile=${outputFile%%.scss}
+    ./node_modules/node-sass/bin/node-sass $cssFile > webroot/common/ui/css/${outputFile}.css
+done
+
 
 # compile sass
 ./node_modules/node-sass/bin/node-sass webroot/common/ui/scss/contrail.thirdparty.unified.scss > webroot/common/ui/css/contrail.thirdparty.unified.css
