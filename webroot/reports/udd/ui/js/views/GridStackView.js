@@ -105,9 +105,6 @@ define([
         add: function() {
             var newWidgetModelConfig = _.merge({
                 dashboardId: this.p.dashboardId,
-                tabId: this.p.tabId,
-                tabName: this.model.getTabName(),
-                tabCreationTime: this.model.getTabCreationTime(),
                 config: {
                     isReady: false,
                     step: uddConstants.steps.DATA_CONFIG,
@@ -116,7 +113,8 @@ define([
                 }
             }, {
                 config: this.getNextPosMeta()
-            });
+            },
+            this.model.tabModels[this.p.tabId].info);
 
             this.model.add(newWidgetModelConfig);
         },
