@@ -14,7 +14,7 @@ var http = require('http'),
     global = require('./global'),
     httpsOp = require('./httpsoptions.api'),
     request = require('request'),
-    contrailService = require('../jobs/core/contrailservice.utils');
+    contrailService = require('../jobs/core/contrailservice.api');
 
 if (!module.parent) {
     logutils.logger.warn(util.format(messages.warn.invalid_mod_call, module.filename));
