@@ -133,28 +133,45 @@ function serveAPIRequest (reqUrl, reqData, jobData, appHeaders, reqType,
     });
 }
 
+function apiRequestCB (regionObj, callback)
+{
+    serveAPIRequest(regionObj.reqUrl, regionObj.reqData, regionObj.appData,
+                    regionObj.appHeaders, regionObj.reqType,
+                    function(error, data) {
+        callback(null, {error: error, data: data});
+    });
+}
+
 function apiGet (reqUrl, jobData, callback, appHeaders, stopRetry)
 {
-    serveAPIRequest(reqUrl, null, jobData, appHeaders,
-                    global.HTTP_REQUEST_GET, stopRetry, callback);
+    var reqType = global.HTTP_REQUEST_GET;
+    configServerApi.apiRequest(reqUrl, null, jobData, reqType, callback,
+                               appHeaders, stopRetry, apiRequestCB,
+                               serveAPIRequest);
 }
 
 function apiPut (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
 {
-    serveAPIRequest(reqUrl, reqData, jobData, appHeaders,
-                    global.HTTP_REQUEST_PUT, stopRetry, callback);
+    var reqType = global.HTTP_REQUEST_PUT;
+    configServerApi.apiRequest(reqUrl, reqData, jobData, reqType, callback,
+                               appHeaders, stopRetry, apiRequestCB,
+                               serveAPIRequest);
 }
 
 function apiPost (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
 {
-    serveAPIRequest(reqUrl, reqData, jobData, appHeaders,
-                    global.HTTP_REQUEST_POST, stopRetry, callback);
+    var reqType = global.HTTP_REQUEST_POST;
+    configServerApi.apiRequest(reqUrl, reqData, jobData, reqType, callback,
+                               appHeaders, stopRetry, apiRequestCB,
+                               serveAPIRequest);
 }
 
 function apiDelete (reqUrl, jobData, callback, appHeaders, stopRetry)
 {
-    serveAPIRequest(reqUrl, null, jobData, appHeaders,
-                    global.HTTP_REQUEST_DEL, stopRetry, callback);
+    var reqType = global.HTTP_REQUEST_DEL;
+    configServerApi.apiRequest(reqUrl, null, jobData, reqType, callback,
+                               appHeaders, stopRetry, apiRequestCB,
+                               serveAPIRequest);
 }
 
 exports.apiGet = apiGet;

@@ -151,7 +151,7 @@ function getHeaders (dataObj, callback)
         break;
     }
     var apiServiceType = authApi.getEndpointServiceType(apiId);
-    authApi.getServiceAPIVersionByReqObj(req, apiServiceType,
+    authApi.getServiceAPIVersionByReqObj(req, null, apiServiceType,
                                          function(verObjs) {
         var verObj = null;
         if ((null != verObjs) && (null != verObjs[0])) {

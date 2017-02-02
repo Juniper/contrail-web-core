@@ -197,7 +197,7 @@ function getDfltEndPointValueByType (module, type)
     Get openStack Module API Version, IP, Port, Protocol from
     publicURL/internalURL in keystone catalog response
  */
-function getServiceAPIVersionByReqObj (req, type, callback, reqBy)
+function getServiceAPIVersionByReqObj (req, appData, type, callback, reqBy)
 {
     var redirectToLogout = true;
     var dataObjArr = [];
@@ -259,6 +259,12 @@ function getServiceAPIVersionByReqObj (req, type, callback, reqBy)
         return;
     }
     var regionName = authApi.getCurrentRegion(req);
+    var reqRegion = commonUtils.getValueByJsonPath(appData,
+                                                   "authObj;reqRegion",
+                                                   null);
+    if (null != reqRegion) {
+        regionName = reqRegion;
+    }
     if ((null != regionName) && ('undefined' != regionName)) {
         serviceCatalog =
             commonUtils.getValueByJsonPath(req, 'session;serviceCatalog;' +

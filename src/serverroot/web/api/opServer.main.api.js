@@ -39,7 +39,7 @@ function getHeaders(dataObj, callback)
 
     var opServiceType =
         authApi.getEndpointServiceType(global.DEFAULT_CONTRAIL_ANALYTICS_IDENTIFIER);
-    authApi.getServiceAPIVersionByReqObj(req, opServiceType,
+    authApi.getServiceAPIVersionByReqObj(req, appData, opServiceType,
                                          function(verObjs, regionName) {
         var verObj = null;
         if (null != verObjs) {
@@ -150,29 +150,42 @@ function serveAPIRequest (reqUrl, reqData, appData, appHeaders, reqType,
     });
 }
 
+function apiRequestCB (regionObj, callback)
+{
+    serveAPIRequest(regionObj.reqUrl, regionObj.reqData, regionObj.appData,
+                    regionObj.appHeaders, regionObj.reqType,
+                    function(error, data) {
+        callback(null, {error: error, data: data});
+    });
+}
+
 function apiGet (reqUrl, appData, callback, appHeaders, stopRetry)
 {
-    serveAPIRequest(reqUrl, null, appData, appHeaders,
-                    global.HTTP_REQUEST_GET, callback);
+    var reqType = global.HTTP_REQUEST_GET;
+    configServerApi.apiRequest(reqUrl, null, appData, reqType, callback,
+                               appHeaders, stopRetry, apiRequestCB, serveAPIRequest);
 }
 
 
 function apiPut (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
 {
-    serveAPIRequest(reqUrl, reqData, appData, appHeaders,
-                    global.HTTP_REQUEST_PUT, callback);
+    var reqType = global.HTTP_REQUEST_PUT;
+    configServerApi.apiRequest(reqUrl, reqData, appData, reqType, callback,
+                               appHeaders, stopRetry, apiRequestCB, serveAPIRequest);
 }
 
 function apiPost (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
 {
-    serveAPIRequest(reqUrl, reqData, appData, appHeaders,
-                    global.HTTP_REQUEST_POST, callback);
+    var reqType = global.HTTP_REQUEST_POST;
+    configServerApi.apiRequest(reqUrl, reqData, appData, reqType, callback,
+                               appHeaders, stopRetry, apiRequestCB, serveAPIRequest);
 }
 
 function apiDelete (reqUrl, appData, callback, appHeaders, stopRetry)
 {
-    serveAPIRequest(reqUrl, null, appData, appHeaders,
-                    global.HTTP_REQUEST_DEL, callback);
+    var reqType = global.HTTP_REQUEST_DEL;
+    configServerApi.apiRequest(reqUrl, null, appData, reqType, callback,
+                               appHeaders, stopRetry, apiRequestCB, serveAPIRequest);
 }
 
 exports.apiGet = apiGet;

@@ -11,6 +11,7 @@ var assert = require('assert');
 var config = process.mainModule.exports.config;
 var plugins = require('../orchestration/plugins/plugins.api');
 var commonUtils = require('../utils/common.utils');
+var async = require("async");
 
 function getApiServerRequestedByData (appData, reqBy)
 {
@@ -93,6 +94,57 @@ function configAppHeaders (headers, appData)
     return headers;
 }
 
+function apiRequest (reqUrl, reqData, appData, reqType, callback, appHeaders,
+                     stopRetry, apiRequestCB, serveAPIRequest)
+{
+    var req = commonUtils.getValueByJsonPath(appData, "authObj;req", null,
+                                             false);
+    var regionCookie = commonUtils.getValueByJsonPath(req, "cookies;region",
+                                                   null, false);
+    if ((null == regionCookie) || (global.REGION_ALL != regionCookie)) {
+        serveAPIRequest(reqUrl, reqData, appData, appHeaders, reqType, callback);
+        return;
+    }
+    var regions = commonUtils.getValueByJsonPath(req, "session;regionList",
+                                                 null, false);
+    var apiObjArr = [];
+    var regionsCnt = regions.length;
+    if (regionsCnt > 0) {
+        if (null == appData.authObj) {
+            appData.authObj = {};
+        }
+    }
+    var req = appData.authObj.req;
+    for (var i = 0; i < regionsCnt; i++) {
+        var newAppData = {};
+        appData.authObj.reqRegion = regions[i];
+        delete appData.authObj.req;
+        delete appData.req;
+        newAppData = commonUtils.cloneObj(appData);
+        newAppData.authObj.req = req;
+        newAppData.req = req;
+        apiObjArr.push({reqUrl: reqUrl, reqData: reqData, appData: newAppData,
+                       callback: callback, appHeaders: appHeaders,
+                       reqType: reqType, stopRetry: stopRetry});
+    }
+    appData.authObj.req = req;
+    appData.req = req;
+    async.map(apiObjArr, apiRequestCB, function(error, data) {
+        if (null == data) {
+            callback(error, data);
+            return;
+        }
+        var responseData = {};
+        for (i = 0; i < regionsCnt; i++) {
+            responseData[regions[i]] = data[i].data;
+            if (null != data[i].error) {
+                error = data[i].error;
+            }
+        }
+        callback(error, responseData);
+    });
+}
+
 exports.apiGet = apiGet;
 exports.apiPut = apiPut;
 exports.apiPost = apiPost;
@@ -100,5 +152,5 @@ exports.apiDelete = apiDelete;
 exports.getDefProjectByAppData = getDefProjectByAppData;
 exports.getAuthTokenByProject = getAuthTokenByProject;
 exports.configAppHeaders = configAppHeaders;
-
+exports.apiRequest = apiRequest;
 
