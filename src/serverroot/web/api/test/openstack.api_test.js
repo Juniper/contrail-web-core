@@ -45,30 +45,30 @@ QUnit.module("openStackAPI", {
 
 test('getServiceAPIVersionByReqObj', function() {
     authApi.getServiceCatalog = getServiceCatalogData;
-    oStack.getServiceAPIVersionByReqObj(null, global.SERVICE_ENDPT_TYPE_COMPUTE,
+    oStack.getServiceAPIVersionByReqObj(null, null, global.SERVICE_ENDPT_TYPE_COMPUTE,
                                         function(data) {
         deepEqual(data, mockData.servCatRespComputeData_OP,
                   'Expecting Compute Data Match');
     });
-    oStack.getServiceAPIVersionByReqObj(null, global.SERVICE_ENDPT_TYPE_IMAGE,
+    oStack.getServiceAPIVersionByReqObj(null, null, global.SERVICE_ENDPT_TYPE_IMAGE,
                                         function(data) {
         deepEqual(data, mockData.servCatRespImageData_OP,
                   'Expecting Image Data Match');
     });
-    oStack.getServiceAPIVersionByReqObj(null, global.SERVICE_ENDPT_TYPE_VOLUME,
+    oStack.getServiceAPIVersionByReqObj(null, null, global.SERVICE_ENDPT_TYPE_VOLUME,
                                         function(data) {
         deepEqual(data, mockData.servCatRespVolData_OP, 
                   'Expecting Volume Data Match');
     });
     /* Test for multiple entries in endpoint for 'compute' node */
     authApi.getServiceCatalog = getServiceCatalogCompData;
-    oStack.getServiceAPIVersionByReqObj(null, 'compute', function(data) {
+    oStack.getServiceAPIVersionByReqObj(null, null, 'compute', function(data) {
         deepEqual(data, mockData.servCatRespCompMultData_OP,
                   'Expecting Compute Multiple Data Match');
     });
     /* Test for compute node with no http keywork in publicURL */
     authApi.getServiceCatalog = getServiceCatalogCompDataWithNoHTTP; 
-    oStack.getServiceAPIVersionByReqObj(null, 'compute', function(data) {
+    oStack.getServiceAPIVersionByReqObj(null, null, 'compute', function(data) {
         deepEqual(data, mockData.getServiceCatalogCompDataWithNoHTTP_OP,
                   'Expecting Compute Default HTTP Match');
     });

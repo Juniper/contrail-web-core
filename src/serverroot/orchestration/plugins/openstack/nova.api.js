@@ -319,7 +319,7 @@ function getVMStatsByProject (projUUID, req, callback)
             return;
         }
         var tenantId = data['tenant']['id'];
-        oStack.getServiceAPIVersionByReqObj(req,
+        oStack.getServiceAPIVersionByReqObj(req, null,
                                             global.SERVICE_ENDPT_TYPE_COMPUTE,
                                             function(apiVer) {
             if (null == apiVer) {
@@ -370,7 +370,7 @@ function getServiceInstanceVMStatus (req, vmRefs, callback)
         }
         var tenantId = data['tenant']['id'];
         var vmRefsCnt = vmRefs.length;
-        oStack.getServiceAPIVersionByReqObj(req,
+        oStack.getServiceAPIVersionByReqObj(req, null,
                                             global.SERVICE_ENDPT_TYPE_COMPUTE,
                                             function(apiVer) {
             if (null == apiVer) {
@@ -445,7 +445,7 @@ function launchVNC (request, callback)
 
         projectId = data.tenant.id;
         /* Now create the final req */
-        oStack.getServiceAPIVersionByReqObj(request,
+        oStack.getServiceAPIVersionByReqObj(request, null,
                                             global.SERVICE_ENDPT_TYPE_COMPUTE,
                                             function(apiVer) {
             if (null == apiVer) {
@@ -560,7 +560,7 @@ function getFlavors (req, callback)
             return;
         }
         var tenantId = data['tenant']['id'];
-        oStack.getServiceAPIVersionByReqObj(req,
+        oStack.getServiceAPIVersionByReqObj(req, null,
                                             global.SERVICE_ENDPT_TYPE_COMPUTE,
                                             function(apiVer) {
             if (null == apiVer) {
@@ -598,7 +598,7 @@ function getOSHostList(req, callback)
             return;
         }
         var tenantId = data['tenant']['id'];
-        oStack.getServiceAPIVersionByReqObj(req,
+        oStack.getServiceAPIVersionByReqObj(req, null,
                                             global.SERVICE_ENDPT_TYPE_COMPUTE,
                                             function(apiVer) {
             if (null == apiVer) {
@@ -636,7 +636,7 @@ function getAvailabilityZoneList(req, callback)
             return;
         }
         var tenantId = data['tenant']['id'];
-        oStack.getServiceAPIVersionByReqObj(req,
+        oStack.getServiceAPIVersionByReqObj(req, null,
                                             global.SERVICE_ENDPT_TYPE_COMPUTE,
                                             function(apiVer) {
             if (null == apiVer) {
@@ -713,7 +713,7 @@ function portAttach (req, body, callback)
             return;
         }
         var tenantId = data['tenant']['id'];
-        oStack.getServiceAPIVersionByReqObj(req,
+        oStack.getServiceAPIVersionByReqObj(req, null,
                                             global.SERVICE_ENDPT_TYPE_COMPUTE,
                                             function(apiVer) {
             if (null == apiVer) {
@@ -765,7 +765,7 @@ function portDetach (req, portID, vmUUID, callback)
             return;
         }
         var tenantId = data['tenant']['id'];
-        oStack.getServiceAPIVersionByReqObj(req,
+        oStack.getServiceAPIVersionByReqObj(req, null,
                                             global.SERVICE_ENDPT_TYPE_COMPUTE,
                                             function(apiVer) {
             if (null == apiVer) {

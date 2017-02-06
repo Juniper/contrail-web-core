@@ -39,7 +39,7 @@ function getHeaders(dataObj, callback)
 
     var opServiceType =
         authApi.getEndpointServiceType(global.DEFAULT_CONTRAIL_ANALYTICS_IDENTIFIER);
-    authApi.getServiceAPIVersionByReqObj(req, opServiceType,
+    authApi.getServiceAPIVersionByReqObj(req, appData, opServiceType,
                                          function(verObjs, regionName) {
         var verObj = null;
         if (null != verObjs) {
@@ -153,26 +153,34 @@ function serveAPIRequest (reqUrl, reqData, appData, appHeaders, reqType,
 function apiGet (reqUrl, appData, callback, appHeaders, stopRetry)
 {
     serveAPIRequest(reqUrl, null, appData, appHeaders,
-                    global.HTTP_REQUEST_GET, callback);
+                    global.HTTP_REQUEST_GET, function(error, data) {
+        configServerApi.encapRegionToResp(appData, error, data, callback);
+    });
 }
 
 
 function apiPut (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
 {
     serveAPIRequest(reqUrl, reqData, appData, appHeaders,
-                    global.HTTP_REQUEST_PUT, callback);
+                    global.HTTP_REQUEST_PUT, function(error, data) {
+        configServerApi.encapRegionToResp(appData, error, data, callback);
+    });
 }
 
 function apiPost (reqUrl, reqData, appData, callback, appHeaders, stopRetry)
 {
     serveAPIRequest(reqUrl, reqData, appData, appHeaders,
-                    global.HTTP_REQUEST_POST, callback);
+                    global.HTTP_REQUEST_POST, function(error, data) {
+        configServerApi.encapRegionToResp(appData, error, data, callback);
+    });
 }
 
 function apiDelete (reqUrl, appData, callback, appHeaders, stopRetry)
 {
     serveAPIRequest(reqUrl, null, appData, appHeaders,
-                    global.HTTP_REQUEST_DEL, callback);
+                    global.HTTP_REQUEST_DEL, function(error, data) {
+        configServerApi.encapRegionToResp(appData, error, data, callback);
+    });
 }
 
 exports.apiGet = apiGet;

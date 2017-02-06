@@ -131,6 +131,13 @@ function processPendingReq (ctx, next, callback)
     },
     genBy: global.service.MAINSEREVR
   };
+  /* Add region information in appData */
+  var reqRegion = ctx.req.query["reqRegion"];
+  if (null != reqRegion) {
+      appData.authObj.reqRegion = reqRegion;
+  }
+  /* Add appData in req object */
+  ctx.req.appData = appData;
   callback(ctx.req, ctx.res, appData);
 }
 

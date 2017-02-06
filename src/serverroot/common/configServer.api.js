@@ -73,6 +73,18 @@ function getAuthTokenByProject (req, defTokenObj, project)
     return {'project': defProject, 'token': defToken};
 }
 
+function encapRegionToResp (appData, error, data, callback)
+{
+    var reqRegion = commonUtils.getValueByJsonPath(appData,
+                                                   "authObj;reqRegion",
+                                                   null);
+    var result = data;
+    if (null != reqRegion) {
+        result = {reqRegion: data};
+    }
+    callback(error, result);
+}
+
 function configAppHeaders (headers, appData)
 {
     var defProject = getDefProjectByAppData(appData);
@@ -100,5 +112,5 @@ exports.apiDelete = apiDelete;
 exports.getDefProjectByAppData = getDefProjectByAppData;
 exports.getAuthTokenByProject = getAuthTokenByProject;
 exports.configAppHeaders = configAppHeaders;
-
+exports.encapRegionToResp = encapRegionToResp;
 

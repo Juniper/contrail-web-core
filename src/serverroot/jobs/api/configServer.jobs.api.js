@@ -136,25 +136,33 @@ function serveAPIRequest (reqUrl, reqData, jobData, appHeaders, reqType,
 function apiGet (reqUrl, jobData, callback, appHeaders, stopRetry)
 {
     serveAPIRequest(reqUrl, null, jobData, appHeaders,
-                    global.HTTP_REQUEST_GET, stopRetry, callback);
+                    global.HTTP_REQUEST_GET, stopRetry, function(error, data) {
+        jobsUtils.encapRegionToResp(jobData, error, data, callback);
+    });
 }
 
 function apiPut (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
 {
     serveAPIRequest(reqUrl, reqData, jobData, appHeaders,
-                    global.HTTP_REQUEST_PUT, stopRetry, callback);
+                    global.HTTP_REQUEST_PUT, stopRetry, function(error, data) {
+        jobsUtils.encapRegionToResp(jobData, error, data, callback);
+    });
 }
 
 function apiPost (reqUrl, reqData, jobData, callback, appHeaders, stopRetry)
 {
     serveAPIRequest(reqUrl, reqData, jobData, appHeaders,
-                    global.HTTP_REQUEST_POST, stopRetry, callback);
+                    global.HTTP_REQUEST_POST, stopRetry, function(error, data) {
+        jobsUtils.encapRegionToResp(jobData, error, data, callback);
+    });
 }
 
 function apiDelete (reqUrl, jobData, callback, appHeaders, stopRetry)
 {
     serveAPIRequest(reqUrl, null, jobData, appHeaders,
-                    global.HTTP_REQUEST_DEL, stopRetry, callback);
+                    global.HTTP_REQUEST_DEL, stopRetry, function(error, data) {
+        jobsUtils.encapRegionToResp(jobData, error, data, callback);
+    });
 }
 
 exports.apiGet = apiGet;

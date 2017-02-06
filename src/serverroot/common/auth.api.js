@@ -203,10 +203,11 @@ function getDomainNameByUUID (request, uuid, domList)
                                                                              domList);
 }
 
-function getServiceAPIVersionByReqObj (request, svcType, callback, reqBy)
+function getServiceAPIVersionByReqObj (request, appData, svcType, callback, reqBy)
 {
     var orchMode = request.session.loggedInOrchestrationMode;
     return getAuthMethod[orchMode].getServiceAPIVersionByReqObj(request,
+                                                                appData,
                                                                 svcType,
                                                                 callback, reqBy);
 }

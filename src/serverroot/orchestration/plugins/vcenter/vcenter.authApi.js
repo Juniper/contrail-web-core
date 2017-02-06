@@ -214,7 +214,7 @@ function deleteAllTokens (req, callback)
     callback(null, null);
 }
 
-function getServiceAPIVersionByReqObj (req, svcType, callback)
+function getServiceAPIVersionByReqObj (req, appData, svcType, callback)
 {
     callback(null);
 }
