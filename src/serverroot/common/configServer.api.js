@@ -101,4 +101,3 @@ exports.getDefProjectByAppData = getDefProjectByAppData;
 exports.getAuthTokenByProject = getAuthTokenByProject;
 exports.configAppHeaders = configAppHeaders;
 
-

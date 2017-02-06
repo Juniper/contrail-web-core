@@ -41,7 +41,7 @@ function getHeaders(dataObj, callback)
 
     var apiServiceType =
         authApi.getEndpointServiceType(global.DEFAULT_CONTRAIL_API_IDENTIFIER);
-    authApi.getServiceAPIVersionByReqObj(req, apiServiceType,
+    authApi.getServiceAPIVersionByReqObj(req, appData, apiServiceType,
                                          function(verObjs, regionName,
                                                   redirectToLogout) {
         if (((null == verObjs) && (true == redirectToLogout)) &&

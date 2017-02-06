@@ -168,7 +168,7 @@ function glanceApiGetByAPIVersionList (reqUrlPrefix, apiVerList, req, startIndex
 
 function getImageList (req, callback)
 {
-    oStack.getServiceAPIVersionByReqObj(req,
+    oStack.getServiceAPIVersionByReqObj(req, null,
                                         global.SERVICE_ENDPT_TYPE_IMAGE, 
                                         function(apiVer) {
         if (null == apiVer) {

@@ -39,7 +39,7 @@ function getHeaders(dataObj, callback)
 
     var opServiceType =
         authApi.getEndpointServiceType(global.DEFAULT_CONTRAIL_ANALYTICS_IDENTIFIER);
-    authApi.getServiceAPIVersionByReqObj(req, opServiceType,
+    authApi.getServiceAPIVersionByReqObj(req, appData, opServiceType,
                                          function(verObjs, regionName) {
         var verObj = null;
         if (null != verObjs) {

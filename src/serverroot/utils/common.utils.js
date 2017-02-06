@@ -278,6 +278,14 @@ function handleJSONResponse (error, res, json, isJson)
         return;
     }
 	if (!error) {
+        var reqRegion = getValueByJsonPath(res.req, "appData;authObj;reqRegion",
+                                           null, false);
+        if (null != reqRegion) {
+            var uiResp = cloneObj(json);
+            json = {};
+            json["regionName"] = reqRegion;
+            json["data"] = uiResp;
+        }
         if ((null == isJson) || (true == isJson)) {
             res.json(global.HTTP_STATUS_RESP_OK, json);
         } else {
@@ -1381,6 +1389,9 @@ function getWebServerInfo (req, res, appData)
     serverObj['serverUTCTime'] = commonUtils.getCurrentUTCTime();
     serverObj['hostName'] = os.hostname();
     serverObj['role'] = req.session.userRole;
+    if (global.REGION_ALL == req.cookies.region) {
+        serverObj['role'] = [global.STR_ROLE_GLOBAL_CONTROLLER];
+    }
     serverObj['featurePkg'] = {};
     serverObj['uiConfig'] = ui;
     serverObj['isAuthenticated'] = req.session.isAuthenticated;

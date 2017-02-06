@@ -356,6 +356,11 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
 			appData: appData
 		}
 	};
+    var reqRegion = commonUtils.getValueByJsonPath(req, "appData;authObj;reqRegion", null);
+    if (null != reqRegion) {
+        reqMsgObj.data.reqRegion = reqRegion;
+    }
+
 	return JSON.stringify(reqMsgObj);
 }
 
