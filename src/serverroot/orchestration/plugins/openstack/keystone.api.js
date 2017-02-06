@@ -2928,9 +2928,9 @@ function getSessionExpiryTime (req, appData, callback)
     return null;
 }
 
-function getServiceAPIVersionByReqObj (req, svcType, callback, reqBy)
+function getServiceAPIVersionByReqObj (req, appData, svcType, callback, reqBy)
 {
-    oStack.getServiceAPIVersionByReqObj(req, svcType, callback, reqBy);
+    oStack.getServiceAPIVersionByReqObj(req, appData, svcType, callback, reqBy);
 }
 
 function shiftServiceEndpointList (req, serviceType, regionName)
