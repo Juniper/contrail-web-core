@@ -2,7 +2,7 @@
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
 define([
-    'underscore',
+    'lodash',
     'backbone',
     'contrail-view',
     'gridstack',
@@ -71,6 +71,16 @@ define([
                 }
             });
         },
+        //Mark the layout as invalid if there are more than 5 widgets in a row i.e
+        //avg width of a widget shouldn't be more than 12/5 (12 being the total width)
+        isLayoutValid: function(data) {
+            var itemWidths = _.sum(data,'itemAttr.width');
+            var avgItemWidth = itemWidths/data.length;
+            if(avgItemWidth < 2.3) {
+                return false;
+            }
+            return true;
+        },
         saveGrid : function () {
             var self = this;
             var isValidLayout = true;
@@ -94,6 +104,11 @@ define([
                         })
                 };
             }, this);
+
+            if(!self.isLayoutValid(serializedData)) {
+                isValidLayout = false;
+            }
+
             if(isValidLayout == true) {
                 localStorage.setItem(self.elementId,JSON.stringify(serializedData));
             } else {
