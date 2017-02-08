@@ -36,19 +36,22 @@ constants.coreModules  = [
             "contrail-list-model","contrail-model","contrail-view-model","d3","nv.d3","slick.checkboxselectcolumn","jquery.event.drag",
             "slick.grid","slick.rowselectionmodel","select2","jquery-ui","jquery.multiselect","jquery.multiselect.filter"
         ]
-    },{
+    },/*{
         enabled: true,
         name: "./js/common/chart.libs",
         exclude: [
             "jquery","lodash","backbone"
         ]
-    },{
+    },*/{
         enabled: true,
         name: "./js/common/thirdparty.libs",
         exclude: [
-            "jquery","jquery.event.drag","knockout","backbone","knockback","validation"
-        ]
-    },{
+            "jquery","jquery-ui","knockout","backbone","knockback","validation","lodash"
+        ],
+        override: {
+            wrapShim: false
+        }
+    },/*{
         enabled: true,
         name: "./js/common/jquery.dep.libs",
         exclude: [
@@ -57,7 +60,7 @@ constants.coreModules  = [
         override: {
             wrapShim: false
         }
-    },{
+    },*/{
         enabled: true,
         name: "./js/common/nonamd.libs",
         exclude: [
