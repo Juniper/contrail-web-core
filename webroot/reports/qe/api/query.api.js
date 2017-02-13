@@ -217,6 +217,14 @@ function runNewQuery(req, res, queryId, queryReqObj, appData, isGetQ) {
 }
 
 function getQueryOptions(queryReqObj) {
+    queryReqObj = commonUtils.sanitizeXSS(queryReqObj);
+    // queryReqObj["engQueryStr"] = JSON.stringify(_.object(_.map(
+    //     _.pairs(JSON.parse(queryReqObj["engQueryStr"])),
+    //     function(pair) {
+    //         pair[1] = _.escape(pair[1]);
+    //         return pair;
+    //     }
+    // )))
     var formModelAttrs = queryReqObj.formModelAttrs,
         tableType = formModelAttrs.table_type,
         queryId = queryReqObj.queryId,
