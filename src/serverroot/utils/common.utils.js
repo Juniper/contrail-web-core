@@ -27,7 +27,7 @@ var commonUtils = module.exports,
     js2xml = require('data2xml')(),
     pd = require('pretty-data').pd,
     v4 = require('ipv6').v4,
-    v6 = require('ipv6').v6;
+    v6 = require('ipv6').v6,
     contrailPath = '/contrail',
     _ = require('underscore'),
     redisUtils = require('./redis.utils');
@@ -2225,6 +2225,34 @@ function handleAuthenToAuthorizeError(err, req, callback)
     }
 }
 
+
+function isJSON(str) {
+    var testRes = true;
+    try {
+        var parsed = JSON.parse(str);
+    } catch (e) {
+        testRes = false;
+    } finally {
+        return testRes;
+    }
+}
+
+function sanitizeXSS(obj) {
+    _.each(obj, function(value, key, ctx) {
+        if (_.isObject(value)) {
+            ctx[key] = sanitizeXSS(value);
+        } else if (_.isString(value)) {
+            if (isJSON(value)) {
+                ctx[key] = JSON.stringify(sanitizeXSS(JSON.parse(value)));
+            } else {
+                ctx[key] = _.escape(value);
+            }
+        }
+    });
+
+    return obj;
+}
+
 exports.filterJsonKeysWithNullValues = filterJsonKeysWithNullValues;
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
@@ -2285,4 +2313,4 @@ exports.findAllPathsInEdgeGraph = findAllPathsInEdgeGraph;
 exports.isSubArray = isSubArray;
 exports.getValueByJsonPath = getValueByJsonPath;
 exports.handleAuthenToAuthorizeError = handleAuthenToAuthorizeError;
-
+exports.sanitizeXSS = sanitizeXSS;
