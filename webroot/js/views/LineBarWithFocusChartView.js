@@ -4,14 +4,14 @@
 
 define([
     'underscore',
-    'contrail-view',
+    'core-basedir/js/views/ChartView',
     'core-basedir/js/models/LineBarWithFocusChartModel',
     'contrail-list-model',
     'nv.d3',
     'chart-utils',
     'core-constants'
-], function (_, ContrailView, LineBarWithFocusChartModel, ContrailListModel, nv, chUtils, cowc) {
-    var LineBarWithFocusChartView = ContrailView.extend({
+], function (_, ChartView, LineBarWithFocusChartModel, ContrailListModel, nv, chUtils, cowc) {
+    var LineBarWithFocusChartView = ChartView.extend({
         settingsChanged: function(newSettings) {
             var self = this,
                 vc = self.attributes.viewConfig;
@@ -88,11 +88,17 @@ define([
                 data = viewConfig['parseFn'](data, viewConfig['chartOptions']);
             }
             if ($(selector).parents('.custom-grid-stack-item').length != 0) {
-                viewConfig['chartOptions']['height'] = $(selector).parents('.custom-grid-stack-item').height() - 20;
+                viewConfig['chartOptions']['height'] = $(selector).parents('.custom-grid-stack-item').height();
             }
             chartViewConfig = self.getChartViewConfig(data, viewConfig.chartOptions);
             chartOptions = chartViewConfig['chartOptions'];
             //viewConfig.chartOptions = chartOptions;
+            var chartOptionsForSize = ChartView.prototype.getChartOptionsFromDimension(selector);
+            chartOptions = $.extend(true, {}, chartOptions, chartOptionsForSize);
+            var showLegend = chartOptions['showLegend'];
+            if (showLegend) {
+                chartOptions['height'] -= 30;
+            }
             chartViewModel = new LineBarWithFocusChartModel(chartOptions);
             chartViewModel.chartOptions = chartOptions;
 

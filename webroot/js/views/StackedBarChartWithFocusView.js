@@ -5,14 +5,15 @@
 
 define([
     'underscore',
-    'contrail-view',
+    '/js/views/ChartView.js',
+    //'contrail-view',
     'contrail-list-model',
     'legend-view',
     'core-constants',
     'chart-utils'
-], function (_, ContrailView,  ContrailListModel, LegendView, cowc, chUtils) {
+], function (_, ChartView,  ContrailListModel, LegendView, cowc, chUtils) {
     var cfDataSource;
-    var stackedBarChartWithFocusChartView = ContrailView.extend({
+    var stackedBarChartWithFocusChartView = ChartView.extend({
         settingsChanged: function(newSettings) {
             var self = this,
                 vc = self.attributes.viewConfig;
@@ -101,7 +102,8 @@ define([
             var chartOptions = getValueByJsonPath(viewConfig, 'chartOptions', {});
             var cfDataSource = viewConfig.cfDataSource;
             var defaultChartOptions = getDefaultChartOptions();
-            chartOptions = $.extend(defaultChartOptions, chartOptions);
+            var chartOptionsForSize = ChartView.prototype.getChartOptionsFromDimension(selector);
+            chartOptions = $.extend(defaultChartOptions, chartOptions, chartOptionsForSize);
             var addOverviewChart = getValueByJsonPath(chartOptions,'addOverviewChart',true);
             var brush = getValueByJsonPath(chartOptions,'brush',false);
             var xAxisLabel = getValueByJsonPath(chartOptions,'xAxisLabel',"Time");
@@ -109,7 +111,7 @@ define([
             var limit = getValueByJsonPath(chartOptions,'limit');
             var yField = getValueByJsonPath(chartOptions,'yField');
             var totalHeight = ($(selector).closest('.custom-grid-stack-item').length > 0 )? 
-                    $(selector).closest('.custom-grid-stack-item').height() - 50:
+                    $(selector).closest('.custom-grid-stack-item').height():
                         chartOptions['height'];
             var customMargin = getValueByJsonPath(chartOptions,'margin',{});
             var xAxisOffset = getValueByJsonPath(chartOptions,'xAxisOffset',0); // in minutes
@@ -125,10 +127,19 @@ define([
             var tooltipFn = getValueByJsonPath(chartOptions,'tooltipFn', defaultTooltipFn);
             var colors = getValueByJsonPath(chartOptions,'colors', {yAxisLabel: cowc.DEFAULT_COLOR});
             var yAxisFormatter = getValueByJsonPath(chartOptions,'yAxisFormatter');
+            var xAxisFormatter = getValueByJsonPath(chartOptions,'xAxisFormatter', d3.time.format("%H:%M"));
             var onClickBar = getValueByJsonPath(chartOptions,'onClickBar',false);
             var defaultZeroLineDisplay = getValueByJsonPath(chartOptions,'defaultZeroLineDisplay', false);
             var groupBy = chartOptions['groupBy'], groups = [], yAxisMaxValue;
             var resetColor = getValueByJsonPath(chartOptions,'resetColor',false);
+            var showXAxis = cowu.getValueByJsonPath(chartOptions, 'showXAxis', true);
+            var showYAxis = cowu.getValueByJsonPath(chartOptions, 'showYAxis', true);
+            var showXMinMax = cowu.getValueByJsonPath(chartOptions, 'showXMinMax', false);
+            var showYMinMax = cowu.getValueByJsonPath(chartOptions, 'showYMinMax', false);
+
+            if (showLegend) {
+                totalHeight -= 30; //we can make dynamic by getting the legend div height
+            }
             //settings
             if(typeof chartOptions["colors"] != 'function' && chartOptions['applySettings'] != false) {
                 chartOptions["colors"] = cowc.FIVE_NODE_COLOR;
@@ -193,16 +204,12 @@ define([
             if(!addOverviewChart) {
                 margin =  { top: 20, right: 20, bottom: 40, left: 50 };
             }
-            var customTimeFormat = d3.time.format.multi([
-//                                                         [".%L", function(d) { return d.getMilliseconds(); }],
-                                                         [":%S", function(d) { return d.getSeconds(); }],
-                                                         ["%H:%M", function(d) { return d.getMinutes(); }],
-                                                         ["%H:%M", function(d) { return d.getHours(); }],
-                                                         ["%a %d", function(d) { return d.getDay() && d.getDate() != 1; }],
-                                                         ["%b %d", function(d) { return d.getDate() != 1; }],
-                                                         ["%B", function(d) { return d.getMonth(); }],
-                                                         ["%Y", function() { return true; }]
-                                                       ]);
+            if (!showXAxis) {
+                margin['bottom'] = 0;
+            }
+            if (!showYAxis) {
+                margin['left'] = 0;
+            }
             var width = totalWidth - margin.left - margin.right,
 //            var width = totalWidth - 54,
                 height = totalHeight - margin.top - margin.bottom,
@@ -227,7 +234,7 @@ define([
                             .innerTickSize(-height)
                             .outerTickSize(0)
                             .tickPadding(tickPadding)
-                            .tickFormat(customTimeFormat)
+                            .tickFormat(xAxisFormatter);
             var yAxis = d3.svg.axis()
                             .scale(y)
                             .orient("left")
@@ -236,6 +243,7 @@ define([
                             .innerTickSize(-width)
                             .outerTickSize(0)
                             .tickPadding(tickPadding);
+
             var xAxisOverview = d3.svg.axis()
                             .scale(xOverview)
                             .orient("bottom");
@@ -249,13 +257,16 @@ define([
                             .attr("class", "main")
                             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
             //Add the axis labels
-            var xaxisLabel = main.append("text")
+            if (showXAxis) {
+                xaxisLabel = main.append("text")
                                 .attr("class", "axis-label")
                                 .attr("text-anchor", "middle")
                                 .attr("x", width/2)
                                 .attr("y", height + 40)
                                 .text(xAxisLabel);
-            var yaxisLabel = main.append("text")
+            }
+            if (showYAxis) {
+                yaxisLabel = main.append("text")
                                 .attr("class", "axis-label")
                                 .attr("text-anchor", "middle")
                                 .attr("y", -margin.left)
@@ -264,6 +275,7 @@ define([
                                 .attr("dx", ".75em")
                                 .attr("transform", "rotate(-90)")
                                 .text(yAxisLabel);
+            }
             var tooltipDiv = self.tooltipDiv;
             var formatTime = d3.time.format("%e %b %X");
             if(brush && addOverviewChart) {
@@ -281,7 +293,7 @@ define([
                                     .on("brushend", brushed2Main);
             }
             var dateExtent;
-            var yAxisMaxValue = d3.max(data, function(d) { return d.total; });
+            var yAxisMaxValue = getyAxisMaxValue(data);
             yAxisMaxValue = yAxisMaxValue + (yAxisOffset/100) * yAxisMaxValue;
             var yExtent = [0, yAxisMaxValue];
             var filter = cfDataSource != null ? cfDataSource.getFilter('timeFilter') : null;
@@ -321,18 +333,28 @@ define([
                 yAxisMaxValue = 1;
             }
             x.domain(dateExtent);
+            y.domain(yExtent);
             self.barPadding = 2; //Space between the bars
             xOverview.domain(x.domain());
             yOverview.domain(y.domain());
-
+            if (showXMinMax) {
+                xAxis.tickValues(x.domain());
+            }
+            if (showYMinMax) {
+                yAxis.tickValues(y.domain());
+            }
             // draw the axes now that they are fully set up
-            main.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
-                .call(xAxis);
-            main.append("g")
-                .attr("class", "y axis")
-                .call(yAxis);
+            if (showXAxis) {
+                main.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(xAxis);
+            }
+            if (showYAxis) {
+                main.append("g")
+                    .attr("class", "y axis")
+                    .call(yAxis);
+            }
             //Create the brush
             if(brush && addOverviewChart) {
                 overview.append("g")
