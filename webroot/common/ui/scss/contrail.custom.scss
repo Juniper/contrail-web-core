@@ -1242,8 +1242,15 @@ button#close-error-popup{
 .custom-grid-stack.show-borders .custom-grid-stack-item {
     border: 1px solid #f2f2f2;
 }
-
-
+.custom-grid-stack .custom-grid-stack-item g.nv-axisMin-x text {
+    text-anchor: start !important;
+}
+.custom-grid-stack .custom-grid-stack-item g.nv-axisMax-x text {
+    text-anchor: end !important;
+}
+.custom-grid-stack .custom-grid-stack-item g.x g.tick text:first {
+    text-anchor: start !important;
+}
 /* Start - Event-drops css */
 /*.event-drops-tooltip {
     position: absolute;

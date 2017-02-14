@@ -105,8 +105,19 @@ define([
             , defaultState = null
             , legendLeftAxisHint = ' (left axis)'
             , legendRightAxisHint = ' (right axis)'
+            , showXAxis = cowu.getValueByJsonPath(chartOptions, 'showXAxis', true)
+            , showYAxis = cowu.getValueByJsonPath(chartOptions, 'showYAxis', true)
+            , showXMinMax = cowu.getValueByJsonPath(chartOptions, 'showXMinMax', false)
+            , showYMinMax = cowu.getValueByJsonPath(chartOptions, 'showYMinMax', false)
             ;
 
+        if (!showXAxis) {
+            margin['bottom'] =0;
+        }
+        if (!showYAxis) {
+            margin['left'] = 0;
+            margin['right'] = 0;
+        }
         lines.clipEdge(true);
         lines2.interactive(false);
         xAxis.orient('bottom').tickPadding(5);
@@ -507,8 +518,10 @@ define([
 
                     xAxis.domain([Math.ceil(extent[0]), Math.floor(extent[1])]);
 
-                    g.select('.nv-x.nv-axis').transition().duration(transitionDuration)
-                        .call(xAxis);
+                    if(showXAxis) {
+                        g.select('.nv-x.nv-axis').transition().duration(transitionDuration)
+                            .call(xAxis);
+                    }
 
                     // Update Main (Focus) Bars and Lines
                     focusBarsWrap.transition().duration(transitionDuration).call(bars);
@@ -531,10 +544,12 @@ define([
                     g.select('.nv-focus .nv-y2.nv-axis')
                         .attr('transform', 'translate(' + x2.range()[1] + ',0)');
 
-                    g.select('.nv-focus .nv-y1.nv-axis').transition().duration(transitionDuration)
-                        .call(y1Axis);
-                    g.select('.nv-focus .nv-y2.nv-axis').transition().duration(transitionDuration)
-                        .call(y2Axis);
+                    if(showYAxis) {
+                        g.select('.nv-focus .nv-y1.nv-axis').transition().duration(transitionDuration)
+                            .call(y1Axis);
+                        g.select('.nv-focus .nv-y2.nv-axis').transition().duration(transitionDuration)
+                            .call(y2Axis);
+                    }
                 }
 
                 onBrush();
@@ -698,30 +713,28 @@ define([
                 return d3.time.format('%H:%M:%S')(new Date(d));
             });
         }
-        if (chartOptions['xAxisMaxMin'] != null) {
-            chartModel.xAxis.showMaxMin(chartOptions['xAxisMaxMin']);
-        }
         chartModel.xAxis.axisLabelDistance(chartOptions.axisLabelDistance);
         if (chartOptions['xAxisLabel'] != null) {
             chartModel.xAxis.axisLabel(chartOptions['xAxisLabel']);
         }
         if (chartOptions['xAxisTicksCnt'] != null) {
-            chartModel.xAxis.ticks(parseInt(chartOptions['xAxisTicksCnt']));
+            chartModel.xAxis.ticks(parseInt(chartOptions['xAxisTicksCnt']))
+                            .showMaxMin(showXMinMax);
         }
 
         chartModel.x2Axis.axisLabel("Time").tickFormat(function (d) {
             return d3.time.format('%H:%M:%S')(new Date(d));
         });
-
+        chUtils.updateTickOptionsInChart(chartModel, chartOptions);
         chartModel.y1Axis.axisLabel(chartOptions.y1AxisLabel)
                          .axisLabelDistance(chartOptions.axisLabelDistance)
                          .tickFormat(chartOptions['y1Formatter'])
-                         .showMaxMin(false);
+                         .showMaxMin(showYMinMax);
 
         chartModel.y2Axis.axisLabel(chartOptions.y2AxisLabel)
                          .axisLabelDistance(chartOptions.axisLabelDistance)
                          .tickFormat(chartOptions['y2Formatter'])
-                         .showMaxMin(false);
+                         .showMaxMin(showYMinMax);
 
         chartModel.showLegend(chartOptions.showLegend);
 
