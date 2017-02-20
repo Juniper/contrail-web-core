@@ -304,7 +304,7 @@ function Contrail() {
                         output += '<span class="value">' + self.formatJsonObject(val, formatDepth - 1, currentDepth + 1, ignoreKeys) + '</span>';
                     }
                     else {
-                        output += '<span class="value ' + typeof val + '">' + val + '</span>';
+                        output += '<span class="value ' + typeof val + '">' + _.escape(val) + '</span>';
                     }
                     output += '</li>';
                 }
