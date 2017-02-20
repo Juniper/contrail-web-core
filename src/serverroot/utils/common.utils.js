@@ -2309,6 +2309,33 @@ function handleAuthToAuthorizeError(err, req, callback)
     }
 }
 
+function isJSON(str) {
+    var testRes = true;
+    try {
+        var parsed = JSON.parse(str); // eslint-disable-line
+    } catch (e) {
+        testRes = false;
+    } finally {
+        return testRes;
+    }
+}
+
+function sanitizeXSS(obj) {
+  _.each(obj, function (value, key, ctx) {
+    if (_.isObject(value)) {
+      ctx[key] = sanitizeXSS(value);
+    } else if (_.isString(value)) {
+      if (isJSON(value)) {
+        ctx[key] = JSON.stringify(sanitizeXSS(JSON.parse(value)));
+      } else {
+        ctx[key] = _.escape(value);
+      }
+    }
+  });
+
+    return obj;
+}
+
 exports.filterJsonKeysWithNullValues = filterJsonKeysWithNullValues;
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
@@ -2371,4 +2398,4 @@ exports.getFeaturePkgs = getFeaturePkgs;
 exports.doDeepSort = doDeepSort;
 exports.invalidateReqSession = invalidateReqSession;
 exports.handleAuthToAuthorizeError = handleAuthToAuthorizeError;
-
+exports.sanitizeXSS = sanitizeXSS;

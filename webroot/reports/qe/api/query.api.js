@@ -182,6 +182,8 @@ function getCurrentTime(req, res) {
 }
 
 function runQuery(req, res, queryReqObj, appData, isGetQ) {
+    queryReqObj = commonUtils.sanitizeXSS(queryReqObj);
+
     var queryId = queryReqObj.queryId,
         chunk = queryReqObj.chunk,
         chunkSize = parseInt(queryReqObj.chunkSize),
