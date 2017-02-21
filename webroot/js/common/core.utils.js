@@ -2327,7 +2327,7 @@ define([
                         }
                     }
                 }
-            }else if(updatedObj[i] === null){
+            }else if( updatedObj[i] === null ){
                 delete updatedObj[i];
             }else if(typeof updatedObj[i] === 'object' && updatedObj[i] !== null && updatedObj[i].constructor !== Array){
                 if(oldJson !== undefined && oldJson !== null){
