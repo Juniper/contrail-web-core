@@ -1658,6 +1658,7 @@ define([
             var cf = crossfilter(response);
             var timeStampField = 'T',
                 parsedData = [], failureCheckFn = getValueByJsonPath(options, 'failureCheckFn'),
+                substractFailures = getValueByJsonPath(options, 'substractFailures'),
                 colors = getValueByJsonPath(options, 'colors',cowc.FIVE_NODE_COLOR),
                 groupBy = getValueByJsonPath(options, 'groupBy'),
                 yField = getValueByJsonPath(options, 'yField'),
@@ -1767,8 +1768,13 @@ define([
                             groupSumObj = _.indexBy(groupByDimSum.top(Infinity), 'key');
                             groupByMap = [];
                             for (var key in groupCountsObj) {
+                                var count = getValueByJsonPath(groupCountsObj, key+';value', 1);
+                                //To calculate average denominator should be non zero..
+                                if (count == 0) {
+                                    count = 1;
+                                }
                                 groupByMap.push({key: key,
-                                    value: getValueByJsonPath(groupSumObj, key+';value', 0)/getValueByJsonPath(groupCountsObj, key+';value', 1)});
+                                    value: getValueByJsonPath(groupSumObj, key+';value', 0)/count});
                             }
                         } else {
                             //Default is sum
@@ -1815,7 +1821,12 @@ define([
                                 // total failure in this bar(or bucket)
                                 failedBarCnt += failedSliceCnt;
                                 //Subtracting the failures from total records
-                                groupByObjVal -= parseInt(failedSliceCnt);
+                                if (substractFailures == false) {
+                                    total += failedBarCnt;
+                                } else {
+                                    groupByObjVal -= parseInt(failedSliceCnt);
+                                }
+
                             }
                         }
                         if (limit != null && groupByObjKey != cowc.OTHERS) {
@@ -1891,8 +1902,9 @@ define([
             var yFields = getValueByJsonPath(options,'yFields',[]);
             var parsedData = [];
             var colors = getValueByJsonPath(options,'colors',cowc.FIVE_NODE_COLOR);
+            var yLabels = getValueByJsonPath(options,'yLabels', []);
             $.each(yFields,function(i,yField){
-                var key = getLabelForPercentileYField(yField);
+                var key = yLabels[i] != null ? yLabels[i]: getLabelForPercentileYField(yField);
                 parsedData[yField] = {"key":key,"color":colors[i],values:[]};
                 var values = parsedData[yField]['values'];
                 $.each(data,function(j,d){
@@ -1980,6 +1992,9 @@ define([
                     groupCnt = {};
                 tsDim.filter(timestampExtent);
                 var sampleCnt = tsDim.top(Infinity).length;
+                if (sampleCnt == 0) {
+                    sampleCnt = 1;
+                }
                 groupDimData = groupDim.group().all();
                 groupDimData = _.sortBy(groupDimData, 'key');
                 $.each(groupDimData, function(idx, obj) {
@@ -2083,8 +2098,8 @@ define([
         }
 
         self.resetGridStackLayout = function(allPages) {
-            var gridStackId = $('.custom-grid-stack').attr('data-widget-id');
-            localStorage.removeItem(gridStackId);
+            //var gridStackId = $('.custom-grid-stack').attr('data-widget-id');
+            localStorage.clear();
             var gridStackInst = $('.custom-grid-stack').data('grid-stack-instance')
             if(gridStackInst != null ) {
                 gridStackInst.render()
@@ -2128,28 +2143,36 @@ define([
                       "limit": "150000"
                     }
                 };
-
-                if (statsConfig['table_name'] != null) {
-                    postData['formModelAttrs']['table_name'] = statsConfig['table_name'];
+                var remoteConfig ;
+                if (statsConfig['type'] != null && statsConfig['type'] == "non-stats-query") {
+                    if(statsConfig['remoteConfig']) {
+                        remoteConfig = statsConfig['remoteConfig'];
+                    }
+                } else {
+                    if (statsConfig['table_name'] != null) {
+                        postData['formModelAttrs']['table_name'] = statsConfig['table_name'];
+                    }
+                    if (statsConfig['table_type'] != null) {
+                        postData['formModelAttrs']['table_type'] = statsConfig['table_type'];
+                    }
+                    if (statsConfig['select'] != null) {
+                        postData['formModelAttrs']['select'] = statsConfig['select'];
+                    }
+                    if (statsConfig['where'] != null) {
+                        postData['formModelAttrs']['where'] = statsConfig['where'];
+                    }
+                    if (statsConfig['time_granularity'] != null) {
+                        postData['formModelAttrs']['time_granularity'] = statsConfig['time_granularity'];
+                    }
+                    if (statsConfig['time_granularity_unit'] != null) {
+                        postData['formModelAttrs']['time_granularity_unit'] = statsConfig['time_granularity_unit'];
+                    }
                 }
-                if (statsConfig['table_type'] != null) {
-                    postData['formModelAttrs']['table_type'] = statsConfig['table_type'];
-                }
-                if (statsConfig['select'] != null) {
-                    postData['formModelAttrs']['select'] = statsConfig['select'];
-                }
-                if (statsConfig['where'] != null) {
-                    postData['formModelAttrs']['where'] = statsConfig['where'];
-                }
-                if (statsConfig['time_granularity'] != null) {
-                    postData['formModelAttrs']['time_granularity'] = statsConfig['time_granularity'];
-                }
-                if (statsConfig['time_granularity_unit'] != null) {
-                    postData['formModelAttrs']['time_granularity_unit'] = statsConfig['time_granularity_unit'];
-                }
-
                 if(i == 0) {
-                    var remoteObj = {
+                    if (statsConfig['type'] != null && statsConfig['type'] == "non-stats-query"){
+                        primaryRemoteConfig = remoteConfig;
+                    } else {
+                        var remoteObj = {
                             ajaxConfig : {
                                 url : "/api/qe/query",
                                 type: 'POST',
@@ -2159,40 +2182,42 @@ define([
                                 function (response) {
                                     var data = getValueByJsonPath(response,'data',[]);
                                     if (response['queryJSON'] != null) {
-                                        data = _.map(data, function(obj) {
+                                        data = _.map(data, function(obj) { 
                                             return _.extend({}, obj, {queryJSON: response['queryJSON']});
                                         });
                                     }
                                     return data;
                                 }
                         };
-                    primaryRemoteConfig = remoteObj;
+                        primaryRemoteConfig = remoteObj;
+                    }
                 } else {
                     var vlRemoteObj = {
-                        getAjaxConfig: function() {
-                            return {
-                                url : "/api/qe/query",
-                                type: 'POST',
-                                data: JSON.stringify(postData)
+                        getAjaxConfig: function(primaryResponse) {
+                            if(statsConfig['getAjaxConfig']) {
+                                return statsConfig['getAjaxConfig'](primaryResponse,postData);
+                            } else {
+                                return {
+                                    url : "/api/qe/query",
+                                    type: 'POST',
+                                    data: JSON.stringify(postData)
+                                }
                             }
                         },
                         dataParser : (statsConfig['parser'])? statsConfig['parser'] :
                             function (response) {
                                 var data = getValueByJsonPath(response,'data',[]);
                                 if (response['queryJSON'] != null) {
-                                    data = _.map(data, function(obj) {
+                                    data = _.map(data, function(obj) { 
                                         return _.extend({}, obj, {queryJSON: response['queryJSON']});
                                     });
                                 }
                                 return data;
                             },
-                        successCallback: (statsConfig['parser'])?
-                            function(data, contrailListModel) {
-                                statsConfig['mergeFn'] (data,contrailListModel);
-                            }:
-                                function(response, contrailListModel) {
-                                var data = getValueByJsonPath(response,'data',[]);
-                                statsConfig['mergeFn'] (data,contrailListModel);
+                        successCallback: function(data, contrailListModel) {
+                                if(statsConfig['mergeFn']){
+                                    statsConfig['mergeFn'] (data,contrailListModel);
+                                }
                             }
                     };
                     vlRemoteList.push (vlRemoteObj);
@@ -2212,26 +2237,6 @@ define([
                 listModelConfig['cacheConfig']['ucid'] = statsConfig['modelId'];
             }
             return listModelConfig;
-        };
-        self.checkArrayContainsObject = function(array){
-            var obj;
-            for(var i = 0; i < array.length; i++){
-                if(typeof array[i] == 'object' && array[i].constructor !== Array){
-                    obj = array[i];
-                    break;
-                }
-            }
-           return obj;
-        };
-        self.checkArrayContainsString = function(array){
-            var str;
-            for(var i = 0; i < array.length; i++){
-                if(typeof array[i] == 'string' || typeof array[i] == 'number'){
-                    str = array[i];
-                    break;
-                }
-            }
-           return str;
         };
     };
 
@@ -2305,7 +2310,7 @@ define([
         for(var i in updatedObj){
             if(typeof updatedObj[i] === 'number' || typeof updatedObj[i] === 'string' || typeof updatedObj[i] === 'boolean'){
                 if(oldObj === undefined){
-                    if(updatedObj[i] === '' || updatedObj[i] === 0 || updatedObj[i] === false){
+                    if(updatedObj[i] === '' || updatedObj[i] === false){
                         delete updatedObj[i];
                     }
                 }else{
@@ -2313,7 +2318,7 @@ define([
                         if(updatedObj[i] === oldObj[i] && !oldJson.hasOwnProperty(i)){
                             delete updatedObj[i];
                         }
-                        if(oldJson[i] === null){
+                        if(oldJson[i] === null && updatedObj[i] === null){
                             updatedObj[i] = null;
                         }
                     }else{
@@ -2322,6 +2327,8 @@ define([
                         }
                     }
                 }
+            }else if(updatedObj[i] === null){
+                delete updatedObj[i];
             }else if(typeof updatedObj[i] === 'object' && updatedObj[i] !== null && updatedObj[i].constructor !== Array){
                 if(oldJson !== undefined && oldJson !== null){
                     getDeepDiffOfKey(updatedObj[i], oldObj[i], oldJson[i]);
@@ -2352,7 +2359,7 @@ define([
                 }
                 if(updatedObj[i].length == 0){
                        delete updatedObj[i];
-                }else if(typeof cowu.checkArrayContainsString(updatedObj[i]) === 'string'){
+                }else if(typeof checkArrayContainsString(updatedObj[i]) === 'string'){
                     if(oldObj !== undefined){
                         if(updatedObj[i].length === oldObj[i].length){
                             if(oldJson != undefined){
@@ -2384,7 +2391,7 @@ define([
                           }
                         }
                     }
-                }else if(typeof cowu.checkArrayContainsObject(updatedObj[i]) == 'object' && cowu.checkArrayContainsObject(updatedObj[i]) !== null && cowu.checkArrayContainsObject(updatedObj[i]).constructor !== Array){
+                }else if(typeof checkArrayContainsObject(updatedObj[i]) == 'object' && checkArrayContainsObject(updatedObj[i]) !== null && checkArrayContainsObject(updatedObj[i]).constructor !== Array){
                     for(var j = 0; j < updatedObj[i].length; j++){
                             if(oldJson !== undefined && oldJson !== null){
                                 if(oldJson[i] !== undefined){
@@ -2436,6 +2443,26 @@ define([
             }
         }
         return updatedObj;
+    };
+    function checkArrayContainsObject(array){
+        var obj;
+        for(var i = 0; i < array.length; i++){
+            if(typeof array[i] == 'object' && array[i].constructor !== Array){
+                obj = array[i];
+                break;
+            }
+        }
+       return obj;
+    };
+    function checkArrayContainsString(array){
+        var str;
+        for(var i = 0; i < array.length; i++){
+            if(typeof array[i] == 'string' || typeof array[i] == 'number'){
+                str = array[i];
+                break;
+            }
+        }
+       return str;
     };
     function deepDiff(a, b, r, reversible, oldJson, enumKeys) {
         lodash.each(a, function(v, k) {
@@ -2503,20 +2530,18 @@ define([
                  }
               }
           } else {
-              value = b[k];
+              value = b[k]
           }
-          if(value != undefined){
-                if(typeof value === 'object' && value.constructor !== Array && Object.keys(value).length == 0 && oldJson === undefined){
-                }else if(typeof value === 'object' && value.constructor !== Array && Object.keys(value).length == 0 && oldJson !== undefined){
-                    r[k] = null;
+            if(value != undefined){
+                if(typeof value === 'object' && value.constructor !== Array && Object.keys(value).length == 0){
                 }else{
-                    r[k] = value;
+                   r[k] = value;
                 }
-          }
-          if(value === null){
+             }
+            if(value === null){
                 r[k] = value;
-          }
-        });
+            }
+          });
 
     };
     lodash.mixin({
