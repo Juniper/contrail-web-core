@@ -4,7 +4,7 @@
 
 define(['underscore'], function (_) {
     var MenuHandler = function () {
-        var self = this, menuObj,
+        var self = this, menuObj, menuXML,
             initMenuDefObj = $.Deferred();  //Will be resolved once menu is loaded and filtered
         //onHashChange is triggered once it is resolved
         self.deferredObj = $.Deferred();
@@ -14,8 +14,11 @@ define(['underscore'], function (_) {
             'webStorage': 'ws',
             'serverManager': 'sm'
         };
-
-        this.loadMenu = function (xml) {
+        this.reloadMenu = function() {
+           this.loadMenu(menuXML, {reload: true});
+        }
+        this.loadMenu = function (xml, cfg) {
+            menuXML = xml;
             menuObj = $.xml2json(xml);
             var optFeatureList =
                 getValueByJsonPath(globalObj, 'webServerInfo;optFeatureList',
@@ -27,7 +30,9 @@ define(['underscore'], function (_) {
             globalObj['siteMapSearchStrings'] = [];
             processXMLJSON(menuObj, optFeatureList);
             //populate the autocomplete dropdown for siteMap
-            enableSearchAhead();
+            if(cfg != null && cfg['reload'] != true) {
+                enableSearchAhead();
+            }
             var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'], 'menushortcut', featurePkgsInfo));
             //Load top-level menu buttons (Configure,Monitor,Settings,Query)
             $("#sidebar-shortcuts").html(menuShortcuts);
@@ -107,7 +112,7 @@ define(['underscore'], function (_) {
          * and returns true if permitted else false
          */
         function checkForAccess(value) {
-            var roleExists = false, orchExists = false, accessFnRetVal = false;
+            var roleExists = false, orchExists = false, accessFnRetVal = false, allRegion=false;
             var orchModel = globalObj['webServerInfo']['loggedInOrchestrationMode'];
             var loggedInUserRoles = globalObj['webServerInfo']['role'];
             if (value.access != null) {
@@ -150,13 +155,21 @@ define(['underscore'], function (_) {
                     }
                 } else
                     orchExists = true;
-                return (roleExists && orchExists && accessFnRetVal);
+                    if(rolesArr !== undefined && loadUtils.getCookie('region') !== 'All Regions'){
+                        for (var j = 0; j < rolesArr.length; j++) {
+                            if (rolesArr[j] === "globalController") {
+                                allRegion = true;
+                                break;
+                            }
+                        }
+                    }
+                    return (roleExists && orchExists && accessFnRetVal && !allRegion);
             } else {
                 return true;
             }
         }
 
-        this.toggleMenuButton = function (menuButton, currPageHash, lastPageHash) {
+        this.toggleMenuButton = function (menuButton, currPageHash, lastPageHash, cfg) {
             var currentBCTemplate = contrail.getTemplate4Id('current-breadcrumb');
             var currPageHashArray, subMenuId, reloadMenu, linkId;
             var hostname = window.location.hostname;
@@ -171,12 +184,26 @@ define(['underscore'], function (_) {
                 menuButton = getMenuButtonName(currPageHashArray[0]);
                 //If user has switched between top-level menu
                 reloadMenu = check2ReloadMenu(lastPageHash, currPageHashArray[0]);
+                if(cfg != null && cfg['reload'] == true) {
+                         reloadMenu = true;
+                } else {
+                    reloadMenu = check2ReloadMenu(lastPageHash, currPageHashArray[0]);
+                }
             }
             if (reloadMenu == null || reloadMenu) {
-                var menu = {};
+                var menu = {},role;
                 for (var i = 0; i < menuObj['items']['item'].length; i++) {
                     if (menuObj['items']['item'][i]['name'] == menuButton)
                         menu = menuObj['items']['item'][i];
+                    if(menuObj['items']['item'][i].items !== undefined){
+                        if(menuObj['items']['item'][i].items.item[0] !== undefined){
+                            if(menuObj['items']['item'][i].items.item[0].access !== undefined){
+                                if(menuObj['items']['item'][i].items.item[0].access.roles !== undefined){
+                                    role = menuObj['items']['item'][i].items.item[0].access.roles.role[0];
+                                }
+                            }
+                        }
+                    }
                 }
                 $('#menu').html('');
                 $('#menu').html(contrail.getTemplate4Id('menu-template')(menu));
@@ -184,6 +211,15 @@ define(['underscore'], function (_) {
                     $('#sidebar-collapse').find('i').toggleClass('fa-chevron-left').toggleClass('fa-chevron-right');
                 }
                 this.selectMenuButton("#btn-" + menuButton);
+            }
+            if(role === 'globalController' && currPageHash !== undefined){
+                if(currPageHash === 'mon_gc_globalcontroller'){
+                    $('iframe').remove();
+                    $("#main-content").show();
+                    $("#gohanGrid").hide();
+                    $("page-content").show();
+                    $("#alarms-popup-link").show();
+                }
             }
             $('#tabTitle').text(hostname.substring(0,15)+'... | Contrail ' +
                 menuButton.charAt(0).toUpperCase() + menuButton.slice(1));
