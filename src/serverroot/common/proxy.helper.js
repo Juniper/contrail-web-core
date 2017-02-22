@@ -130,4 +130,30 @@ function isServerByType (serverType, proxyHost, proxyPort)
     return false;
 }
 
+function getSSLOptionsByProxyPort (port)
+{
+    port = port.toString();
+    var found = false;
+    for (var key in config.proxy) {
+        var processList = config.proxy[key];
+        for (var procKey in processList) {
+            if (processList[procKey].indexOf(port) > -1) {
+                found = true;
+                break;
+            }
+        }
+        if (true == found) {
+            break;
+        }
+    }
+    var options = null;
+    if (true == found) {
+        options = commonUtils.getValueByJsonPath(config, "introspect;" +
+                                                     procKey, null);
+    }
+    return options;
+}
+
 exports.validateProxyIpPort = validateProxyIpPort;
+exports.getSSLOptionsByProxyPort = getSSLOptionsByProxyPort;
+

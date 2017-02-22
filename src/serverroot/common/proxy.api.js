@@ -105,6 +105,35 @@ function sendProxyRequest (request, response, appData, options, userData)
             var htmlFile = reqParams[proxyURLStr].substr(lastSlashIdx + 1, lastHtmlIdx);
         }
     }
+    /* Get SSL options in case of https request */
+    var sslOptions = proxyHelper.getSSLOptionsByProxyPort(options.port);
+    if ((null != sslOptions) &&
+        (global.PROTOCOL_HTTPS == sslOptions.authProtocol)) {
+        try {
+            options.cert = fs.readFileSync(sslOptions.cert);
+        } catch(e) {
+            logutils.logger.error("SSL Cert file read error:" +
+                                  sslOptions.cert);
+            options.cert = "";
+        }
+        try {
+            options.key = fs.readFileSync(sslOptions.key);
+        } catch(e) {
+            logutils.logger.error("SSL Key file read error:" +
+                                  sslOptions.key);
+            options.key = "";
+        }
+        try {
+            options.ca = fs.readFileSync(sslOptions.ca);
+        } catch(e) {
+            logutils.logger.error("SSL CA file read error:" +
+                                  sslOptions.ca);
+            options.ca = "";
+        }
+        options.rejectUnauthorized = sslOptions.strictSSL;
+        options.protocol = "https:";
+        protocol = https;
+    }
     var rqst = protocol.request(options, function(res) {
         var body = '';
         res.on('end', function() {

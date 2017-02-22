@@ -6,6 +6,7 @@ var fs      = require('fs');
 var config  = process.mainModule.exports.config;
 var request = require('request');
 var restler = require('restler');
+var commonUtils = require("../utils/common.utils");
 
 /* Function: getHttpsOptionsDefValue
     Get the default value for https options
@@ -41,11 +42,15 @@ function getHttpsOptionsByAPIType (apiType, reqType)
     if (null == orchModule) {
         return defVal;
     }
-    if ((null != config) && (null != config[orchModule]) &&
-        (null != config[orchModule][reqType])) {
-        return config[orchModule][reqType];
-    }
-    return defVal;
+    var optionVal =
+        commonUtils.getValueByJsonPath(config,
+                                       "introspect;" + orchModule + ";" + reqType,
+                                       commonUtils.getValueByJsonPath(config,
+                                                                      orchModule
+                                                                      + ";" +
+                                                                      reqType,
+                                                                      defVal));
+    return optionVal;
 }
 
 /* Function: getOrchModuleByAPIType
@@ -82,7 +87,18 @@ function getOrchModuleByAPIType (apiType)
     case global.label.DISCOVERY_SERVER:
         orchModule = 'discoveryService';
         break;
+    /* Http Introspect */
+    case global.label.INTROSPECT_AGENT:
+        orchModule = "agent";
+        break;
+    case global.label.INTROSPECT_DNS:
+        orchModule = "dns";
+        break;
+    case global.label.INTROSPECT_CONTROL:
+        orchModule = "control";
+        break;
     default:
+        orchModule = apiType;
         break;
     }
     return orchModule;
@@ -105,11 +121,18 @@ function getProtocolByAPIType (apiType)
     if (null == orchModule) {
         return defProtocol;
     }
-    if ((null != config) && (null != config[orchModule]) &&
-        (null != config[orchModule]['authProtocol']) &&
-        ((global.PROTOCOL_HTTP == config[orchModule]['authProtocol']) ||
-         (global.PROTOCOL_HTTPS == config[orchModule]['authProtocol']))) {
-        return config[orchModule]['authProtocol'];
+    var authProtocol =
+        commonUtils.getValueByJsonPath(config,
+                                       "introspect;" + orchModule +
+                                       ";authProtocol",
+                                       commonUtils.getValueByJsonPath(config,
+                                                                      orchModule
+                                                                      +
+                                                                      ";authProtocol",
+                                                                      defProtocol));
+    if ((global.PROTOCOL_HTTP == authProtocol) ||
+        (global.PROTOCOL_HTTPS == authProtocol)) {
+        return authProtocol;
     }
     return defProtocol;
 }
