@@ -2044,6 +2044,8 @@ define([
         this.TMPL_QUERY_QUEUE_PAGE = "query-queue-page-template";
         this.TMPL_QUERY_TEXT = "query-text-template";
         this.TMPL_QUERY_SELECT = "query-select-popup-template";
+        //Global controller constants
+        this.GLOBAL_CONTROLLER_ALL_REGIONS = "All Regions";
     };
     //Export to global scope
     cowc = new CoreConstants();
