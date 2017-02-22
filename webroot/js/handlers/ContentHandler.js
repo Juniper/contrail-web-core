@@ -78,10 +78,15 @@ define(['underscore'], function (_) {
                 currPageQueryStr = ifNull(currHash['q'], {}),
                 lastPageQueryStr = ifNull(lastHash['q'], {}),
                 webServerInfo = globalObj['webServerInfo'];
-
             try {
                 if (currPageHash == '' || menuHandler.isHashExists(currHash) == false) {
-                    if(webServerInfo['loggedInOrchestrationMode'] == 'vcenter') {
+                    var currentRole =  getValueByJsonPath(webServerInfo,
+                            'role;0', "", false);
+                    var cgcEnabled = getValueByJsonPath(globalObj,
+                            'webServerInfo;cgcEnabled', false, false);
+                    if(cgcEnabled && currentRole == "globalController"){
+                        currPageHash = "mon_gc_globalcontroller";
+                    } else if(webServerInfo['loggedInOrchestrationMode'] == 'vcenter') {
                         //If vCenter is the only orchestration model
                         if(webServerInfo['orchestrationModel'].length == 1)
                             currPageHash = "mon_infra_dashboard";
@@ -101,7 +106,9 @@ define(['underscore'], function (_) {
                             contrailIntrospectProcess = "xml";
                         }
                         currPageHash = "setting_introspect_" + contrailIntrospectProcess;
-                    }
+                   } else {
+                       currPageHash = "mon_infra_dashboard";
+                   }
                 }
                 var currMenuObj = menuHandler.getMenuObjByHash(currPageHash);
                 //Toggle menu button only if there is a change in hash of main menu[Monitor/Configure/Settings/Queries]
@@ -122,11 +129,13 @@ define(['underscore'], function (_) {
                         if(contrail.checkIfExist(loaderObj) && window[loaderObj['class']] != null && window[loaderObj['class']]['updateViewByHash'] != null) {
                             window[loaderObj['class']].updateViewByHash(currPageQueryStr, lastPageQueryStr, currMenuObj);
                         } else {
-                            $.each(currMenuObj['resources']['resource'], function(idx,currResourceObj) {
-                                if (window[currResourceObj['class']] != null && window[currResourceObj['class']]['updateViewByHash'] != null) {
-                                    window[currResourceObj['class']].updateViewByHash(currPageQueryStr, lastPageQueryStr, currMenuObj);
-                                }
-                            });
+                            if(currMenuObj != -1){
+                                $.each(currMenuObj['resources']['resource'], function(idx,currResourceObj) {
+                                    if (window[currResourceObj['class']] != null && window[currResourceObj['class']]['updateViewByHash'] != null) {
+                                        window[currResourceObj['class']].updateViewByHash(currPageQueryStr, lastPageQueryStr, currMenuObj);
+                                    }
+                                });
+                            }
                         }
 
                         if(contrail.checkIfExist(loadingStartedDefObj)) {
