@@ -17,7 +17,6 @@ globalObj['siteMapSearchStrings'] = [];
  * not
  */
 var loadIntrospectViaProxy = true;
-
 var FEATURE_PCK_WEB_CONTROLLER = "webController",
     FEATURE_PCK_WEB_STORAGE = "webStorage",
     FEATURE_PCK_WEB_SERVER_MANAGER = "serverManager";
@@ -104,7 +103,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'jquery-linedtextarea'        : coreWebDir + '/assets/jquery-linedtextarea/js/jquery-linedtextarea',
         'qe-module'                   : coreWebDir + '/reports/qe/ui/js/qe.module',
         'udd-module'                  : coreWebDir + '/reports/udd/ui/js/udd.module',
-        'chart-config'              : coreWebDir + '/js/chartconfig'
+        'chart-config'                : coreWebDir + '/js/chartconfig'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -998,21 +997,33 @@ function loadGohanUI() {
     });
 };
 
-function changeRegion (e)
+function changeRegion (regionName)
 {
+    cowch.reset();
+    globalAlerts = [];
+    var region;
+    var checkRegionObject = getValueByJsonPath(regionName, 'added', null);
+    if(checkRegionObject != null){
+        region = regionName.added.text;
+    }
+    else{
+        region = regionName;
+    }
+    if(region != 'All Regions') {
+        if($('.iframe-view').length != 0){
+                $('.iframe-view').remove();
+         }
+    }
+    $("#gohanGrid").hide();
+    $("#page-content").show();
+    $("#nav-search").show();
+    $("#alarms-popup-link").show();
+    $("#main-content").show();
     var oldRegion = contrail.getCookie('region');
-    var region = e.added.text;
     if ((null != region) && (oldRegion != region) &&
         ('null' != region) && ('undefined' != region)) {
         contrail.setCookie('region', region);
-        if(region == "All Regions") {
-            //To indicate that gohanUI is being embedded in contrailUI
-            sessionStorage.setItem('gohan_contrail',true);
-            loadGohanUI();
-            return;
-        }
-        /* And issue logout request */
-        loadUtils.logout()
+        loadUtils.isAuthenticated();
     }
 }
 
@@ -1147,6 +1158,9 @@ if (typeof document !== 'undefined' && document) {
                 }
                 return false;
             },
+            setCookie: function(name,value){
+                document.cookie = name + "=" + escape(value) + "; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/";
+            },
             postAuthenticate: function(response) {
                 require(['jquery'],function() {
                     //To fetch alarmtypes
@@ -1172,6 +1186,17 @@ if (typeof document !== 'undefined' && document) {
                         }
                     });
                     globalObj['webServerInfo'] = loadUtils.parseWebServerInfo(response);
+               //Check whether it is not all regions then load the normal dashboard
+                    var hashString = window.location.hash;
+                    var region = loadUtils.getCookie('region');
+                    if (!((hashString.indexOf('mon_infra_globalcontroller') > -1) || (hashString.indexOf('config_location') > -1))) {
+                     if(region === 'All Regions'){
+                            var regionlist = globalObj.webServerInfo.regionList;
+                            if(regionlist.length > 0){
+                                loadUtils.setCookie('region',regionlist[0]);
+                            }
+                        }
+                    }
 
                     //For Region drop-down
                     require(['jquery', 'thirdparty-libs','nonamd-libs'], function() {
@@ -1188,28 +1213,12 @@ if (typeof document !== 'undefined' && document) {
                         var isServiceEndPointFromConfig =
                             globalObj.webServerInfo.serviceEndPointFromConfig;
                         if ((cnt > 0) && (false == isServiceEndPointFromConfig)) {
-                            $('#regionDD').contrailDropdown({dataTextField:"text",
+                            $('#regionDD').select2({dataTextField:"text",
                                                             dataValueField:"id",
                                                             width: '100px',
-                                                            change: changeRegion});
-                            $('#regionDD').data("contrailDropdown").setData(ddRegionList);
-                            // if(loadUtils.getCookie('region') != "All Regions")
-                            $("#regionDD").data("contrailDropdown").value(loadUtils.getCookie('region'));
-                            if(globalObj['webServerInfo']['cgcEnabled'] == true) {
-                                //Fetch tokens for gohanUI
-                                $.ajax({
-                                    type: "POST",
-                                    url: '/gohan_contrail_auth/tokens'
-                                }).done(function(response,textStatus,xhr) {
-                                    var jsonObj = {};
-                                    jsonObj[loadUtils.getCookie('project')] = response;
-                                    sessionStorage.setItem('scopedToken',JSON.stringify(jsonObj));
-                                });
-                            }
-                            //Trigger change handler while setting default value
-                            if(loadUtils.getCookie('region') == "All Regions") {
-                                loadGohanUI();
-                            }
+                                                            data: ddRegionList,
+                                                            }).on("change", changeRegion);
+                            $("#regionDD").select2("val", loadUtils.getCookie('region'));
                         }
                     });
                     webServerInfoDefObj.resolve();
@@ -1224,7 +1233,6 @@ if (typeof document !== 'undefined' && document) {
                         if(globalObj['featureAppDefObj'] == null)
                             globalObj['featureAppDefObj'] = $.Deferred();
                         require(['core-bundle','thirdparty-libs'],function() {
-                            if(loadUtils.getCookie('region') != "All Regions")
                                 layoutHandler.load(menuXML);
                         });
                     });
@@ -1388,7 +1396,12 @@ if (typeof document !== 'undefined' && document) {
                 return webServerInfo;
             }
         }
-        //Check if the session is authenticated
+        var hashString = window.location.hash;
+        var region = loadUtils.getCookie('region');
+        if ((hashString.indexOf('mon_infra_globalcontroller') > -1) || (hashString.indexOf('config_location') > -1)) {
+            loadUtils.setCookie('region', "All Regions");
+        }
+      //Check if the session is authenticated
         loadUtils.isAuthenticated();
         require(['jquery'],function() {
             require(['core-bundle','nonamd-libs'],function() {
