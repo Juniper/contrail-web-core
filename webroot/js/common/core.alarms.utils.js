@@ -4,9 +4,10 @@
 
 define(
        [ 'underscore',
-         'core-constants'],
-       function(_,cowc) {
+         'core-constants','contrail-view','js/contrail-common'],
+       function(_,cowc,ContrailView,ContrailCommon) {
             var CoreAlarmUtils = function() {
+                var contrail = new ContrailCommon();
                 var self = this;
                 self.BUCKET_DURATION = 300000000;//5 MINS
 
@@ -48,28 +49,31 @@ define(
                 };
 
                 self.fetchAndUpdateAlarmBell = function () {
-                    var alarmDeferredObj = $.Deferred();
-
-                    alarmDeferredObj.done( function(alarmCounts) {
-                        self.updateAlarmBell(alarmCounts);
-                        self.startUpdateBellTimer();
-                    });
-                    self.fetchAlarms(alarmDeferredObj);
+                    var region = contrail.getCookie('region');
+                    if(region != 'All Regions') {
+                        var alarmDeferredObj = $.Deferred();
+                        alarmDeferredObj.done( function(alarmCounts) {
+                            self.updateAlarmBell(alarmCounts);
+                            self.startUpdateBellTimer();
+                        });
+                        self.fetchAlarms(alarmDeferredObj);
+                    }
                 };
 
                 self.updateAlarmBell = function (alarmCounts) {
                     if (alarmCounts != null && alarmCounts.unacked > 0) {
                         //update the icon
-//                        $('#pageHeader').find('.icon-bell-alt').addClass('red');
-                        $('#pageHeader').find('#alert_info').text('Alarms ('+ alarmCounts.unacked +')');
+                        $('#alert_info').css("background-color", "#e4564f");
+                        $('#pageHeader').find('#alert_info').text(alarmCounts.unacked);
                     } else {
-//                        $('#pageHeader').find('.icon-bell-alt').removeClass('red');
-                        $('#pageHeader').find('#alert_info').text('Alarms');
+                        $('#alert_info').css("background-color", "#fff");
+                        $('#pageHeader').find('#alert_info').text('');
                     }
                 };
-
                 self.startUpdateBellTimer = function () {
-                    setTimeout(self.fetchAndUpdateAlarmBell,cowc.ALARM_REFRESH_DURATION);
+                    var region = contrail.getCookie('region');
+                    if(region != 'All Regions')
+                        setTimeout(self.fetchAndUpdateAlarmBell,cowc.ALARM_REFRESH_DURATION);
                 };
                 //Call the update alarm bell
                 //self.fetchAndUpdateAlarmBell();
