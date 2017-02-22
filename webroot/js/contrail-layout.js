@@ -49,6 +49,17 @@ function enableSearchAhead() {
     });
 }
 
+function isGlobalControllerFlow(hash) {
+    var hashArray = hash && hash['p'] ? hash['p'].split('_') : [];
+    if(hashArray.length < 2) {
+        return false;
+    }
+    if(hashArray[1] === 'gc') {
+        return true;
+    }
+    return false;
+}
+
 function searchSiteMap() {
     var searchString = $('#nav-search-input').val(), hash, queryParams;
     var siteMap = globalObj['siteMap'];
