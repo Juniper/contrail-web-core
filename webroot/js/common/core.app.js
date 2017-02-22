@@ -17,6 +17,7 @@ globalObj['siteMapSearchStrings'] = [];
  * not
  */
 var loadIntrospectViaProxy = true;
+var gMenuXML = null;
 
 var FEATURE_PCK_WEB_CONTROLLER = "webController",
     FEATURE_PCK_WEB_STORAGE = "webStorage",
@@ -103,7 +104,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'jdorn-jsoneditor'            : coreWebDir + '/assets/jdorn-jsoneditor/js/jdorn-jsoneditor',
         'jquery-linedtextarea'        : coreWebDir + '/assets/jquery-linedtextarea/js/jquery-linedtextarea',
         'qe-module'                   : coreWebDir + '/reports/qe/ui/js/qe.module',
-        'udd-module'                  : coreWebDir + '/reports/udd/ui/js/udd.module'
+        'udd-module'                  : coreWebDir + '/reports/udd/ui/js/udd.module',
+        'chart-config'              : coreWebDir + '/js/chartconfig'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -484,6 +486,7 @@ var coreBundles = {
             'help-handler',
             'content-handler',
             'validation',
+            'chart-config',
             'core-basedir/js/views/BarChartInfoView',
             'core-basedir/js/views/BreadcrumbDropdownView',
             'core-basedir/js/views/BreadcrumbTextView',
@@ -1003,14 +1006,7 @@ function changeRegion (e)
     if ((null != region) && (oldRegion != region) &&
         ('null' != region) && ('undefined' != region)) {
         contrail.setCookie('region', region);
-        if(region == "All Regions") {
-            //To indicate that gohanUI is being embedded in contrailUI
-            sessionStorage.setItem('gohan_contrail',true);
-            loadGohanUI();
-            return;
-        }
-        /* And issue logout request */
-        loadUtils.logout()
+        loadUtils.isAuthenticated();
     }
 }
 
@@ -1186,28 +1182,12 @@ if (typeof document !== 'undefined' && document) {
                         var isServiceEndPointFromConfig =
                             globalObj.webServerInfo.serviceEndPointFromConfig;
                         if ((cnt > 0) && (false == isServiceEndPointFromConfig)) {
-                            $('#regionDD').contrailDropdown({dataTextField:"text",
+                            $('#regionDD').select2({dataTextField:"text",
                                                             dataValueField:"id",
                                                             width: '100px',
-                                                            change: changeRegion});
-                            $('#regionDD').data("contrailDropdown").setData(ddRegionList);
-                            // if(loadUtils.getCookie('region') != "All Regions")
-                            $("#regionDD").data("contrailDropdown").value(loadUtils.getCookie('region'));
-                            if(globalObj['webServerInfo']['cgcEnabled'] == true) {
-                                //Fetch tokens for gohanUI
-                                $.ajax({
-                                    type: "POST",
-                                    url: '/gohan_contrail_auth/tokens'
-                                }).done(function(response,textStatus,xhr) {
-                                    var jsonObj = {};
-                                    jsonObj[loadUtils.getCookie('project')] = response;
-                                    sessionStorage.setItem('scopedToken',JSON.stringify(jsonObj));
-                                });
-                            }
-                            //Trigger change handler while setting default value
-                            if(loadUtils.getCookie('region') == "All Regions") {
-                                loadGohanUI();
-                            }
+                                                            data: ddRegionList,
+                                                            }).on("change", changeRegion);
+                            $("#regionDD").select2("val", loadUtils.getCookie('region'));
                         }
                     });
                     webServerInfoDefObj.resolve();
@@ -1219,10 +1199,10 @@ if (typeof document !== 'undefined' && document) {
                     loadUtils.bindAppListeners();
 
                     $.when.apply(window,[menuXMLLoadDefObj,layoutHandlerLoadDefObj]).done(function(menuXML) {
+                        gMenuXML = menuXML;
                         if(globalObj['featureAppDefObj'] == null)
                             globalObj['featureAppDefObj'] = $.Deferred();
                         require(['core-bundle'],function() {
-                            if(loadUtils.getCookie('region') != "All Regions")
                                 layoutHandler.load(menuXML);
                         });
                     });

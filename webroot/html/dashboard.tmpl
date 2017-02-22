@@ -32,6 +32,12 @@
                         /* failure(); */
                     }
                 };
+                if (url.indexOf("?") > -1) {
+                    url += "&";
+                } else {
+                    url += "?";
+                }
+                url += "reqTime=" + Date.now();
                 this.xhr.open(method,url,true);
                 this.xhr.send();
             },
@@ -170,8 +176,8 @@
                 </li>
                 <li id="alarms-popup-link" onclick="cowu.loadAlertsPopup();" class="pull-right">
                     <a href="javascript:void(0);">
-                        <i class="fa fa-bell icon-only"></i>
-                        <span id="alert_info">Alarms</span>
+                        <span class="fa fa-bell icon-only"></span>
+                        <span><sup style="" class="alarmsCnt" id="alert_info"></sup></span>
                     </a>
                 </li>
             </ul>
