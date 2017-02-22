@@ -330,6 +330,20 @@ define([
                     chartObj.y2Axis.ticks(0);
                 }
             }
+            // Even though we want to hide the axis, we need the formatter
+            // configured to display the formatted data in tooltip
+            if (chartOptions['yFormatter'] != null) {
+                chartObj.y1Axis != null ? chartObj.y1Axis.tickFormat(chartOptions['yFormatter']): chartObj.yAxis.tickFormat(chartOptions['yFormatter']);
+                if (chartObj.y2Axis) {
+                    chartObj.y2Axis.tickFormat(chartOptions['yFormatter']);
+                }
+            }
+            if (chartOptions['xFormatter'] != null) {
+                chartObj.xAxis.tickFormat(chartOptions['xFormatter']);
+                if (chartObj.x2Axis != null) {
+                    chartObj.x2Axis.tickFormat(chartOptions['xFormatter']);
+                }
+            }
             return chartObj;
         }
     };
