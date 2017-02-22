@@ -72,7 +72,7 @@ define(
                     setTimeout(self.fetchAndUpdateAlarmBell,cowc.ALARM_REFRESH_DURATION);
                 };
                 //Call the update alarm bell
-                self.fetchAndUpdateAlarmBell();
+                //self.fetchAndUpdateAlarmBell();
 
                 self.mapSeverityToColor = function (severity) {
                     if (severity != -1) {
