@@ -204,6 +204,120 @@ config.vcenter.strictSSL = false;               //Validate the certificate or ig
 config.vcenter.ca = '';                         //specify the certificate key file
 config.vcenter.wsdl = '/usr/src/contrail/contrail-web-core/webroot/js/vim.wsdl';
 
+/*****************************************************************************
+ * The below configurations descibe the SSL options for connecting to different
+ * Sandesh port.
+ *
+ * key:
+ *      Private key to use for SSL
+ * cert:
+ *      Public x509 certificate to use
+ * ca:
+ *      A string, Buffer or array of strings or Buffers of trusted certificates
+ *      in PEM format. These are used to authorize connections.
+ * strictSSL:
+ *      If true, the server certificate is verified against the list of
+ *      supplied CAs
+ *****************************************************************************/
+config.introspect = {};
+config.introspect.control = {};
+config.introspect.control.authProtocol = 'http';
+config.introspect.control.key = '';
+config.introspect.control.cert = '';
+config.introspect.control.ca = '';
+config.introspect.control.strictSSL = false;
+
+config.introspect.dns = {};
+config.introspect.dns.authProtocol = 'http';
+config.introspect.dns.key = '';
+config.introspect.dns.cert = '';
+config.introspect.dns.ca = '';
+config.introspect.dns.strictSSL = false;
+
+config.introspect.control_nodemgr = {};
+config.introspect.control_nodemgr.authProtocol = 'http';
+config.introspect.control_nodemgr.key = '';
+config.introspect.control_nodemgr.cert = '';
+config.introspect.control_nodemgr.ca = '';
+config.introspect.control_nodemgr.strictSSL = false;
+
+config.introspect.agent = {};
+config.introspect.agent.authProtocol = 'http';
+config.introspect.agent.key = '';
+config.introspect.agent.cert = '';
+config.introspect.agent.ca = '';
+config.introspect.agent.strictSSL = false;
+
+config.introspect.vrouter_nodemgr = {};
+config.introspect.vrouter_nodemgr.authProtocol = 'http';
+config.introspect.vrouter_nodemgr.key = '';
+config.introspect.vrouter_nodemgr.cert = '';
+config.introspect.vrouter_nodemgr.ca = '';
+config.introspect.vrouter_nodemgr.strictSSL = false;
+
+config.introspect.collector = {};
+config.introspect.collector.authProtocol = 'http';
+config.introspect.collector.key = '';
+config.introspect.collector.cert = '';
+config.introspect.collector.ca = '';
+config.introspect.collector.strictSSL = false;
+
+config.introspect.analytics_api = {};
+config.introspect.analytics_api.authProtocol = 'http';
+config.introspect.analytics_api.key = '';
+config.introspect.analytics_api.cert = '';
+config.introspect.analytics_api.ca = '';
+config.introspect.analytics_api.strictSSL = false;
+
+config.introspect.qe = {};
+config.introspect.qe.authProtocol = 'http';
+config.introspect.qe.key = '';
+config.introspect.qe.cert = '';
+config.introspect.qe.ca = '';
+config.introspect.qe.strictSSL = false;
+
+config.introspect.analytics_nodemgr = {};
+config.introspect.analytics_nodemgr.authProtocol = 'http';
+config.introspect.analytics_nodemgr.key = '';
+config.introspect.analytics_nodemgr.cert = '';
+config.introspect.analytics_nodemgr.ca = '';
+config.introspect.analytics_nodemgr.strictSSL = false;
+
+config.introspect.config = {};
+config.introspect.config.authProtocol = 'http';
+config.introspect.config.key = '';
+config.introspect.config.cert = '';
+config.introspect.config.ca = '';
+config.introspect.config.strictSSL = false;
+
+config.introspect.schema = {};
+config.introspect.schema.authProtocol = 'http';
+config.introspect.schema.key = '';
+config.introspect.schema.cert = '';
+config.introspect.schema.ca = '';
+config.introspect.schema.strictSSL = false;
+
+config.introspect.svc_monitor = {};
+config.introspect.svc_monitor.authProtocol = 'http';
+config.introspect.svc_monitor.key = '';
+config.introspect.svc_monitor.cert = '';
+config.introspect.svc_monitor.ca = '';
+config.introspect.svc_monitor.strictSSL = false;
+
+config.introspect.device_mgr = {};
+config.introspect.device_mgr.authProtocol = 'http';
+config.introspect.device_mgr.key = '';
+config.introspect.device_mgr.cert = '';
+config.introspect.device_mgr.ca = '';
+config.introspect.device_mgr.strictSSL = false;
+
+config.introspect.config_nodemgr = {};
+config.introspect.config_nodemgr.authProtocol = 'http';
+config.introspect.config_nodemgr.key = '';
+config.introspect.config_nodemgr.cert = '';
+config.introspect.config_nodemgr.ca = '';
+config.introspect.config_nodemgr.strictSSL = false;
+
 /* Job Server */
 config.jobServer = {};
 config.jobServer.server_ip = '127.0.0.1';

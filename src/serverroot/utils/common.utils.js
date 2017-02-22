@@ -147,7 +147,7 @@ function getJsonViaInternalApi (api, ignoreError, url, callback)
     }
 };
 
-function retrieveSandeshIpUrl (url, apiServer, isRawData)
+function retrieveSandeshIpUrl (url, apiServer, isRawData, apiName)
 {
     try {
         var serverObj = {};
@@ -158,8 +158,9 @@ function retrieveSandeshIpUrl (url, apiServer, isRawData)
         pos = subStr.indexOf('@');
         var serverPort = subStr.substr(0, pos);
         url = subStr.slice(pos + 1);
+        apiName = (null != apiName) ? apiName : global.SANDESH_API;
         apiServer =
-            apiServer({apiName:global.SANDESH_API, server:serverIp,
+            apiServer({apiName: apiName, server:serverIp,
                       port:serverPort, isRawData: isRawData });
         serverObj['apiServer'] = apiServer;
         serverObj['newUrl'] = url;
@@ -188,9 +189,11 @@ function getDataFromSandeshByIPUrl (apiServer, ignoreError, params, url,
 {
     var reqTimeout = null;
     var isRawData = false;
+    var apiName = null;
     if (null != params) {
         reqTimeout = params['reqTimeout'];
         isRawData = params['isRawData'];
+        apiName = params['apiName'];
     }
     var oldUrl = url, oldCallback = callback;
     if (typeof oldUrl === 'undefined' || typeof oldCallback === 'undefined') {
@@ -200,7 +203,7 @@ function getDataFromSandeshByIPUrl (apiServer, ignoreError, params, url,
         if (ignoreError) {
             return function (newUrl, newCallback) {
                 var serverObj = retrieveSandeshIpUrl(newUrl, apiServer,
-                                                     isRawData);
+                                                     isRawData, apiName);
                 if (serverObj == null) {
                     newCallback(null, null);
                 } else {
@@ -219,7 +222,7 @@ function getDataFromSandeshByIPUrl (apiServer, ignoreError, params, url,
         } else {
             return function (newUrl, newCallback) {
                 var serverObj = retrieveSandeshIpUrl(newUrl, apiServer,
-                                                     isRawData);
+                                                     isRawData, apiName);
                 if (null == serverObj) {
                     var error = new
                         appErrors.RESTServerError(util.format(messages.error.invalid_url,
@@ -237,7 +240,7 @@ function getDataFromSandeshByIPUrl (apiServer, ignoreError, params, url,
             };
         }
     } else {
-        var serverObj = retrieveSandeshIpUrl(url, apiServer, isRawData);
+        var serverObj = retrieveSandeshIpUrl(url, apiServer, isRawData, apiName);
         if (null == serverobj) {
             var error = new
                     appErrors.RESTServerError(util.format(messages.error.invalid_url,
