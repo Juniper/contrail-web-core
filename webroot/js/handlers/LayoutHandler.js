@@ -38,15 +38,19 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
 
         /** Override the entire hash object with the given one */
         this.setURLHashObj = function (obj) {
-            if (!menuHandler.isHashExists(obj))
-                return
+            /*if (!menuHandler.isHashExists(obj))
+                return*/
+            var cgcEnabled = getValueByJsonPath(globalObj,
+                    'webServerInfo;cgcEnabled', false, false);
             var currHashObj = self.getURLHashObj();
+            if(cgcEnabled) {
+                obj.region = contrail.getCookie('region');
+            }
             //Update Hash only if it differs from current hash
             if (JSON.stringify(sort(currHashObj)) != JSON.stringify(sort(obj))) {
                 cowhu.pushState(obj, 2);
             }
         };
-
         /** Returns the value of 'q' in urlHash which is used to maintain the state within a page */
         this.getURLHashParams = function () {
             var urlHash = cowhu.getState('q');
@@ -72,8 +76,9 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
                 //To avoid loading the view again
                 if (triggerHashChange == false)
                     globalObj.hashUpdated = 1;
-                if ((obj != null) && (obj['p'] != null))
+                if ((obj != null) && (obj['p'] != null)){
                     cowhu.pushState({p: obj['p'], q: hashParams});
+                }
                 else
                     cowhu.pushState({q: hashParams});
             }
