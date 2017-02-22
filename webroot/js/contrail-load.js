@@ -19,7 +19,6 @@ $(document).ready(function () {
         var widgetBoxElem = $(this).parents('div.widget-box');
         $(widgetBoxElem).toggleClass('collapsed');
     });
-
     //$('.preBlock i').on('click', function () {
     $(document).on('click', '.preBlock i', function () {
         $(this).toggleClass('fa-minus').toggleClass('fa-plus');
@@ -127,18 +126,55 @@ $(document).ready(function () {
     // delete_cookie('_csrf');
 
     $(window).on('hashchange', function () {
+        var cgcEnabled = getValueByJsonPath(globalObj,
+                'webServerInfo;cgcEnabled', false, false);
         currHash = cowhu.getState();
+        if(cgcEnabled && currHash.region && currHash.region !== contrail.getCookie('region')) {
+            contrail.setCookie('region', currHash.region);
+            $("#regionDD").select2("val", currHash.region);
+            if(globalObj['menuClicked'] != true)
+                globalObj['menuClicked'] = true;
+        }
+        //it is required to handle switch between global control flow and regular
+        if((isGlobalControllerFlow(currHash) === true && isGlobalControllerFlow(lastHash) === false) ||
+                (isGlobalControllerFlow(currHash) === false && isGlobalControllerFlow(lastHash) === true)) {
+            var currRole;
+            if(currHash.region) {
+                contrail.setCookie('region', currHash.region);
+            } else {
+                //backbutton flow
+                if(isGlobalControllerFlow(currHash) === true){
+                    contrail.setCookie('region', 'All Regions');
+                } else {
+                    var specificRegion = getValueByJsonPath(globalObj,
+                            'webServerInfo;regionList;1', '', false);
+                    if(specificRegion) {
+                        contrail.setCookie('region', specificRegion);
+                    }
+                }
+            }
+            if(isGlobalControllerFlow(currHash) === true){
+                currRole = 'globalController';
+                globalObj.webServerInfo.role = [currRole];
+            } else {
+                currRole = 'cloudAdmin';
+                globalObj.webServerInfo.role = [currRole];
+            }
+            menuHandler.reloadMenu();
+            menuHandler.toggleMenuButton(null,currHash['p'],lastHash['p'],{reload: true});
+        }
         //Don't trigger hashChange if URL hash is updated from code
         //As the corresponding view has already been loaded from the place where hash is updated
         //Ideally,whenever to load a view,just update the hash let it trigger the handler,instead calling it manually
-        if (globalObj.hashUpdated == 1) {
-            globalObj.hashUpdated = 0;
-            lastHash = currHash;
-            return;
+        if(lastHash.region != "All Regions" && currHash.region != "All Regions"){
+            if (globalObj.hashUpdated == 1) {
+                globalObj.hashUpdated = 0;
+                lastHash = currHash;
+                return;
+            }
         }
         logMessage('hashChange', JSON.stringify(lastHash), ' -> ', currHash);
         logMessage('hashChange', JSON.stringify(currHash));
-
         layoutHandler.onHashChange(lastHash, currHash);
         lastHash = currHash;
     });
