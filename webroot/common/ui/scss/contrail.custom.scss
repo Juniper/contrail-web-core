@@ -17,7 +17,11 @@
     font-size: 35px;
     color: #555;
 }
-
+/* Global variables*/
+$font-size13: 13px;
+$dashboard-info-label-color:#3183bd;
+$dashboard-alarms-color:#e4564f;
+$dashboard-default-color:#000;
 /*
  * Styles moved from vcon-web.css
  * TODO Cleanup required to remove unused styles
@@ -1587,3 +1591,208 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
 .carousel-control-cover-story{
     z-index: 1;
 }
+/* Carousel custom tooltip CSS - Ends*/
+
+/*GlobalController dashbaord  CSS starts here*/
+#globalControllerwrapper {
+    width:100%;
+    margin-left:10px;
+}
+#globalControllerwrapper{
+    .globalcontrollertopbar{
+        width:100%;
+        margin-left:0px;
+        padding:15px 15px 10px 15px;
+        -webkit-box-shadow:0 1px 4px 0 rgba(0,0,0,.1);
+        box-shadow: 0 1px 4px 0 rgba(0,0,0,.1);
+        float:left;
+        margin-bottom:0px !important;
+    }
+    .globalcontrollertopbar .regionname{
+        font-size:14px;
+        float:left;
+        padding:5px 10px;
+    }
+    .globalcontrollertopbar .regionLabel{
+        color:#ccc;
+        font-size:11px;
+    }
+    .globalcontrollertopbar .objectcntsection{
+        float:right;
+        margin-right:20px;
+    }
+    .globalcontrollertopbar .alarmscntcontainer{
+        font-size:14px;
+        padding:10px 5px 0 0;
+        float:right;
+    }
+    .globalcontrollertopbar .alarmscntcontainer span.fa-bell:hover{
+        cursor:default !important;
+    }
+    .objectcntsection .wrapper{
+        padding:4px 12px;
+        float:left;
+        font-size:11px;
+    }
+    .objectcntsection .wrapper .textcenter{
+        text-align:center;
+    }
+    .objectcntsection .wrapper .textbold{
+        font-size:18px;
+    }
+    .objectcntsection .wrapper .textfontstyle{
+        color:#bdbdbd;
+    }
+    .chartsection{
+        margin-top:25px;
+        margin-bottom: 20px;
+    }
+    .chartsection .chart-section-title{
+        text-align:center;
+        font-size:9px;
+        color:#787878;
+        bottom:10px;
+    }
+    .nvtooltip{
+        top: 0px;
+        left: 0px;
+        opacity: 1;
+        padding:0 10px 0 5px;
+        background:rgba(255, 255, 255, .95);
+    }
+    .global-controller-tooltip-title{
+        font-size:13px;
+        font-weight:600;
+        padding:0px !important;
+    }
+    .global-controller-tooltip-subtitle{
+        font-size:12px;
+        color:#959595;
+        padding:0 0 10px 0!important;
+    }
+    .global-controller-tooltip-timeLabel{
+        font-weight:600;
+    }
+    .clrbth{
+        clear:both;
+    }
+}
+.globalcontrollerbar{
+    background-color:#fff;
+    font-size:$font-size13;
+    margin-left:23px;
+    border-radius: 4px;
+    margin-right:33.5px;
+    border:0.5px solid #ddd;
+    -webkit-box-shadow:0 1px 4px 0 rgba(0,0,0,.1);
+    box-shadow: 0 1px 4px 0 rgba(0,0,0,.1);
+    padding:11px;
+}
+.globalcontrollerbar{
+    .globalControllerbar-itemfst{
+        padding-left:5px;
+        float:left;
+        border-right:1px solid #bdbdbd;
+        padding-right:20px;
+        line-height:14px;
+    }
+    .globalControllerbar-items{
+        padding-left:20px;
+        float:left;
+        border-right:1px solid #bdbdbd;
+        padding-right:20px;
+        line-height:14px;
+    }
+    .globalControllerbar-items{
+        .totalnodes-downcnt-text{
+            font-weight:normal;
+            color:#e4564f;
+        }
+        .totalnodes-downcnt-arrow{
+            margin-top:-2px;
+        }
+    }
+    .globalControllerbar-itemlast{
+        padding-left:20px;
+        float:left;
+        line-height:14px;
+    }
+    .alarmsColor{
+        color:$dashboard-alarms-color;
+    }
+}
+.nodescntcontainer{
+     ul{
+        margin-left:5px;
+        margin-bottom:0px;
+     }
+     ul li{
+        display:inline;
+        padding-left:5px;
+        font-size:11px;
+        color:#787878;
+      }
+    li span{
+        display:inline-block;
+        font-size:11px;
+        color:#787878;
+        letter-spacing:-1px;
+    }
+ }
+#globalcontroller-carousel-view {
+    background-color: #f3f4f5 !important;
+    height:700px !important;
+ }
+#globalcontroller-carousel-view{
+    .grid-stack-item-content header {
+        display: none;
+    }
+    .nvd3 text {
+        font: normal 10px "Open Sans" !important;
+     }
+    .nv-group {
+        fill-opacity: 1 !important;
+    }
+    .grid-stack.grid-stack-12 > .grid-stack-item[data-gs-x='6'] {
+        left: 48% !important;
+    }
+    .carousel-inner{
+        padding: 20px 25px 0px 25px !important;
+    }
+}
+.globalController-borderight{
+    border-right:1px solid #bdbdbd;
+}
+#alarms-popup-link, #region-profile {
+    float:right !important;
+}
+.alarmscnt{
+    width:10px;
+    background-color: #e4564f;
+    color:#fff;
+    padding:2px 3px 0 3px;
+    position:relative;left:-2px;top:-8px;
+}
+.globalController-floatright{
+    float:right;
+}
+.globalcontroller-info-label{
+    color:$dashboard-info-label-color;
+}
+.dashboard-default-color{
+    color:$dashboard-default-color;
+}
+#region-profile .select2-container {
+    border: none !important;
+    padding-top: 5px !important;
+ }
+#region-profile .select2-container a .select2-chosen {
+    color: #555 !important;
+}
+#region-profile .select2-container a:hover {
+    text-decoration: none !important;
+}
+.iframe-view {
+  z-index: -1 !important;
+ }
+/*GlobalController dashbaord ends here*/
