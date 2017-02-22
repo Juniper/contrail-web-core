@@ -107,7 +107,7 @@ define(['underscore'], function (_) {
          * and returns true if permitted else false
          */
         function checkForAccess(value) {
-            var roleExists = false, orchExists = false, accessFnRetVal = false;
+            var roleExists = false, orchExists = false, accessFnRetVal = false, allRegion=false;
             var orchModel = globalObj['webServerInfo']['loggedInOrchestrationMode'];
             var loggedInUserRoles = globalObj['webServerInfo']['role'];
             if (value.access != null) {
@@ -150,7 +150,15 @@ define(['underscore'], function (_) {
                     }
                 } else
                     orchExists = true;
-                return (roleExists && orchExists && accessFnRetVal);
+                    if(rolesArr !== undefined && loadUtils.getCookie('region') !== 'All Regions'){
+                        for (var j = 0; j < rolesArr.length; j++) {
+                            if (rolesArr[j] === "globalController") {
+                                allRegion = true;
+                                break;
+                            }
+                        }
+                    }
+                    return (roleExists && orchExists && accessFnRetVal && !allRegion);
             } else {
                 return true;
             }
