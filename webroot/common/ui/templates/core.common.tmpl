@@ -2660,6 +2660,164 @@
         <div class="widget-toolbar config-alarms pull-right"><a class="widget-toolbar-icon" title="Config Alarms"><i class="fa fa-wrench"></i></a></div>
         <div class="widget-toolbar monitor-alarms pull-right"><a class="widget-toolbar-icon" title="Monitor Alarms"><i class="fa fa-bar-chart-o "></i></a></div>
     </div>
-    <div class="notification-content"><div>    
+    <div class="notification-content"><div>
 </div>
+</script>
+
+<script type="text/x-handlebars-template" id="globalController-dashbaord-template">
+<div class="container" id="globalControllerwrapper">
+    <div class="panel panel-default globalcontrollertopbar">
+        <div class="regionname"><a onclick="javascript:changeRegion('{{{this.headInfo.regionName}}}', this)">{{{this.headInfo.regionName}}}</a><div class="regionLabel">Region</div>
+        </div>
+        <div class="alarmscntcontainer">
+          <span class="fa fa-bell icon-only"></span>
+          {{#IfCompare this.headInfo.data.alarmsCnt 0 operator='>'}}
+          <span><sup class="alarmscnt">{{{this.headInfo.data.alarmsCnt}}}</sup></span>
+          {{else}}
+          <span></span>
+           {{/IfCompare}}
+        </div>
+         <div class="objectcntsection">
+       </div>
+    <div>
+    <div class="clrbth"></div>
+    <div  class="chartsection"></div>
+    <div class="clrbth"></div>
+    <div class="nodescntcontainer"></div>
+</div>
+ </script>
+ <script type="text/x-handlebars-template" id="objectCntView-template">
+        <div class="wrapper globalController-borderight">
+             <div class="textcenter textbold">{{{this.dataObjectCnt.vnCnt}}}</div>
+             <div  class="textfontstyle">Networks</div>
+         </div>
+        <div class="wrapper globalController-borderight">
+             <div class="textcenter textbold">{{{this.dataObjectCnt.vmCnt}}}</div>
+             <div  class="textfontstyle">Instances</div>
+         </div>
+          <div class="wrapper globalController-borderight">
+             <div  class="textcenter textbold">{{{this.dataObjectCnt.vmiCnt}}}</div>
+             <div class="textfontstyle">Interfaces</div>
+         </div>
+          <div class="wrapper">
+             <div class="textcenter textbold">{{{this.dataObjectCnt.svcInstsCnt}}}</div>
+             <div class="textfontstyle">Service Instances</div>
+         </div>
+ </script>
+  <script type="text/x-handlebars-template" id="chartView-template">
+   <div class="row">
+                <div class="col1 col-md-6">
+                    <div class="topleftchartcontainer"></div>
+                    <div class="chart-section-title">CPU</div>
+                </div>
+                <div class="col2 col-md-6">
+                    <div class="toprightchartcontainer"></div>
+                    <div class="chart-section-title">Memory</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col3 col-md-6">
+                      <div class="bottomleftchartcontainer"></div>
+                      <div class="chart-section-title">Bandwidth</div>
+                </div>
+                <div class="col4 col-md-6">
+                      <div class="bottomrightchartcontainer"></div>
+                      <div class="chart-section-title">Disk Usage</div>
+                </div>
+            </div>
+ </script>
+   <script type="text/x-handlebars-template" id="barView-template">
+        <div class="panel-body panel-default globalcontrollerbar">
+        <div  class="globalControllerbar-itemfst">
+            <span> {{{this.regionListLen}}}</span>
+            <span class="globalcontroller-info-label">Regions</span>
+        </div>
+          <div class="globalControllerbar-items">
+             <span>{{{this.vnCnt}}}</span>
+             <span class="globalcontroller-info-label">Networks </span>
+         </div>
+        <div class="globalControllerbar-items">
+            <span>{{{this.totalNodesCnt}}} </span>
+            <span class="globalcontroller-info-label">Infrastructure Nodes</span>
+           {{#IfCompare this.totalNodesDownCnt 0 operator='>'}}
+            <span class="totalnodes-downcnt-text">{{{this.totalNodesDownCnt}}}</span>
+            <img src="/img/down_arrow.svg" class="totalnodes-downcnt-arrow"></img>
+            {{else}}
+            <span></span>
+            {{/IfCompare}}
+        </div>
+        <div class="globalControllerbar-items">
+             <span>{{{this.interfacesCnt}}}</span>
+             <span class="globalcontroller-info-label">Interfaces </span>
+         </div>
+         <div  class="globalControllerbar-itemlast">
+             <span>{{{this.servivceInstanceCnt}}}</span>
+             <span class="globalcontroller-info-label">  Service Instances</span>
+         </div>
+         <div class="globalController-floatright">
+            {{#IfCompare this.alarmCnt 0 operator='>'}}
+             <span class="alarmscntbar alarmsColor">{{{this.alarmCnt}}}</span>
+            {{else}}
+             <span class="alarmscntbar globalcontroller-info-label">No</span>
+            {{/IfCompare}}
+             <span class="globalcontroller-info-label">Alarms </span>
+         </div>
+        </div>
+  </script>
+ <script type="text/x-handlebars-template" id="nodeCntView-template">
+   <ul>
+       <li>
+       <span>{{{this.dataNodesCnt.vRoutersCnt}}}&nbsp;&nbsp;</span>vRouters&nbsp;
+       {{#IfCompare this.dataNodesCnt.vRoutersNodesDownCnt 0 operator='>'}}
+            {{{this.dataNodesCnt.vRoutersNodesDownCnt}}}<span><img src="/img/down_arrow.svg"></img></span>
+       {{else}}
+            <span></span>
+       {{/IfCompare}}
+       </li>
+       <li><span>{{{this.dataNodesCnt.configNodesCnt}}}&nbsp;&nbsp;</span>config Nodes&nbsp;
+        {{#IfCompare this.dataNodesCnt.configNodesDownCnt 0 operator='>'}}
+            {{{this.dataNodesCnt.configNodesDownCnt}}}<span><img src="/img/down_arrow.svg"></img></span>
+       {{else}}
+            <span></span>
+       {{/IfCompare}}
+       </li>
+       <li><span>{{{this.dataNodesCnt.controlNodesCnt}}}</span>&nbsp;&nbsp;Control Nodes&nbsp;
+         {{#IfCompare this.dataNodesCnt.controlNodesDownCnt 0 operator='>'}}
+            {{{this.dataNodesCnt.controlNodesDownCnt}}}<span><img src="/img/down_arrow.svg"></img></span>
+       {{else}}
+            <span></span>
+       {{/IfCompare}}
+       </li>
+       <li><span>{{{this.dataNodesCnt.analyticsNodesCnt}}}</span>&nbsp;&nbsp;Analytics Nodes&nbsp;
+        {{#IfCompare this.dataNodesCnt.analyticsNodesDownCnt 0 operator='>'}}
+            {{{this.dataNodesCnt.analyticsNodesDownCnt}}}<span><img src="/img/down_arrow.svg"></img></span>
+       {{else}}
+            <span></span>
+       {{/IfCompare}}
+       </li>
+       <li><span>{{{this.dataNodesCnt.databaseNodesCnt}}}</span>&nbsp;&nbsp;DB Nodes&nbsp;
+        {{#IfCompare this.dataNodesCnt.databaseNodesDownCnt 0 operator='>'}}
+            {{{this.dataNodesCnt.databaseNodesDownCnt}}}<span><img src="/img/down_arrow.svg"></img></span>
+       {{else}}
+            <span></span>
+       {{/IfCompare}}
+       </li>
+      </ul>
+ </script>
+<script type="text/x-handlebars-template" id="dashboard-custom-tooltip">
+    <div class="nvtooltip xy-tooltip nv-pointer-events-none" id="nvtooltip-58867">
+        <table>
+        <thead>
+        <tr><td colspan="3" class="global-controller-tooltip-title">{{{this.title}}}</td></tr></thead>
+        <tr><td colspan="3" class="global-controller-tooltip-subtitle">{{{this.subtitle}}}</td></tr></thead>
+        <tr><td colspan="3" class="global-controller-tooltip-timeLabel">{{{this.Time}}}</td></tr></thead>
+        <tbody><tr><td class="legend-color-guide"><div style="background-color: rgb(114, 169, 208);"></div></td>
+        <td class="key">{{{this.yAxisLabel}}}
+        {{#each this.series}}
+        </td><td class="value">{{{this.value}}}</td>
+        {{/each}}
+        </tr>
+        </tbody>
+        </table>
+    </div>
 </script>
