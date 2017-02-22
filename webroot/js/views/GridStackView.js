@@ -22,6 +22,9 @@ define([
             self.gridAttr = cowu.getValueByJsonPath(options,'attributes;viewConfig;gridAttr',{});
             self.elementId = cowu.getValueByJsonPath(options,'attributes;viewConfig;elementId','');
             self.movedWidgetCfg = cowu.getValueByJsonPath(options,'attributes;viewConfig;movedWidgetCfg',null);
+            self.disableDrag = cowu.getValueByJsonPath(options,'attributes;viewConfig;disableDrag',false);
+            self.disableResize = cowu.getValueByJsonPath(options,'attributes;viewConfig;disableResize',false);
+            self.isSaveLayout = cowu.getValueByJsonPath(options,'attributes;viewConfig;savelayout',true);
             self.COLUMN_CNT = 2;
             self.VIRTUAL_COLUMNS = 2;
             //Decouple cellHieght from height assigned to widget
@@ -38,6 +41,8 @@ define([
                 resizable: {
                     handles:'sw,se',
                 },
+                disableDrag: self.disableDrag,
+                disableResize: self.disableResize,
                 verticalMargin:8/self.CELL_HEIGHT_MULTIPLER,
                 cellHeight: 20,
                 animate:false,
@@ -85,6 +90,8 @@ define([
         saveGrid : function () {
             var self = this;
             var isValidLayout = true;
+            if(self.isSaveLayout === false)
+            return false;
             var serializedData = _.map(self.$el.find('.custom-grid-stack-item:visible'), function (el) {
                 el = $(el);
                 var node = el.data('_gridstack_node');
@@ -198,20 +205,25 @@ define([
             var modelCfg = cfg['modelCfg'],model;
             //Add cache Config
             var modelId = cfg['modelCfg']['modelId'];
+            var region = contrail.getCookie('region');
+            if(region == null) {
+                region = "Default"
+            }
             //if there exists a mapping of modelId in widgetConfigManager.modelInstMap, use it
             //Maintain a mapping of cacheId vs contrailListModel and if found,return that
-            var cachedModelObj = widgetConfigManager.modelInstMap[modelId];
+            var cachedModelObj = cowu.getValueByJsonPath(widgetConfigManager.modelInstMap,region + ';' + modelId);
             var isCacheExpired = true;
+            
             if(cachedModelObj != null && 
                (_.now() - cachedModelObj['time']) < cowc.INFRA_MODEL_CACHE_TIMEOUT * 1000) {
-                model = widgetConfigManager.modelInstMap[modelId]['model'];
+                model = cowu.getValueByJsonPath(widgetConfigManager.modelInstMap,region + ';' + modelId+ ';model');
                 if(model.errorList.length == 0) {
                     isCacheExpired = false;
                     model.loadedFromCache = true;
                 }
             }
             if(!isCacheExpired) {
-                model = widgetConfigManager.modelInstMap[modelId]['model'];
+                model = cowu.getValueByJsonPath(widgetConfigManager.modelInstMap,region + ';' + modelId+ ';model');
             } else if(cowu.getValueByJsonPath(cfg,'modelCfg;source','').match(/STATTABLE|LOG|OBJECT/)) {
                 model = new ContrailListModel(cowu.getStatsModelConfig(modelCfg['config']));
             } else if(cowu.getValueByJsonPath(cfg,'modelCfg;listModel','') != '') {
@@ -220,7 +232,8 @@ define([
                 model = new ContrailListModel(modelCfg['config']);
             }
             if(isCacheExpired && modelId != null) {
-                widgetConfigManager.modelInstMap[modelId] = {
+                widgetConfigManager.modelInstMap[region] = {};
+                widgetConfigManager.modelInstMap[region][modelId] = {
                     model: model,
                     time: _.now()
                 };
