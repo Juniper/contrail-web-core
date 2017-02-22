@@ -1204,46 +1204,48 @@ define([
                 }
             }
         };
-
         this.loadAlertsPopup = function(cfgObj) {
-            var prefixId = 'dashboard-alerts';
-            var notificationView = false;
-            var cfgObj = ifNull(cfgObj,{});
-            var modalTemplate =
-                contrail.getTemplate4Id('core-modal-template');
-            var modalId = 'dashboard-alerts-modal';
-            var modalLayout = modalTemplate({prefixId: prefixId, modalId: modalId});
-            var formId = prefixId + '_modal';
-            var modalConfig = {
-                    'modalId': modalId,
-                    'className': 'modal-840',
-                    'body': modalLayout,
-                    'onCancel': function() {
-                        $("#" + modalId).modal('hide');
-                    }
-                }
-            if (notificationView) {
-                require(['js/views/NotificationView', 'core-alarm-parsers', 'core-alarm-utils'],
-                 function (NotificationView, coreAlarmParsers, coreAlarmUtils) {
-                    var notificationView = new NotificationView({
-                        el: $("#alarms-popup-link a"),
-                        viewConfig: {
-                            template: 'notification-popover-template',
-                            title: 'Alarms'
+           var region = contrail.getCookie('region');
+           if(region != 'All Regions') {
+                var prefixId = 'dashboard-alerts';
+                var notificationView = false;
+                var cfgObj = ifNull(cfgObj,{});
+                var modalTemplate =
+                    contrail.getTemplate4Id('core-modal-template');
+                var modalId = 'dashboard-alerts-modal';
+                var modalLayout = modalTemplate({prefixId: prefixId, modalId: modalId});
+                var formId = prefixId + '_modal';
+                var modalConfig = {
+                        'modalId': modalId,
+                        'className': 'modal-840',
+                        'body': modalLayout,
+                        'onCancel': function() {
+                            $("#" + modalId).modal('hide');
                         }
-                    });
-                    notificationView.render();
-                });
-            } else {
-                    cowu.createModal(modalConfig);
-                    require(['js/views/AlarmGridView'], function(AlarmGridView) {
-                        var alarmGridView = new AlarmGridView({
-                            el:$("#" + modalId).find('#' + formId),
-                            viewConfig:{}
+                    }
+                if (notificationView) {
+                    require(['js/views/NotificationView', 'core-alarm-parsers', 'core-alarm-utils'],
+                     function (NotificationView, coreAlarmParsers, coreAlarmUtils) {
+                        var notificationView = new NotificationView({
+                            el: $("#alarms-popup-link a"),
+                            viewConfig: {
+                                template: 'notification-popover-template',
+                                title: 'Alarms'
+                            }
                         });
-                        alarmGridView.render();
+                        notificationView.render();
                     });
-            }
+                } else {
+                        cowu.createModal(modalConfig);
+                        require(['js/views/AlarmGridView'], function(AlarmGridView) {
+                            var alarmGridView = new AlarmGridView({
+                                el:$("#" + modalId).find('#' + formId),
+                                viewConfig:{}
+                            });
+                            alarmGridView.render();
+                        });
+                }
+           }
         };
 
         this.delete_cookie = function(name) {
@@ -1777,7 +1779,7 @@ define([
                     if (yField != null) {
                         var groupByDimSum = groupDim.group().reduceSum(
                             function (d) {
-                                return d[yField];
+                                return cowu.getValueByJsonPath(d, yField);
                         });
                         if (yFieldOperation == 'average') {
                             groupCountsObj = _.indexBy(groupDim.group().reduceCount().all(), 'key');
@@ -1881,7 +1883,7 @@ define([
                      // Currently we are computing the max value
                      // we can add sum, failures etc based on need
                      var maxValueObj = _.max(recordsArr, function (d) {
-                         return ifNull(d[yField], 0);
+                         return cowu.getValueByJsonPath(d, yField, 0);
                      });
                      var maxValue = getValueByJsonPath(maxValueObj, yField, 0);
                      parsedData[yAxisLabel].values.push({
@@ -2130,7 +2132,6 @@ define([
             }
             return items;
         }
-
         /**
          * Takes input as an array of configs.
          * The first one is considered as primary req and the rest are added as
