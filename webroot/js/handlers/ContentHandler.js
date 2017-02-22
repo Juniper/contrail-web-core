@@ -78,10 +78,13 @@ define(['underscore'], function (_) {
                 currPageQueryStr = ifNull(currHash['q'], {}),
                 lastPageQueryStr = ifNull(lastHash['q'], {}),
                 webServerInfo = globalObj['webServerInfo'];
-
             try {
                 if (currPageHash == '' || menuHandler.isHashExists(currHash) == false) {
-                    if(webServerInfo['loggedInOrchestrationMode'] == 'vcenter') {
+                    var currentRole =  getValueByJsonPath(webServerInfo,
+                            'role;0', "", false);
+                    if(currentRole == "globalController"){
+                        currPageHash = "mon_infra_globalcontroller";
+                    } else if(webServerInfo['loggedInOrchestrationMode'] == 'vcenter') {
                         //If vCenter is the only orchestration model
                         if(webServerInfo['orchestrationModel'].length == 1)
                             currPageHash = "mon_infra_dashboard";
