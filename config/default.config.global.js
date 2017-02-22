@@ -386,6 +386,7 @@ config.proxy.analytics_node_ports = [
     '8090', /* HttpPortOpserver */
     '8091', /* HttpPortQueryEngine */
     '8104', /* HttpPortAnalyticsNodemgr */
+    '9081'  /* HttpPortAnalyticsHA */
 ];
 config.proxy.config_node_ports = [
     '5998', /* DiscoveryServerPort */
