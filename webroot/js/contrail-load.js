@@ -19,7 +19,6 @@ $(document).ready(function () {
         var widgetBoxElem = $(this).parents('div.widget-box');
         $(widgetBoxElem).toggleClass('collapsed');
     });
-
     //$('.preBlock i').on('click', function () {
     $(document).on('click', '.preBlock i', function () {
         $(this).toggleClass('fa-minus').toggleClass('fa-plus');
