@@ -19,7 +19,15 @@ $(document).ready(function () {
         var widgetBoxElem = $(this).parents('div.widget-box');
         $(widgetBoxElem).toggleClass('collapsed');
     });
-
+// Remove padding of page content if the page is multiregion dashbaord
+    var region = contrail.getCookie('region');
+    if(region === 'All Regions') {
+            $("#page-content").css("padding","0px");
+        }
+        else{
+          $("#page-content").css("padding","2px 10px 5px");
+        }
+ 
     //$('.preBlock i').on('click', function () {
     $(document).on('click', '.preBlock i', function () {
         $(this).toggleClass('fa-minus').toggleClass('fa-plus');
