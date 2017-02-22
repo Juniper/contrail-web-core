@@ -22,6 +22,8 @@ define([
             self.gridAttr = cowu.getValueByJsonPath(options,'attributes;viewConfig;gridAttr',{});
             self.elementId = cowu.getValueByJsonPath(options,'attributes;viewConfig;elementId','');
             self.movedWidgetCfg = cowu.getValueByJsonPath(options,'attributes;viewConfig;movedWidgetCfg',null);
+            self.disableDrag = cowu.getValueByJsonPath(options,'attributes;viewConfig;disableDrag',false);
+            self.disableResize = cowu.getValueByJsonPath(options,'attributes;viewConfig;disableResize',false);
             self.COLUMN_CNT = 2;
             self.VIRTUAL_COLUMNS = 2;
             //Decouple cellHieght from height assigned to widget
@@ -38,6 +40,8 @@ define([
                 resizable: {
                     handles:'sw,se',
                 },
+                disableDrag: self.disableDrag,
+                disableResize: self.disableResize,
                 verticalMargin:8/self.CELL_HEIGHT_MULTIPLER,
                 cellHeight: 20,
                 animate:false,
