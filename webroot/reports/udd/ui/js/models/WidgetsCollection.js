@@ -42,7 +42,7 @@ define([
         // both params are mandatory to access filtered collections right
         filterBy: function(dashboardId, tabId) {
             if (this.tabModels[tabId]) {
-                return this.tabModels[tabId].collections;
+                return this.tabModels[tabId].collection;
             }
 
             var tabInfoFields = [
