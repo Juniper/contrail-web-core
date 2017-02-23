@@ -1407,7 +1407,7 @@ define([
                     };
                 }
                 customConfig['tags'] = true;
-                customConfig['tokenSeparators'] = ["|"];
+                customConfig['tokenSeparators'] = [","];
                 customConfig['initSelection'] = function (element, callback) {
                     var data = [];
 
@@ -1419,7 +1419,7 @@ define([
                         return val;
                     }
 
-                    $(splitVal(element.val(), "|")).each(function () {
+                    $(splitVal(element.val(), ",")).each(function () {
                         data.push({
                             id: this,
                             text: this
@@ -1569,9 +1569,7 @@ define([
                 config.data = source;
             }
             if (contrail.checkIfExist(config.data)) {
-                
-                var initIds = _.pluck(config.data, "value");
-                initSelect2(config, config.multiple ? initIds : null, true);
+                initSelect2(config);
             }
 
             $.extend(true, dataObject, {
