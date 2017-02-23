@@ -2310,7 +2310,7 @@ define([
         for(var i in updatedObj){
             if(typeof updatedObj[i] === 'number' || typeof updatedObj[i] === 'string' || typeof updatedObj[i] === 'boolean'){
                 if(oldObj === undefined){
-                    if(updatedObj[i] === '' || updatedObj[i] === 0 || updatedObj[i] === false){
+                    if(updatedObj[i] === '' || updatedObj[i] === false){
                         delete updatedObj[i];
                     }
                 }else{
@@ -2318,7 +2318,7 @@ define([
                         if(updatedObj[i] === oldObj[i] && !oldJson.hasOwnProperty(i)){
                             delete updatedObj[i];
                         }
-                        if(oldJson[i] === null){
+                        if(oldJson[i] === null && updatedObj[i] === null){
                             updatedObj[i] = null;
                         }
                     }else{
@@ -2327,6 +2327,8 @@ define([
                         }
                     }
                 }
+            }else if(updatedObj[i] === null){
+                delete updatedObj[i];
             }else if(typeof updatedObj[i] === 'object' && updatedObj[i] !== null && updatedObj[i].constructor !== Array){
                 if(oldJson !== undefined && oldJson !== null){
                     getDeepDiffOfKey(updatedObj[i], oldObj[i], oldJson[i]);
