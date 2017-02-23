@@ -41,6 +41,10 @@ define([
         //TODO it would be good to use synced subcollections like: https://github.com/anthonyshort/backbone.collectionsubset
         // both params are mandatory to access filtered collections right
         filterBy: function(dashboardId, tabId) {
+            if (this.tabModels[tabId]) {
+                return this.tabModels[tabId].collections;
+            }
+
             var tabInfoFields = [
                     "customizedTabListOrder",
                     "tabCreationTime",
@@ -103,7 +107,7 @@ define([
                     tabId: tabId,
                     tabName: model.collection._tabName,
                     tabCreationTime: model.collection._tabCreationTime,
-                    customizedTabListOrder: this.models[0].get("customizedTabListOrder")
+                    customizedTabListOrder: this.models[0] ? this.model[0].get("customizedTabListOrder") : ""
                 };
 
                 model.set(this.tabModels[tabId].info);
