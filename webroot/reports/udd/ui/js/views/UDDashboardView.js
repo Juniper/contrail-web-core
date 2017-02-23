@@ -33,6 +33,7 @@ define([
             // add default tab
             if (_.isEmpty(tabIds)) {
                 tabIds.push(this.currentTab);
+                this.model.setTabCreationTime(Date.now());
             }
 
             // sort by creationTime
