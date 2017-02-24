@@ -369,6 +369,32 @@ config.vcenter.strictSSL = false;               //Strictly Validate the certific
 config.vcenter.ca = '';                         //specify the certificate key file
 
 /*****************************************************************************
+ * The below configurations descibe the SSL options for connecting to different
+ * introspect port.
+ *
+ * enabled:
+ *      Boolean flag to enable or disable ssl while connecting to different
+ *      introspect port
+ * key:
+ *      Private key to use for SSL
+ * cert:
+ *      Public x509 certificate to use
+ * ca:
+ *      A string, Buffer or array of strings or Buffers of trusted certificates
+ *      in PEM format. These are used to authorize connections.
+ * strictSSL:
+ *      If true, the server certificate is verified against the list of
+ *      supplied CAs
+ *****************************************************************************/
+config.introspect = {};
+config.introspect.ssl = {};
+config.introspect.ssl.enabled = false;
+config.introspect.ssl.key = '';
+config.introspect.ssl.cert = '';
+config.introspect.ssl.ca = '';
+config.introspect.ssl.strictSSL = false;
+
+/*****************************************************************************
  * The below flag indicates wheather multi_tenancy is enabled or not.
  * If set
  *  true  - Only admin users can login to UI.
@@ -420,35 +446,53 @@ config.network.router_L3Enable = true;
  * config_node_ports - the allowed port list when the ip/host in proxy URL
  *      used has role as config node
  *
+ * Note: Introspect port must be added inside introspect section, if not a
+ *       introspect port, then add that against some key, ex:
+ *       config.proxy.vrouter_node_ports = {
+ *           "key": "port",
+ *           ......
+ *       };
+ *
  *****************************************************************************/
 config.proxy = {};
 config.proxy.enabled = true;
-config.proxy.vrouter_node_ports = [
-    '8085', /* HttpPortAgent */
-    '8102', /* HttpPortVRouterNodemgr */
-];
-config.proxy.control_node_ports = [
-    '8083', /* HttpPortControl */
-    '8092', /* HttpPortDns */
-    '8101', /* HttpPortControlNodemgr */
-
-];
-config.proxy.analytics_node_ports = [
-    '8081', /* OpServerPort */
-    '8089', /* HttpPortCollector */
-    '8090', /* HttpPortOpserver */
-    '8091', /* HttpPortQueryEngine */
-    '8104', /* HttpPortAnalyticsNodemgr */
-    '9081'  /* HttpPortAnalyticsHA */
-];
-config.proxy.config_node_ports = [
-    '8082', /* ApiServerPort */
-    '8084', /* HttpPortApiServer */
-    '8087', /* HttpPortSchemaTransformer */
-    '8088', /* HttpPortSvcMonitor */
-    '8096', /* HttpPortDeviceManager */
-    '8100', /* HttpPortConfigNodemgr */
-];
+config.proxy.vrouter_node_ports = {
+    "introspect": [
+        /* All introspect ports for processes in vrouter/agent */
+        "8085",             /* HttpPortAgent */
+        "8102",             /* HttpPortVRouterNodemgr */
+    ]
+};
+config.proxy.control_node_ports = {
+    "introspect": [
+        /* All introspect ports for processes in control node */
+        "8083",             /* HttpPortControl */
+        "8092",             /* HttpPortDns */
+        "8101",             /* HttpPortControlNodemgr */
+    ]
+};
+config.proxy.analytics_node_ports = {
+    "analytics": ["8081"],  /* OpServerPort */
+    "introspect": [
+        /* All introspect ports for processes in analytics */
+        "8089",             /* HttpPortCollector */
+        "8090",             /* HttpPortOpserver */
+        "8091",             /* HttpPortQueryEngine */
+        "8104",             /* HttpPortAnalyticsNodemgr */
+        "9081"              /* HttpPortAnalyticsHA */
+    ]
+};
+config.proxy.config_node_ports = {
+    "api-server": ["8082"],   /* ApiServerPort */
+    "introspect": [
+        /* All introspect ports for processes in config */
+        "8084",             /* HttpPortApiServer */
+        "8087",             /* HttpPortSchemaTransformer */
+        "8088",             /* HttpPortSvcMonitor */
+        "8096",             /* HttpPortDeviceManager */
+        "8100"              /* HttpPortConfigNodemgr */
+    ]
+};
 
 /*****************************************************************************
  *

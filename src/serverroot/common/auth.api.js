@@ -330,6 +330,18 @@ function getAuthRetryData (token, req, reqUrl, callback)
                                                     callback);
 }
 
+function getPortToProcessMapByReqObj (req)
+{
+    var orchMode = req.session.loggedInOrchestrationMode;
+    return getAuthMethod[orchMode].getPortToProcessMapByReqObj(req);
+}
+
+function getConfigEntityByServiceEndpoint (req, serviceName)
+{
+    var orchMode = req.session.loggedInOrchestrationMode;
+    return getAuthMethod[orchMode].getConfigEntityByServiceEndpoint(req, serviceName);
+}
+
 exports.doAuthenticate = doAuthenticate;
 exports.getTenantList = getTenantList;
 exports.getTokenObj = getTokenObj;
@@ -362,4 +374,6 @@ exports.getCurrentRegion = getCurrentRegion;
 exports.shiftServiceEndpointList = shiftServiceEndpointList;
 exports.getRoleList = getRoleList;
 exports.getAuthRetryData = getAuthRetryData;
+exports.getPortToProcessMapByReqObj = getPortToProcessMapByReqObj;
+exports.getConfigEntityByServiceEndpoint = getConfigEntityByServiceEndpoint;
 
