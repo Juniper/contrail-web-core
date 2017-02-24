@@ -29,7 +29,9 @@
     "xml2js": "0.2.3",
     "redis-rstream": "0.1.2",
     "connect-redis": "1.4.5",
-    "request-timeout": "0.0.2"
+    "request-timeout": "0.0.2",
+    "cassandra-driver": "3.2.0",
+    "webworker-threads": "0.7.11"
   },
   "devDependencies": {
     "grunt": "0.4.2",
