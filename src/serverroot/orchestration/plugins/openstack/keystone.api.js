@@ -2938,6 +2938,61 @@ function shiftServiceEndpointList (req, serviceType, regionName)
     oStack.shiftServiceEndpointList(req, serviceType, regionName);
 }
 
+function getPortToProcessMapByReqObj (req)
+{
+    var portToProcessMap = {};
+    var regionCookie = commonUtils.getValueByJsonPath(req, "cookies;region",
+                                                      null, false);
+    var portToEntityMaps = commonUtils.getValueByJsonPath(req,
+                                                          "session;portToProcessMap;"
+                                                          + regionCookie,
+                                                          null, false);
+    if (null != portToEntityMaps) {
+        return portToEntityMaps;
+    }
+    /* compute from catalog */
+    var serviceCatalog = commonUtils.getValueByJsonPath(req,
+                                                        "session;serviceCatalog",
+                                                        null, false);
+    if (null == serviceCatalog[regionCookie]) {
+        return null;
+    }
+    for (var key in serviceCatalog[regionCookie]) {
+        var port = commonUtils.getValueByJsonPath(serviceCatalog[regionCookie],
+                                                  key + ";maps;0;port", null);
+        if (null == port) {
+            continue;
+        }
+        portToProcessMap[port] = key;
+    }
+    /* Save it to session object */
+    req.session.portToProcessMap = {};
+    req.session.portToProcessMap[regionCookie] = portToProcessMap;
+    return portToProcessMap;
+}
+
+function getConfigEntityByServiceEndpoint (req, serviceName)
+{
+    switch (serviceName) {
+    case global.SERVICE_ENDPT_TYPE_IDENTITY:
+        return "identityManager";
+    case global.SERVICE_ENDPT_TYPE_NETWORK:
+        return "networkManager";
+    case global.SERVICE_ENDPT_TYPE_IMAGE:
+        return "imageManager";
+    case global.SERVICE_ENDPT_TYPE_COMPUTE:
+        return "computeManager";
+    case global.SERVICE_ENDPT_TYPE_APISERVER:
+        return "cnfg";
+    case global.SERVICE_ENDPT_TYPE_OPSERVER:
+        return "analytics";
+    default:
+        /* Not used in contrail-ui */
+        return null;
+    }
+    return null;
+}
+
 exports.authenticate = authenticate;
 exports.getToken = getToken;
 exports.getTenantList = getTenantList;
@@ -2963,4 +3018,6 @@ exports.getServiceCatalogByRegion = getServiceCatalogByRegion;
 exports.shiftServiceEndpointList = shiftServiceEndpointList;
 exports.getRoleList = getRoleList;
 exports.getAuthRetryData = getAuthRetryData;
+exports.getPortToProcessMapByReqObj = getPortToProcessMapByReqObj;
+exports.getConfigEntityByServiceEndpoint = getConfigEntityByServiceEndpoint;
 
