@@ -754,9 +754,9 @@ function initCustomKOBindings(Knockout) {
                     if (contrail.checkIfExist(value)) {
                         if (value !== '') {
                             value = $.isArray(value) ? value : [value];
-                            multiselect.value(value);
+                            multiselect.value(value, true);
                         } else if (value === '') {
-                            multiselect.value([]);
+                            multiselect.value([], true);
                         }
                     }
                 }
