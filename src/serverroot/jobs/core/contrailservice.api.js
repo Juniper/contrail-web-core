@@ -13,7 +13,8 @@ var config = process.mainModule.exports.config,
 
 var serviceRespData = {},
     activeServiceRespData = {},
-    unChangedActiveSvcRespData = {};
+    unChangedActiveSvcRespData = {},
+    gServerHeaders = {};
 
 function checkIfActiveServiceRespDataChanged (serviceType)
 {
@@ -211,19 +212,79 @@ function resetServicesByParams (params, apiName)
     return params;
 }
 
+function getTokenAndServerResponse (serviceObj, callback, stopRetry)
+{
+    var authApi = require("../../common/auth.api");
+    var apiServer = serviceObj.apiServer;
+    var headers = (null != serviceObj.headers) ? serviceObj.headers : {};
+    var serviceType = serviceObj.serviceType;
+    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
+
+    if ((global.CONTRAIL_SERVICE_TYPE_API_SERVER == serviceType) ||
+        (global.CONTRAIL_SERVICE_TYPE_OP_SERVER == serviceType)) {
+        authApi.getUserAuthDataByConfigAuthObj(null, null,
+                                               function(error, data) {
+            var tokenId =
+                commonUtils.getValueByJsonPath(data, "access;token;id", null);
+            if ((null == error) && (null != tokenId)) {
+                /* Admin Token */
+                if (true == multiTenancyEnabled) {
+                    headers["X_API_ROLE"] = "admin";
+                }
+                headers["X-Auth-Token"] = tokenId;
+                gServerHeaders = headers;
+                serviceObj.headers = headers;
+            }
+            getServerResponse (serviceObj, callback, stopRetry);
+        });
+        return;
+    }
+    getServerResponse(serviceObj, callback);
+}
+
+function getServerResponse (serviceObj, callback, stopRetry)
+{
+    var apiServer = serviceObj.apiServer;
+    var headers = (null != serviceObj.headers) ? serviceObj.headers : {};
+    var serviceType = serviceObj.serviceType;
+
+    apiServer.api.get(serviceObj.url, function(err, data) {
+        if ((err != null) && (true != stopRetry)) {
+            if (global.HTTP_STATUS_AUTHORIZATION_FAILURE ==
+                err.responseCode) {
+                getTokenAndServerResponse(serviceObj, callback, true);
+                return;
+            }
+        }
+        callback(null, {err: err, data:
+                       {serviceType: serviceObj.serviceType, data: data}});
+    }, headers);
+}
+
 function subscribeToContrailService (serviceObj, callback)
 {
-    var apiServer = serviceObj.apiServer,
-        url = serviceObj.url;
-    apiServer.api.get(url, function(err, data) {
-        if(err){
-            callback(null, {err: err, data:
-                {serviceType: serviceObj.serviceType, data: data}});
+    var multiTenancyEnabled = commonUtils.isMultiTenancyEnabled();
+    var url = serviceObj.url;
+    var authObj = null;
+    var headers = {};
+    if (true == multiTenancyEnabled) {
+        /* Admin token */
+        headers["X_API_ROLE"] = "admin";
+    }
+    headers["X-Auth-Token"] = null;
+    var serviceType = serviceObj.serviceType;
+    if ((global.CONTRAIL_SERVICE_TYPE_API_SERVER == serviceType) ||
+        (global.CONTRAIL_SERVICE_TYPE_OP_SERVER == serviceType)) {
+        var xAuthToken = commonUtils.getValueByJsonPath(gServerHeaders,
+                                                        "X-Auth-Token", null);
+        if (null == xAuthToken) {
+            getTokenAndServerResponse(serviceObj, callback);
             return;
         }
-        callback(null, {err: null, data:
-            {serviceType: serviceObj.serviceType, data: data}});
-    });
+        headers["X-Auth-Token"] = xAuthToken;
+        serviceObj.headers = headers;
+    }
+    getServerResponse(serviceObj, callback);
 }
 
 function getContrailServices ()
