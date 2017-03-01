@@ -84,8 +84,8 @@ global.SERVICE_ENDPT_TYPE_IMAGE = 'image';
 global.SERVICE_ENDPT_TYPE_VOLUME = 'volume';
 global.SERVICE_ENDPT_TYPE_EC2 = 'ec2';
 global.SERVICE_ENDPT_TYPE_IDENTITY = 'identity';
-global.SERVICE_ENDPT_TYPE_APISERVER = 'apiServer';
-global.SERVICE_ENDPT_TYPE_OPSERVER = 'opServer';
+global.SERVICE_ENDPT_TYPE_APISERVER = 'ApiServer';
+global.SERVICE_ENDPT_TYPE_OPSERVER = 'OpServer';
 global.SERVICE_ENDPT_TYPE_CGC = 'cgc';
 global.REGION_ALL = 'All Regions';
 

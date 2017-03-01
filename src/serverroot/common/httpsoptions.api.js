@@ -6,6 +6,7 @@ var fs      = require('fs');
 var config  = process.mainModule.exports.config;
 var request = require('request');
 var restler = require('restler');
+var commonUtils = require("../utils/common.utils");
 
 /* Function: getHttpsOptionsDefValue
     Get the default value for https options
@@ -33,6 +34,10 @@ function getHttpsOptionsDefValue (reqType)
  */
 function getHttpsOptionsByAPIType (apiType, reqType)
 {
+    if (global.SANDESH_API == apiType) {
+        return commonUtils.getValueByJsonPath(config,
+                                              "introspect;ssl;" + reqType);
+    }
     var defVal = getHttpsOptionsDefValue(reqType);
     if (null == apiType) {
         return defVal;
@@ -93,6 +98,13 @@ function getOrchModuleByAPIType (apiType)
  */
 function getProtocolByAPIType (apiType)
 {
+    if (global.SANDESH_API == apiType) {
+        var isSSLEnabled = commonUtils.getValueByJsonPath(config,
+                                                          "introspect;ssl;enabled",
+                                                          false);
+        return (true == isSSLEnabled) ? global.PROTOCOL_HTTPS :
+            global.PROTOCOL_HTTP;
+    }
     if (null != apiProtocolList[apiType]) {
         return apiProtocolList[apiType];
     }

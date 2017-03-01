@@ -12,6 +12,7 @@ var redisUtils  = require('../utils/redis.utils');
 var commonUtils = require('../utils/common.utils');
 var config      = process.mainModule.exports.config;
 var global      = require('./global');
+var authApi     = require("./auth.api");
 
 var redisProxyClient = null;
 var opApiServerKeyList = [global.label.API_SERVER, global.label.OPSERVER,
@@ -130,4 +131,73 @@ function isServerByType (serverType, proxyHost, proxyPort)
     return false;
 }
 
+function getSSLOptionsByProxyPort (req, port)
+{
+    var sslOptions = null;
+    port = port.toString();
+    var found = false;
+    var isSvcEndPtsFromConfig = config.serviceEndPointFromConfig;
+    if (true == isSvcEndPtsFromConfig) {
+        for (var key in config) {
+            var entity = config[key];
+            var ports =
+                commonUtils.getValueByJsonPath(entity, "port",
+                                               commonUtils.getValueByJsonPath(entity,
+                                                                              "server_port",
+                                                                              null));
+            if (null == ports) {
+                continue;
+            }
+            if (ports instanceof Array) {
+                if (ports.indexOf(port) > -1) {
+                    return entity;
+                }
+            } else if (ports == port) {
+                return entity;
+            }
+        }
+    } else {
+        var portToProcessMap = authApi.getPortToProcessMapByReqObj(req);
+        if (null != portToProcessMap) {
+            return
+                authApi.getConfigEntityByServiceEndpoint(req, portToProcessMap[port]);
+        }
+    }
+    var introspectSSLOptions =
+        commonUtils.getValueByJsonPath(config, "introspect;ssl", null);
+    var isIntrospectSSLEnabled =
+        commonUtils.getValueByJsonPath(introspectSSLOptions, "enabled", false);
+    if (true == isIntrospectSSLEnabled) {
+        /* Check if the port is introspect port */
+        /* TODO: If UVE sends the introspect port, then consider that also along
+         * with config file
+         */
+        for (var key in config.proxy) {
+            var portListObjs = config.proxy[key];
+            var introspectPorts =
+                commonUtils.getValueByJsonPath(portListObjs, "introspect", []);
+            if (introspectPorts.indexOf(port) > -1) {
+                found = true;
+                break;
+            }
+            if (true == found) {
+                break;
+            }
+        }
+        if (true == found) {
+            sslOptions = commonUtils.getValueByJsonPath(config, "introspect;ssl",
+                                                        null);
+            if (null != sslOptions) {
+                sslOptions.authProtocol = (true == sslOptions.enabled) ?
+                    global.PROTOCOL_HTTPS : global.PROTOCOL_HTTP;
+                return sslOptions;
+            }
+            return sslOptions;
+        }
+    }
+    return null;
+}
+
 exports.validateProxyIpPort = validateProxyIpPort;
+exports.getSSLOptionsByProxyPort = getSSLOptionsByProxyPort;
+
