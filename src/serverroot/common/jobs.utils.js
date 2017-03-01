@@ -150,8 +150,15 @@ function getHeaders (dataObj, callback)
     default:
         break;
     }
+    var reqRegion = commonUtils.getValueByJsonPath(jobData,
+                                                   "taskData;reqRegion", null);
+    if (null != reqRegion) {
+        var appData = {};
+        appData.authObj = {};
+        appData.authObj.reqRegion = reqRegion;
+    }
     var apiServiceType = authApi.getEndpointServiceType(apiId);
-    authApi.getServiceAPIVersionByReqObj(req, apiServiceType,
+    authApi.getServiceAPIVersionByReqObj(req, appData, apiServiceType,
                                          function(verObjs) {
         var verObj = null;
         if ((null != verObjs) && (null != verObjs[0])) {
