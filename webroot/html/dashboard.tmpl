@@ -38,16 +38,16 @@
         };
     </script>
     <script type="text/javascript">
-        var built_at="";
+        var built_at=1488264901;
         var hostname = window.location.hostname;
         document.getElementById('tabTitle').innerHTML = hostname.substring(0,15)+'... | Contrail';
     </script>
 
     <link rel="stylesheet" href="/common/ui/css/contrail.thirdparty.unified.css"/>
-    <!-- Start prod_env -->
+    <!-- Start prod_env
     <link rel="stylesheet" href="/common/ui/css/contrail.unified.css"/>
-    <!-- End prod_env -->
-    <!-- Start dev_env
+    End prod_env -->
+    <!-- Start dev_env -->
     <link rel="stylesheet" href="/common/ui/css/contrail.init.css"/>
     <link rel="stylesheet" href="/common/ui/css/contrail.theme.css"/>
     <link rel="stylesheet" href="/common/ui/css/contrail.theme.layout.css"/>
@@ -61,13 +61,13 @@
     <link rel="stylesheet" href="/common/ui/css/contrail.custom.css"/>
     <link rel="stylesheet" href="/common/ui/css/contrail.font.css"/>
     <link rel="stylesheet" href="/common/ui/css/login.css"/>
-    End dev_env -->
+    <!-- End dev_env -->
     <!--[if lte IE 8]>
-    <link rel="stylesheet" href="/common/ui/css/contrail-ie.min.css?built_at="/>
+    <link rel="stylesheet" href="/common/ui/css/contrail-ie.min.css?built_at=1488264901"/>
     <![endif]-->
 
     <!--[if IE 7]>
-    <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome-ie7.min.css?built_at="/>
+    <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome-ie7.min.css?built_at=1488264901"/>
     <![endif]-->
 
 
@@ -212,12 +212,12 @@
     <div id="app-container">
     </div>
 
-<!-- Start dev_env
+<!-- Start dev_env -->
 <script data-env="dev" data-main="/js/common/core.app" src="/assets/requirejs/require.js"></script>
-End dev_env -->
-<!-- Start prod_env -->
+<!-- End dev_env -->
+<!-- Start prod_env
 <script data-env="prod" data-main="/js/common/core.app" src="/assets/requirejs/require.js"></script>
-<!-- End prod_env -->
+End prod_env -->
 
 <!--[if lte IE 8]>
 <script src="/js/"></script>

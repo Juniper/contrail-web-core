@@ -3,7 +3,7 @@
  */
 
 var dir         = require('node-dir');
-var fs          = require('fs');
+var fs          = require('../../fs.js');
 var exec        = require('child_process').exec;
 var mime        = require('mime');
 var async       = require('async');
