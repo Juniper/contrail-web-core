@@ -1016,6 +1016,24 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-four-optns-radio-button-view-template">
+    <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        {{> coreFormLabel}}
+        <div class="row">
+            {{#each elementConfig.dataObj}}
+                <div class="col-xs-3">
+                    <input type="radio" name="{{../id}}" value="{{value}}" class="{{../class}}"
+                        data-bind="
+                            {{#if ../disabled}}disable: {{../disabled}}, {{/if}} {{#if ../lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                            checked: {{../dataBindValue}},event: { focusout: function() { validateAttr('{{../path}}', '{{../validation}}') } }" />
+                    <span class="margin-0-0-0-5">{{label}}</span>
+                </div>
+            {{/each}}
+        </div>
+        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-dropdown-view-template">
    <div class="form-group"
         data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}"

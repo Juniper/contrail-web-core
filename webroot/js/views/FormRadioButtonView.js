@@ -8,8 +8,8 @@ define([
 ], function (_, ContrailView) {
     var FormRadioButtonView = ContrailView.extend({
         render: function () {
-            var radioButtonTemplate = contrail.getTemplate4Id(cowc.TMPL_RADIO_BUTTON_VIEW),
-                viewConfig = this.attributes.viewConfig,
+            var viewConfig = this.attributes.viewConfig,
+                radioButtonTemplate = contrail.getTemplate4Id((viewConfig.templateId) ? viewConfig.templateId: cowc.TMPL_RADIO_BUTTON_VIEW),
                 elementConfig = viewConfig[cowc.KEY_ELEMENT_CONFIG],
                 elId = this.attributes.elementId,
                 app = this.attributes.app,
