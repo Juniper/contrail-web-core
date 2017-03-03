@@ -2115,7 +2115,7 @@ define([
 
         self.resetGridStackLayout = function(allPages) {
             //var gridStackId = $('.custom-grid-stack').attr('data-widget-id');
-            localStorage.clear();
+            localStorage.removeItem(cowc.LAYOUT_PREFERENCE);
             var gridStackInst = $('.custom-grid-stack').data('grid-stack-instance')
             if(gridStackInst != null ) {
                 gridStackInst.render()
@@ -2129,8 +2129,36 @@ define([
                 items = gridInst._dataView.getItems();
             }
             return items;
-        }
+        };
+        self.getLayoutPreference = function (elementId) {
+            // We have remove this if block once all the keys
+            // are removed from local storage
+            if (localStorage.getItem(elementId) != null) {
+                var preferences = JSON.parse(localStorage.getItem(elementId));
+                _.map(preferences, function (item) {
+                    if (item != null && item.itemAttr != null) {
+                        item.itemAttr.width *= 2;
+                    }
+                    return item;
+                });
+                self.updateLayoutPreference(elementId, preferences);
+                localStorage.removeItem(elementId);
+            }
 
+            if (localStorage.getItem(cowc.LAYOUT_PREFERENCE) != null) {
+                return _.result(JSON.parse(localStorage.getItem(cowc.LAYOUT_PREFERENCE)), elementId);
+            }
+        };
+        self.updateLayoutPreference = function (elementId, preferences) {
+            var layoutPref = localStorage.getItem(cowc.LAYOUT_PREFERENCE);
+            if (layoutPref != null) {
+                layoutPref = JSON.parse(layoutPref);
+            } else {
+                layoutPref = {};
+            }
+            layoutPref[elementId] = preferences;
+            localStorage.setItem(cowc.LAYOUT_PREFERENCE, JSON.stringify(layoutPref));
+        }
         /**
          * Takes input as an array of configs.
          * The first one is considered as primary req and the rest are added as
