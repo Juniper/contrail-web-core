@@ -576,6 +576,9 @@ define([
                             url: "/api/qe/query",
                             type: "POST",
                             data: JSON.stringify(queryResultPostData),
+                            dataFilter:function(data){
+                                return data;
+                            }
                         },
                         dataParser: function (response) {
                             return response.data;

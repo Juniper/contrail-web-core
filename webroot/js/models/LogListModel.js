@@ -17,7 +17,8 @@ define([
                 ajaxConfig : {
                     url : cowc.URL_QE_QUERY,
                     type: "POST",
-                    data: JSON.stringify(postData)
+                    data: JSON.stringify(postData),
+                    dataFilter: function(data){return data;}
                 },
                 dataParser : function(result) {
                     return result.data;
