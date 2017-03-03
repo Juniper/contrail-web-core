@@ -7,7 +7,8 @@ define(['contrail-list-model'], function(ContrailListModel) {
         var listModelConfig = {
             remote : {
                 ajaxConfig : {
-                    url : cowl.DASHBOARD_LOGS_URL
+                    url : cowl.DASHBOARD_LOGS_URL,
+                    dataFilter: function(data){return data;}
                 },
                 dataParser : parseDashboardLogs,
             },

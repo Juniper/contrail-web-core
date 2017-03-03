@@ -835,6 +835,22 @@ define([
             } catch(e) {
                 return defValue;
             }
+        };
+
+        this.sanitize = function (str) {
+            try {
+                return (str != null)? (str + "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"): str;
+            } catch(e) {
+                return str;
+            }
+        }
+
+        this.deSanitize = function (str) {
+            try {
+                return (str != null)? (str + "").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">"): str;
+            } catch(e) {
+                return str;
+            }
         }
 
         this.getValueByConfig = function(configValue, app, objectAccessor) {

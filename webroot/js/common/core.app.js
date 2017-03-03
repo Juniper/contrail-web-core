@@ -1360,6 +1360,9 @@ if (typeof document !== 'undefined' && document) {
                 },
                 error: function (xhr, e) {
                     //ajaxDefErrorHandler(xhr);
+                },
+                dataFilter : function (data, type) {
+                    return (type == 'json') ? (data + "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"): data;
                 }
             });
             loadUtils.fetchMenu(menuXMLLoadDefObj);
