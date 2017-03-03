@@ -112,6 +112,9 @@ $(document).ready(function () {
         },
         error: function (xhr, e) {
             //ajaxDefErrorHandler(xhr);
+        },
+        dataFilter : function (data, type) {
+            return (type == 'json') ? (data + "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"): data;
         }
     });
     layoutHandler.load();

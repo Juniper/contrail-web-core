@@ -38,7 +38,10 @@ define([
                 queryResultRemoteConfig = {
                     url: "/api/qe/query",
                     type: 'POST',
-                    data: JSON.stringify(queryRequestPostData)
+                    data: JSON.stringify(queryRequestPostData),
+                    dataFilter:function(data) {
+                        return data;
+                    }
                 };
 
                 listModelConfig = {

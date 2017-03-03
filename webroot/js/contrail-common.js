@@ -136,7 +136,7 @@ function Contrail() {
         var contentType = config['contentType'], dataType = config['dataType'],
             methodType = config['type'], cacheEnabled = config['cache'],
             reqTimeOut = config['timeout'], dataUrl = config['url'],
-            postData = config['data'], ajaxConfig = {};
+            postData = config['data'], ajaxConfig = {}, dataFilter = config['dataFilter'];
 
         ajaxConfig.async = contrail.checkIfExist(config.async) ? config.async : true;
 
@@ -162,6 +162,7 @@ function Contrail() {
         ajaxConfig.cache = cacheEnabled;
         ajaxConfig.url = dataUrl;
         ajaxConfig.data = postData;
+        ajaxConfig.dataFilter = dataFilter;
 
         if (isSet(reqTimeOut) && isNumber(reqTimeOut) && reqTimeOut > 0) {
             ajaxConfig.timeout = reqTimeOut;
