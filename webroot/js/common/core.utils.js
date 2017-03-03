@@ -834,6 +834,14 @@ define([
             }
         }
 
+        this.sanitize = function (str) {
+            return (str != null)? (str + "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"): str;
+        }
+
+        this.deSanitize = function (str) {
+            return (str != null)? (str + "").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">"): str;
+        }
+
         this.getValueByConfig = function(configValue, app, objectAccessor) {
             var templateGenerator = configValue.templateGenerator;
             if (templateGenerator === 'TextGenerator' || templateGenerator === 'LinkGenerator' || templateGenerator === 'json') {
