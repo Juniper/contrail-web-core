@@ -28,9 +28,9 @@ define([
             self.CELL_HEIGHT_MULTIPLER = 1;
             //Default is 12 columns. To have 3 column layout, set defaultWidth as 4
             if(self.gridAttr['defaultWidth'] != null)
-                self.COLUMN_CNT = 12/self.gridAttr['defaultWidth'];
+                self.COLUMN_CNT = cowc.GRID_STACK_COLUMN_CNT/self.gridAttr['defaultWidth'];
 
-            self.$el.addClass('grid-stack grid-stack-12 custom-grid-stack');
+            self.$el.addClass('grid-stack grid-stack-24 custom-grid-stack');
             self.$el.attr('data-widget-id',self.elementId);
             self.gridStack = $(self.$el).gridstack({
                 float:true,
@@ -41,9 +41,10 @@ define([
                 verticalMargin:8/self.CELL_HEIGHT_MULTIPLER,
                 cellHeight: 20,
                 animate:false,
-                acceptWidgets:'label'
+                acceptWidgets:'label',
+                width: 24
             }).data('gridstack');
-            
+
             self.$el.on('drag','.grid-stack-item',function(event,ui) {
                 $('.custom-grid-stack').addClass('show-borders');
             });
@@ -63,7 +64,7 @@ define([
             //Listen for change events once gridStack is rendered else it's getting triggered even while adding widgets for the first time
             self.$el.on('change',function(event,items) {
                 //Added to avoid saving to localStorage on resetLayout..as change event gets triggered even if we remove all widgets from gridstack
-                if(localStorage.getItem(self.elementId) != null) {
+                if(self.getLayoutPreference() != null) {
                     if(self.doSaveLayout == true)
                         self.saveGrid();
                     if(self.doSaveLayout == true)
@@ -95,8 +96,9 @@ define([
                 };
             }, this);
             if(isValidLayout == true) {
-                localStorage.setItem(self.elementId,JSON.stringify(serializedData));
+                self.updateLayoutPreference(serializedData);
             } else {
+
             }
         },
         render: function() {
@@ -119,9 +121,9 @@ define([
             }
             var widgetCfgList = self.widgetCfgList;
             //Check if there exists a saved preference for current gridStack id
-            if(localStorage.getItem(self.elementId) != null) {
-                var serializedData = localStorage.getItem(self.elementId),
-                    tmpData = JSON.parse(serializedData);
+            if(self.getLayoutPreference() != null) {
+                var serializedData = self.getLayoutPreference(),
+                    tmpData = serializedData;
                 if(tmpData.length > 0){
                     widgetCfgList = tmpData;
                 }
@@ -156,7 +158,7 @@ define([
             var widgetCnt = self.widgets.length;
             $(currElem).attr('data-widget-id',widgetCfg['id']);
             $(currElem).data('data-cfg', cfg);
-            if(localStorage.getItem(self.elementId) != null || isMoved) {
+            if(self.getLayoutPreference() != null || isMoved) {
                 if(isMoved){
                     self.tmpHeight = itemAttr['height'];
                     itemAttr['x'] = 0;
@@ -216,6 +218,23 @@ define([
             }
             cfg['viewCfg'] = $.extend(true,{},chUtils.getDefaultViewConfig(viewType),cfg['viewCfg']);
             self.renderView4Config($(currElem).find('.item-content'), model, cfg['viewCfg']);
+        },
+        getLayoutPreference: function () {
+            var self = this;
+            return _.result(JSON.parse(localStorage.getItem(cowc.LAYOUT_PREFERENCE)), self.elementId);
+        },
+        updateLayoutPreference: function (serializedData) {
+            var self = this,
+                elementId = self.elementId,
+                layoutPref = localStorage.getItem(cowc.LAYOUT_PREFERENCE);
+            if (layoutPref != null) {
+                layoutPref = JSON.parse(layoutPref);
+            } else {
+                localStorage.clear();
+                layoutPref = {};
+            }
+            layoutPref[elementId] = serializedData;
+            localStorage.setItem(cowc.LAYOUT_PREFERENCE, JSON.stringify(layoutPref));
         }
     });
     return GridStackView;

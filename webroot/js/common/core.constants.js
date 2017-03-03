@@ -2041,6 +2041,10 @@ define([
         this.TMPL_QUERY_QUEUE_PAGE = "query-queue-page-template";
         this.TMPL_QUERY_TEXT = "query-text-template";
         this.TMPL_QUERY_SELECT = "query-select-popup-template";
+
+        //Grid stack
+        this.GRID_STACK_COLUMN_CNT = 24;
+        this.LAYOUT_PREFERENCE = 'layout-preference';
     };
     //Export to global scope
     cowc = new CoreConstants();

@@ -2099,7 +2099,7 @@ define([
 
         self.resetGridStackLayout = function(allPages) {
             //var gridStackId = $('.custom-grid-stack').attr('data-widget-id');
-            localStorage.clear();
+            localStorage.removeItem(cowc.LAYOUT_PREFERENCE);
             var gridStackInst = $('.custom-grid-stack').data('grid-stack-instance')
             if(gridStackInst != null ) {
                 gridStackInst.render()
