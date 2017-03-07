@@ -95,11 +95,21 @@ define([
             , state = nv.utils.state()
             , defaultState = null
             , showTicks = cowu.getValueByJsonPath(chartOptions, 'showTicks', true)
-            , showXaxis = cowu.getValueByJsonPath(chartOptions, 'showXaxis', true)
-            , showYaxis = cowu.getValueByJsonPath(chartOptions, 'showYaxis', true)
+            , showXAxis = cowu.getValueByJsonPath(chartOptions, 'showXAxis', true)
+            , showYAxis = cowu.getValueByJsonPath(chartOptions, 'showYAxis', true)
+            , showXMinMax = cowu.getValueByJsonPath(chartOptions, 'showXMinMax', false)
+            , showYMinMax = cowu.getValueByJsonPath(chartOptions, 'showYMinMax', false)
             , area = cowu.getValueByJsonPath(chartOptions, 'area', false)
+            , xTickCnt = cowu.getValueByJsonPath(chartOptions, 'xTickCnt')
+            , yTickCnt = cowu.getValueByJsonPath(chartOptions, 'yTickCnt')
             ;
 
+        if (!showXAxis) {
+            margin['bottom'] = 0;
+        }
+        if (!showYAxis) {
+            margin['left'] = 0;
+        }
         lines.clipEdge(false).duration(0);
         lines2.interactive(false);
         xAxis.orient('bottom').tickPadding(5);
@@ -350,12 +360,7 @@ define([
                     d3.transition(g.select('.nv-context .nv-y.nv-axis'))
                         .call(y2Axis);
                 }
-                if (!showTicks) {
-                    xAxis._ticks(0);
-                    yAxis._ticks(0);
-                    x2Axis._ticks(0);
-                    y2Axis._ticks(0);
-                }
+
                 g.select('.nv-context .nv-x.nv-axis')
                     .attr('transform', 'translate(0,' + y2.range()[0] + ')');
 
@@ -521,13 +526,13 @@ define([
 
                     //Update xAxis domain
                     xAxis.domain([Math.ceil(extent[0]), Math.floor(extent[1])]);
-                    
+
                     // Update Main (Focus) Axes
-                    if (showXaxis) {
+                    if (showXAxis) {
                         g.select('.nv-focus .nv-x.nv-axis').transition().duration(transitionDuration)
                         .call(xAxis);
                     }
-                    if (showYaxis) {
+                    if (showYAxis) {
                         g.select('.nv-focus .nv-y.nv-axis').transition().duration(transitionDuration)
                         .call(yAxis);
                     }
@@ -746,17 +751,20 @@ define([
 
         chartModel.interpolate(chUtils.interpolateSankey);
 
-        chartModel.xAxis.axisLabel(chartOptions.xAxisLabel)
+        if (showXAxis) {
+            chartModel.xAxis.axisLabel(chartOptions.xAxisLabel)
                     .tickFormat(chartOptions['xFormatter'])
-                    .showMaxMin(chartOptions['showXAxisMaxMin']);
+                    .showMaxMin(showXMinMax);
 
-        chartModel.x2Axis.axisLabel(chartOptions.xAxisLabel).tickFormat(chartOptions['x2Formatter']);
-
-        chartModel.yAxis.axisLabel(chartOptions.yAxisLabel)
+            chartModel.x2Axis.axisLabel(chartOptions.xAxisLabel).tickFormat(chartOptions['x2Formatter']);
+        }
+        if (showYAxis) {
+            chartModel.yAxis.axisLabel(chartOptions.yAxisLabel)
                         .axisLabelDistance(chartOptions.axisLabelDistance)
                         .tickFormat(chartOptions['yFormatter'])
-                        .showMaxMin(false);
-
+                        .showMaxMin(showYMinMax);
+        }
+        chUtils.updateTickOptionsInChart(chartModel, chartOptions);
         if(contrail.checkIfExist(chartOptions.forceY)) {
             chartModel.lines.forceY(chartOptions.forceY);
             chartModel.lines2.forceY(chartOptions.forceY);

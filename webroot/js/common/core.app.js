@@ -103,7 +103,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'jdorn-jsoneditor'            : coreWebDir + '/assets/jdorn-jsoneditor/js/jdorn-jsoneditor',
         'jquery-linedtextarea'        : coreWebDir + '/assets/jquery-linedtextarea/js/jquery-linedtextarea',
         'qe-module'                   : coreWebDir + '/reports/qe/ui/js/qe.module',
-        'udd-module'                  : coreWebDir + '/reports/udd/ui/js/udd.module'
+        'udd-module'                  : coreWebDir + '/reports/udd/ui/js/udd.module',
+        'chart-config'              : coreWebDir + '/js/chartconfig'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -484,6 +485,7 @@ var coreBundles = {
             'help-handler',
             'content-handler',
             'validation',
+            'chart-config',
             'core-basedir/js/views/BarChartInfoView',
             'core-basedir/js/views/BreadcrumbDropdownView',
             'core-basedir/js/views/BreadcrumbTextView',
