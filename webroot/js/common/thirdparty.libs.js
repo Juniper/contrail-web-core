@@ -19,19 +19,10 @@ define([
         'jquery.panzoom',
         'jquery.event.drag',
         'jquery.datetimepicker',
-
         'slick.grid',
         'slick.checkboxselectcolumn',
         'slick.groupmetadata',
         'slick.rowselectionmodel',
-        
         'd3',
-        'nv.d3',
-        
-        
+        'nv.d3'
         ],function() {});
-
-
-
-        
-       

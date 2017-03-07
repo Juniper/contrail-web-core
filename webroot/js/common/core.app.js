@@ -319,7 +319,7 @@ var coreAppShim =  {
         deps: ['jquery']
     },
     'thirdparty-libs' : {
-        deps: ['jquery-ui', 'slick.core']
+        deps: ['jquery-ui']
     },
     'slickgrid-utils': {
         deps: ['jquery','slick.grid','slick.dataview']
@@ -1223,7 +1223,7 @@ if (typeof document !== 'undefined' && document) {
                     $.when.apply(window,[menuXMLLoadDefObj,layoutHandlerLoadDefObj]).done(function(menuXML) {
                         if(globalObj['featureAppDefObj'] == null)
                             globalObj['featureAppDefObj'] = $.Deferred();
-                        require(['core-bundle'],function() {
+                        require(['core-bundle','thirdparty-libs'],function() {
                             if(loadUtils.getCookie('region') != "All Regions")
                                 layoutHandler.load(menuXML);
                         });
