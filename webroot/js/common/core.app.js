@@ -317,9 +317,9 @@ var coreAppShim =  {
     'slick.groupmetadata': {
         deps: ['jquery']
     },
-    'thirdparty-libs' : {
+    /*'thirdparty-libs' : {
         deps: ['jquery-ui', 'slick.core']
-    },
+    },*/
     'slickgrid-utils': {
         deps: ['jquery','slick.grid','slick.dataview']
     },
@@ -401,23 +401,6 @@ var coreBundles = {
             'nv.d3'
         ],*/
         'thirdparty-libs'   : [
-           'jquery.xml2json',
-           'jquery.json',
-           'bootstrap',
-           'select2',
-           'slick.core',
-           'slick.dataview',
-           //From jquery-libs
-           'jquery.timer',
-           'jquery.ui.touch-punch',
-           'jquery.validate',
-           'jquery.tristate',
-           'jquery.multiselect',
-           'jquery.multiselect.filter',
-           'jquery.steps.min',
-           'jquery.panzoom',
-           'jquery.event.drag',
-           'jquery.datetimepicker',
             'slick.grid',
             'slick.checkboxselectcolumn',
             'slick.groupmetadata',
@@ -501,7 +484,24 @@ var coreBundles = {
             "core-basedir/js/views/LogListView",
             'mon-infra-sysinfo-view',
             'mon-infra-dashboard-view',
-            'core-alarm-utils'
+            'core-alarm-utils',
+            'jquery.xml2json',
+            'jquery.json',
+            'bootstrap',
+            'select2',
+            'slick.core',
+            'slick.dataview',
+            //From jquery-libs
+            'jquery.timer',
+            'jquery.ui.touch-punch',
+            'jquery.validate',
+            'jquery.tristate',
+            'jquery.multiselect',
+            'jquery.multiselect.filter',
+            'jquery.steps.min',
+            'jquery.panzoom',
+            'jquery.event.drag',
+            'jquery.datetimepicker'
         ],
         'contrail-core-views': [
             'core-basedir/js/views/GridView',
@@ -1080,7 +1080,7 @@ if (typeof document !== 'undefined' && document) {
                     //Post-Authentication
                     webServerInfoDefObj.done(function() {
                         //Need to remove "slickgrid-utils" once all grids are moved to GridView
-                        require(['core-bundle','thirdparty-libs','nonamd-libs'],function() {
+                        require(['core-bundle','nonamd-libs'],function() {
                             require(['slickgrid-utils'],function() {
                                 loadUtils.getScript(smUrl);
                             });
@@ -1172,7 +1172,7 @@ if (typeof document !== 'undefined' && document) {
                     globalObj['webServerInfo'] = loadUtils.parseWebServerInfo(response);
 
                     //For Region drop-down
-                    require(['jquery', 'thirdparty-libs','nonamd-libs'], function() {
+                    require(['jquery', 'core-bundle','nonamd-libs'], function() {
                         var regionList =
                             globalObj.webServerInfo.regionList;
                         var cnt = 0;
@@ -1230,7 +1230,7 @@ if (typeof document !== 'undefined' && document) {
             },
             onAuthenticationReq: function(loadCfg) {
                 document.getElementById('signin-container').innerHTML = document.getElementById('signin-container-tmpl').innerHTML;
-                require(['jquery','thirdparty-libs'], function() {
+                require(['jquery','core-bundle'], function() {
                     var isRegionsFromConfig = false;
                     if (null != loadCfg) {
                         isRegionsFromConfig = loadCfg.isRegionListFromConfig;
@@ -1390,6 +1390,7 @@ if (typeof document !== 'undefined' && document) {
         loadUtils.isAuthenticated();
         require(['jquery'],function() {
             require(['core-bundle','nonamd-libs'],function() {
+                require(['thirdparty-libs'],function() {});
             });
             menuXMLLoadDefObj = $.Deferred();
             layoutHandlerLoadDefObj = $.Deferred();
@@ -1413,7 +1414,6 @@ if (typeof document !== 'undefined' && document) {
             loadUtils.fetchMenu(menuXMLLoadDefObj);
 
             //require(['jquery-dep-libs'],function() {});
-            require(['thirdparty-libs'],function() {});
             globalObj['layoutDefObj'] = $.Deferred();
 
             SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformToElement || function(toElement) {

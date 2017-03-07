@@ -46,7 +46,7 @@ constants.coreModules  = [
         enabled: true,
         name: "./js/common/thirdparty.libs",
         exclude: [
-            "jquery","jquery-ui","knockout","backbone","knockback","validation","lodash"
+            "jquery","jquery.event.drag","knockout","backbone","knockback","validation","lodash"
         ],
         override: {
             wrapShim: false

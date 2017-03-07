@@ -52,7 +52,24 @@ define([
     'mon-infra-alert-grid-view',
     "core-basedir/js/views/LogListView",
     'mon-infra-sysinfo-view',
-    'mon-infra-dashboard-view'
+    'mon-infra-dashboard-view',
+    'jquery.xml2json',
+    'jquery.json',
+    'bootstrap',
+    'select2',
+    'slick.core',
+    'slick.dataview',
+    //From jquery-libs
+    'jquery.timer',
+    'jquery.ui.touch-punch',
+    'jquery.validate',
+    'jquery.tristate',
+    'jquery.multiselect',
+    'jquery.multiselect.filter',
+    'jquery.steps.min',
+    'jquery.panzoom',
+    'jquery.event.drag',
+    'jquery.datetimepicker'
 
 ], function (CoreHandlebarsUtils, CoreUtils, CoreHashUtils, CoreConstants, CoreFormatters, Cache, CoreLabels,
              CoreMessages, CoreViewsDefaultConfig, Contrail, CoreContrailFormElements, ChartUtils, CoreCommonTmpls) {

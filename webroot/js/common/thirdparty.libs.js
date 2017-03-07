@@ -2,7 +2,7 @@
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
 define([
-        'jquery.xml2json',
+       /* 'jquery.xml2json',
         'jquery.json',
         'bootstrap',
         'select2',
@@ -18,20 +18,12 @@ define([
         'jquery.steps.min',
         'jquery.panzoom',
         'jquery.event.drag',
-        'jquery.datetimepicker',
+        'jquery.datetimepicker',*/
 
         'slick.grid',
         'slick.checkboxselectcolumn',
         'slick.groupmetadata',
         'slick.rowselectionmodel',
-        
         'd3',
-        'nv.d3',
-        
-        
+        'nv.d3'
         ],function() {});
-
-
-
-        
-       
