@@ -228,6 +228,27 @@ function createJobServerRedisClient ()
     return redisUtils.createRedisClient(server_port, server_ip, uiDB);
 }
 
+function addPrefixToCacheKey (key, prefix)
+{
+    if (null == prefix) {
+        return key;
+    }
+    return prefix + global.ZWQ_MSG_SEPERATOR + global.ZWQ_MSG_SEPERATOR + key;
+}
+
+function getKeyPrefixFromCacheKey (cacheKey)
+{
+    var keysSep = cacheKey.split(global.ZWQ_MSG_SEPERATOR +
+                            global.ZWQ_MSG_SEPERATOR);
+    var prefix = null;
+    var key = cacheKey;
+    if (keysSep.length > 1) {
+        prefix = keysSep[0];
+        key = keysSep[1];
+    }
+    return {prefix: prefix, key: key};
+}
+
 exports.registerForJobTaskDataChange = registerForJobTaskDataChange;
 exports.getChangedJobTaskData = getChangedJobTaskData;
 exports.deleteChangedJobTaskData = deleteChangedJobTaskData;
@@ -239,3 +260,6 @@ exports.buildDummyReqObjByJobData = buildDummyReqObjByJobData;
 exports.updateJobDataAuthObjToken = updateJobDataAuthObjToken;
 exports.getHeaders = getHeaders;
 exports.createJobServerRedisClient = createJobServerRedisClient;
+exports.addPrefixToCacheKey = addPrefixToCacheKey;
+exports.getKeyPrefixFromCacheKey = getKeyPrefixFromCacheKey;
+

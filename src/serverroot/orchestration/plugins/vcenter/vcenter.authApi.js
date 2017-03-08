@@ -224,6 +224,11 @@ function shiftServiceEndpointList (req, serviceType, regionName)
     return;
 }
 
+function getRegionToCacheKey (req, appData)
+{
+    return null;
+}
+
 exports.getCookieObjs = getCookieObjs;
 exports.getSessionExpiryTime = getSessionExpiryTime;
 exports.authenticate = authenticate;
@@ -244,3 +249,5 @@ exports.getExtUserRoleByTenant = getExtUserRoleByTenant;
 exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
 exports.getServiceAPIVersionByReqObj = getServiceAPIVersionByReqObj;
 exports.shiftServiceEndpointList = shiftServiceEndpointList;
+exports.getRegionToCacheKey = getRegionToCacheKey;
+

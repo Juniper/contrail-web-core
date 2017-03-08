@@ -87,6 +87,8 @@ function parseJobListFile (result, fileToGen, cb)
     len = itemList.length;
   }
   for (var i = 0; i < len; i++) {
+    jobCbStr += "\n  parseJobsReq.jobKeysToCallbackMaps['" +
+        itemList[i]['jobName'] + "']" + " = jobsProcess." + itemList[i]['callback'] + ";";
     jobCbStr +=   "\n  parseJobsReq.jobsApi.jobs.process('";
     jobCbStr += itemList[i]['jobName'] + "', maxActiveJobs, function(job, done) {";
     jobCbStr += jobChannel;

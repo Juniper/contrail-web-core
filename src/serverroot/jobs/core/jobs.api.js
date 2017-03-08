@@ -17,6 +17,7 @@ var redis = require("redis")
     , contrailServ = require('./contrailservice.api')
     , UUID = require('uuid-js')
     , jobUtils = require('../../common/jobs.utils')
+    , parseJobsReq = require("../../common/parseJobsRequire")
 	, messages = require('../../common/messages');
 
 try {
@@ -147,6 +148,36 @@ function doJobExist (jobName, callback)
     });
 }
 
+function registerDynamicKeydJobs (jobName, taskData, callback)
+{
+    var keyPrefix = taskData.keyPrefix;
+    if (null == keyPrefix) {
+        /* Already registered */
+        callback();
+        return;
+    }
+    var defMaxActiveJobs = 10;
+    var maxActiveJobs = config.maxActiveJobs || defMaxActiveJobs;
+    var keyPrefixObj = jobUtils.getKeyPrefixFromCacheKey(jobName);
+    var jobCallback = parseJobsReq.jobKeysToCallbackMaps[keyPrefixObj.key];
+    if (null == jobCallback) {
+        /* This is weired, we have keyPrefix, but we did not get callback */
+        logutils.logger.error("This is weired, we have keyPrefix: " + keyPrefix +
+                              ", but we did not get callback for job: " +
+                              jobName);
+        callback();
+        return;
+    }
+    parseJobsReq.jobsApi.jobs.process(jobName, maxActiveJobs,
+                                      function(job, done) {
+        var jobStartTime = parseJobsReq.commonUtils.getCurrentTimestamp();
+        job.data['jobStartTime'] = jobStartTime;
+        jobCallback(job.data.taskData.pubChannel,
+                    job.data.taskData.saveChannelKey, job.data, done);
+    });
+    callback();
+}
+
 /* Function createJob:
  @jobName    : name of the job
  @jobTitle   : title of the job, useful for kue UI
@@ -199,19 +230,21 @@ function createJobCB (jobName, jobTitle, jobPriority, delayInMS, runCount,
     taskData =
         jobUtils.getAndUpdateChangedJobTaskData(jobTitleStr, taskData);
     var obj = { 'title':jobTitleStr, 'runCount':runCount, 'taskData':taskData };
-    var newJob = jobsApi.jobs.create(jobName, obj);
-    if (delayInMS) {
-        newJob.delay(delayInMS);
-    }
-    /* Check valid job priority */
-    var check = checkKueJobPriority(jobPriority);
-    if (false == check) {
-        logutils.logger.error("Invalid priority provided" + jobPriority);
-        assert(0);
-    }
-    newJob.priority(jobPriority);
-    newJob.save();
-    logutils.logger.debug("Created a new Job with jobName:" + jobName);
+    registerDynamicKeydJobs(jobName, taskData, function() {
+        var newJob = jobsApi.jobs.create(jobName, obj);
+        if (delayInMS) {
+            newJob.delay(delayInMS);
+        }
+        /* Check valid job priority */
+        var check = checkKueJobPriority(jobPriority);
+        if (false == check) {
+            logutils.logger.error("Invalid priority provided" + jobPriority);
+            assert(0);
+        }
+        newJob.priority(jobPriority);
+        newJob.save();
+        logutils.logger.debug("Created a new Job with jobName:" + jobName);
+    });
 }
 
 function getJobInfo (job)

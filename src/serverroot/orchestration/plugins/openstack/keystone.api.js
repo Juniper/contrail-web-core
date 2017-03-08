@@ -2995,6 +2995,24 @@ function getConfigEntityByServiceEndpoint (req, serviceName)
     return null;
 }
 
+function getRegionToCacheKey (req, appData)
+{
+    if (true == config.serviceEndPointFromConfig) {
+        return null;
+    }
+    var reqRegion = commonUtils.getValueByJsonPath(appData, "authObj;reqRegion",
+                                                   null, false);
+    if (null != reqRegion) {
+        return reqRegion;
+    }
+    var regionName = commonUtils.getValueByJsonPath(req, "cookies;region", null,
+                                                    false);
+    if (global.REGION_ALL != regionName) {
+        return regionName;
+    }
+    return null;
+}
+
 exports.authenticate = authenticate;
 exports.getToken = getToken;
 exports.getTenantList = getTenantList;
@@ -3022,4 +3040,5 @@ exports.getRoleList = getRoleList;
 exports.getAuthRetryData = getAuthRetryData;
 exports.getPortToProcessMapByReqObj = getPortToProcessMapByReqObj;
 exports.getConfigEntityByServiceEndpoint = getConfigEntityByServiceEndpoint;
+exports.getRegionToCacheKey = getRegionToCacheKey;
 

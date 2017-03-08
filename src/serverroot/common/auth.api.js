@@ -343,6 +343,12 @@ function getConfigEntityByServiceEndpoint (req, serviceName)
     return getAuthMethod[orchMode].getConfigEntityByServiceEndpoint(req, serviceName);
 }
 
+function getRegionToCacheKey (req, appData)
+{
+    var orchMode = req.session.loggedInOrchestrationMode;
+    return getAuthMethod[orchMode].getRegionToCacheKey(req, appData);
+}
+
 exports.doAuthenticate = doAuthenticate;
 exports.getTenantList = getTenantList;
 exports.getTokenObj = getTokenObj;
@@ -377,4 +383,5 @@ exports.getRoleList = getRoleList;
 exports.getAuthRetryData = getAuthRetryData;
 exports.getPortToProcessMapByReqObj = getPortToProcessMapByReqObj;
 exports.getConfigEntityByServiceEndpoint = getConfigEntityByServiceEndpoint;
+exports.getRegionToCacheKey = getRegionToCacheKey;
 

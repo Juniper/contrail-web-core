@@ -11,6 +11,7 @@ var redisSub = require('./redisSub')
 	, logutils = require('../../utils/log.utils')
 	, util = require('util')
     , redisUtils = require('../../utils/redis.utils')
+    , jobsUtils = require("../../common/jobs.utils")
 	, messages = require('../../common/messages');
 
 if (!module.parent) 
@@ -356,6 +357,10 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
 			appData: appData
 		}
 	};
+    var keyPrefixObj  = jobsUtils.getKeyPrefixFromCacheKey(jobName);
+    if (null != keyPrefixObj.prefix) {
+        reqMsgObj.data.keyPrefix = keyPrefixObj.prefix;
+    }
     var reqRegion = commonUtils.getValueByJsonPath(req, "appData;authObj;reqRegion", null);
     if (null != reqRegion) {
         reqMsgObj.data.reqRegion = reqRegion;

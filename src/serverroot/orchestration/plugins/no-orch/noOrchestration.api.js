@@ -205,6 +205,11 @@ function shiftServiceEndpointList (req, serviceType, regionName)
     return;
 }
 
+function getRegionToCacheKey (req, appData)
+{
+    return null;
+}
+
 exports.authenticate = authenticate;
 exports.getServiceCatalog = getServiceCatalog;
 exports.getAPIServerAuthParamsByReq = getAPIServerAuthParamsByReq;
@@ -226,4 +231,5 @@ exports.getExtUserRoleByTenant = getExtUserRoleByTenant;
 exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
 exports.getServiceAPIVersionByReqObj = getServiceAPIVersionByReqObj;
 exports.shiftServiceEndpointList = shiftServiceEndpointList;
+exports.getRegionToCacheKey = getRegionToCacheKey;
 
