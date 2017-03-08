@@ -118,46 +118,6 @@ kueJobListen = function() {
     kue.app.listen(kuePort, '127.0.0.1');
 }
 
-function createVRouterSummaryJob ()
-{
-    var appData = {};
-    appData['addGen'] = true;
-    var jobObj = {};
-    var url = '/virtual-routers';
-    jobObj['jobName'] = global.STR_GET_VROUTERS_SUMMARY;
-    jobObj['url'] = url;
-    jobObj['firstRunDelay'] = global.VROUTER_SUMM_JOB_REFRESH_TIME;
-    jobObj['runCount'] = 0;
-    jobObj['nextRunDelay'] = global.VROUTER_SUMM_JOB_REFRESH_TIME;
-    jobObj['orchModel'] = 'openstack';
-    jobObj['appData'] = appData;
-    jobsApi.createJobAtInit(jobObj);
-}
-
-function createVRouterGeneratorsJob ()
-{
-    var url = '/virtual-routers';
-    var jobObj = {};
-    jobObj['jobName'] = global.STR_GET_VROUTERS_GENERATORS;
-    jobObj['url'] = url;
-    jobObj['firstRunDelay'] = global.VROUTER_SUMM_JOB_REFRESH_TIME;
-    jobObj['runCount'] = 0;
-    jobObj['nextRunDelay'] = global.VROUTER_GENR_JOB_REFRESH_TIME;
-    jobObj['orchModel'] = 'openstack';
-    jobsApi.createJobAtInit(jobObj);
-}
-
-function createJobsAtInit ()
-{
-    var authApi = require('./src/serverroot/common/auth.api');
-    if (true == authApi.isMultiRegionSupported()) {
-        /* Do not cache if multi region is supported */
-        return;
-    }
-    createVRouterSummaryJob();
-    createVRouterGeneratorsJob();
-}
-
 function registerTojobListenerEvent()
 {
     var pkgDir;
@@ -208,7 +168,6 @@ function startServers ()
     contrailServ.startWatchContrailServiceRetryList();
     redisPub.createRedisPubClient(function() {
         connectToMainServer();
-        createJobsAtInit();
         doFeatureTaskInit();
         process.send("INIT IS DONE");
     });
