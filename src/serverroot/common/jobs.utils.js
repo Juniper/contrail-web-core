@@ -6,14 +6,36 @@ var jobTaskDataChanges = {};
 var jobTaskDataRequiresFields = {};
 var eventEmitter = require('events').EventEmitter;
 var jobKueEventEmitter = new eventEmitter();
+var jobListenerReadyQEvent = new eventEmitter();
 var commonUtils = require('./../utils/common.utils');
 var rest = require('../common/rest.api');
+var logutils = require("../utils/log.utils");
 
 var authParams = null;
 try {
         authParams = require('../../../config/userAuth');
 } catch(e) {
         authParams = null;
+}
+
+function registerTojobListenerEvent()
+{
+    var pkgList = process.mainModule.exports.pkgList;
+    var pkgDir;
+    var pkgListLen = pkgList.length;
+    for (var i = 0; i < pkgListLen; i++) {
+        if (pkgList[i]['jobProcess.xml']) {
+            pkgDir = commonUtils.getPkgPathByPkgName(pkgList[i]['pkgName']);
+            var jobListLen = pkgList[i]['jobProcess.xml'].length;
+            for (var j = 0; j < jobListLen; j++) {
+                logutils.logger.debug("Registering jobListeners: " +
+                                      pkgDir + pkgList[i]['jobProcess.xml'][j]);
+                require(pkgDir +
+                        pkgList[i]['jobProcess.xml'][j]).addjobListenerEvent();
+                require(pkgDir + pkgList[i]['jobProcess.xml'][j]).jobsProcess();
+            }
+        }
+    }
 }
 
 function registerForJobTaskDataChange (jobData, field)
@@ -228,6 +250,7 @@ function createJobServerRedisClient ()
     return redisUtils.createRedisClient(server_port, server_ip, uiDB);
 }
 
+exports.registerTojobListenerEvent = registerTojobListenerEvent;
 exports.registerForJobTaskDataChange = registerForJobTaskDataChange;
 exports.getChangedJobTaskData = getChangedJobTaskData;
 exports.deleteChangedJobTaskData = deleteChangedJobTaskData;
@@ -239,3 +262,4 @@ exports.buildDummyReqObjByJobData = buildDummyReqObjByJobData;
 exports.updateJobDataAuthObjToken = updateJobDataAuthObjToken;
 exports.getHeaders = getHeaders;
 exports.createJobServerRedisClient = createJobServerRedisClient;
+exports.jobListenerReadyQEvent = jobListenerReadyQEvent;

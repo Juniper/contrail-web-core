@@ -6,9 +6,9 @@ var redis = require('redis')
 	, config = process.mainModule.exports.config
 	, logutils = require('../../utils/log.utils')
 	, messages = require('../../common/messages')
-    , jobsApi = require('./jobs.api')
     , commonUtils = require('../../utils/common.utils')
     , redisUtils = require('../../utils/redis.utils')
+    , jobsUtils = require('../../common/jobs.utils')
 	, util = require('util');
 
 if (!module.parent) {
@@ -82,7 +82,7 @@ function publishDataToRedis (pubChannel, saveChannelKey, errCode, pubData,
    /* This may be a result of request in Job Server itself, so create an event 
       to trigger it
     */
-    jobsApi.jobListenerReadyQEvent.emit('dataPublished', pubChannel, JSON.stringify(pubData));
+    jobsUtils.jobListenerReadyQEvent.emit('dataPublished', pubChannel, JSON.stringify(pubData));
          
 	/* Reids does not save the data while publishing data, so if it is needed to
 	 save the data by calling this API, set doSave = 1

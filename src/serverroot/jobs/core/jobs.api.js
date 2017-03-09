@@ -31,7 +31,6 @@ if (!module.parent) {
 }
 
 var jobListenerReadyQ = {};
-var jobListenerReadyQEvent = new eventEmitter();
 
 jobsApi.kue = kue;
 
@@ -46,6 +45,7 @@ kue.redis.createClient = function ()
 kue.redis.createClient();
 jobsApi.jobs = kue.createQueue();
 jobsApi.jobs.promote();
+jobUtils.registerTojobListenerEvent();
 jobUtils.jobKueEventEmitter.emit('kueReady');
 
 /* kue UI listening port */
@@ -344,8 +344,8 @@ function doCheckJobsProcess ()
 		logutils.logger.info("We are on jobs.on for event 'job complete', id:" + id);
 		jobsApi.kue.Job.get(id, function (err, job) {
 			if ((err) || (null == job)) {
-				logutils.logger.error("Some error happened or job is null:",
-					err, process.pid);
+				logutils.logger.error("Some error happened or job is null:" +
+					err + process.pid);
 				return;
 			}
 			logutils.logger.debug("Job " + job.id + " completed by process: " + process.pid);
@@ -499,7 +499,7 @@ function createJobObj (hash, url, runCount, nextRunDelay, data)
     return jobData;
 }
 
-jobListenerReadyQEvent.on('dataPublished', function(pubChannel, pubData) {
+jobUtils.jobListenerReadyQEvent.on('dataPublished', function(pubChannel, pubData) {
     logutils.logger.debug("Got notified on Job Listener Channel:" + pubChannel);
     /* Check if the originator of this request is myself */
     var channelObj = jobListenerReadyQ[pubChannel];
@@ -510,11 +510,10 @@ jobListenerReadyQEvent.on('dataPublished', function(pubChannel, pubData) {
     var hash = channelObj.myHash + global.ZWQ_MSG_SEPERATOR + channelObj.lookupHash;
     logutils.logger.debug("Getting channelObj:" + channelObj);
 
-    jobListenerReadyQEvent.emit(hash, pubData, channelObj.pubChannel, 
-                                channelObj.saveChannelKey, channelObj.done);
+    jobUtils.jobListenerReadyQEvent.emit(hash, pubData, channelObj.pubChannel,
+                                         channelObj.saveChannelKey, channelObj.done);
 });
 
-exports.jobListenerReadyQEvent = jobListenerReadyQEvent;
 exports.createJobListener = createJobListener;
 exports.createJobByMsgObj = createJobByMsgObj;
 exports.doCheckJobsProcess = doCheckJobsProcess;

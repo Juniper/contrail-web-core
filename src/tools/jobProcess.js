@@ -100,7 +100,7 @@ function parseJobListFile (result, fileToGen, cb)
     jobCbStr += "\n  });\n";
     if (itemList[i]['requireJob']) {
         dependFound = true;
-        jobDependStr += "    parseJobsReq.jobsApi.jobListenerReadyQEvent.on(" +
+        jobDependStr += "    parseJobsReq.jobsUtils.jobListenerReadyQEvent.on(" +
             "'" + itemList[i]['jobName'] + '@' + itemList[i]['requireJob'] + "'" + ",\n" +
             "       function(dependData, pubChannel, saveChannelKey, done) {\n";
         jobDependStr += "       var storedData =" +

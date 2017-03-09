@@ -5,6 +5,7 @@
 var parseJobsReq = {};
 parseJobsReq.config         = process.mainModule.exports['config'];
 parseJobsReq.jobsApi        = require('../jobs/core/jobs.api');
+parseJobsReq.jobsUtils      = require('./jobs.utils');
 parseJobsReq.commonUtils    = require('../utils/common.utils');
 
 module.exports = parseJobsReq;
