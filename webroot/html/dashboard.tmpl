@@ -32,6 +32,12 @@
                         /* failure(); */
                     }
                 };
+                if (url.indexOf("?") > -1) {
+                    url += "&";
+                } else {
+                    url += "?";
+                }
+                url += "reqTime=" + Date.now();
                 this.xhr.open(method,url,true);
                 this.xhr.send();
             },
