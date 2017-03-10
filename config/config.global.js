@@ -185,12 +185,12 @@ config.analytics.ca = '';
 config.analytics.statusURL = "/analytics/uves/bgp-peers";
 
 //DNS API Server and port.
+/* Please note: being introspect port, SSL options for dns should come from
+   config.introspect.ssl configuration
+ */
 config.dns = {};
 config.dns.server_ip = ['127.0.0.1'];
 config.dns.server_port = '8092';
-config.dns.authProtocol = 'http';
-config.dns.strictSSL = false;
-config.dns.ca = '';
 config.dns.statusURL = "/Snh_PageReq?x=AllEntries%20VdnsServersReq";
 
 // vcenter related parameters

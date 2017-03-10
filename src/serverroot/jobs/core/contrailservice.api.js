@@ -248,6 +248,20 @@ function getServerResponse (serviceObj, callback, stopRetry)
     var headers = (null != serviceObj.headers) ? serviceObj.headers : {};
     var serviceType = serviceObj.serviceType;
 
+    if (global.CONTRAIL_SERVICE_TYPE_DNS_SERVER == serviceObj.serviceType) {
+        /* Introspect port */
+        var options = {apiName: global.SANDESH_API};
+        var reqUrl = serviceObj.apiServer.hostname + global.ZWQ_MSG_SEPERATOR +
+            serviceObj.apiServer.port + global.ZWQ_MSG_SEPERATOR +
+            serviceObj.url;
+        commonUtils.getDataFromSandeshByIPUrl(rest.getAPIServer, false,
+                                              options, reqUrl,
+                                              function(error, data) {
+            callback(null, {err: error, data:
+                     {serviceType: serviceObj.serviceType, data: data}});
+        });
+        return;
+    }
     apiServer.api.get(serviceObj.url, function(err, data) {
         if ((err != null) && (true != stopRetry)) {
             if (global.HTTP_STATUS_AUTHORIZATION_FAILURE ==
