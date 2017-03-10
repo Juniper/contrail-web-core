@@ -113,6 +113,7 @@ define([
         this.TMPL_BUTTON_VIEW = "core-button-view-template";
         this.TMPL_COMPOSITE_VIEW = "core-composite-view-template";
         this.TMPL_RADIO_BUTTON_VIEW = "core-radio-button-view-template";
+        this.TMPL_FOUR_OPTNS_RADIO_BUTTON_VIEW = "core-four-optns-radio-button-view-template";
         this.TMPL_EDITABLE_GRID_VIEW = "core-editable-grid-view-template";
         this.TMPL_TEXT_VIEW = "core-text-view-template";
 
