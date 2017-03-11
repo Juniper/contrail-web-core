@@ -1,12 +1,14 @@
 /*
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
+var rest        = require('../common/rest.api');
+var global      = require('./global');
+var config      = process.mainModule.exports.config;
+var authApi     = require('./auth.api');
+var logutils    = require('../utils/log.utils');
+var appErrors   = require('../errors/app.errors');
+var cgcConfig   = require('../../../webroot/config.json');
 var commonUtils = require('../utils/common.utils');
-var rest = require('../common/rest.api');
-var appErrors = require('../errors/app.errors');
-var global = require('./global');
-var config = process.mainModule.exports.config;
-var cgcConfig = require('../../../webroot/config.json');
 
 var cgcServerIP = ((config.cgc) && (config.cgc.server_ip)) ?
     config.cgc.server_ip : global.DFLT_SERVER_IP;
@@ -18,10 +20,7 @@ var cgcServer = rest.getAPIServer({apiName: global.label.CGC,
 
 function getCGCRestApiInst (req)
 {
-    var authApi = require('./auth.api');
     var oStack = require('../orchestration/plugins/openstack/openstack.api');
-    var region =
-        commonUtils.getValueByJsonPath(req, 'req;session;region', null, false);
     if (true == authApi.isMultiRegionSupported()) {
         var regionName = authApi.getCurrentRegion(req);
         var pubUrl = oStack.getPublicUrlByRegionName(regionName,
@@ -41,6 +40,22 @@ function getCGCRestApiInst (req)
 
 function getCGCAllReq (req, res, next)
 {
+    var projectCookie = req.cookies.project;
+    var authObj = {req: req, project: projectCookie};
+    authApi.getTokenAndUpdateLastToken(authObj, function(error, tokenObj,
+                                                         dataAccess) {
+        if ((null != error) || (null == tokenObj)) {
+            logutils.logger.error("In CGC, we did not get token for project:" +
+                                  projectCookie);
+            commonUtils.redirectToLogout(req, res);
+            return;
+        }
+        sendGohanRequest(req, res, tokenObj.id);
+    });
+}
+
+function sendGohanRequest (req, res, tokenId)
+{
     var handler = require('../web/routes/handler')
     if (!handler.isSessionAuthenticated(req)) {
         commonUtils.redirectToLogout(req, res);
@@ -58,7 +73,7 @@ function getCGCAllReq (req, res, next)
         return;
     }
     var tmpCGCRestObj = getCGCRestApiInst(req);
-    var headers = {'X-Auth-Token': req.session.last_token_used.id};
+    var headers = {'X-Auth-Token': tokenId};
     if (null != tmpCGCRestObj['mapped']) {
         headers['protocol'] = tmpCGCRestObj.mapped.protocol;
     }
@@ -111,14 +126,14 @@ function getCGCAuthReq (req, res, next)
         next();
         return;
     }
-    var authApi = require('./auth.api');
     var reqUrl = splitArr[1];
  
     if (-1 != reqUrl.indexOf('/tokens')) {
         /* This is a token get request */
         var authObj = {req: req, project: req.cookies.project};
-        authApi.getTokenObj(authObj, function(error, token, tokenObj) {
-            commonUtils.handleJSONResponse(error, res, tokenObj);
+        authApi.getTokenAndUpdateLastToken(authObj, function(error, tokenObj,
+                                                             dataAccess) {
+            commonUtils.handleJSONResponse(error, res, dataAccess);
             return;
         });
         return;
