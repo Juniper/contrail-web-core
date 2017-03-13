@@ -84,7 +84,7 @@ function authenticate (req, res, appData, callback)
             //res.redirect('/');
             //return;
         plugins.setAllCookies(req, res, appData, {'username': username}, function() {
-            if ('' != urlPath) {
+            if (urlPath.indexOf('/vcenter') == 0) {
                 res.redirect(urlPath + urlHash);
             } else {
                 res.redirect('/' + urlHash);
