@@ -1224,8 +1224,13 @@ if (typeof document !== 'undefined' && document) {
                         if(globalObj['featureAppDefObj'] == null)
                             globalObj['featureAppDefObj'] = $.Deferred();
                         require(['core-bundle','thirdparty-libs'],function() {
-                            if(loadUtils.getCookie('region') != "All Regions")
+                            var isSvcEndPtFromConfig =
+                                globalObj.webServerInfo.serviceEndPointFromConfig;
+                            if ((true == isSvcEndPtFromConfig) ||
+                                ("All Regions" !=
+                                 loadUtils.getCookie('region'))) {
                                 layoutHandler.load(menuXML);
+                            }
                         });
                     });
                 });
