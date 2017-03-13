@@ -1357,7 +1357,12 @@ function authenticate (req, res, appData, callback)
 
         setDomainToReqObj(req, post.domain);
         plugins.setAllCookies(req, res, appData, {'username': username}, function() {
-            if(urlPath != '') 
+            //Ensure that urlHash is just a fragment i.e starts with #
+            if(urlHash.indexOf('#') != 0) {
+                urlHash = '#' + urlHash;
+            }
+            //Only in Vcenter case urlPath will be '/vcenter' as we suffix all URLs with /vcenter and will be empty in all other cases
+            if(urlPath.indexOf('/vcenter') == 0)
                 res.redirect(urlPath + urlHash);
             else
                 res.redirect('/' + urlHash);
