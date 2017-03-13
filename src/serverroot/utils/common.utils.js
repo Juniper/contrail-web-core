@@ -1377,6 +1377,7 @@ function getFeaturePkgs() {
 function getWebServerInfo (req, res, appData)
 {
     var plugins = require('../orchestration/plugins/plugins.api');
+    var authApi = require('../common/auth.api');
     var serverObj = plugins.getOrchestrationPluginModel(),
         featurePackages = config.featurePkg,
         ui = config.ui;
@@ -1389,7 +1390,8 @@ function getWebServerInfo (req, res, appData)
     serverObj['serverUTCTime'] = commonUtils.getCurrentUTCTime();
     serverObj['hostName'] = os.hostname();
     serverObj['role'] = req.session.userRole;
-    if (global.REGION_ALL == req.cookies.region) {
+    if ((global.REGION_ALL == req.cookies.region) &&
+        (true == authApi.isMultiRegionSupported())) {
         serverObj['role'] = [global.STR_ROLE_GLOBAL_CONTROLLER];
     }
     serverObj['featurePkg'] = {};
@@ -1434,7 +1436,6 @@ function getWebServerInfo (req, res, appData)
     if(serverObj['cgcEnabled'] == true)
         serverObj['regionList'].unshift("All Regions");
 
-    var authApi = require('../common/auth.api');
     serverObj['currentRegionName'] = authApi.getCurrentRegion(req);
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;
