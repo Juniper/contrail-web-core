@@ -173,10 +173,17 @@ define(['underscore'], function (_) {
                 reloadMenu = check2ReloadMenu(lastPageHash, currPageHashArray[0]);
             }
             if (reloadMenu == null || reloadMenu) {
-                var menu = {};
+                var menu = {},role;
                 for (var i = 0; i < menuObj['items']['item'].length; i++) {
                     if (menuObj['items']['item'][i]['name'] == menuButton)
                         menu = menuObj['items']['item'][i];
+                    if(menuObj['items']['item'][i].items !== undefined){
+                        if(menuObj['items']['item'][i].items.item[0] !== undefined){
+                            if(menuObj['items']['item'][i].items.item[0].access !== undefined){
+                                role = menuObj['items']['item'][i].items.item[0].access.roles.role[0];
+                            }
+                        }
+                    }
                 }
                 $('#menu').html('');
                 $('#menu').html(contrail.getTemplate4Id('menu-template')(menu));
@@ -185,12 +192,23 @@ define(['underscore'], function (_) {
                 }
                 this.selectMenuButton("#btn-" + menuButton);
             }
+            if(role === 'globalController' && currPageHash !== undefined){
+                if(currPageHash === 'mon_infra_globalcontroller'){
+                    $('iframe').remove();
+                    $("#main-content").show();
+                    $("#gohanGrid").hide();
+                    $("#page-content").show();
+                    $("#gohan-config-role").hide();
+                    $('#alarms-popup-link').show();
+                }
+            }
             $('#tabTitle').text(hostname.substring(0,15)+'... | Contrail ' +
                 menuButton.charAt(0).toUpperCase() + menuButton.slice(1));
             if (subMenuId == null) {
                 subMenuId = $('.item:first').find('ul:first');
                 var href = $('.item:first').find('ul:first').find('li:first a').attr("href");
                 loadFeature(cowhu.deparam.fragment(href));
+                
             } else {
                 subMenuId = $(linkId).parent('ul.submenu');
                 toggleSubMenu($(subMenuId), linkId);
