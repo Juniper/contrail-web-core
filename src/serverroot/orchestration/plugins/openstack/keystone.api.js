@@ -1237,13 +1237,32 @@ function getToken (authObj, callback)
     });
 }
 
+function getAccessDataByProject (req, tenantName)
+{
+    return commonUtils.getValueByJsonPath(req, "session;accessData;" +
+                                          tenantName, null, false);
+}
+
+function updateAccessDataByProject (req, tenantName, accessData)
+{
+    if ((null == tenantName) || (null == accessData) || (null == req)) {
+        return;
+    }
+    if (null == req.session.accessData) {
+        req.session.accessData = {};
+    }
+    req.session.accessData[tenantName] = accessData;
+}
+
 function getTokenAndUpdateLastToken (authObj, callback)
 {
     var req = authObj.req;
     var tenantName = authObj.project;
-    var cachedToken = getTokenIdByProject(req, tenantName);
-    if (null != cachedToken) {
-        callback(null, cachedToken);
+    var cachedAccessData = getAccessDataByProject(req, tenantName);
+    var token = commonUtils.getValueByJsonPath(cachedAccessData, "access;token",
+                                               null);
+    if (null != token) {
+        callback(null, token, cachedAccessData);
         return;
     }
     getUserAuthData(req, tenantName, function(error, data) {
@@ -1252,6 +1271,7 @@ function getTokenAndUpdateLastToken (authObj, callback)
         updateTokenIdForProject(req, tenantName, data.access);
         updateDefTenantToken(req, tenantName, data);
         updateLastTokenUsed(req, data.access);
+        updateAccessDataByProject(req, tenantName, data);
         callback(null, token, dataAccess);
     });
 }
