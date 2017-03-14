@@ -209,7 +209,7 @@ define([
                 };
             }
             var viewType = cowu.getValueByJsonPath(cfg,'viewCfg;view','');
-            if(viewType.match(/eventDropsView/)) {
+            if(viewType.match(/eventDropsView/) || viewType.match(/VRouterCrossFiltersView/)) {
                 $(currElem).find('header').addClass('drag-handle');
             } else {
                 $(currElem).find('.item-content').addClass('drag-handle');
