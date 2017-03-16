@@ -1590,9 +1590,11 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
 /*Fix for the select2 placeholder text truncating issue */
 .select2-container-multi .select2-choices .select2-search-field {
     width: 100%;
+    text-align:left;
     }
- .select2-container-multi .select2-choices .select2-search-choice+ .select2-search-field{
+.select2-container-multi .select2-choices .select2-search-choice+ .select2-search-field{
     width: auto;/*overwrites previous class when one/more item(s) are added*/}
-.select2-search-field input{
+#ecmp_hashing_include_fields .select2-search-field input{
     width:100%!important }
-
+.no-label-input{
+    padding-top:22px;}
