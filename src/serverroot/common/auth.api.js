@@ -69,9 +69,16 @@ function doAuthenticate (req, res, appData, callback) {
 
 function getTokenObj (authObj, callback)
 {
-    var req = authObj.req 
+    var req = authObj.req;
     getAuthMethod[req.session.loggedInOrchestrationMode].getToken(authObj,
                                                                   callback);
+}
+
+function getTokenAndUpdateLastToken (authObj, callback)
+{
+    var req = authObj.req;
+    getAuthMethod[req.session.loggedInOrchestrationMode].getTokenAndUpdateLastToken(authObj,
+                                                                                    callback);
 }
 
 function getTenantList (req, appData, callback)
@@ -346,6 +353,7 @@ function getConfigEntityByServiceEndpoint (req, serviceName)
 exports.doAuthenticate = doAuthenticate;
 exports.getTenantList = getTenantList;
 exports.getTokenObj = getTokenObj;
+exports.getTokenAndUpdateLastToken = getTokenAndUpdateLastToken;
 exports.checkAndUpdateDefTenantToken = checkAndUpdateDefTenantToken;
 exports.getAPIServerAuthParams = getAPIServerAuthParams;
 exports.createAuthKeyBySessionId = createAuthKeyBySessionId;

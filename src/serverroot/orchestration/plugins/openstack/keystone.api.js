@@ -1237,6 +1237,25 @@ function getToken (authObj, callback)
     });
 }
 
+function getTokenAndUpdateLastToken (authObj, callback)
+{
+    var req = authObj.req;
+    var tenantName = authObj.project;
+    var cachedToken = getTokenIdByProject(req, tenantName);
+    if (null != cachedToken) {
+        callback(null, cachedToken);
+        return;
+    }
+    getUserAuthData(req, tenantName, function(error, data) {
+        var token = data.access.token;
+        var dataAccess = commonUtils.cloneObj(data);
+        updateTokenIdForProject(req, tenantName, data.access);
+        updateDefTenantToken(req, tenantName, data);
+        updateLastTokenUsed(req, data.access);
+        callback(null, token, dataAccess);
+    });
+}
+
 /** Function: getToken
  *   This function is used to get token object from the tenantId and once done,
  *   call the callback
@@ -3022,4 +3041,4 @@ exports.getRoleList = getRoleList;
 exports.getAuthRetryData = getAuthRetryData;
 exports.getPortToProcessMapByReqObj = getPortToProcessMapByReqObj;
 exports.getConfigEntityByServiceEndpoint = getConfigEntityByServiceEndpoint;
-
+exports.getTokenAndUpdateLastToken = getTokenAndUpdateLastToken;
