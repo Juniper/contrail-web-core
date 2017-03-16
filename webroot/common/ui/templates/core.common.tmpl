@@ -941,6 +941,42 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-editable-grid-label-input-view-template">
+   <div data-bind="
+        {{#if viewConfig.visible}} visible: {{viewConfig.visible}}, {{/if}}
+        style:
+        {
+            {{#if viewConfig.width}}
+                width: '{{viewConfig.width}}px'
+            {{/if}}
+        }
+        ">
+        <div class="col-xs-4 form-label margin-0-0-5">
+            <label style="margin-top:5px;text-align:left;">{{label}}</label>
+        </div>
+        <div class="form-element col-xs-8">
+         {{#IfCompare type 'password' operator='==='}}
+            <div class="input-group inset col-xs-12">
+                <input type="{{type}}" name="{{id}}" class="col-xs-12 {{class}}"
+                            data-bind="
+                                {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                                value: {{viewConfig.dataBindValue}},
+                                event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data) } }"
+                        />
+                <span class="input-group-addon input-type-toggle-action"><i class="fa fa-eye"></i></span>
+            </div>
+        {{else}}
+            <input type="{{type}}" name="{{id}}" placeholder="{{viewConfig.placeholder}}" class="form-control"
+                data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                value: {{viewConfig.dataBindValue}},
+                event: { focusout: function() { validateAttr()('{{viewConfig.path}}', '{{validation}}', $data) } }"
+            />
+        {{/IfCompare}}
+        <span class="help-block red" data-bind="visible: errors()().{{name}}_error, text: errors()().{{name}}_error"></span>
+        </div>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-editable-grid-input-view-template">
         <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
             {{#IfCompare type 'password' operator='==='}}
@@ -1034,6 +1070,24 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-editable-grid-radio-button-view-template">
+    <div class="form-group" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+        {{> coreFormLabel}}
+        <div class="row radio-group">
+            {{#each elementConfig.dataObj}}
+                <div class="col-xs-4">
+                    <input type="radio"   value="{{value}}" class="{{../class}}"
+                        data-bind=" name: model().cid,
+                            {{#if ../disabled}}disable: {{../disabled}}, {{/if}} {{#if ../lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                            checked: {{../dataBindValue}},event: { focusout: function() { validateAttr()('{{../path}}', '{{../validation}}', $data) } }" />
+                    <span class="margin-0-0-0-5">{{label}}</span>
+                </div>
+            {{/each}}
+        </div>
+        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-dropdown-view-template">
    <div class="form-group"
         data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}"
@@ -1082,10 +1136,10 @@
             {{/if}}
         }
         ">
-        <div class="col-xs-2 form-label margin-0-0-5">
+        <div class="col-xs-4 form-label margin-0-0-5">
             <label style="margin-top:5px;text-align:left;">{{label}}</label>
         </div>
-        <div class="form-element col-xs-10">
+        <div class="form-element col-xs-8">
             <input id="{{id}}" name="{{name}}" class="{{class}}"
                 data-bind="
                     {{#if viewConfig.disabled}}

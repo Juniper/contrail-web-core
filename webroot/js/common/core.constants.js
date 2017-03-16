@@ -93,6 +93,7 @@ define([
         this.TMPL_JSON_EDITOR_VIEW = "core-json-editor-view-template";
         this.TMPL_INPUT_VIEW = "core-input-view-template";
         this.TMPL_EDITABLE_GRID_INPUT_VIEW = "core-editable-grid-input-view-template";
+        this.TMPL_EDITABLE_GRID_INPUT_LEFT_LABEL_VIEW = "core-editable-grid-label-input-view-template";
         this.TMP_EDITABLE_GRID_ACTION_VIEW = "core-editable-grid-action-view-template";
         this.TMPL_DROPDOWN_VIEW = "core-dropdown-view-template";
         this.TMPL_EDITABLE_GRID_DROPDOWN_VIEW = "core-editable-grid-dropdown-view-template";
@@ -112,6 +113,7 @@ define([
         this.TMPL_AUTOCOMPLETETEXTBOX_VIEW = "core-autocompletetextbox-view-template";
         this.TMPL_BUTTON_VIEW = "core-button-view-template";
         this.TMPL_COMPOSITE_VIEW = "core-composite-view-template";
+        this.TMPL_EDITABLE_GRID_RADIO_BUTTON_VIEW = "core-editable-grid-radio-button-view-template";
         this.TMPL_RADIO_BUTTON_VIEW = "core-radio-button-view-template";
         this.TMPL_FOUR_OPTNS_RADIO_BUTTON_VIEW = "core-four-optns-radio-button-view-template";
         this.TMPL_EDITABLE_GRID_VIEW = "core-editable-grid-view-template";
