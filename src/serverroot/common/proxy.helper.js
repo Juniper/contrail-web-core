@@ -131,38 +131,10 @@ function isServerByType (serverType, proxyHost, proxyPort)
     return false;
 }
 
-function getSSLOptionsByProxyPort (req, port)
+function getSSLOptionsIntrospectPort (req, port)
 {
-    var sslOptions = null;
-    port = port.toString();
     var found = false;
-    var isSvcEndPtsFromConfig = config.serviceEndPointFromConfig;
-    if (true == isSvcEndPtsFromConfig) {
-        for (var key in config) {
-            var entity = config[key];
-            var ports =
-                commonUtils.getValueByJsonPath(entity, "port",
-                                               commonUtils.getValueByJsonPath(entity,
-                                                                              "server_port",
-                                                                              null));
-            if (null == ports) {
-                continue;
-            }
-            if (ports instanceof Array) {
-                if (ports.indexOf(port) > -1) {
-                    return entity;
-                }
-            } else if (ports == port) {
-                return entity;
-            }
-        }
-    } else {
-        var portToProcessMap = authApi.getPortToProcessMapByReqObj(req);
-        if (null != portToProcessMap) {
-            return
-                authApi.getConfigEntityByServiceEndpoint(req, portToProcessMap[port]);
-        }
-    }
+    var sslOptions = null;
     var introspectSSLOptions =
         commonUtils.getValueByJsonPath(config, "introspect;ssl", null);
     var isIntrospectSSLEnabled =
@@ -193,6 +165,46 @@ function getSSLOptionsByProxyPort (req, port)
                 return sslOptions;
             }
             return sslOptions;
+        }
+    }
+    return null;
+}
+
+function getSSLOptionsByProxyPort (req, port)
+{
+    var sslOptions = null;
+    port = port.toString();
+    var isSvcEndPtsFromConfig = config.serviceEndPointFromConfig;
+    var sslOptions = getSSLOptionsIntrospectPort(req, port);
+    if (null != sslOptions) {
+        /* Introspect Port */
+        return sslOptions;
+    }
+    /* Now check for ports other than introspect */
+    if (true == isSvcEndPtsFromConfig) {
+        for (var key in config) {
+            var entity = config[key];
+            var ports =
+                commonUtils.getValueByJsonPath(entity, "port",
+                                               commonUtils.getValueByJsonPath(entity,
+                                                                              "server_port",
+                                                                              null));
+            if (null == ports) {
+                continue;
+            }
+            if (ports instanceof Array) {
+                if (ports.indexOf(port) > -1) {
+                    return entity;
+                }
+            } else if (ports == port) {
+                return entity;
+            }
+        }
+    } else {
+        var portToProcessMap = authApi.getPortToProcessMapByReqObj(req);
+        if (null != portToProcessMap) {
+            return
+                authApi.getConfigEntityByServiceEndpoint(req, portToProcessMap[port]);
         }
     }
     return null;

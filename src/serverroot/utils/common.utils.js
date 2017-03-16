@@ -238,7 +238,7 @@ function getDataFromSandeshByIPUrl (apiServer, ignoreError, params, url,
         }
     } else {
         var serverObj = retrieveSandeshIpUrl(url, apiServer, isRawData);
-        if (null == serverobj) {
+        if (null == serverObj) {
             var error = new
                     appErrors.RESTServerError(util.format(messages.error.invalid_url,
                                                           serverObj.newUrl));
