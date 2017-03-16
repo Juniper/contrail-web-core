@@ -1591,16 +1591,6 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
 .carousel-control-cover-story{
     z-index: 1;
 }
-/*Fix for the select2 placeholder text truncating issue */
-.select2-container-multi .select2-choices .select2-search-field {
-    width: 100%;
-}
- .select2-container-multi .select2-choices .select2-search-choice+ .select2-search-field{
-    width: auto;/*overwrites previous class when one/more item(s) are added*/
-}
-.select2-search-field input{
-    width:100%!important;
-}
 /* Carousel custom tooltip CSS - Ends*/
 /*GlobalController dashboard  CSS starts here*/
 #globalControllerwrapper {
@@ -1966,6 +1956,17 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
     padding:0px !important;
  }
 /*GlobalController dashboard ends here*/
+/*Fix for the select2 placeholder text truncating issue */
+.select2-container-multi .select2-choices .select2-search-field {
+        width: 100%;
+        text-align:left;
+                       }
+.select2-container-multi .select2-choices .select2-search-choice+ .select2-search-field{
+    width: auto;/*overwrites previous class when one/more item(s) are added*/}
+#ecmp_hashing_include_fields .select2-search-field input, #ecmpHashingIncFields .select2-search-field input {
+    width:100%!important }
+
+
 .grid-stack.grid-stack-24 .grid-stack-item{
     $gridstack-columns: 24;
 
@@ -1976,3 +1977,5 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
         &.grid-stack-item[data-gs-max-width='#{$i}'] { max-width: (100% / $gridstack-columns) * $i; }
     }
 }
+.no-label-input{
+    padding-top:22px;}
