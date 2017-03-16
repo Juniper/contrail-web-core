@@ -94,36 +94,6 @@ define([
             {select:"vmi_uuid", display:{width:140}},
             {select:"drop_reason", display:{ width:140}}
         ],
-        "StatTable.AnalyticsCpuState.cpu_info" : [ 
-            {select:"COUNT(cpu_info)", display:{width:120}},
-            {select:"cpu_info.cpu_share", display:{width:120}},
-            {select:"cpu_info.mem_res", display:{ width:170}},
-            {select:"SUM(cpu_info.mem_res)", display:{ width:190}},
-            {select:"MIN(cpu_info.mem_res)", display:{width:190}},
-            {select:"MAX(cpu_info.mem_res)", display:{ width:190}}
-        ],
-        "StatTable.ConfigCpuState.cpu_info" : [
-            {select:"COUNT(cpu_info)", display:{ width:120}},
-            {select:"cpu_info.mem_res", display:{width:170}},
-            {select:"SUM(cpu_info.mem_res)", display:{width:190}},
-            {select:"MIN(cpu_info.mem_res)", display:{width:190}},
-            {select:"MAX(cpu_info.mem_res)", display:{width:190}}
-        ],
-        "StatTable.ControlCpuState.cpu_info" : [
-            {select:"COUNT(cpu_info)", display:{ width:120}},
-            {select:"cpu_info.mem_virt", display:{width:120}},
-            {select:"cpu_info.cpu_share", display:{ width:120}},
-            {select:"SUM(cpu_info.cpu_share)", display:{ width:120}},
-            {select:"MIN(cpu_info.cpu_share)", display:{ width:120}},
-            {select:"MAX(cpu_info.cpu_share)", display:{ width:120}},
-
-            {select:"cpu_info.mem_res", display:{ width:170}},
-            {select:"SUM(cpu_info.mem_res)", display:{width:190}},
-            {select:"MIN(cpu_info.mem_res)", display:{ width:190}},
-            {select:"MAX(cpu_info.mem_res)", display:{ width:190}},
-
-            {select:"cpu_info.inst_id", display:{ width:120}}
-        ],
         "StatTable.PRouterEntry.ifStats" : [
             {select:"COUNT(ifStats)", display:{width:120}},
             {select:"ifStats.ifInUcastPkts", display:{ width:120}},
@@ -180,34 +150,6 @@ define([
             {select:"SUM(ifStats.ifIndex)", display:{width:160}},
             {select:"MAX(ifStats.ifIndex)", display:{width:160}},
             {select:"MIN(ifStats.ifIndex)", display:{width:160}}
-        ],
-        "StatTable.ComputeCpuState.cpu_info" : [
-            {select:"COUNT(cpu_info)", display:{width:120}},
-
-            {select:"cpu_info.mem_virt", display:{width:160}},
-            {select:"SUM(cpu_info.mem_virt)", display:{width:160}},
-            {select:"MAX(cpu_info.mem_virt)", display:{width:160}},
-            {select:"MIN(cpu_info.mem_virt)", display:{width:160}},
-
-            {select:"cpu_info.cpu_share", display:{width:160}},
-            {select:"SUM(cpu_info.cpu_share)", display:{width:160}},
-            {select:"MAX(cpu_info.cpu_share)", display:{width:160}},
-            {select:"MIN(cpu_info.cpu_share)", display:{width:160}},
-
-            {select:"cpu_info.used_sys_mem", display:{width:190}},
-            {select:"SUM(cpu_info.used_sys_mem)", display:{width:190}},
-            {select:"MAX(cpu_info.used_sys_mem)", display:{width:190}},
-            {select:"MIN(cpu_info.used_sys_mem)", display:{width:190}},
-
-            {select:"cpu_info.one_min_cpuload", display:{width:160}},
-            {select:"SUM(cpu_info.one_min_cpuload)", display:{width:160}},
-            {select:"MAX(cpu_info.one_min_cpuload)", display:{width:160}},
-            {select:"MIN(cpu_info.one_min_cpuload)", display:{width:160}},
-
-            {select:"cpu_info.mem_res", display:{width:170}},
-            {select:"SUM(cpu_info.mem_res)", display:{ width:190}},
-            {select:"MIN(cpu_info.mem_res)", display:{width:190}},
-            {select:"MAX(cpu_info.mem_res)", display:{width:190}}
         ],
         "StatTable.VirtualMachineStats.cpu_stats" : [
             {select:"cpu_stats.cpu_one_min_avg", display:{width:170}},
