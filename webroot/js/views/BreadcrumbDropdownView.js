@@ -138,8 +138,12 @@ define([
             selecting: function (e) {
                 var selectedValueData = {
                     name: e.object['name'],
-                    value: e.object['value']
+                    value: e.object['value'],
+                    fq_name: e.object['fq_name']
                 };
+                selectedValueData.parentSelectedValueData =
+                    (null != dropdownOptions) ?
+                        dropdownOptions.parentSelectedValueData : null;
 
                 if(dropdownOptions.preSelectCB != null && typeof(dropdownOptions.preSelectCB) == 'function') {
                     //Wrapping the return value inside $.when to handle the case if the function doesn't return a deferred object
