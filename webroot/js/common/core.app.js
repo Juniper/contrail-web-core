@@ -104,7 +104,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'jquery-linedtextarea'        : coreWebDir + '/assets/jquery-linedtextarea/js/jquery-linedtextarea',
         'qe-module'                   : coreWebDir + '/reports/qe/ui/js/qe.module',
         'udd-module'                  : coreWebDir + '/reports/udd/ui/js/udd.module',
-        'chart-config'              : coreWebDir + '/js/chartconfig'
+        'chart-config'                : coreWebDir + '/js/chartconfig',
+        'contrail-utils'              : coreWebDir + '/js/common/contrail.utils',
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -503,7 +504,8 @@ var coreBundles = {
             "core-basedir/js/views/LogListView",
             'mon-infra-sysinfo-view',
             'mon-infra-dashboard-view',
-            'core-alarm-utils'
+            'core-alarm-utils',
+            'contrail-utils'
         ],
         'contrail-core-views': [
             'core-basedir/js/views/GridView',
