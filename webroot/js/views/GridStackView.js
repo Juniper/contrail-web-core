@@ -28,9 +28,9 @@ define([
             self.CELL_HEIGHT_MULTIPLER = 1;
             //Default is 12 columns. To have 3 column layout, set defaultWidth as 4
             if(self.gridAttr['defaultWidth'] != null)
-                self.COLUMN_CNT = 12/self.gridAttr['defaultWidth'];
+                self.COLUMN_CNT = cowc.GRID_STACK_COLUMN_CNT/self.gridAttr['defaultWidth'];
 
-            self.$el.addClass('grid-stack grid-stack-12 custom-grid-stack');
+            self.$el.addClass('grid-stack grid-stack-24 custom-grid-stack');
             self.$el.attr('data-widget-id',self.elementId);
             self.gridStack = $(self.$el).gridstack({
                 float:true,
@@ -41,9 +41,10 @@ define([
                 verticalMargin:8/self.CELL_HEIGHT_MULTIPLER,
                 cellHeight: 20,
                 animate:false,
-                acceptWidgets:'label'
+                acceptWidgets:'label',
+                width: 24
             }).data('gridstack');
-            
+
             self.$el.on('drag','.grid-stack-item',function(event,ui) {
                 $('.custom-grid-stack').addClass('show-borders');
             });
@@ -63,7 +64,7 @@ define([
             //Listen for change events once gridStack is rendered else it's getting triggered even while adding widgets for the first time
             self.$el.on('change',function(event,items) {
                 //Added to avoid saving to localStorage on resetLayout..as change event gets triggered even if we remove all widgets from gridstack
-                if(localStorage.getItem(self.elementId) != null) {
+                if(cowu.getLayoutPreference(self.elementId) != null) {
                     if(self.doSaveLayout == true)
                         self.saveGrid();
                     if(self.doSaveLayout == true)
@@ -110,8 +111,9 @@ define([
             }
 
             if(isValidLayout == true) {
-                localStorage.setItem(self.elementId,JSON.stringify(serializedData));
+                cowu.updateLayoutPreference(self.elementId, serializedData);
             } else {
+
             }
         },
         render: function() {
@@ -134,9 +136,9 @@ define([
             }
             var widgetCfgList = self.widgetCfgList;
             //Check if there exists a saved preference for current gridStack id
-            if(localStorage.getItem(self.elementId) != null) {
-                var serializedData = localStorage.getItem(self.elementId),
-                    tmpData = JSON.parse(serializedData);
+            if(cowu.getLayoutPreference(self.elementId) != null) {
+                var serializedData = cowu.getLayoutPreference(self.elementId),
+                    tmpData = serializedData;
                 if(tmpData.length > 0){
                     widgetCfgList = tmpData;
                 }
@@ -171,7 +173,7 @@ define([
             var widgetCnt = self.widgets.length;
             $(currElem).attr('data-widget-id',widgetCfg['id']);
             $(currElem).data('data-cfg', cfg);
-            if(localStorage.getItem(self.elementId) != null || isMoved) {
+            if(cowu.getLayoutPreference(self.elementId) != null || isMoved) {
                 if(isMoved){
                     self.tmpHeight = itemAttr['height'];
                     itemAttr['x'] = 0;
