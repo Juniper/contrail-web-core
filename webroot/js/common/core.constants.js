@@ -200,6 +200,8 @@ define([
 
         this.COOKIE_DOMAIN = 'domain';
         this.COOKIE_PROJECT = 'project';
+        this.COOKIE_DOMAIN_FQN = 'domain-fqn';
+        this.COOKIE_PROJECT_FQN = 'project-fqn';
         this.COOKIE_VIRTUAL_NETWORK = 'virtual-network';
 
         this.THEME_DETAIL_WIDGET = 'widget-box';
