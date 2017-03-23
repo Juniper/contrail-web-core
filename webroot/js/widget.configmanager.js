@@ -3,15 +3,15 @@
  */
 define([ 'controlnode-viewconfig', 'vrouter-viewconfig',
         'databasenode-viewconfig', 'analyticsnode-viewconfig',
-        'confignode-viewconfig','monitor-infra-viewconfig','global-controller-viewconfig'], function(
+        'confignode-viewconfig','monitor-infra-viewconfig','global-controller-viewconfig','alarms-viewconfig'], function(
         ControlNodeViewConfig, VRouterViewConfig, DatabaseNodeViewConfig,
-        AnalyticsNodeViewConfig, ConfigNodeViewConfig,MonitorInfraViewConfig,globalControllerViewConfig) {
+        AnalyticsNodeViewConfig, ConfigNodeViewConfig,MonitorInfraViewConfig,globalControllerViewConfig, AlarmsViewConfig) {
     var widgetCfgManager = function() {
         var self = this;
         var widgetViewCfgMap = {};
         $.extend(widgetViewCfgMap, ControlNodeViewConfig, VRouterViewConfig,
                 DatabaseNodeViewConfig, AnalyticsNodeViewConfig,
-                ConfigNodeViewConfig,MonitorInfraViewConfig,globalControllerViewConfig);
+                ConfigNodeViewConfig,MonitorInfraViewConfig,globalControllerViewConfig,AlarmsViewConfig);
         self.get = function(widgetId) {
             return widgetViewCfgMap[widgetId];
         }
