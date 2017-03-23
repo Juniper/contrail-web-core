@@ -28,6 +28,10 @@ define([
                     self.renderText(selector, viewConfig, self.model);
                 });
 
+                self.model.onDataUpdate.subscribe(function () {
+                    self.renderText($(self.$el), viewConfig, self.model);
+                });
+
                 self.resizeFunction = _.debounce(function (e) {
                      self.renderText($(self.$el), viewConfig, self.model);
                  },cowc.THROTTLE_RESIZE_EVENT_TIME);
@@ -40,19 +44,23 @@ define([
         renderText: function (selector, viewConfig, textViewModel) {
             var data = textViewModel.getItems(),
                 template = viewConfig['template'];
-                widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null;
+                widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
+                title = cowu.getValueByJsonPath(viewConfig,'title');
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data);
             }
             $(selector).html('');
+            var html = '';
+            if (title) {
+                html = '<div class="row notification-title">'+ title +'</div>'
+            }
             if (textViewModel != null && !textViewModel.isRequestInProgress() && data != null && data.length == 0) {
-                $(selector).html('<div class="alarm-load-status"><p class="status"><i class=""></i> No Alarms Found.</p></div>')
+                html += '<div class="alarm-load-status"><p class="status"><i class=""></i> No Alarms Found.</p></div>';
+//                $(selector).html(html)
             }
             else if (template != null) {
-                var html = '',
-                    template = contrail.getTemplate4Id(template);
-
+                template = contrail.getTemplate4Id(template);
                 $.each(data, function(idx, obj) {
                     html += template(obj);
                 });

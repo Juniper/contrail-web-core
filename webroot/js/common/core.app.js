@@ -104,7 +104,9 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'jquery-linedtextarea'        : coreWebDir + '/assets/jquery-linedtextarea/js/jquery-linedtextarea',
         'qe-module'                   : coreWebDir + '/reports/qe/ui/js/qe.module',
         'udd-module'                  : coreWebDir + '/reports/udd/ui/js/udd.module',
-        'chart-config'              : coreWebDir + '/js/chartconfig'
+        'chart-config'                : coreWebDir + '/js/chartconfig',
+        'legend-view'                 : coreWebDir + '/js/views/LegendView',
+        'alarms-viewconfig'           : coreWebDir + '/js/views/alarms/alarms.viewconfig'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -204,7 +206,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'databasenode-viewconfig'     : 'empty:',
             'analyticsnode-viewconfig'    : 'empty:',
             'confignode-viewconfig'       : 'empty:',
-            'monitor-infra-viewconfig'    : 'empty:'
+            'monitor-infra-viewconfig'    : 'empty:',
+            'alarms-viewconfig'           : coreWebDir + '/js/views/alarms/alarms.viewconfig'
 
         };
         //Merge common (for both prod & dev) alias
@@ -1462,3 +1465,4 @@ if (typeof exports !== 'undefined' && module.exports) {
     exports.coreAppMap = coreAppMap;
     exports.coreAppShim = coreAppShim;
 }
+
