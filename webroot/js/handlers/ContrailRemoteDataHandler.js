@@ -11,7 +11,8 @@ define([
             vlRemoteConfig = remoteHandlerConfig['vlRemoteConfig'],
             vlRemoteList = (vlRemoteConfig != null) ? vlRemoteConfig['vlRemoteList'] : null,
             hlRemoteConfig = remoteHandlerConfig['hlRemoteConfig'],
-            hlRemoteList = (hlRemoteConfig != null) ? hlRemoteConfig['hlRemoteList'] : null;
+            hlRemoteList = (hlRemoteConfig != null) ? hlRemoteConfig['hlRemoteList'] : null,
+            listModelConfig = remoteHandlerConfig['listModelConfig'];
 
         var autoFetchData = remoteHandlerConfig['autoFetchData'];
 
@@ -59,6 +60,18 @@ define([
                 contrail.ajaxHandler(pAjaxConfig, pInitHandler, pRefreshHandler, pFailureHandler);
             }
         };
+
+        self.getPrimaryAjaxConfig = function () {
+            return pAjaxConfig;
+        }
+
+        self.getPrimaryRemoteConfig = function () {
+            return primaryRemoteConfig;
+        }
+
+        self.getRemoteConfig = function () {
+            return listModelConfig;
+        }
 
         if(autoFetchData == null || autoFetchData) {
             fetchPrimaryData();
@@ -193,7 +206,7 @@ define([
                         innerCounter = vlRequestsInProgress[vlCounter].length;
                     vlRequestsInProgress[vlCounter][innerCounter] = 1;
                     vlRequestsConfig[vlCounter][innerCounter] =
-                        vlRemoteList[i].getAjaxConfig(resultJSON);
+                        (vlRemoteList[i]['ajaxConfig'])? vlRemoteList[i]['ajaxConfig'] : vlRemoteList[i].getAjaxConfig(resultJSON);
                     updateVLRequestStatus();
                     var vlDataParser = vlRemote.dataParser,
                         vlSuccessCallback = vlRemote.successCallback,
@@ -205,7 +218,7 @@ define([
                         getVLFailureHandlerFn(vlFailureCallback, vlCounter,
                                               innerCounter, vlRequestsConfig);
 
-                    contrail.ajaxHandler(vlRemoteList[i].getAjaxConfig(resultJSON), vlRemoteList[i].initCallback, vlSuccessHandler, vlFailureHandler);
+                    contrail.ajaxHandler((vlRemoteList[i]['ajaxConfig'])? vlRemoteList[i]['ajaxConfig'] : vlRemoteList[i].getAjaxConfig(resultJSON), vlRemoteList[i].initCallback, vlSuccessHandler, vlFailureHandler);
                 }
             }
         };

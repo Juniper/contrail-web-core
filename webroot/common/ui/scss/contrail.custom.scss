@@ -1268,6 +1268,15 @@ button#close-error-popup{
     border-radius: 8px;
     pointer-events: none;
 }*/
+.eventdrops-widget .extremum {
+    display:none;
+}
+
+.event-drops-tooltip hr {
+    margin: 10px;
+    border-top-width:3px;
+}
+
 .event-drops-tooltip {
     position: absolute;
     background: #fff;
@@ -1275,52 +1284,78 @@ button#close-error-popup{
     border-radius: 1rem;
     padding: .5rem 1rem;
     /* width: 10rem; */
-    width: 200px;
-    line-height: 1.4rem;
+    /* width: 300px; */
+    /* line-height: 1.4rem; */
+    line-height:23px;
 }
 
-.event-drops-tooltip::before {
-    content: '';
-    display: block;
-    position: absolute;
-    top: -.65rem;
-    width: 1rem;
-    height: 1rem;
-    background: #fff;
-    border: 3px solid #e7e7e7;
-    border-width: 3px 0 0 3px;
-    transform: rotate(45deg);
-    z-index: 1;
-}
+/*
+ * .event-drops-tooltip::before {
+ *     content: '';
+ *     display: block;
+ *     position: absolute;
+ *     top: -.65rem;
+ *     width: 1rem;
+ *     height: 1rem;
+ *     background: #fff;
+ *     border: 3px solid #e7e7e7;
+ *     border-width: 3px 0 0 3px;
+ *     transform: rotate(45deg);
+ *     z-index: 1;
+ * }
+ * 
+ * .event-drops-tooltip.left::before {
+ *     left: 1.65rem;
+ * }
+ * 
+ * .event-drops-tooltip.right::before {
+ *     right: 1.65rem;
+ * }
+ */
 
-.event-drops-tooltip.left::before {
-    left: 1.65rem;
+/*
+ * .event-drops-tooltip::before {
+ *     content: '';
+ *     display: block;
+ *     position: absolute;
+ *     top: -.65rem;
+ *     width: 1rem;
+ *     height: 1rem;
+ *     background: #fff;
+ *     border: 3px solid #e7e7e7;
+ *     border-width: 3px 0 0 3px;
+ *     transform: rotate(45deg);
+ *     z-index: 1;
+ * }
+ * 
+ * .event-drops-tooltip.left::before {
+ *     left: 1.65rem;
+ * }
+ * 
+ * .event-drops-tooltip.right::before {
+ *     right: 1.65rem;
+ * }
+ */
+/* End - Event-drops CSS */
+.eventdrops-widget .eventdrops-widget-title {
+    /* font-weight: bold; */
+    /* text-align:center; */
+    font-size:14px;
+    /* color: #3182bd; */
 }
-
-.event-drops-tooltip.right::before {
-    right: 1.65rem;
+.eventdrops-widget .labels .label {
+    font-size:12px;
+    /* fill:#616161; */
 }
-
-.event-drops-tooltip::before {
-    content: '';
-    display: block;
-    position: absolute;
-    top: -.65rem;
-    width: 1rem;
-    height: 1rem;
-    background: #fff;
-    border: 3px solid #e7e7e7;
-    border-width: 3px 0 0 3px;
-    transform: rotate(45deg);
-    z-index: 1;
+.eventdrops-widget .chart-wrapper .tick text {
+    font-size:11px;
+    fill:#787878;
 }
-
-.event-drops-tooltip.left::before {
-    left: 1.65rem;
+.eventdrops-widget .event-drops-tooltip {
+    font-size: 14px;
 }
-
-.event-drops-tooltip.right::before {
-    right: 1.65rem;
+.eventdrops-widget {
+    padding-right: 20px;
 }
 
 /* End - Event-drops CSS */
@@ -1571,6 +1606,28 @@ Stack area chart opacity
     padding-right:25px;
     margin-top: 3px;
     margin-bottom: 3px;
+}
+.event-drops-tooltip .nvtooltip .popover-title p, .grid-stack-item .nvtooltip p{
+    text-align:left;
+    margin:0px;
+    padding:0px;
+}
+.event-drops-tooltip .nvtooltip .popover-info, .grid-stack-item .nvtooltip .popover-info{
+    font-weight:600;
+    font-family:'Open Sans';
+    font-size:12px;
+    color: #393939;
+    padding: 30px 5px 7px;
+}
+.event-drops-tooltip  .popover.popover-tooltip .popover-tooltip-icon{
+    margin-top:0px !important;
+    padding-bottom:40px !important;
+}
+.event-drops-tooltip .nvtooltip.popover.popover-tooltip .popover-title .sub-heading{
+    padding-right:25px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    font-size: 11px;
 }
 .custom-grid-stack-item .grid-stack-item-content{
     overflow:initial !important;
@@ -2058,3 +2115,126 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
     -webkit-animation-delay: 0.1s;
  }
 /*Gohan Config CSS Ends*/
+
+.notification-padding {
+    padding: 10px 10px 10px 10px
+}
+
+.notification-item {
+    font-size: 12px;
+}
+
+.notification-item-header {
+    font-weight: bold;
+}
+
+.notification-time-stamp {
+    font-size: 10px;
+    opacity: 0.8;
+}
+
+.notification-title {
+    padding-left: 50px;
+    font-weight: bold;
+}
+.notification-content .circle {
+    vertical-align: top;
+    margin-top: 5px;
+}
+
+.event-drops-tooltip .nvtooltip {
+    position: relative;
+}
+.event-drops-tooltip{
+    background:#fff;
+    Opacity:.98;
+    border:none;
+    border-radius:0;
+    padding:0px;
+}
+.event-drops-tooltip .circle {
+    vertical-align: top;
+}
+.event-drops-tooltip .fa-remove {
+    margin-top: -15px;
+    padding: 2px;
+    font-size: 14px;
+}
+.event-drops-tooltip .popover-info, .event-drops-tooltip .popover .popover-tooltip .popover-content .popover-tooltip-row{
+    white-space: normal !important;
+    overflow: inherit !important;
+}
+.event-drops-tooltip .popover-tooltip-row {
+    font-weight: 400 !important;
+}
+.notification-content .circle ,.alarms-details-panel .circle ,.event-drops-tooltip .circle {
+    vertical-align: top;
+    margin-top: 5px;
+}
+.alarms-details-panel-title {
+    background: #ffffff;
+    padding: 10px 10px 0px 10px;
+}
+.alarms-details-panel-title .heading {
+    margin: 0 20px 2px 0;
+    color: #3182bd;
+    line-height: 18px;
+    font-size: 14px;
+    font-weight: 400;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.alarms-details-panel-title .sub-heading {
+    padding-right: 25px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    font-size:11px;
+    color:#333;
+}
+.alarms-details-panel{
+    padding-left: 60px;
+}
+
+.alarms-notification-view .fa-remove {
+    font-size: 14px;
+    padding: 10px;
+}
+.alarms-details-panel-content{
+  padding:10px;
+}
+.alarms-details-panel pre.pre-format-JSON2HTML{
+  padding-top: 20px;
+  border-top: #eeeeee solid 1px;
+}
+
+.alarms-display-inline{
+  font-size:12px
+}
+
+.alarms-display-inline~div{
+  font-weight:400;
+  font-size:12px;
+  color:#000;
+  padding-bottom: 5px;
+}
+
+.eventdrops-chart .line-separator:not(.x-axis) {
+  stroke-width: 0.3
+}
+
+.eventdrops-chart .line-separator .x-axis {
+  stroke-width: 1.2
+}
+
+#alarms-historical-chart .nvtooltip table td.legend-color-guide div, .alarms-active-alarm-filter-chart > .nvtooltip table td.legend-color-guide div,
+.alarms-active-alarm-chart .nvtooltip table td.legend-color-guide div{
+    width: 10px;
+    height: 10px;
+    border: none;
+    border-radius: 6px;
+    margin-top: 1px;
+    padding: 0px;
+}

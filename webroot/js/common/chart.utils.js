@@ -6,6 +6,10 @@ define([
     'underscore',
     'legend-view'
 ], function (_,LegendView) {
+    var historyCallBacks = $.Callbacks('unique');
+    window.onpopstate = history.onpushstate = function(event) {
+        historyCallBacks.fire(event);
+    }
     var chartUtils = {
         updateChartOnResize: function(selector,chart){
             if(selector != null && $(selector).is(':visible') && chart != null) {
@@ -141,19 +145,19 @@ define([
               var hours;
               var minutes;
               tooltipData  = $.map(tooltipData,function(d){ d.values['y'] = yAxisFormatter(d.values['y']);
-              if(d.dateTime){
-                  strTime = d.dateTime;
-                  d['Time']= strTime;
-              }
-              else{
-                hours = d.values['date'].getHours();
-                hours = ('0' + hours).slice(-2);
-                minutes = d.values['date'].getMinutes();
-                minutes = ('0' + minutes).slice(-2);
-                strTime = hours + ':' + minutes;
-                d['Time']= strTime;
-            }
-            return d;
+                  if(d.dateTime){
+                      strTime = d.dateTime;
+                      d['Time']= strTime;
+                  }
+                  else{
+                    hours = d.values['date'].getHours();
+                    hours = ('0' + hours).slice(-2);
+                    minutes = d.values['date'].getMinutes();
+                    minutes = ('0' + minutes).slice(-2);
+                    strTime = hours + ':' + minutes;
+                    d['Time']= strTime;
+                }
+                return d;
             });
               var toolTipTemplate = contrail.getTemplate4Id(cowc.TOOLTIP_TEMPLATE);
               return toolTipTemplate({
@@ -369,6 +373,16 @@ define([
                 }
             }
             return chartObj;
+        },
+
+        listenToHistory: function (callBack) {
+            historyCallBacks.add(callBack);
+            return historyCallBacks;
+        },
+
+        getTimeExtentForDuration: function (secs) {
+            var currTime = _.now();
+            return [new Date(currTime - secs * 1000), new Date(currTime)];
         }
     };
 

@@ -224,6 +224,15 @@ define([
             },
             columnHeader: {
                 columns: alarmColumns
+            },
+            footer: {
+                pager: {
+                    options: {
+                        pageSize: 50,
+                        pageSizeSelect: [5, 10, 50]
+                    }
+
+                }
             }
         };
         return gridElementConfig;

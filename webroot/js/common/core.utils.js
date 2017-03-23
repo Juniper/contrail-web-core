@@ -7,8 +7,9 @@ define([
     'moment',
     'handlebars',
     'lodash',
-    "core-constants"
-], function (_, moment, Handlebars, lodash, cowc) {
+    "core-constants",
+    "contrail-list-model"
+], function (_, moment, Handlebars, lodash, cowc, ContrailListModel) {
     var serializer = new XMLSerializer(),
         domParser = new DOMParser();
 
@@ -1237,7 +1238,7 @@ define([
                     });
                 } else {
                         cowu.createModal(modalConfig);
-                        require(['js/views/AlarmGridView'], function(AlarmGridView) {
+                        require(['js/views/alarms/AlarmGridView'], function(AlarmGridView) {
                             var alarmGridView = new AlarmGridView({
                                 el:$("#" + modalId).find('#' + formId),
                                 viewConfig:{}
@@ -1950,14 +1951,13 @@ define([
         }
         this.parsePercentilesDataForStack = function (data,options) {
             var yFields = getValueByJsonPath(options,'yFields',[]);
-            var parsedData = [];
-            var colors = getValueByJsonPath(options,'colors',cowc.FIVE_NODE_COLOR);
+            var yLabels = getValueByJsonPath(options,'yLabels',[]);
             var parsedData = [];
             $.each(yFields,function(i,yfield){
                 $.each(data,function(j,d){
                    var itemData = $.extend(true,{},d);
-                   itemData['Source'] = yfield;
-                   itemData['percentileValue'] = getValueByJsonPath(d,yfield);
+                   itemData['Source'] = getValueByJsonPath(yLabels,""+i,yfield);
+                   itemData['plotValue'] = getValueByJsonPath(d,yfield);
                    parsedData.push(itemData);
                 });
             });
@@ -2071,6 +2071,20 @@ define([
             return false;
         }
 
+        this.getXPathValuesFromXmlDoc = function(data, xpathObj) {
+            var doc = (new DOMParser).parseFromString(data, 'text/xml');
+            var retObj = {};
+            _.each(xpathObj,function(value,key) {
+                var it = doc.evaluate(value, doc, null, 5, null);
+                var node = it.iterateNext();
+                retObj[key] = '';
+                if(node != null)
+                    retObj[key] = node.textContent;
+
+            });
+            return retObj;
+        }
+
         self.parseAndMergeStats = function (response,primaryDS) {
             var primaryData = primaryDS.getItems();
             if(primaryData.length == 0) {
@@ -2104,6 +2118,29 @@ define([
                 }
             }
             primaryDS.updateData(primaryData);
+        };
+
+//        self.mergingFlag = false;
+        self.parseAndMergeObjectLogs = function (response,primaryDS) {
+//            if(self.mergingFlag) {
+//                setTimeout(function () {
+//                    self.parseAndMergeObjectLogs(response,primaryDS);
+//                }, 1000);
+//                return;
+//            }
+//            self.mergingFlag = true;
+            var primaryData = primaryDS.getItems();
+            if(primaryData.length == 0) {
+                primaryDS.setData(response);
+//                self.mergingFlag = false;
+                return;
+            }
+            if(response.length == 0) {
+//                self.mergingFlag = false;
+                return;
+            }
+            primaryDS.addData(response);
+//            self.mergingFlag = false;
         };
 
         self.getGridItemsForWidgetId = function(widgetId) {
@@ -2167,24 +2204,27 @@ define([
          * The first one is considered as primary req and the rest are added as
          * vl config
          */
-        self.getStatsModelConfig = function (config) {
+        self.getStatsModelConfig = function (config,timeRange) {
             if (!_.isArray(config)) {
                 config = [config];
             }
+            timeRange = (timeRange)? timeRange :
+                    [Date.now() - (2 * 60 * 60 * 1000), Date.now()];
             var primaryRemoteConfig ;
             var vlRemoteList = [];
             for (var i = 0; i < config.length; i++) {
                 var statsConfig = config[i];
+                var noSanitize = cowu.getValueByJsonPath(statsConfig,'no_sanitize',false);
                 var postData = {
                     "autoSort": true,
                     "async": false,
                     "formModelAttrs": {
                       "table_type": "STAT",
                       "query_prefix": "stat",
-                      "from_time": Date.now() - (2 * 60 * 60 * 1000),
-                      "from_time_utc": Date.now() - (2 * 60 * 60 * 1000),
-                      "to_time": Date.now(),
-                      "to_time_utc": Date.now(),
+                      "from_time": timeRange[0],
+                      "from_time_utc": timeRange[0],
+                      "to_time": timeRange[1],
+                      "to_time_utc": timeRange[1],
                       "time_granularity_unit": "secs",
                       "time_granularity": 150,
                       "limit": "150000"
@@ -2196,6 +2236,12 @@ define([
                         remoteConfig = statsConfig['remoteConfig'];
                     }
                 } else {
+                    if (statsConfig['from_time_utc'] != null) {
+                        postData['formModelAttrs']['from_time_utc'] = statsConfig['from_time_utc'];
+                    }
+                    if (statsConfig['to_time_utc'] != null) {
+                        postData['formModelAttrs']['to_time_utc'] = statsConfig['to_time_utc'];
+                    }
                     if (statsConfig['table_name'] != null) {
                         postData['formModelAttrs']['table_name'] = statsConfig['table_name'];
                     }
@@ -2236,6 +2282,14 @@ define([
                                     return data;
                                 }
                         };
+                        if(noSanitize) {
+                            remoteObj.ajaxConfig['dataFilter'] = function(data){
+                                                                    return data;
+                                                                };
+                        }
+                        if (statsConfig['timeout']) {
+                            remoteObj.ajaxConfig['timeout'] = statsConfig['timeout'];
+                        }
                         primaryRemoteConfig = remoteObj;
                     }
                 } else {
@@ -2244,12 +2298,26 @@ define([
                             if(statsConfig['getAjaxConfig']) {
                                 return statsConfig['getAjaxConfig'](primaryResponse,postData);
                             } else {
-                                return {
+                                var ajaxConfig = {
                                     url : "/api/qe/query",
                                     type: 'POST',
                                     data: JSON.stringify(postData)
                                 }
+                                if (noSanitize) {
+                                    ajaxConfig['dataFilter'] = function(data){
+                                                                    return data;
+                                                                };
+                                }
+                                if (statsConfig['timeout']) {
+                                    ajaxConfig['timeout'] = statsConfig['timeout'];
+                                }
+                                return ajaxConfig;
                             }
+                        },
+                        ajaxConfig : {
+                            url : "/api/qe/query",
+                            type: 'POST',
+                            data: JSON.stringify(postData)
                         },
                         dataParser : (statsConfig['parser'])? statsConfig['parser'] :
                             function (response) {
@@ -2267,6 +2335,14 @@ define([
                                 }
                             }
                     };
+                    if(noSanitize) {
+                        vlRemoteObj.ajaxConfig['dataFilter'] = function(data){
+                                                                    return data;
+                                                                };
+                    }
+                    if (statsConfig['timeout']) {
+                        vlRemoteObj.ajaxConfig['timeout'] = statsConfig['timeout'];
+                    }
                     vlRemoteList.push (vlRemoteObj);
                 }
             }
@@ -2285,6 +2361,51 @@ define([
             }
             return listModelConfig;
         };
+
+        self.modifyTimeRangeInRemoteConfig = function (remoteConfig,timeExtent) {
+            var postData = JSON.parse(getValueByJsonPath(remoteConfig,'ajaxConfig;data'));
+            var formModelAttrs = getValueByJsonPath(postData,'formModelAttrs');
+            formModelAttrs["from_time"] = timeExtent[0] / 1000;
+            formModelAttrs["from_time_utc"] = timeExtent[0] / 1000;
+            formModelAttrs["to_time"] = timeExtent[1] / 1000;
+            formModelAttrs["to_time_utc"] = timeExtent[1] / 1000;
+            postData['formModelAttrs'] = formModelAttrs;
+            remoteConfig['ajaxConfig']['data'] = JSON.stringify(postData);
+            return remoteConfig;
+        }
+
+        /**
+         * Given a model and time range change the time range in all the 
+         * ajaxconfig - primary, vl and hl and return the new list model.
+         */
+        self.buildNewModelForTimeRange = function (model, viewConfig, timeExtent) {
+            var postData, remoteConfig, vlConfigs, hlConfigs;
+            if (model === null && viewConfig['modelConfig'] != null) {
+                remoteConfig = viewConfig['modelConfig'];
+                postData = JSON.parse(getValueByJsonPath(pRemoteConfig,'remote;ajaxConfig;data'));
+            } else {
+              //get the models ajax config and then modify the timeextent
+                remoteConfig = model.getRemoteConfig();
+                var pRemoteConfig = cowu.getValueByJsonPath(remoteConfig,'remote');
+                vlConfigs = cowu.getValueByJsonPath(remoteConfig,'vlRemoteConfig;vlRemoteList',[]);
+                hlConfigs = cowu.getValueByJsonPath(remoteConfig,'hlRemoteConfig;hlRemoteList',[]);
+            }
+            var pRemoteConfig = cowu.modifyTimeRangeInRemoteConfig(pRemoteConfig, timeExtent);
+            $.each(vlConfigs,function(i,vlConfig){
+                vlConfigs[i] = cowu.modifyTimeRangeInRemoteConfig(vlConfig,timeExtent);
+            });
+            $.each(hlConfigs,function(i,hlConfig){
+                hlConfigs[i] = cowu.modifyTimeRangeInRemoteConfig(vlConfig,timeExtent);
+            });
+            remoteConfig['remote'] = pRemoteConfig;
+            if(vlConfigs.length > 0) {
+                remoteConfig['vlRemoteConfig']['vlRemoteList'] = vlConfigs;
+            }
+            if(hlConfigs.length > 0) {
+                remoteConfig['hlRemoteConfig']['hlRemoteList'] = hlConfigs;
+            }
+            return new ContrailListModel(remoteConfig);
+        }
     };
 
     function filterXML(xmlString, is4SystemLogs) {

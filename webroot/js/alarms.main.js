@@ -9,7 +9,7 @@ function MonitorAlarmsLoader() {
         var self = this, currMenuObj = globalObj.currMenuObj,
             hashParams = paramObject['hashParams'],
             rootDir = currMenuObj['resources']['resource'][0]['rootDir'],
-            pathMNView = rootDir + '/js/views/AlarmView.js',
+            pathMNView = rootDir + '/js/views/alarms/AlarmView.js',
             renderFn = paramObject['function'];
 
         requirejs([pathMNView], function (AlarmsView) {

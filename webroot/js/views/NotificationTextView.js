@@ -12,14 +12,16 @@ define([
     var NotificationTextView = ContrailView.extend({
         el: $(contentContainer),
 
-        render: function (viewConfig) {
-            var self = this,
-                modelConfig = cowu.getValueByJsonPath(viewConfig, modelConfig, getAlarmModelConfig()),
-                alarmListModel = new ContrailListModel(modelConfig);
-            self.model = alarmListModel;
+        render: function () {
+            var self = this, alarmListModel;
+            var viewConfig = self.attributes.viewConfig;
+            if (self.model == null) {
+                var modelConfig = cowu.getValueByJsonPath(viewConfig, modelConfig, getAlarmModelConfig());
+                self.model = new ContrailListModel(modelConfig);
+            }
             self.renderView4Config(self.$el, self.model,
                     getNotificationTextViewConfig(viewConfig));
-            alarmListModel.onDataUpdate.subscribe(function () {
+            self.model.onDataUpdate.subscribe(function () {
                 var alarms = self.model.getItems();
                 var ack_newAlarms = coreAlarmUtils.getNewAndAcknowledgedAlarms(alarms);
                 $('.alarm-popover .notification-menu .ack-info').html(contrail.format('(<strong> {0}</strong> New, <strong> {1}</strong> Acknowledged)',
@@ -41,7 +43,8 @@ define([
                                 elementId: cowc.NOTIFICATION_TEXT_ID,
                                 view: "TextView",
                                 viewConfig: {
-                                    template: 'notification-template'
+                                    title: viewConfig.title,
+                                    template: 'notification-template-2'
                                 }
                             }
                         ]
