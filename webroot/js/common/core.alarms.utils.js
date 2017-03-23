@@ -200,7 +200,7 @@ define(
                     return {
                         severity: options['severity'] ? options['severity'] : 1,
                         type: cowc.UI_GENERATED_ALARM,
-                        timestamp: new Date().getTime() * 1000,
+                        T: new Date().getTime() * 1000,
                         alarm_msg: options['alarmText'],
                         display_name: options['display_name']
                     }

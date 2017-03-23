@@ -215,6 +215,18 @@ define([
                 }
             }
          }
+
+        contrailListModel['getPrimaryAjaxConfig'] = function () {
+            return contrailDataHandler.getPrimaryAjaxConfig();
+        }
+
+        contrailListModel['getPrimaryRemoteConfig'] = function () {
+            return contrailDataHandler.getPrimaryRemoteConfig();
+        }
+
+        contrailListModel['getRemoteConfig'] = function () {
+            return contrailDataHandler.getRemoteConfig();
+        }
     };
 
     function getRemoteHandlerConfig(listModelConfig, contrailListModel, parentModelList, autoFetchData) {
@@ -311,6 +323,7 @@ define([
 
             vlRemote = {
                 getAjaxConfig: vlRemoteList[i].getAjaxConfig,
+                ajaxConfig: vlRemoteList[i].ajaxConfig,
                 dataParser: vlRemoteList[i].dataParser,
                 initCallback: vlRemoteList[i].initCallback,
                 successCallback: getVLRemoteSuccessCB(vlSuccessCallback, contrailListModel, parentModelList),
@@ -319,7 +332,7 @@ define([
             remoteHandlerConfig['vlRemoteConfig']['vlRemoteList'].push(vlRemote);
         };
 
-
+        remoteHandlerConfig['listModelConfig'] = listModelConfig;
         return remoteHandlerConfig;
     };
 
@@ -457,7 +470,8 @@ define([
             }
             remoteHandlerConfig['vlRemoteConfig']['vlRemoteList'].push(vlRemote);
         }
-
+      //store the original modelConfig to retrieve when required.
+        remoteHandlerConfig['listModelConfig'] = listModelConfig;
         return remoteHandlerConfig;
     };
 
