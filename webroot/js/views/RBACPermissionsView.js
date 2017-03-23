@@ -183,7 +183,7 @@ define([
                      ],
                     rowActions: [
                         {onClick: "function() {" +
-                            "$root.addShare();" +
+                            "$root.addShareByIndex($data, this);" +
                             "}",
                          iconClass: 'fa fa-plus'},
                         {onClick: "function() {" +
@@ -204,4 +204,3 @@ define([
 
     return rbacPermissionsView;
 });
-
