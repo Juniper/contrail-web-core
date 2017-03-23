@@ -33,11 +33,32 @@ define([
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ?
                         viewConfig.widgetConfig : null,
                 resizeId;
+            var chartOptions = getValueByJsonPath(viewConfig, 'chartOptions', {});
+            var listenToHistory = getValueByJsonPath(chartOptions,'listenToHistory',false);
             //settings
             cowu.updateSettingsWithCookie(viewConfig);
             cfDataSource = viewConfig.cfDataSource;
-            if (self.model === null && viewConfig['modelConfig'] != null) {
-                self.model = new ContrailListModel(viewConfig['modelConfig']);
+            if(listenToHistory) {
+                var postData, remoteConfig;
+                if (self.model === null && viewConfig['modelConfig'] != null) {
+                    remoteConfig = viewConfig['modelConfig'];
+                    postData = JSON.parse(getValueByJsonPath(pRemoteConfig,'remote;ajaxConfig;data'));
+                } else {
+                  //get the models ajax config and then modify the timeextent
+                    remoteConfig = self.model.getRemoteConfig();
+                    var pRemoteConfig = getValueByJsonPath(remoteConfig,'remote');
+                    postData = JSON.parse(getValueByJsonPath(pRemoteConfig,'ajaxConfig;data'));
+                }
+                chUtils.listenToHistory(function(event) {
+                  //create a new model and then bind to self.
+                    var timeExtent = getValueByJsonPath(event,'state;timeExtent',null);
+                    if(timeExtent != null && timeExtent.length > 0) {
+                        self.model = cowu.buildNewModelForTimeRange (self.model,viewConfig,timeExtent);
+                        self.model.onAllRequestsComplete.subscribe(function () {
+                            self.renderChart($(self.$el), viewConfig, self.model);
+                        });
+                    }
+                });
             }
 
             if (self.model !== null) {
@@ -130,6 +151,10 @@ define([
             var yAxisFormatter = getValueByJsonPath(chartOptions,'yAxisFormatter',function (value) {
                 return cowu.numberFormatter(value);
             });
+            var listenToHistory = getValueByJsonPath(chartOptions,'listenToHistory',false);
+            var data = [];
+            data = chartViewModel.getFilteredItems();
+
             var customTimeFormat = d3.time.format.multi([
                     //[".%L", function(d) { return d.getMilliseconds(); }],
                     [":%S", function(d) { return d.getSeconds(); }],
