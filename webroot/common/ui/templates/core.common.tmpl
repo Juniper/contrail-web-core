@@ -2461,10 +2461,24 @@
 <script type="text/x-handlebars-template" id="gridstack-widget-template">
     <div class='custom-grid-stack-item'>
         <div class='grid-stack-item-content'>
-            <header>Widget</header>
+            <div class='widget-dropdown slick-dropdown'></div>
             <div class='item-content'>
             </div>
         </div>
+    </div>
+</script>
+<script type="text/x-handlebars-template" id="eventdrops-widget-template">
+    <div class='eventdrops-widget'>
+        <div class='eventdrops-widget-title'>
+        </div>
+        <div class='eventdrops-chart'>
+        </div>
+</script>
+<script type="text/x-handlebars-template" id="gridstack-template">
+    <a class="widget-toolbar-icon">
+        <i class="fa fa-plus"></i>
+    </a>
+    <div class='custom-grid-stack'>
     </div>
 </script>
 <script type="text/x-handlebars-template" id="core-2-row-4-column-template">
@@ -2593,6 +2607,37 @@
         </dd>
     </dl>
 </script>
+<script type="text/x-handlebars-template" id="notification-template-2">
+    <div class="row notification-padding notification-item">
+        <div class="col-md-4">
+            <dl>
+                <dd style="text-align: center;">
+	            {{#IfCompare severity 1 operator='<='}}
+	                <div data-color=red class="circle red {{#IfCompare ack false}}filled{{/IfCompare}} alarms-circle-grid-style alarms-circle-display-flex" style="vertical-align: top;"></div>
+	                <i class="fa fa-clock-o" style="cursor:default"></i>
+	            {{/IfCompare}}
+	            {{#IfCompare severity 1 operator='>'}}
+	                <div data-color=orange class="circle orange {{#IfCompare ack false}}filled{{/IfCompare}} alarms-circle-grid-style alarms-circle-display-flex" style="vertical-align: top;"></div>
+	                <i class="fa fa-clock-o" style="cursor:default"></i>
+	            {{/IfCompare}}
+	            </dd>
+	            <dd style="text-align: center;">
+	            {{#IfCompare timeDiff null operator='!='}}
+		            <span class="notification-time-stamp"> {{timeDiff}} </span>
+		        {{/IfCompare}}
+		        </dd>
+	        </dl>
+        </div>
+        <div class="col-md-8">
+            {{#IfCompare display_name null operator='!='}}
+                <div class="notification-item-header"> {{display_name}} </div>
+            {{/IfCompare}}
+            {{#IfCompare alarm_msg null operator='!='}}
+                <span> {{alarm_msg}} </span>
+            {{/IfCompare}}
+        </div>
+    </div>
+</script>
 <script type="text/x-handlebars-template" id="tooltip-template">
  <div class="nvtooltip xy-tooltip nv-pointer-events-none popover popover-tooltip popover-tooltip-no-icon" id="nvtooltip">
     <div class="popover-title">
@@ -2618,7 +2663,67 @@
         </div>
     </div>
 </div>
- </script>
+</script>
+<script type="text/x-handlebars-template" id="alarms-eventdrop-tooltip-template">
+ <div class="nvtooltip xy-tooltip nv-pointer-events-none popover popover-tooltip popover-tooltip-no-icon ">
+ <!-- <div class="event-drops popover-remove"> 
+     <i class="fa fa-remove pull-right popover-remove-icon"></i> 
+ </div> -->
+    <div class="popover-title no-background">
+        <p class="heading">{{{this.title}}}</p>
+        <p class="sub-heading">{{{this.subTitle}}}</p>
+    </div>
+    <div class="popover-content">
+        <div class="popover-tooltip-icon font-element">
+            <i class="false"></i>
+        </div>
+        <div class="popover-info ">
+            <!--<div  class="sub-heading"><span>{{{this.time}}}</div> -->
+            <div class="popover-tooltip-row"/>
+               <div class="tooltip-data">
+                   {{#each this.tooltipData}}
+                        <div data-color={{{color}}} class=" circle {{{color}}} {{#unless this.ack}}filled{{/unless}} alarms-circle-grid-style alarms-circle-display-flex"></div>
+                        <!-- <div class="alarms-display-inline">&nbsp;{{{severityText}}}</div> -->
+                        <!-- <div class="popover-tooltip-row">
+                            <span class="key">Acknowledged: </span>
+                            <span class="value">{{{this.ack}}}</span>
+                         </div> -->
+                        <div class="alarms-display-inline">
+                            <!--<span class="key">Description: </span>-->
+                            <span class="value">{{{this.description}}}</span>
+                        </div>
+                        <div class="popover-tooltip-row"/>
+                    {{/each}}
+              </div>
+        </div>
+    </div>
+</div>
+</script>
+<script type="text/x-handlebars-template" id="alarms-tooltip-data-template">
+<div class="alarms-details-panel">
+    <div class="alarms-details-panel-title">
+        <p class="heading">{{{this.title}}}</p>
+        <p class="sub-heading">{{{this.subTitle}}}</p>
+    </div>
+    <!--<div  class="sub-heading"><span>{{{this.time}}}</div>-->
+    <div class="alarms-details-panel-content">
+        {{#each this.tooltipData}}
+            {{#if color}}<div data-color={{{color}}} class=" circle {{{color}}} {{#unless this.ack}}filled{{/unless}} alarms-circle-grid-style alarms-circle-display-flex"></div>{{/if}}
+            <div class="alarms-display-inline">&nbsp;{{{severityText}}}</div>
+            <!-- <div class="">
+                <span class="key">Acknowledged: </span>
+                <span class="value">{{{this.ack}}}</span>
+             </div> -->
+            <div class="">
+                <!--<span class="key">Description: </span>-->
+                <span class="value">{{{this.description}}}</span>
+            </div>
+            <div class=""/>
+        {{/each}}
+        <div>{{{xmlMessage}}}</div>
+    </div>
+</div>
+</script>
 <script type="text/x-handlebars-template" id="tooltip-lineareachart-template">
   <div class="nvtooltip xy-tooltip nv-pointer-events-none popover popover-tooltip popover-tooltip-no-icon" id="nvtooltip">
     <div class="popover-title">
@@ -2660,6 +2765,24 @@
         <div class="widget-toolbar config-alarms pull-right"><a class="widget-toolbar-icon" title="Config Alarms"><i class="fa fa-wrench"></i></a></div>
         <div class="widget-toolbar monitor-alarms pull-right"><a class="widget-toolbar-icon" title="Monitor Alarms"><i class="fa fa-bar-chart-o "></i></a></div>
     </div>
-    <div class="notification-content"><div>    
+    <div class="notification-content"><div>
 </div>
+</script>
+
+<script type="text/x-handlebars-template" id="alarms-dashboard-details-panel-template">
+    <div class="alarms-dashboard-details-panel">
+        <div class="notification-content">
+        </div>
+    </div>
+    <div class="alarms-event-log-container">
+        <div class="row">
+	        <span>Event Log</span>
+	    </div>
+        <div class="alarms-event-log-content"/>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="alarms-event-logs-template">
+    <div class="alarms-event-log-container">
+    </div>
 </script>

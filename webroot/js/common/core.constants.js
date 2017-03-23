@@ -1968,6 +1968,8 @@ define([
         this.ALARM_REFRESH_DURATION = 300000;//5 MINUTES
         this.ALARM_BUCKET_DURATION = 300000000;//5 MINUTES
         this.TMPL_ALARM_SEVERITY = 'alarm-severity-template';
+        this.ALARM_CLEARED_MESSAGE = 'Alarm Cleared';
+        this.ALARMS_VIEWPATH_PREFIX = 'js/views/alarms/'
 
         this.DEFAULT_BUCKET_DURATION = 5; //MINUTES
 
@@ -2049,6 +2051,19 @@ define([
         this.GRID_STACK_COLUMN_CNT = 24;
         this.GRID_STACK_DEFAULT_WIDTH = 12;
         this.LAYOUT_PREFERENCE = 'layout-preference';
+        
+        //List of object table names used for fetch the object logs in Alarms history page
+        this.OBJECT_TABLE_LIST = [
+            'ObjectQueryTable',
+            'ObjectCollectorInfo',
+            'ObjectConfigNode',
+            'ObjectQueryQid',
+            'ObjectVNTable',
+            'ObjectVRouter',
+            'ObjectGeneratorInfo',
+            'ObjectBgpRouter',
+            'ObjectDatabaseInfo'
+        ];
     };
     //Export to global scope
     cowc = new CoreConstants();

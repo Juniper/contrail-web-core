@@ -37,9 +37,6 @@ define([
             if (cowu.getValueByJsonPath(viewConfig, 'chartOptions;applySettings', true)) {
                 cowu.updateSettingsWithCookie(viewConfig);
             }
-            self.tooltipDiv = d3.select("body").append("div")
-                            .attr("class", "stack-bar-chart-tooltip")
-                            .style("opacity", 0);
             cfDataSource = viewConfig.cfDataSource;
             if (self.model === null && viewConfig['modelConfig'] != null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
@@ -99,6 +96,7 @@ define([
             var widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ?
                     viewConfig.widgetConfig : null;
             var chartOptions = getValueByJsonPath(viewConfig, 'chartOptions', {});
+            var updateToHistory = getValueByJsonPath(chartOptions,'updateToHistory',false);
             var cfDataSource = viewConfig.cfDataSource;
             var defaultChartOptions = getDefaultChartOptions();
             var chartOptionsForSize = ChartView.prototype.getChartOptionsFromDimension(selector);
@@ -109,7 +107,7 @@ define([
             var yAxisLabel = getValueByJsonPath(chartOptions,'yAxisLabel',"Count");
             var limit = getValueByJsonPath(chartOptions,'limit');
             var yField = getValueByJsonPath(chartOptions,'yField');
-            var totalHeight = ($(selector).closest('.custom-grid-stack-item').length > 0 )? 
+            var totalHeight = ($(selector).closest('.custom-grid-stack-item').length > 0 )?
                     $(selector).closest('.custom-grid-stack-item').height():
                         chartOptions['height'];
             var customMargin = getValueByJsonPath(chartOptions,'margin',{});
@@ -135,10 +133,17 @@ define([
             var showYAxis = cowu.getValueByJsonPath(chartOptions, 'showYAxis', true);
             var showXMinMax = cowu.getValueByJsonPath(chartOptions, 'showXMinMax', false);
             var showYMinMax = cowu.getValueByJsonPath(chartOptions, 'showYMinMax', false);
+            var zoomIn = cowu.getValueByJsonPath(chartOptions, 'zoomIn', true);
+            var brushRangeLimit = cowu.getValueByJsonPath(chartOptions, 'brushRangeLimit');
+            var minTimeRange = cowu.getValueByJsonPath(chartOptions, 'minTimeRange');
+            var fixedTimeRange = cowu.getValueByJsonPath(chartOptions, 'fixedTimeRange');
+            var useCustomTimeFormat = cowu.getValueByJsonPath(chartOptions, 'useCustomTimeFormat');
 
             if (showLegend) {
                 totalHeight -= 30; //we can make dynamic by getting the legend div height
             }
+            var hideTicks = getValueByJsonPath(chartOptions,'hideTicks',false);
+            self.grouped = getValueByJsonPath(chartOptions,'grouped',false);
             //settings
             if(typeof chartOptions["colors"] != 'function' && chartOptions['applySettings'] != false) {
                 chartOptions["colors"] = cowc.FIVE_NODE_COLOR;
@@ -150,12 +155,26 @@ define([
                 if (data === null || data.length === 0 && defaultZeroLineDisplay){
                     var start = Date.now() - (cowc.DEFAULT_CHART_DURATION * 60 * 60 * 1000),
                         end = Date.now();
-                        chartOptions['timeRange'] = {'start_time': parseInt(start.toString()+'000'), 
+                        chartOptions['timeRange'] = {'start_time': parseInt(start.toString()+'000'),
                                 'end_time': parseInt(end.toString()+'000')};
                 }else{
                     chartOptions['defaultZeroLineDisplay'] = false;
                 }
                 data = cowu.chartDataFormatter(data, chartOptions);
+            }
+            if (fixedTimeRange) {
+                //Filter the data within the time range
+                var currTime = _.now()
+                var fixedTimeRangeDate = [currTime - fixedTimeRange * 1000, currTime];
+                for (var i = 0 ; i < data.length; i++) {
+                    var values = cowu.getValueByJsonPath(data[i],'values',[]);
+                    values = $.map(values, function(d,i) {
+                        if(new Date(d.date).getTime() > fixedTimeRangeDate[0] && new Date(d.date).getTime() < fixedTimeRangeDate[1]) {
+                            return d;
+                        }
+                    });
+                    data[i]['values'] = values;
+                }
             }
 
             var colorNodes = _.without(_.pluck(data, 'key'), failureLabel);
@@ -209,6 +228,18 @@ define([
             if (!showYAxis) {
                 margin['left'] = 0;
             }
+
+            var customTimeFormat = d3.time.format.multi([
+//              [".%L", function(d) { return d.getMilliseconds(); }],
+              [":%S", function(d) { return d.getSeconds(); }],
+              ["%H:%M", function(d) { return d.getMinutes(); }],
+              ["%H:%M", function(d) { return d.getHours(); }],
+              ["%a %d", function(d) { return d.getDay() && d.getDate() != 1; }],
+              ["%b %d", function(d) { return d.getDate() != 1; }],
+              ["%B", function(d) { return d.getMonth(); }],
+              ["%Y", function() { return true; }]
+            ]);
+
             var width = totalWidth - margin.left - margin.right,
 //            var width = totalWidth - 54,
                 height = totalHeight - margin.top - margin.bottom,
@@ -233,11 +264,11 @@ define([
                             .innerTickSize(-height)
                             .outerTickSize(0)
                             .tickPadding(tickPadding)
-                            .tickFormat(xAxisFormatter);
+                            .tickFormat((useCustomTimeFormat)? customTimeFormat: xAxisFormatter);
             var yAxis = d3.svg.axis()
                             .scale(y)
                             .orient("left")
-                            .ticks(3)
+                            .ticks(getValueByJsonPath(chartOptions,'ticks',3))
                             .tickFormat(yAxisFormatter)
                             .innerTickSize(-width)
                             .outerTickSize(0)
@@ -258,7 +289,7 @@ define([
             //Add the axis labels
             if (showXAxis) {
                 xaxisLabel = main.append("text")
-                                .attr("class", "axis-label")
+                                .attr("class", "axis-label drag-handle")
                                 .attr("text-anchor", "middle")
                                 .attr("x", width/2)
                                 .attr("y", height + 40)
@@ -277,6 +308,9 @@ define([
             }
             var tooltipDiv = self.tooltipDiv;
             var formatTime = d3.time.format("%e %b %X");
+            if (hideTicks) {
+                $('.stacked-bar-chart-container .tick > line').css('opacity','0')
+            }
             if(brush && addOverviewChart) {
                 overview = svg.append("g")
                                     .attr("class", "overview")
@@ -285,11 +319,13 @@ define([
                 // brush tool to let us zoom and pan using the overview chart
                 brush = d3.svg.brush()
                                     .x(xOverview)
-                                    .on("brushend", brushed);
+                                    .on("brushend", brushed)
+                                    .on("brush",brushed);
             } else if (brush) {
                 brush2Main = d3.svg.brush()
                                     .x(x)
-                                    .on("brushend", brushed2Main);
+                                    .on("brushend", brushed2Main)
+                                    .on("brush", brushDragged2Main);
             }
             var dateExtent;
             var yAxisMaxValue = getyAxisMaxValue(data);
@@ -304,21 +340,36 @@ define([
                 } else {
                     dateExtent = d3.extent(data, function(d) { return d.date; });
                     //Need to look for a way to use d3.extent for nested array of object
-                    if (dateExtent[0] == null || dateExtent[1] == null) {
-                        dateExtent[0] = d3.min(self.stackedData, function(d) {
-                            return d3.min(d, function(d) {
-                                return d.date;
+                        if (dateExtent[0] == null || dateExtent[1] == null) {
+                            dateExtent[0] = d3.min(self.stackedData, function(d) {
+                                return d3.min(d, function(d) {
+                                    return d.date;
+                                });
                             });
-                        });
-                        dateExtent[1] = d3.max(self.stackedData, function(d) {
-                            return d3.max(d, function(d) {
-                                return d.date;
+                            dateExtent[1] = d3.max(self.stackedData, function(d) {
+                                return d3.max(d, function(d) {
+                                    return d.date;
+                                });
                             });
-                        });
-                    }
+                        }
+//                    if (minTimeRange != null) {// && dateExtent.length > 1 && dateExtent[0] != null && dateExtent[1] != null) {
+//                        if ((dateExtent[1].getTime() - dateExtent[0].getTime()) < minTimeRange * 1000) {
+//                            var maxDate = dateExtent[1] = d3.max(self.stackedData, function(d) {
+//                                                                                return d3.max(d, function(d) {
+//                                                                                    return d.date;
+//                                                                                });
+//                                                                            });
+//                            dateExtent[0] = new Date(maxDate.getTime() - minTimeRange * 1000);
+//                        }
+//                    }
+                    if (fixedTimeRange != null) {// && dateExtent.length > 1 && dateExtent[0] != null && dateExtent[1] != null) {
+                      var currTime = _.now();
+                      dateExtent[0] = new Date(currTime - minTimeRange * 1000);
+                      dateExtent[1] = new Date(currTime);
+                   }
                     //extend the range after to plot the x axis
-                    dateExtent = [d3.time.minute.offset(dateExtent[0], - xAxisOffset),
-                                  d3.time.minute.offset(dateExtent[1], xAxisOffset)];
+//                    dateExtent = [d3.time.minute.offset(dateExtent[0], - xAxisOffset),
+//                                  d3.time.minute.offset(dateExtent[1], xAxisOffset)];
                 }
             }
             if(data == null || data.length == 0 && !defaultZeroLineDisplay) {
@@ -396,6 +447,11 @@ define([
                     // no y scale, i.e. we should see the extent being marked
                     // over the full height of the overview chart
                     .attr("height", height + 7);  // +7 is magic number for styling
+                if (brushRangeLimit) {
+                    brush2Main.extent(chUtils.getTimeExtentForDuration(brushRangeLimit));
+                    main.select('.brush').call(brush2Main);
+                    brushed2Main();
+                }
             }
             if (self.stackedData != null && self.stackedData.length > 0) {
                 updateChart(self, chartOptions);
@@ -536,6 +592,9 @@ define([
                     .on("mouseover", function(d, i, j) {
                         var tooltipData = [],
                             reverseParsedValues = cowu.getValueByJsonPath(chartView,'parsedValues',[]).reverse();
+                        self.tooltipDiv = d3.select("body").append("div")
+                                .attr("class", "stack-bar-chart-tooltip")
+                                .style("opacity", 0);
                         $.each(reverseParsedValues, function (idx, obj) {
                             obj['values'] = cowu.getValueByJsonPath(obj, 'values;'+i, {});
                             tooltipData.push(obj);
@@ -548,6 +607,7 @@ define([
                             var x = tooltipData;
                             //TODO parent div adjust need to be removed
                             //$(tooltipDiv).css({'width': '0px','height': '0px'});
+                            var tooltipDiv = self.tooltipDiv;
                             tooltipDiv.transition()
                                 .duration(200)
                                 .style("opacity", 1);
@@ -560,7 +620,7 @@ define([
                      })
                     .on("mouseout", function(d) {
                             //setTimeout(function () {
-                            clearToolTip(true);
+                            clearToolTip(true,self);
                             //}, 1000);
                      });
                 chartView.groups = groups;
@@ -713,9 +773,9 @@ define([
                     cfDataSource.fireCallBacks({source:'crossfilter'});
                 }
             }
-            function clearToolTip(fade) {
+            function clearToolTip(fade,self) {
                 if(fade) {
-                    tooltipDiv.transition()
+                    self.tooltipDiv.transition()
                         .duration(500)
                         .style("opacity", 0);
                 } else {
@@ -737,20 +797,50 @@ define([
                 cfDataSource.fireCallBacks({source:'crossfilter'});
             }
 
+            function brushDragged2Main() {
+                var xExtent = (brush2Main.empty() ? x.domain() : brush2Main.extent());
+                console.log (xExtent[1].getTime() - xExtent[0].getTime());
+                if (brushRangeLimit) {
+                    if ((xExtent[1].getTime() - xExtent[0].getTime()) < brushRangeLimit * 1000) {
+                        return;
+                    } else {
+    //                    brush2Main.extent([new Date(xExtent[0]), new Date(xExtent[0] + brushRangeLimit * 1000)]);
+    //                    main.select('.brush').call(brush2Main);
+                        d3.event.target.extent([new Date(xExtent[0].getTime()), new Date(xExtent[0].getTime() + brushRangeLimit * 1000)]);
+                        d3.event.target(d3.select(this));
+                    }
+                }
+            }
+
             function brushed2Main() {
                 clearToolTip(false);
                 if(brush2Main.empty()){
                     cfDataSource.removeFilter('timeFilter');
+                    if(updateToHistory) {
+                        //do push the current time range to history
+                        var xExtent = [new Date().getTime() * 1000 - (2 * 60 * 60 * 1000), new Date().getTime() * 1000]
+                        history.pushState({timeExtent:xExtent}, 'timeRange', window.location.pathname + window.location.hash);
+                    }
                 } else {
                     var xExtent = (brush2Main.empty() ? x.domain() : brush2Main.extent());
+
                     xExtent = xExtent.map(function(date){
                         return new Date(date).getTime() *1000; //convert to millisecs
                     });
-                    if ((xExtent[1] - xExtent[0]) > cowc.ALARM_BUCKET_DURATION) {
-                        cfDataSource.applyFilter('timeFilter',xExtent);
+                    if(updateToHistory) {
+                        //do push the current time range to history
+                        history.pushState({timeExtent:xExtent}, 'timeRange', window.location.pathname + window.location.hash);
+                    }
+                    if (zoomIn == null || zoomIn == true ) {
+                        if ((xExtent[1] - xExtent[0]) > cowc.ALARM_BUCKET_DURATION) {
+                            cfDataSource.applyFilter('timeFilter',xExtent);
+                        }
+                    } else {
+                        //Nothing to do. The chart will not zoomIn and brush will be visible
                     }
                 }
-                cfDataSource.fireCallBacks({source:'crossfilter'});
+                if (zoomIn == null || zoomIn == true )
+                    cfDataSource.fireCallBacks({source:'crossfilter'});
 //                setTimeout(updateFilteredCntInHeader,500);
             }
 
@@ -773,6 +863,9 @@ define([
             /**
              * Actual chart code ENDS
              */
+            if (hideTicks) {
+                $('.stacked-bar-chart-container .tick > line').css('opacity','0')
+            }
         }
     });
 
