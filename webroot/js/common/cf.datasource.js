@@ -53,6 +53,8 @@ define(['crossfilter'], function(crossfilter) {
                     }
                     dimension = cf.dimension(dimFn);
                     dimensions[dimensionName] = dimension;
+                } else {
+                    dimension = self.getDimension(dimensionName);
                 }
                 filters[dimensionName] = null;
             }

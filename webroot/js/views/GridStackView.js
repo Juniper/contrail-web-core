@@ -51,7 +51,9 @@ define([
             }).data('gridstack');
 
             self.$el.on('drag','.grid-stack-item',function(event,ui) {
-                $('.custom-grid-stack').addClass('show-borders');
+                if($(ui.drag).find('.brush').length == 0) {
+                    $('.custom-grid-stack').addClass('show-borders');
+                }
             });
             self.$el.on('dragstop',function(event,ui) {
                 self.doSaveLayout = true;
@@ -179,6 +181,7 @@ define([
             var widgetCfg = cfg['widgetCfg'];
             var widgetCnt = self.widgets.length;
             $(currElem).attr('data-widget-id',widgetCfg['id']);
+            $(currElem).attr('id',widgetCfg['id']);
             $(currElem).data('data-cfg', cfg);
             if(cowu.getLayoutPreference(self.elementId) != null || isMoved) {
                 if(isMoved){
@@ -241,6 +244,14 @@ define([
             var viewType = cowu.getValueByJsonPath(cfg,'viewCfg;view','');
             if(viewType.match(/eventDropsView/) || viewType.match(/VRouterCrossFiltersView/)) {
                 $(currElem).find('header').addClass('drag-handle');
+            } else if(viewType.match(/StackedBarChartWithFocusView/)){
+                //No handle
+                var isBrushEnabled = getValueByJsonPath(cfg, 'viewCfg;viewConfig;chartOptions;brush', false);
+                if(isBrushEnabled) {
+                    $(currElem).find('.stacked-bar-chart-container .axis-label').addClass('drag-handle');
+                } else {
+                    $(currElem).find('.item-content').addClass('drag-handle');
+                }
             } else {
                 $(currElem).find('.item-content').addClass('drag-handle');
             }
