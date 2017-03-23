@@ -479,5 +479,18 @@ $(document).on('click', '.pre-format-JSON2HTML .collapser', function(){
         var temp = this[0].offsetHeight;
         this.css('display', '');
     };
-	
+
+    (function(history){
+        if(history != null) {
+            var pushState = history.pushState;
+            history.pushState = function(state) {
+                if (typeof history.onpushstate == "function") {
+                    history.onpushstate({state: state});
+                }
+                // whatever else you want to do
+                // maybe call onhashchange e.handler
+                return pushState.apply(history, arguments);
+            }
+        }
+    })(window.history);
 })(jQuery);
