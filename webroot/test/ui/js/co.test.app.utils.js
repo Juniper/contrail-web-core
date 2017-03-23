@@ -90,6 +90,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'jquery-ui'                 : coreWebDir + '/assets/jquery-ui/js/jquery-ui',
         'qe-module'                   : coreWebDir + '/reports/qe/ui/js/qe.module',
         'legend-view'                 : coreWebDir + '/js/views/LegendView',
+        'chart-config'              : coreWebDir + '/js/chartconfig'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
