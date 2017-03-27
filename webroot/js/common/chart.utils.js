@@ -265,7 +265,7 @@ define([
                             },
                             tickPadding: 8,
                             hideFocusChart: true,
-                            forceY: [0, 0.01],
+                            forceY: [0, 1],
                             yFormatter : function(d){
                                 return d;
                             },

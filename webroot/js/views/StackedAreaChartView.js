@@ -149,7 +149,7 @@ define([
                 data = viewConfig['parseFn'](data, chartOptions);
               //Need to check and remove the data.length condition because invalid for object
             } else {
-                data = cowu.chartDataFormatter(data, chartOptions);
+                data = cowu.chartDataFormatter(data, chartOptions, chartViewModel.isRequestInProgress());
             }
             if (colors != null) {
                 if (typeof colors == 'function') {
