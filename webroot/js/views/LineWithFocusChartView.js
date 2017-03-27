@@ -87,12 +87,12 @@ define([
                 defaultZeroLineDisplay = getValueByJsonPath(viewConfig,'chartOptions;defaultZeroLineDisplay', false);
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                data = viewConfig['parseFn'](data, viewConfig['chartOptions']);
+                data = viewConfig['parseFn'](data, viewConfig['chartOptions'], chartDataModel.isRequestInProgress());
             }
             if ($(selector).parents('.custom-grid-stack-item').length != 0) {
                 viewConfig['chartOptions']['height'] = $(selector).parents('.custom-grid-stack-item').height();
             }
-            chartViewConfig = self.getChartViewConfig(data, viewConfig);
+            chartViewConfig = self.getChartViewConfig(data, viewConfig, chartDataModel.isRequestInProgress());
             chartOptions = chartViewConfig['chartOptions'];
             var chartOptionsForSize = ChartView.prototype.getChartOptionsFromDimension(selector);
             //TODO Need to check overview chart enabled cases on resize
@@ -213,7 +213,7 @@ define([
             _.isFuntion(self.resizeFn) && self.resizeFn();
         },
 
-        getChartViewConfig: function(chartData, viewConfig) {
+        getChartViewConfig: function(chartData, viewConfig, isRequestInProgress) {
             var chartViewConfig = {},
                 chartOptions = ifNull(viewConfig['chartOptions'], {}),
                 chartAxesOptionKey = contrail.checkIfExist(chartOptions.chartAxesOptionKey) ? chartOptions.chartAxesOptionKey : null,
@@ -221,7 +221,7 @@ define([
 
             chartOptions = $.extend(true, {}, covdc.lineWithFocusChartConfig, chartOptions, chartAxesOption);
 
-            chartOptions['forceY'] = getForceYAxis(chartData, chartOptions);
+            chartOptions['forceY'] = getForceYAxis(chartData, chartOptions, isRequestInProgress);
 
             if (chartData.length > 0) {
                 if (chartOptions['spliceAtBorders'] != false) {
@@ -266,7 +266,7 @@ define([
                 data = viewConfig['parseFn'](data, viewConfig['chartOptions']);
             }
             //Todo remove the dependency to calculate the chartData and chartOptions via below function.
-            var chartViewConfig = self.getChartViewConfig(data, viewConfig);
+            var chartViewConfig = self.getChartViewConfig(data, viewConfig, dataModel.isRequestInProgress());
             //If legendView exist, update with new config built from new data.
             if (self.legendView) self.legendView.update(getLegendViewConfig(chartViewConfig.chartOptions, data));
 
@@ -280,9 +280,13 @@ define([
 
     function setData2Chart(self, chartViewConfig, chartDataModel, chartViewModel) {
         var chartDataObj = {
-                data: chartViewConfig.chartData,
-                requestState: getDataRequestState(chartViewConfig, chartDataModel)
-            };
+            data: chartViewConfig.chartData,
+            requestState: getDataRequestState(chartViewConfig, chartDataModel)
+        };
+        if(contrail.checkIfExist(chartViewConfig.chartOptions.forceY)) {
+            chartViewModel.lines.forceY(chartViewConfig.chartOptions.forceY);
+            chartViewModel.lines2.forceY(chartViewConfig.chartOptions.forceY);
+        }
         d3.select($(self.$el)[0]).select('svg').datum(chartDataObj).call(chartViewModel);
     }
 
@@ -317,7 +321,7 @@ define([
         }
     };
 
-    function getForceYAxis(chartData, chartOptions) {
+    function getForceYAxis(chartData, chartOptions, isRequestInProgress) {
         var dataAllLines = [];
 
         for (var j = 0; j < chartData.length; j++) {
@@ -336,7 +340,8 @@ define([
         var defaultForceY = chartOptions['forceY'],
             yAxisDataField = contrail.checkIfExist(chartOptions['yAxisDataField']) ? chartOptions['yAxisDataField'] : 'y',
             forceY;
-
+        if(!isRequestInProgress)
+            defaultForceY = false;
         forceY = cowu.getForceAxis4Chart(dataAllLines, yAxisDataField, defaultForceY);
         return forceY;
     };
