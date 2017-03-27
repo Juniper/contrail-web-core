@@ -1659,13 +1659,14 @@ define([
             //Group stats into buckets
             $.each(stats,function(idx,obj) {
                 var xBucket = xBucketScale(obj[timestampField]);
-                if(buckets[xBucket] == null) {
-                    var timestampExtent = xBucketScale.invertExtent(xBucket);
-                    buckets[xBucket] = {timestampExtent:timestampExtent,
-                                        data:[]};
+                if(typeof xBucket != 'undefined'){
+                    if(buckets[xBucket] == null) {
+                        var timestampExtent = xBucketScale.invertExtent(xBucket);
+                        buckets[xBucket] = {timestampExtent:timestampExtent,
+                                            data:[]};
+                    }
+                    buckets[xBucket]['data'].push(obj);
                 }
-
-                buckets[xBucket]['data'].push(obj);
             });
             if(options.stripLastBucket){
                 delete buckets[lastbucketTimestamp];
@@ -1673,7 +1674,7 @@ define([
             return buckets;
         };
 
-        this.chartDataFormatter = function (response, options) {
+        this.chartDataFormatter = function (response, options, isRequestInProgress) {
             var cf = crossfilter(response);
             var timeStampField = 'T',
                 parsedData = [], failureCheckFn = getValueByJsonPath(options, 'failureCheckFn'),
@@ -1710,7 +1711,7 @@ define([
                    values: []
                 });
             }
-            if(response.length === 0 && defaultZeroLineDisplay && groupBy!=null){
+            if(response.length === 0 || isRequestInProgress && defaultZeroLineDisplay && groupBy!=null){
                 parsedData.push({
                     key: 'DEFAULT',
                     color: cowc.DEFAULT_COLOR,
@@ -1870,13 +1871,14 @@ define([
                               name: failureLabel,
                               total: total,
                           });
-                      } else if(response.length === 0 && defaultZeroLineDisplay && groupBy!=null){
+                      } else if(response.length === 0 || isRequestInProgress && defaultZeroLineDisplay && groupBy!=null){
                           parsedData['DEFAULT'].values.push({
                               date: new Date(i/1000),
                               x: ifNull(i, 0)/1000,
-                              y: failedBarCnt,
-                              name: '',
-                              total: total,
+                              timestampExtent: timestampExtent,
+                              y: 0.01,
+                              name: 'DEFAULT',
+                              total: 1,
                           });
                       }
                 } else {
