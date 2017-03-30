@@ -87,7 +87,14 @@ define([
                 share.add([new RBACPermsShareModel()]);
             }
         },
-
+        addShareByIndex: function(data, kbInterface) {
+            var selectedRuleIndex = data.model().collection.indexOf(kbInterface.model());
+            var share =
+                this.model().attributes["share_list"];
+            if(share && share.add instanceof Function) {
+                share.add([new RBACPermsShareModel()],{at: selectedRuleIndex+1});
+            }
+        },
         deleteShare: function(data, kbInterface) {
             data.model().collection.remove(kbInterface.model())
         },
