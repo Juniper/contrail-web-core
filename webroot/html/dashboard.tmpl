@@ -151,7 +151,7 @@
             <a href="#" class="navbar-brand">
                 <img class="logo" src="/img/sdn-logo.png"/>
             </a>
-            <ul style="width:330px" class="nav ace-nav pull-right">
+            <ul style="width:445px" class="nav ace-nav pull-right">
                 <li id="user-profile" class="hidden pull-right">
                     <a data-toggle="dropdown" href="#" class="user-menu dropdown-toggle">
                         <i class="fa fa-user icon-only"></i>
@@ -171,10 +171,13 @@
                         <span>Help</span>
                     </a>
                 </li>
-                <li id="region-profile">
+                <li id="gohan-config-role" style="padding:0px !important;margin-right: -9px;display: block;" class="pull-right">
+                    <div id="gohanRole" style=""></div>
+                </li>
+                <li id="region-profile" class="pull-right" style="padding-right: 10px !important;padding:0px;">
                     <div id="regionDD" style="padding-bottom:6px"></div>
                 </li>
-                <li id="alarms-popup-link" onclick="cowu.loadAlertsPopup();" class="pull-right">
+                <li id="alarms-popup-link" onclick="cowu.loadAlertsPopup();" class="pull-right" style="padding-right: 10px !important;padding:0px;">
                     <a href="javascript:void(0);">
                         <span class="fa fa-bell icon-only"></span>
                         <span><sup style="" class="alarmscnt" id="alert_info"></sup></span>

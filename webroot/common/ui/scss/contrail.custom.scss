@@ -1976,3 +1976,85 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
         &.grid-stack-item[data-gs-max-width='#{$i}'] { max-width: (100% / $gridstack-columns) * $i; }
     }
 }
+
+/*Gohan Config CSS Starts*/
+.iframe-view {
+    position:absolute;
+    width:100%;
+    height:100%;
+    border: 0px;
+    box-sizing: border-box;
+    top: 0px;
+    padding-top: 44px;
+    margin-left: -182px;
+}
+.region-location-based-grid{
+    padding-left:15px;
+    padding-right:15px;
+    width: 100%;
+    margin-top: 10px;
+    float: left;
+}
+.region-details-table{
+    width: 99.35%;
+    margin-left: 5px;
+    margin-top:8px;
+}
+.pull-down-25{
+   margin-top: 25px !important;
+}
+.region-th-border{
+    color: #787878;
+    border-bottom: 1px solid #cac5c5;
+    padding-bottom: 5px;
+}
+.region-td-border{
+    color: #666;
+    border-bottom: 1px solid #F1F1F1;
+    padding-bottom: 4px;
+    padding-top: 4px;
+}
+.region-details-table tbody tr:last-child td{
+  border-bottom: 0px !important;
+}
+#LocationDetails .select2-container{
+   padding-left:0px !important;
+   padding-right:0px !important;
+}
+#GohanSecRuleDetails table thead, #LocationDetails table thead{
+   background: #fafafa;
+}
+#GohanSecRuleDetails table{
+  margin-top:5px;
+}
+#gohan-config-role .select2-container {
+    border: none !important;
+ }
+#gohan-config-role .select2-container a .select2-chosen {
+    color: #555 !important;
+}
+#gohan-config-role .select2-container a:hover {
+    text-decoration: none !important;
+}
+#configure-service_template .ui-state-default.ui-accordion-header{
+  border:none;
+}
+.region-details-table{
+   margin-bottom:20px;
+}
+#configure-policy #PolicyRules td.error-cell[colspan="10"] {
+    position: relative;
+}
+@-webkit-keyframes fade-out {
+    0% { opacity: .5; -webkit-transform: scale(1);}
+    85% {opacity: .5; -webkit-transform: scale(1);}
+    100% {-webkit-transform: scale(1); opacity: 0;}
+    }
+     .fadeout{
+
+    -webkit-animation: fade-out .145s ease-in;
+    -webkit-animation-fill-mode: forwards;
+    -webkit-animation-iteration-count: 1;
+    -webkit-animation-delay: 0.1s;
+ }
+/*Gohan Config CSS Ends*/
