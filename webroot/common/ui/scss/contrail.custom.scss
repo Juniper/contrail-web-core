@@ -1965,6 +1965,18 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
  #user-profile{
     padding:0px !important;
  }
+ .dashboard-padding{
+    padding:2px 10px 5px !important;
+}
+.dashboard-no-padding{
+    padding:0px !important;
+}
+.alarms-container-bgcolor-on{
+    background-color:#e4564f;
+}
+.alarms-container-bgcolor-off{
+    background-color:#fff;
+}
 /*GlobalController dashboard ends here*/
 .grid-stack.grid-stack-24 .grid-stack-item{
     $gridstack-columns: 24;
