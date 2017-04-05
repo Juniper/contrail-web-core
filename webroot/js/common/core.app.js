@@ -1150,8 +1150,10 @@ if (typeof document !== 'undefined' && document) {
     }
     var orchPrefix = window.location.pathname;
     //Even with URL as <https://localhost:8143>,pathname is returning as "/"
-    //Strip-offf the trailing /
+    //Strip-off the trailing /
     orchPrefix = orchPrefix.replace(/\/$/,'');
+    //Strip off "/proxy" at the end
+    orchPrefix = orchPrefix.replace(/\/proxy$/,'');
 
     (function() {
         var menuXMLLoadDefObj,layoutHandlerLoadDefObj,featurePkgs;
