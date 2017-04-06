@@ -57,7 +57,7 @@ function doNovaOpCb (reqUrl, apiProtoIP, tenantId, req, novaCallback, stopRetry,
 {
     var forceAuth = stopRetry;
 
-    authApi.getTokenObj({'req': req, 'tenant': tenantId, 'forceAuth': forceAuth}, 
+    authApi.getTokenObj({'req': req, 'tenant': tenantId, 'forceAuth': forceAuth},
                         function(err, tokenObj) {
         if ((null != err) || (null == tokenObj) || (null == tokenObj.id)) {
             if (stopRetry) {
@@ -310,7 +310,7 @@ function getVMStatsByProject (projUUID, req, callback)
     var novaCallObjArr = [];
     var reqUrl = null;
 
-    authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth': true}, 
+    authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth': false},
                         function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " +
@@ -360,7 +360,7 @@ function getServiceInstanceVMStatus (req, vmRefs, callback)
     var novaCallObjArr = [];
     var reqUrl = null;
 
-    authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth': true}, 
+    authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth': false},
                         function(err, data) {
         if ((null != err)  || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " +
@@ -427,7 +427,7 @@ function launchVNC (request, callback)
     var requestParams = url.parse(request.url, true);
 
     authApi.getTokenObj({'req': request, 'tenant':
-                        requestParams.query.project_id, 'forceAuth': true}, 
+                        requestParams.query.project_id, 'forceAuth': false},
                         function(error, data) {
         if (null != error) {
             logutils.logger.error("Error in getting token object for tenant: " +
@@ -552,7 +552,7 @@ function getFlavors (req, callback)
         /* Just return as we will be redirected to login page */
         return;
     }
-    authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth': true}, 
+    authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth': false},
                         function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
@@ -591,7 +591,7 @@ function getOSHostList(req, callback)
         return;
     }
     authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth':
-                         true}, function(err, data) {
+                         false}, function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
             commonUtils.handleAuthToAuthorizeError(err, req, callback);
@@ -621,6 +621,44 @@ function getOSHostList(req, callback)
     });
 }
 
+function getNovaDataByReqUrl (req, reqUrl, callback)
+{
+    var tenantStr = getTenantIdByReqCookie(req);
+    if (null == tenantStr) {
+        /* Just return as we will be redirected to login page */
+        return;
+    }
+    authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth':
+                         false}, function(err, data) {
+        if ((null != err) || (null == data) || (null == data['tenant'])) {
+            logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
+            commonUtils.handleAuthToAuthorizeError(err, req, callback);
+            return;
+        }
+        var tenantId = data['tenant']['id'];
+        oStack.getServiceAPIVersionByReqObj(req, null,
+                                            global.SERVICE_ENDPT_TYPE_COMPUTE,
+                                            function(apiVer) {
+            if (null == apiVer) {
+                error =
+                    new appErrors.RESTServerError('apiVersion for NOVA is NULL');
+                callback(error, null);
+                return;
+            }
+            var reqUrlPrefix = '/' + tenantId + reqUrl;
+            var startIndex = 0;
+            var fallbackIndex = novaAPIVerList.length - 1;
+            novaApiGetByAPIVersionList(reqUrlPrefix, apiVer, req, startIndex,
+                                       fallbackIndex, function(err, data, ver) {
+                if (null != ver) {
+                    ver = ver['version'];
+                }
+                getOSHostListByAPIVersion(err, data, ver, callback);
+            });
+        });
+    });
+}
+
 function getAvailabilityZoneList(req, callback)
 {   
     var tenantStr = getTenantIdByReqCookie(req);
@@ -629,7 +667,7 @@ function getAvailabilityZoneList(req, callback)
         return;
     }
     authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth':
-                         true}, function(err, data) {
+                         false}, function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
             commonUtils.handleAuthToAuthorizeError(err, req, callback);
@@ -706,7 +744,7 @@ function portAttach (req, body, callback)
         }
     }
     authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth':
-                         true}, function(err, data) {
+                         false}, function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
             commonUtils.handleAuthToAuthorizeError(err, req, callback);
@@ -758,7 +796,7 @@ function portDetach (req, portID, vmUUID, callback)
     }
 
     authApi.getTokenObj({'req': req, 'tenant': tenantStr, 'forceAuth':
-                         true}, function(err, data) {
+                         false}, function(err, data) {
         if ((null != err) || (null == data) || (null == data['tenant'])) {
             logutils.logger.error("Error in getting token object for tenant: " + tenantStr);
             commonUtils.handleAuthToAuthorizeError(err, req, callback);
@@ -803,4 +841,5 @@ exports.getAvailabilityZoneList =  getAvailabilityZoneList;
 exports.novaAPIVerList = novaAPIVerList;
 exports.portAttach = portAttach;
 exports.portDetach = portDetach;
+exports.getNovaDataByReqUrl = getNovaDataByReqUrl;
 

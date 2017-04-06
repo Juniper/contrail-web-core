@@ -90,6 +90,15 @@ function getAvailabilityZoneList(req, callback)
     });
 }
 
+function getNovaDataByReqUrl (req, reqUrl, callback)
+{
+    var loggedInOrchMode = orch.getLoggedInOrchestrationMode(req);
+    getComputeMethod[loggedInOrchMode].getNovaDataByReqUrl(req, reqUrl,
+                                                           function(error, data) {
+        callback(error, data);
+    });
+}
+
 function portAttach (req, callback)
 {
     var loggedInOrchMode = orch.getLoggedInOrchestrationMode(req);
@@ -132,4 +141,5 @@ exports.getOSHostList = getOSHostList;
 exports.getAvailabilityZoneList = getAvailabilityZoneList;
 exports.portAttach = portAttach;
 exports.portDetach = portDetach;
+exports.getNovaDataByReqUrl = getNovaDataByReqUrl;
 
