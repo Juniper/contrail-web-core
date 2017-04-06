@@ -1257,8 +1257,14 @@ if (typeof document !== 'undefined' && document) {
                                     if(loadUtils.getCookie('region') !== 'All Regions'){
                                      $('#gohan-config-role').hide()
                                     }else{
-                                     $('#gohan-config-role').show()
-                                    }
+                                        var getHash = window.location.hash.split('&')[0];
+                                        var monGcHash = getHash.substring(3,location.length);
+                                        if(monGcHash === 'mon_gc_globalcontroller'){
+                                            $('#gohan-config-role').hide();
+                                        }else{
+                                            $('#gohan-config-role').show();
+                                        }
+                                     }
                                 });
                             }
                         }
