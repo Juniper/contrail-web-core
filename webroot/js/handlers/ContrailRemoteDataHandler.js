@@ -13,7 +13,6 @@ define([
             hlRemoteConfig = remoteHandlerConfig['hlRemoteConfig'],
             hlRemoteList = (hlRemoteConfig != null) ? hlRemoteConfig['hlRemoteList'] : null,
             listModelConfig = remoteHandlerConfig['listModelConfig'];
-
         var autoFetchData = remoteHandlerConfig['autoFetchData'];
 
         var pAjaxConfig, pUrl, pUrlParams, pDataParser, pInitCallback, pSuccessCallback,
@@ -153,8 +152,17 @@ define([
 
         function isFetchMoreData(response) {
             var fetchMoreData = false,
-                postData, chunk;
-
+                postData, chunk,
+                cgcEnabled = getValueByJsonPath(globalObj,
+                    'webServerInfo;cgcEnabled', false, false),
+                currentCookie =  contrail.getCookie('region');
+            // Added the check to get the response if it is All regions case
+            if(cgcEnabled && currentCookie === cowc.GLOBAL_CONTROLLER_ALL_REGIONS){
+                response = response['data'];
+            }
+            else{
+                response = response;
+            }
             if (contrail.checkIfExist(response) && contrail.checkIfExist(response['more'])) {
                 fetchMoreData = response['more'];
                 if(fetchMoreData) {

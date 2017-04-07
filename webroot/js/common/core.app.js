@@ -1016,6 +1016,7 @@ function changeRegion (regionName){
         region = regionName;
     }
     contrail.setCookie('region', region);
+    var hashString = window.location.hash;
     if(region != 'All Regions') {
         if($('.iframe-view').length != 0){
                 $('.iframe-view').remove();
@@ -1024,10 +1025,14 @@ function changeRegion (regionName){
         globalObj['menuClicked'] = true;
         currHashState = layoutHandler.getURLHashObj();
         currHashState = (currHashState && !isGlobalControllerFlow(currHashState)) ? currHashState.p : 'mon_infra_dashboard';
-        layoutHandler.setURLHashObj({'p' : currHashState, 'region' : region});
+        if ((hashString.indexOf('config_gc_location') > -1)) {
+            layoutHandler.setURLHashObj({'p' : 'config_infra_gblconfig', 'region' : region});
+        }
+        else{
+            layoutHandler.setURLHashObj({'p' : currHashState, 'region' : region});
+        }
     } else {
-        var hashString = window.location.hash;
-        if ((hashString.indexOf('config_infra') > -1)) {
+        if ((hashString.indexOf('config_infra_gblconfig') > -1)) {
             layoutHandler.setURLHashObj({'p' : 'config_gc_location', 'region' : region});
         }
         else {
