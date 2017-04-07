@@ -153,13 +153,6 @@ $(document).ready(function () {
                     }
                 }
             }
-            if(isGlobalControllerFlow(currHash) === true){
-                currRole = cowc.GLOBAL_CONTROLLER_ROLE;
-                globalObj.webServerInfo.role = [currRole];
-            } else {
-                currRole = cowc.CLOUDADMIN_ROLE;
-                globalObj.webServerInfo.role = [currRole];
-            }
             menuHandler.reloadMenu();
             menuHandler.toggleMenuButton(null,currHash['p'],lastHash['p'],{reload: true});
         }
