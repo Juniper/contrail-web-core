@@ -1459,6 +1459,7 @@ function getWebServerInfo (req, res, appData)
         serverObj['featurePkg'][activePkgs[i]] = true;
     }
 
+    serverObj["proxyPortList"] = config.proxy;
     /* Return from here, we will get project token stored in
      * req.session.tokenObjs by get-project-role API
      */
