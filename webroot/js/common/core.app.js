@@ -1439,12 +1439,11 @@ if (typeof document !== 'undefined' && document) {
             }
         }
         //Check whether page hash is globalcontroller then set the cookie as All regions to load the global controller page
-          var hashString = window.location.hash;
-          var region = loadUtils.getCookie('region');
-          if ((hashString.indexOf('mon_gc_globalcontroller') > -1)) {
-              loadUtils.setCookie('region', "All Regions");
-          }
-
+        var hashString = window.location.hash;
+        var region = loadUtils.getCookie('region');
+        if ((hashString.indexOf('mon_gc_globalcontroller') > -1)) {
+            loadUtils.setCookie('region', "All Regions");
+        }
       //Check if the session is authenticated
         loadUtils.isAuthenticated();
         require(['jquery'],function() {

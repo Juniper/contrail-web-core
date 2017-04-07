@@ -18,11 +18,17 @@ define([
         self.loadedFromCache = dataListModel.loadedFromCache;
 
         self.isRequestInProgress = function() {
-            return dataListModel.isRequestInProgress()
+            if(_.isFunction(dataListModel.isRequestInProgress))
+                return dataListModel.isRequestInProgress()
+            else 
+                return false;
         };
 
         self.isPrimaryRequestInProgress = function() {
-            return dataListModel.isPrimaryRequestInProgress()
+            if(_.isFunction(dataListModel.isPrimaryRequestInProgress))
+                return dataListModel.isPrimaryRequestInProgress()
+            else 
+                return false;
         };
 
         self.isError = function() {
