@@ -1016,23 +1016,15 @@ function changeRegion (regionName){
         region = regionName;
     }
     contrail.setCookie('region', region);
-    if(region != 'All Regions') {
+    if(region != cowc.GLOBAL_CONTROLLER_ALL_REGIONS) {
         if($('.iframe-view').length != 0){
                 $('.iframe-view').remove();
          }
         $("#regionDD").select2("val", loadUtils.getCookie('region'));
         globalObj['menuClicked'] = true;
-        currHashState = layoutHandler.getURLHashObj();
-        currHashState = (currHashState && !isGlobalControllerFlow(currHashState)) ? currHashState.p : 'mon_infra_dashboard';
-        layoutHandler.setURLHashObj({'p' : currHashState, 'region' : region});
+        cowu.setGlobalControllerPageId(region);
     } else {
-        var hashString = window.location.hash;
-        if ((hashString.indexOf('config_infra') > -1)) {
-            layoutHandler.setURLHashObj({'p' : 'config_gc_location', 'region' : region});
-        }
-        else {
-            layoutHandler.setURLHashObj({'p' : 'mon_gc_globalcontroller', 'region' : region});
-        }
+        cowu.setGlobalControllerPageId(region);
     }
     $("#gohanGrid").hide();
     $("#page-content").show();

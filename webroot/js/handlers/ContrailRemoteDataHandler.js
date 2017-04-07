@@ -6,16 +6,14 @@ define([
     'underscore'
 ], function (_) {
     var ContrailRemoteDataHandler = function (remoteHandlerConfig) {
-
         var primaryRemoteConfig = remoteHandlerConfig['primaryRemoteConfig'],
             vlRemoteConfig = remoteHandlerConfig['vlRemoteConfig'],
             vlRemoteList = (vlRemoteConfig != null) ? vlRemoteConfig['vlRemoteList'] : null,
             hlRemoteConfig = remoteHandlerConfig['hlRemoteConfig'],
             hlRemoteList = (hlRemoteConfig != null) ? hlRemoteConfig['hlRemoteList'] : null,
             listModelConfig = remoteHandlerConfig['listModelConfig'];
-
         var autoFetchData = remoteHandlerConfig['autoFetchData'];
-
+        var isDataWrapped = remoteHandlerConfig['isDataWrapped'];
         var pAjaxConfig, pUrl, pUrlParams, pDataParser, pInitCallback, pSuccessCallback,
             pRefreshSuccessCallback, pFailureCallback, pCompleteCallback,
             pRequestCompleteResponse = [], pRequestInProgress = false;
@@ -154,7 +152,12 @@ define([
         function isFetchMoreData(response) {
             var fetchMoreData = false,
                 postData, chunk;
-
+            if(isDataWrapped === true){
+                response = response['data'];
+            }
+            else{
+                response = response;
+            }
             if (contrail.checkIfExist(response) && contrail.checkIfExist(response['more'])) {
                 fetchMoreData = response['more'];
                 if(fetchMoreData) {

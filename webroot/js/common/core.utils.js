@@ -749,6 +749,30 @@ define([
                 }
             }
         };
+    //function for setting the page id on changeRegion event
+        this.setGlobalControllerPageId = function(region){
+            var hashString = window.location.hash;
+            if(region != 'All Regions'){
+                currHashState = layoutHandler.getURLHashObj();
+                currHashState = (currHashState && !isGlobalControllerFlow(currHashState)) ? currHashState.p : 'mon_infra_dashboard';
+                if ((hashString.indexOf('config_gc') > -1)) {
+                    layoutHandler.setURLHashObj({'p' : 'config_infra_gblconfig', 'region' : region});
+                }
+                else{
+                    layoutHandler.setURLHashObj({'p' : currHashState, 'region' : region});
+                }
+                $("#page-content").removeClass("dashboard-no-padding").addClass("dashboard-padding");
+           }
+           else{
+               if ((hashString.indexOf('config_infra_gblconfig') > -1)) {
+                   layoutHandler.setURLHashObj({'p' : 'config_gc_location', 'region' : region});
+               }
+               else {
+                   layoutHandler.setURLHashObj({'p' : 'mon_gc_globalcontroller', 'region' : region});
+               }
+               $("#page-content").removeClass("dashboard-padding").addClass("dashboard-no-padding");
+           }
+        }
 
         /* Detail Template Generator*/
         this.generateBlockListTemplate = function (config, app, parentConfig) {
