@@ -84,7 +84,8 @@ define(['underscore'], function (_) {
                             'role;0', "", false);
                     var cgcEnabled = getValueByJsonPath(globalObj,
                             'webServerInfo;cgcEnabled', false, false);
-                    if(cgcEnabled && currentRole == "globalController"){
+                    var currentCookie =  contrail.getCookie('region');
+                    if(cgcEnabled && currentCookie === "All Regions"){
                         currPageHash = "mon_gc_globalcontroller";
                     } else if(webServerInfo['loggedInOrchestrationMode'] == 'vcenter') {
                         //If vCenter is the only orchestration model

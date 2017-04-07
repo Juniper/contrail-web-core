@@ -155,15 +155,7 @@ define(['underscore'], function (_) {
                     }
                 } else
                     orchExists = true;
-                    if(rolesArr !== undefined && loadUtils.getCookie('region') !== 'All Regions'){
-                        for (var j = 0; j < rolesArr.length; j++) {
-                            if (rolesArr[j] === "globalController") {
-                                allRegion = true;
-                                break;
-                            }
-                        }
-                    }
-                    return (roleExists && orchExists && accessFnRetVal && !allRegion);
+                    return (roleExists && orchExists && accessFnRetVal);
             } else {
                 return true;
             }

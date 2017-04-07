@@ -1389,9 +1389,6 @@ function getWebServerInfo (req, res, appData)
     serverObj['serverUTCTime'] = commonUtils.getCurrentUTCTime();
     serverObj['hostName'] = os.hostname();
     serverObj['role'] = req.session.userRole;
-    if (global.REGION_ALL == req.cookies.region) {
-        serverObj['role'] = [global.STR_ROLE_GLOBAL_CONTROLLER];
-    }
     serverObj['featurePkg'] = {};
     serverObj['uiConfig'] = ui;
     serverObj['isAuthenticated'] = req.session.isAuthenticated;
@@ -1433,7 +1430,6 @@ function getWebServerInfo (req, res, appData)
     serverObj['configRegionList'] = config.regions;
     if(serverObj['cgcEnabled'] == true)
         serverObj['regionList'].unshift("All Regions");
-
     var authApi = require('../common/auth.api');
     serverObj['currentRegionName'] = authApi.getCurrentRegion(req);
     var pkgList = process.mainModule.exports['pkgList'];

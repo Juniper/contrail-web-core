@@ -471,7 +471,41 @@ globalObj['menuAccessFns'] = {
             return false;
         else
             return true;
-    }
+    },
+    hideConfigInFederatedvCenter : function() {
+        var region = contrail.getCookie('region');
+       //Hide in case of multiple orchestration modes along with vCenter and loggedInOrchestrationMode is vCenter
+       if(globalObj['webServerInfo']['loggedInOrchestrationMode'] == 'vcenter' &&
+               globalObj['webServerInfo']['orchestrationModel'].length > 1 &&
+               globalObj['webServerInfo']['orchestrationModel'].indexOf('vcenter') > -1 || (region === cowc.GLOBAL_CONTROLLER_ALL_REGIONS))
+           return false;
+       else
+           return true;
+   },
+    showGlobalController: function() {
+        var region = contrail.getCookie('region');
+        if(region === cowc.GLOBAL_CONTROLLER_ALL_REGIONS) {
+            $("#btn-query").attr("disabled", "disabled");
+            $("#btn-setting").attr("disabled", "disabled");
+            $("#mon_networking_networks").hide();
+            $("#mon_gc_networks").show();
+            return true;
+        } else {
+            return false;
+        }
+    },
+    hideGlobalController: function() {
+        var region = contrail.getCookie('region');
+        if(region !== cowc.GLOBAL_CONTROLLER_ALL_REGIONS) {
+            $("#btn-query").attr("enabled", "enabled");
+            $("#btn-setting").attr("enabled", "enabled");
+            $("#mon_networking_networks").show();
+            $("#mon_gc_networks").hide();
+            return true;
+        } else {
+            return false;
+        }
+    }    
 }
 
 function strUtil() {
