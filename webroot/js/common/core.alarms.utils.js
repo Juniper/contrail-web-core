@@ -56,7 +56,10 @@ define(
                             self.updateAlarmBell(alarmCounts);
                             self.startUpdateBellTimer();
                         });
-                        self.fetchAlarms(alarmDeferredObj);
+                        if (globalObj.webServerInfo && 
+                                globalObj.webServerInfo.role.indexOf('member') < 0){
+                            self.fetchAlarms(alarmDeferredObj);
+                        }
                     }
                 };
 
@@ -76,7 +79,7 @@ define(
                         setTimeout(self.fetchAndUpdateAlarmBell,cowc.ALARM_REFRESH_DURATION);
                 };
                 //Call the update alarm bell
-                //self.fetchAndUpdateAlarmBell();
+                self.fetchAndUpdateAlarmBell();
 
                 self.mapSeverityToColor = function (severity) {
                     if (severity != -1) {
