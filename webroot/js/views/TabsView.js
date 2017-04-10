@@ -72,7 +72,7 @@ define([
         activeTab = contrail.handleIfNull(viewConfig.active, 0);
 
       // Array of tab view configs
-      self.tabs = viewConfig.tabs;
+      self.tabs = cowu.getAllowedTabs(viewConfig.tabs);
       self.activateTimeout = null;
 
       self.$el.html(tabsTemplate({
@@ -294,7 +294,8 @@ define([
             newIndex = _.sortedIndex(_.without(self.tabs, tabViewConfig), tabViewConfig, self._tabSortIteratee);
             tabsRefreshed = self.moveTab(self.tabs.length - 1, newIndex);
           }
-          if (!tabsRefreshed) self.$el.data("contrailTabs").refresh();
+          if (!tabsRefreshed && self.$el.data("contrailTabs")) 
+              self.$el.data("contrailTabs").refresh();
 
           if (contrail.checkIfKeyExistInObject(true, tabViewConfig, "tabConfig.renderOnActivate") &&
             tabViewConfig.tabConfig.renderOnActivate === true) {
