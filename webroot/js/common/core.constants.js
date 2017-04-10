@@ -2100,6 +2100,7 @@ define([
         this.REGION = "region";
         this.GLOBAL_CONTROLLER_ROLE = "globalController";
         this.CLOUDADMIN_ROLE = "cloudAdmin";
+        this.MEMBER_ROLE = "member";
 
         //List of object table names used for fetch the object logs in Alarms history page
         this.OBJECT_TABLE_LIST = [

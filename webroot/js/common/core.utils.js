@@ -2580,6 +2580,25 @@ define([
 
             return data;
         }
+
+        /*
+        * This method accepts the tabConfig
+        * and filters the tabs based on
+        * visible flag mentioned tabConfig
+        */
+        self.getAllowedTabs = function (tabsConfig) {
+           return tabsConfig.filter(function (tabObj) {
+               return _.result(tabObj, 'tabConfig.visible', true);
+           })
+        };
+        /*
+         * Method check for cloudAdmin role in
+         * webserver info and return true/false
+         */
+        self.isAdmin = function () {
+            var roles = _.result(globalObj, 'webServerInfo.role', []);
+            return roles.indexOf(cowc.CLOUDADMIN_ROLE) > -1 ? true : false;
+        }
     };
 
     function filterXML(xmlString, is4SystemLogs) {
