@@ -13,7 +13,7 @@ var appErrors   = require(process.mainModule.exports["corePath"] +
                           '/src/serverroot/errors/app.errors');
 var fs = require('fs');
 var path = require('path');
-var config = process.mainModule.exports.config;
+var configUtils = require('./config.utils');
 
 function validateId (request)
 {
@@ -51,7 +51,8 @@ function readFileAndReturnData (filePath, callback)
  */
 function getJsonSchema (request, response, appData)
 {
-    var id = validateId(request);
+    var id = validateId(request),
+        config = configUtils.getConfig();
     var schemaDir = commonUtils.getValueByJsonPath(config,"jsonSchemaPath",
             "/usr/src/contrail/contrail-web-core/src/serverroot/configJsonSchemas/sample/");
     var filePath = path.join(schemaDir, id + '-schema.json');
@@ -72,6 +73,7 @@ function getJsonSchema (request, response, appData)
  */
 function getObjectList (request, response, appData)
 {
+    var config = configUtils.getConfig();
     var schemaDir = commonUtils.getValueByJsonPath(config,"jsonSchemaPath",
             "/usr/src/contrail/contrail-web-core/src/serverroot/configJsonSchemas/sample/");
     var filePath = path.join(schemaDir + '/objectList.json');
@@ -92,7 +94,8 @@ function getObjectList (request, response, appData)
  */
 function getPropertiesForObject (request, response, appData)
 {
-    var id = validateId(request);
+    var id = validateId(request),
+        config = configUtils.getConfig();;
     var schemaDir = commonUtils.getValueByJsonPath(config,"jsonSchemaPath",
         "/usr/src/contrail/contrail-web-core/src/serverroot/configJsonSchemas/sample/");
     var filePath = path.join(schemaDir, id + '-schema.json');

@@ -7,7 +7,7 @@
  * keystone
  */
 
-var config = process.mainModule.exports['config'],
+var configUtils = require('../../../common/config.utils'),
     global = require('../../../common/global'),
     messages = require('../../../common/messages'),
     logutils = require('../../../utils/log.utils'),
@@ -17,25 +17,14 @@ var config = process.mainModule.exports['config'],
     commonUtils = require('../../../utils/common.utils'),
     async = require('async'),
     exec = require('child_process').exec,
-    configUtils = require('../../../common/configServer.utils'),
+    configServerUtils = require('../../../common/configServer.utils'),
     plugins = require('../plugins.api'),
     oStack = require('./openstack.api'),
     _ = require('underscore'),
     rest = require('../../../common/rest.api');
 
-var authServerIP = ((config.identityManager) && (config.identityManager.ip)) ? 
-    config.identityManager.ip : global.DFLT_SERVER_IP;
-var authServerPort = 
-    ((config.identityManager) && (config.identityManager.port)) ?
-    config.identityManager.port : '5000';
-
-authAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
-                                   server:authServerIP, port:authServerPort});
-
-var svcAuthAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
-    server:authServerIP, port:"35357"});
-
 var mandatoryEndpointList = ['compute', 'image'];
+var config = configUtils.getConfig();
 var adminRoles = config.roleMaps['cloudAdmin'];
 var memberRoles = config.roleMaps['member'];
 var authAPIVers = ['v2.0'];
@@ -45,6 +34,18 @@ if ((null != config) && (null != config.identityManager) &&
         (0 != config.identityManager.apiVersion.length)) {
         authAPIVers = config.identityManager.apiVersion;
     }
+}
+
+function getKeystoneServiceDetailsFromConfig ()
+{
+    var config = configUtils.getConfig(),
+        authServerIP = ((config.identityManager) &&
+                       (config.identityManager.ip)) ?
+                       config.identityManager.ip : global.DFLT_SERVER_IP,
+        authServerPort =
+            ((config.identityManager) && (config.identityManager.port)) ?
+            config.identityManager.port : '5000';
+    return {authServerIP: authServerIP, authServerPort: authServerPort};
 }
 
 /** Function: getUIRolesByExtRoles
@@ -162,6 +163,11 @@ function getAuthRestApiInst (req, reqUrl, isSvcPortReq)
     var ip = commonUtils.getValueByJsonPath(region, 'ip', null);
     var port = commonUtils.getValueByJsonPath(region, 'port', null);
     if ((null == ip) || (null == port) || (false == isTokenGetURL(reqUrl))) {
+        var authServerDetails = getKeystoneServiceDetailsFromConfig(),
+            authAPIServer = rest.getAPIServer({
+                                    apiName: global.label.IDENTITY_SERVER,
+                                    server: authServerDetails.authServerIP,
+                                    port: authServerDetails.authServerPort});
         if (true == authApi.isMultiRegionSupported()) {
             var regionName = authApi.getCurrentRegion(req);
             var pubUrl =
@@ -180,6 +186,11 @@ function getAuthRestApiInst (req, reqUrl, isSvcPortReq)
             }
         }
         if (true === isSvcPortReq){
+            var authServerDetails = getKeystoneServiceDetailsFromConfig();
+                svcAuthAPIServer = rest.getAPIServer({
+                                     apiName:global.label.IDENTITY_SERVER,
+                                     server: authServerDetails.authServerIP,
+                                     port:"35357"});
             return {authRestAPI: svcAuthAPIServer, mapped: null};
         }
         return {authRestAPI: authAPIServer, mapped: null};
@@ -2307,7 +2318,7 @@ function getAPIServerAuthParamsByReq (req)
 
 function getProjectsFromKeystone (request, appData, callback)
 {
-    configUtils.getTenantListAndSyncDomain(request, appData,
+    configServerUtils.getTenantListAndSyncDomain(request, appData,
                                function(error, domainObjs, tenantList,
                                         domList) {
         formatIdentityMgrProjects(error, request, tenantList, domList,
@@ -2399,7 +2410,7 @@ function getProjectList (req, appData, callback)
         isProjectListFromApiServer = false;
     }
     if (true == isProjectListFromApiServer) {
-        configUtils.getProjectsFromApiServer(req, appData,
+        configServerUtils.getProjectsFromApiServer(req, appData,
                                                function(error, data) {
             if (true == multiTenancyEnabled) {
                 filtProjects = filterProjectList(req, data);
@@ -2635,7 +2646,7 @@ function getAdminProjectList (req, appData, callback)
 {
     var adminProjectList = {'projects': []};
     var adminProjectObjs = {};
-    configUtils.getTenantListAndSyncDomain(req, appData,
+    configServerUtils.getTenantListAndSyncDomain(req, appData,
                                            function(err, domainObjs,
                                                     tenantList, domList) {
         if ((null != err) || (null == tenantList) ||

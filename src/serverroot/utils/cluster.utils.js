@@ -4,7 +4,7 @@
 
 var cluster = require('cluster');
 var global = require('../common/global');
-var config = process.mainModule.exports['config'];
+var configUtils = require('../common/config.utils');
 
 var clusterEventRegistered = false;
 var workers = [];
@@ -12,6 +12,7 @@ var timeouts = [];
 
 function forkWorkers ()
 {
+    var config = configUtils.getConfig();
     if (false == cluster.isMaster) {
         /* Only master can fork workers */
         return;

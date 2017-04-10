@@ -2,8 +2,13 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var path = require('path');
-
+var assert = require('assert'),
+    path = require('path'),
+    fs = require('fs'),
+    contrailConfig,
+    args = process.argv.slice(2),
+    argsCnt = args.length,
+    configFile = null;
 /* Function: compareAndMergeDefaultConfig
    This function is used to compare and merge missing configuration from
    default.config.global.js with config file
@@ -56,11 +61,56 @@ function mergeObjects (defaults, configs)
  */
 function compareAndMergeFiles (fileToCmp, fileWithCmp)
 {
+    delete require.cache[fileToCmp];
     var oldConfig = require(fileToCmp);
     var defConfig = require(fileWithCmp);
     var config = mergeObjects(defConfig, oldConfig);
     return config;
 }
 
+/* Function: subscribeAutoDetectConfig, implements fs.watchFile
+ * This function detects changes in config.global.js
+ * and updates contrailConfig variable
+ */
+function subscribeAutoDetectConfig()
+{
+    fs.watchFile('./config/config.global.js', function(curr, prev){
+        contrailConfig = compareAndMergeDefaultConfig(configFile);
+    });
+}
+
+/* Function: getConfig
+ * This function gets the latest config
+ */
+function getConfig()
+{
+  return contrailConfig;
+}
+
+for (var i = 0; i < argsCnt; i++) {
+    if (('--c' == args[i]) || ('--conf_file' == args[i])) {
+        if (null == args[i + 1]) {
+            console.error('Config file not provided');
+            assert(0);
+        } else {
+            configFile = args[i + 1];
+            try {
+                var tmpConfig = require(configFile);
+                if ((null == tmpConfig) || (typeof tmpConfig !== 'object')) {
+                    console.error('Config file ' + configFile + ' is not valid');
+                    assert(0);
+                }
+                break;
+            } catch(e) {
+                console.error('Config file ' + configFile + ' not found');
+                assert(0);
+            }
+        }
+    }
+}
+contrailConfig = compareAndMergeDefaultConfig(configFile);
+
 exports.compareAndMergeDefaultConfig = compareAndMergeDefaultConfig;
 exports.mergeObjects = mergeObjects;
+exports.subscribeAutoDetectConfig = subscribeAutoDetectConfig;
+exports.getConfig = getConfig;

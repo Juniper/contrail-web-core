@@ -9,7 +9,7 @@
 var url         = require('url');
 var http        = require('http');
 var https       = require('https');
-var config      = process.mainModule.exports.config;
+var configUtils = require('./config.utils');
 var logutils    = require('../utils/log.utils');
 var appErrors   = require('../errors/app.errors');
 var util        = require('util');
@@ -54,6 +54,7 @@ var defConfigNodePorts      = [
 
 function getAllowedProxyPortListByNodeType (nodeType)
 {
+    var config = configUtils.getConfig();
     switch (nodeType) {
     case global.label.VROUTER:
         nodePortsLabel = 'vrouter_node_ports';
@@ -199,6 +200,7 @@ function forwardProxyRequest (request, response, appData)
     var options = url.parse(request.url, true);
     var reqParams = options.query;
     var errStr = null;
+    var config = configUtils.getConfig();
 
     var isProxyEnabled =
         ((null != config.proxy) && (null != config.proxy.enabled)) ?

@@ -3,7 +3,7 @@
  */
 
 var fs      = require('fs');
-var config  = process.mainModule.exports.config;
+var configUtils = require('./config.utils');
 var request = require('request');
 var restler = require('restler');
 var commonUtils = require("../utils/common.utils");
@@ -98,6 +98,7 @@ function getOrchModuleByAPIType (apiType)
  */
 function getProtocolByAPIType (apiType)
 {
+    var config = configUtils.getConfig();
     if (global.SANDESH_API == apiType) {
         var isSSLEnabled = commonUtils.getValueByJsonPath(config,
                                                           "introspect;ssl;enabled",

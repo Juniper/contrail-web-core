@@ -13,7 +13,8 @@ var assert = require("assert"), util = require("util"),
     global = require(process.mainModule.exports.corePath + "/src/serverroot/common/global"),
     opApiServer = require(process.mainModule.exports.corePath + "/src/serverroot/common/opServer.api"),
     redisUtils = require(process.mainModule.exports.corePath + "/src/serverroot/utils/redis.utils"),
-    config = process.mainModule.exports.config,
+    configUtils = require(process.mainModule.exports.corePath +
+            "/src/serverroot/common/config.utils"),
     redisReadStream = require("redis-rstream"),
     threadApi = require(process.mainModule.exports.corePath + "/src/serverroot/common/threads.api"),
     crypto = require("crypto"),
@@ -21,13 +22,21 @@ var assert = require("assert"), util = require("util"),
                      "/webroot/reports/qe/api/query.utils.js"),
     _ = require("lodash");
 
-var redisServerPort = (config.redis_server_port) ? config.redis_server_port : global.DFLT_REDIS_SERVER_PORT,
-    redisServerIP = (config.redis_server_ip) ? config.redis_server_ip : global.DFLT_REDIS_SERVER_IP,
-    redisClient = redisUtils.createRedisClient(redisServerPort, redisServerIP, global.QE_DFLT_REDIS_DB);
-
 if (!module.parent) {
     logutils.logger.warn(util.format(messages.warn.invalid_mod_call, module.filename));
     process.exit(1);
+}
+
+function getRedisClient ()
+{
+    var config = configUtils.getConfig(),
+        redisServerPort = (config.redis_server_port) ?
+            config.redis_server_port : global.DFLT_REDIS_SERVER_PORT,
+        redisServerIP = (config.redis_server_ip) ?
+            config.redis_server_ip : global.DFLT_REDIS_SERVER_IP,
+        redisClient = redisUtils.createRedisClient(redisServerPort,
+                          redisServerIP, global.QE_DFLT_REDIS_DB);
+    return redisClient;
 }
 
 function runGETQuery(req, res, appData) {
@@ -91,7 +100,8 @@ function getTableColumnValues(req, res, appData) {
 // Handle request to get query queue.
 function getQueryQueue(req, res) {
     var queryQueue = req.param("queryQueue"),
-        responseArray = [];
+        responseArray = [],
+        redisClient = getRedisClient();
 
     redisClient.hvals(queryQueue, function(error, results) {
         if (error) {
@@ -108,7 +118,8 @@ function getQueryQueue(req, res) {
 
 // Handle request to get unique flow classes for a flow-series query.
 function getChartGroups(req, res) {
-    var queryId = req.param("queryId");
+    var queryId = req.param("queryId"),
+        redisClient = getRedisClient();
 
     redisClient.get(queryId + ":chartgroups", function(error, results) {
         if (error) {
@@ -122,7 +133,8 @@ function getChartGroups(req, res) {
 
 // Handle request to get chart data for a flow-series query.
 function getChartData(req, res) {
-    var queryId = req.param("queryId");
+    var queryId = req.param("queryId"),
+        redisClient = getRedisClient();
 
     redisClient.get(queryId + ":chartdata", function(error, results) {
         if (error) {
@@ -137,7 +149,8 @@ function getChartData(req, res) {
 // Handle request to delete redis cache for given query ids.
 function deleteQueryCache4Ids(req, res) {
     var queryIds = req.body.queryIds,
-        queryQueue = req.body.queryQueue;
+        queryQueue = req.body.queryQueue,
+        redisClient = getRedisClient();
 
     for (var i = 0; i < queryIds.length; i++) {
         redisClient.hdel(queryQueue, queryIds[i]);
@@ -158,7 +171,8 @@ function deleteQueryCache4Ids(req, res) {
 
 // Handle request to delete redis cache for QE.
 function deleteQueryCache4Queue(req, res) {
-    var queryQueue = req.body.queryQueue;
+    var queryQueue = req.body.queryQueue,
+        redisClient = getRedisClient();
 
     redisClient.hkeys(queryQueue, function(error) {
         if (!error) {
@@ -179,6 +193,7 @@ function deleteQueryCache4Queue(req, res) {
 
 // Handle request to delete redis cache for QE.
 function flushQueryCache(req, res) {
+    var redisClient = getRedisClient();
     redisClient.flushdb(function(error) {
         if (error) {
             logutils.logger.error("Redis QE FlushDB Error: " + error);
@@ -202,7 +217,8 @@ function runQuery (req, queryReqObj, appData, isGetQ, callback) {
         chunk = queryReqObj.chunk,
         chunkSize = parseInt(queryReqObj.chunkSize),
         sort = queryReqObj.sort,
-        cachedResultConfig;
+        cachedResultConfig,
+        redisClient = getRedisClient();
 
     cachedResultConfig = {
         "queryId": queryId, "chunk": chunk, "sort": sort,
@@ -379,6 +395,7 @@ function fetchQueryResults(req, jsonData, queryOptions, appData, callback) {
 }
 
 function sendCachedJSON4Url(opsUrl, res, expireTime, appData) {
+    var redisClient = getRedisClient();
     redisClient.get(opsUrl, function(error, cachedJSONStr) {
         if (error || _.isNil(cachedJSONStr)) {
             opApiServer.apiGet(opsUrl, appData, function(error, jsonData) {
@@ -398,7 +415,8 @@ function sendCachedJSON4Url(opsUrl, res, expireTime, appData) {
 function returnCachedQueryResult(queryOptions, handleQRespCB, callback) {
     var queryId = queryOptions.queryId,
         sort = queryOptions.sort,
-        statusJSON;
+        statusJSON,
+        redisClient = getRedisClient();
 
     if (!_.isNil(sort)) {
         redisClient.get(queryId + ":sortStatus", function(error, result) {
@@ -424,7 +442,8 @@ function handleQueryResponse(options, callback) {
         queryId = options.queryId,
         chunk = options.chunk,
         chunkSize = options.chunkSize,
-        sort = options.sort;
+        sort = options.sort,
+        redisClient = getRedisClient();
 
     if (_.isNil(chunk) || toSort) {
         logutils.logger.error("QE received a query without any chunk information. Returning data for first chunk if available.");
@@ -460,7 +479,8 @@ function handleQueryResponse(options, callback) {
 }
 
 function exportQueryResult(req, res) {
-    var queryId = req.query.queryId;
+    var queryId = req.query.queryId,
+        redisClient = getRedisClient();
     redisClient.exists(queryId, function(err, exists) {
         if (exists) {
             var stream = redisReadStream(redisClient, queryId);
@@ -572,7 +592,8 @@ function updateQueryStatus(queryOptions) {
         errorMessage: queryOptions.errorMessage,
         queryReqObj: queryOptions.queryReqObj,
         opsQueryId: queryOptions.opsQueryId
-    };
+    },
+    redisClient = getRedisClient();
 
     if (queryOptions.progress === 100) {
         queryStatus.timeTaken = (queryOptions.endTime - queryStatus.startTime) / 1000;
@@ -622,7 +643,8 @@ function saveDataToRedisByReqPayload (req, resJson) {
         reqPayload = req.query;
     }
 
-    var redisKey = createStatRedisKey(req, reqPayload);
+    var redisKey = createStatRedisKey(req, reqPayload),
+        redisClient = getRedisClient();
 
     redisClient.set(redisKey, JSON.stringify(resJson), function(error) {
         if (!_.isNil(error)) {
@@ -647,7 +669,8 @@ function getQueryData (req, res, appData) {
         return;
     }
 
-    var redisKey = createStatRedisKey(req, query);
+    var redisKey = createStatRedisKey(req, query),
+        redisClient = getRedisClient();
     redisClient.get(redisKey, function(error, data) {
         if (!_.isNil(error) || _.isNil(data)) {
             runQuery(req, query, appData, true, function(error, data) {
@@ -735,7 +758,8 @@ function processQueryResults(req, queryResults, queryOptions, isGetQ,
 }
 
 function saveQueryResult2Redis(resultData, total, queryId, chunkSize, sort, queryJSON) {
-    var endRow;
+    var endRow,
+        redisClient = getRedisClient();
 
     if (!_.isNil(sort)) {
         redisClient.set(queryId + ":sortStatus", JSON.stringify(sort));
@@ -777,7 +801,8 @@ function saveQueryResult2Redis(resultData, total, queryId, chunkSize, sort, quer
 
 function writeData2Redis(workerData) {
     var redisKey = workerData.redisKey,
-        dataJSON = workerData.dataJSON;
+        dataJSON = workerData.dataJSON,
+        redisClient = getRedisClient();
 
     try {
         var jsonStr = JSON.stringify(dataJSON);

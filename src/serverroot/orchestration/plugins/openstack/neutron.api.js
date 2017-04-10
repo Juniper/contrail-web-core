@@ -3,23 +3,14 @@
  */
 
 var rest = require('../../../common/rest.api'),
-    config = process.mainModule.exports.config,
+    configUtils = require('../../../common/config.utils'),
     authApi = require('../../../common/auth.api'),
     commonUtils = require('../../../utils/common.utils'),
     logutils = require('../../../utils/log.utils')
     ;
-var neutronAPIServer;
 
 neutronApi = module.exports;
 
-var neutronServerIP = ((config.networkManager) && (config.networkManager.ip)) ?
-    config.networkManager.ip : global.DFLT_SERVER_IP;
-var neutronServerPort = ((config.networkManager) && (config.networkManager.port)) ?
-    config.networkManager.port : '9696';
-
-neutronAPIServer = rest.getAPIServer({apiName:global.label.NETWORK_SERVER,
-                                      server:neutronServerIP,
-                                      port:neutronServerPort});
 function getTenantIdByReqCookie (req)
 {
     if (req.cookies && req.cookies.project) {
@@ -34,6 +25,22 @@ function getTenantIdByReqCookie (req)
         }
         return null;
     }
+}
+
+function getNeutronAPIServer ()
+{
+    var config = configUtils.getConfig(),
+        neutronServerIP = ((config.networkManager) &&
+                              (config.networkManager.ip)) ?
+                              config.networkManager.ip : global.DFLT_SERVER_IP,
+        neutronServerPort = ((config.networkManager) &&
+                              (config.networkManager.port)) ?
+                              config.networkManager.port : '9696',
+        neutronAPIServer = rest.getAPIServer({
+                                            apiName:global.label.NETWORK_SERVER,
+                                            server:neutronServerIP,
+                                            port:neutronServerPort});
+    return neutronAPIServer;
 }
 
 /* Function: doNeutronOpCb
@@ -81,7 +88,7 @@ neutronApi.get = function(reqUrl, req, callback, stopRetry) {
             callback(err, null);
         } else {
             headers['X-Auth-Token'] = tokenObj.id;
-		    neutronAPIServer.api.get(reqUrl, function(err, data) {
+            getNeutronAPIServer().api.get(reqUrl, function(err, data) {
                 if (err) {
                     /* Just retry in case of if it fails, it may happen that failure is
                      * due to token change, so give one more change
@@ -115,7 +122,7 @@ neutronApi.put = function(reqUrl, reqData, req, callback, stopRetry) {
             callback(err, null);
         } else {
             headers['X-Auth-Token'] = tokenObj.id;
-            neutronAPIServer.api.put(reqUrl, reqData, function(err, data) {
+            getNeutronAPIServer().api.put(reqUrl, reqData, function(err, data) {
                 if (err) {
                     /* Just retry in case of if it fails, it may happen that failure is
                      * due to token change, so give one more change
@@ -150,7 +157,7 @@ neutronApi.post = function(reqUrl, reqData, req, callback, stopRetry) {
             callback(err, null);
         } else {
             headers['X-Auth-Token'] = tokenObj.id;
-            neutronAPIServer.api.post(reqUrl, reqData, function(err, data) {
+            getNeutronAPIServer().api.post(reqUrl, reqData, function(err, data) {
                 if (err) {
                     /* Just retry in case of if it fails, it may happen that failure is
                      * due to token change, so give one more change
@@ -185,7 +192,7 @@ neutronApi.delete = function(reqUrl, req, callback, stopRetry) {
             callback(err, null);
         } else {
             headers['X-Auth-Token'] = tokenObj.id;
-            neutronAPIServer.api.delete(reqUrl, function(err, data) {
+            getNeutronAPIServer().api.delete(reqUrl, function(err, data) {
                 if (err) {
                     /* Just retry in case of if it fails, it may happen that failure is
                      * due to token change, so give one more change

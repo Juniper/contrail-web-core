@@ -5,7 +5,7 @@
 /**
  * This file contains the functions for REST APIs for Cloud Stack Service
  */
-var config = process.mainModule.exports['config'],
+var configUtils = require('../../../common/config.utils'),
     global = require('../../../common/global'),
     messages = require('../../../common/messages'),
     logutils = require('../../../utils/log.utils'),
@@ -13,20 +13,26 @@ var config = process.mainModule.exports['config'],
     crypto = require('crypto'),
     rest = require('../../../common/rest.api');
     cookie = require('../../../../../node_modules/restler/lib/restler');
-var authServerIP = ((config.identityManager) && (config.identityManager.ip)) ?
-    config.identityManager.ip : global.DFLT_SERVER_IP;
-var authServerPort =
-    ((config.identityManager) && (config.identityManager.port)) ?
-    config.identityManager.port : '8080';
-
-var authAPIServer = 
-    rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
-                      server:authServerIP, port:authServerPort});
 
 function getCloudStackHeaders (req, headers)
 {
     headers['cookie'] = req.session['cloudstack-cookie'];
     return headers;
+}
+
+function getAuthAPIServer()
+{
+    var config = configUtils.getConfig(),
+        authServerIP = ((config.identityManager) &&
+                            (config.identityManager.ip)) ?
+                            config.identityManager.ip : global.DFLT_SERVER_IP,
+        authServerPort = ((config.identityManager) &&
+                            (config.identityManager.port)) ?
+                            config.identityManager.port : '8080',
+        authAPIServer =
+                    rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
+                          server: authServerIP, port: authServerPort});
+    return authAPIServer;
 }
 
 function getCloudStackCommandURL (req, cmd, headers)
@@ -77,7 +83,7 @@ function apiGet (req, cmd, callback)
     var headers = {};
     var reqUrl  = getCloudStackCommandURL(req, cmd, headers); 
    
-    authAPIServer.api.get(reqUrl, function (err, data) {
+    getAuthAPIServer().api.get(reqUrl, function (err, data) {
         callback(err, data);
     }, headers);
 }
@@ -87,7 +93,7 @@ function apiGetByURL (req, url, callback)
     var headers = {};
 
     headers = getCloudStackHeaders(req, headers);
-    authAPIServer.api.get(url, function (err, data) {
+    getAuthAPIServer().api.get(url, function (err, data) {
         callback(err, data);
     }, headers);
 }
@@ -97,7 +103,7 @@ function apiPost (req, cmd, postData, callback)
     var headers = {};
     var reqUrl  = getCloudStackCommandURL(req, cmd, headers);
 
-    authAPIServer.api.post(reqUrl, postData, function (err, data) {
+    getAuthAPIServer().api.post(reqUrl, postData, function (err, data) {
         callback(err, data);
     }, headers);
 }
@@ -107,7 +113,7 @@ function apiPostByURL (req, url, postData, callback)
     var headers = {};
 
     headers = getCloudStackHeaders(req, headers);
-    authAPIServer.api.post(url, postData, function (err, data) {
+    getAuthAPIServer().api.post(url, postData, function (err, data) {
         callback(err, data);
     }, headers);
 }
@@ -117,7 +123,7 @@ function apiPut (req, cmd, putData, callback)
     var headers = {};
     var reqUrl  = getCloudStackCommandURL(req, cmd, headers);
 
-    authAPIServer.api.put(reqUrl, putData, function (err, data) {
+    getAuthAPIServer().api.put(reqUrl, putData, function (err, data) {
         callback(err, data);
     }, headers);
 }
@@ -127,7 +133,7 @@ function apiPutByURL (req, url, putData, callback)
     var headers = {};
     
     headers = getCloudStackHeaders(req, headers);
-    authAPIServer.api.put(url, putData, function (err, data) {
+    getAuthAPIServer().api.put(url, putData, function (err, data) {
         callback(err, data);
     }, headers);
 }
@@ -137,7 +143,7 @@ function apiDelete (req, cmd, callback)
     var headers = {};
     var reqUrl  = getCloudStackCommandURL(req, cmd, headers);
 
-    authAPIServer.api.delete(reqUrl, function (err, data) {
+    getAuthAPIServer().api.delete(reqUrl, function (err, data) {
         callback(err, data);
     }, headers);
 }
@@ -147,7 +153,7 @@ function apiDeleteByURL (req, url, callback)
     var headers = {};
 
     headers = getCloudStackHeaders(req, headers);
-    authAPIServer.api.delete(url, function (err, data) {
+    getAuthAPIServer().api.delete(url, function (err, data) {
         callback(err, data);
     }, headers);
 }

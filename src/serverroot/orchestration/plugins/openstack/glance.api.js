@@ -3,7 +3,7 @@
  */
 
 var rest = require('../../../common/rest.api'),
-    config = process.mainModule.exports.config,
+    configUtils = require('../../../common/config.utils'),
     authApi = require('../../../common/auth.api'),
     appErrors = require('../../../errors/app.errors'),
     commonUtils = require('../../../utils/common.utils'),
@@ -15,13 +15,6 @@ var glanceAPIServer;
 
 glanceApi = module.exports;
 
-var imgMgrIp = ((config.imageManager) && (config.imageManager.ip)) ? 
-    config.imageManager.ip : global.DFLT_SERVER_IP;
-var imgMgrPort = ((config.imageManager) && (config.imageManager.port)) ? 
-    config.imageManager.port : '9292';
-
-glanceAPIServer = rest.getAPIServer({apiName:global.label.IMAGE_SERVER,
-                                      server:imgMgrIp, port:imgMgrPort});
 function getTenantIdByReqCookie (req)
 {
     if (req.cookies && req.cookies.project) {
@@ -70,7 +63,14 @@ function doGlanceOpCb (reqUrl, apiProtoIP, tenantId, req, glanceCallback,
 glanceApi.get = function(reqUrl, apiProtoIP, req, callback, stopRetry) {
     var headers = {};
     var forceAuth = stopRetry;
-    var tenantId = getTenantIdByReqCookie(req);
+    var tenantId = getTenantIdByReqCookie(req),
+        config = configUtils.getConfig(),
+        imgMgrIp = ((config.imageManager) && (config.imageManager.ip)) ?
+            config.imageManager.ip : global.DFLT_SERVER_IP,
+        imgMgrPort = ((config.imageManager) && (config.imageManager.port)) ?
+            config.imageManager.port : '9292',
+        glanceAPIServer = rest.getAPIServer({apiName:global.label.IMAGE_SERVER,
+                                             server:imgMgrIp, port:imgMgrPort});
     if (null == tenantId) {
         /* Just return as we will be redirected to login page */
         return;

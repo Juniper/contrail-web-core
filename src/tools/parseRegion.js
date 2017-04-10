@@ -1,12 +1,13 @@
 /*
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
-var config = process.mainModule.exports.config;
+var configUtils = require('../serverroot/common/config.utils');
 var fs = require('fs');
 var logutils = require('../serverroot/utils/log.utils');
 
 function createRegionFile (callback)
 {
+    var config = configUtils.getConfig();
     var commentStr = "";
     commentStr += "/*\n";
     commentStr += " * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.\n";

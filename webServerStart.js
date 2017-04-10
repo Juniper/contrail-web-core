@@ -1,40 +1,16 @@
 /*
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
-var assert = require('assert');
 var clusterUtils = require('./src/serverroot/utils/cluster.utils');
-var args = process.argv.slice(2);
-var argsCnt = args.length;
-var configFile = null;
-for (var i = 0; i < argsCnt; i++) {
-    if (('--c' == args[i]) || ('--conf_file' == args[i])) {
-        if (null == args[i + 1]) {
-            console.error('Config file not provided');
-            assert(0);
-        } else {
-            configFile = args[i + 1];
-            try {
-                var tmpConfig = require(configFile);
-                if ((null == tmpConfig) || (typeof tmpConfig !== 'object')) {
-                    console.error('Config file ' + configFile + ' is not valid');
-                    assert(0);
-                }
-                break;
-            } catch(e) {
-                console.error('Config file ' + configFile + ' not found');
-                assert(0);
-            }
-        }
-    }
-}
+var configUtils = require('./src/serverroot/common/config.utils');
+
+configUtils.subscribeAutoDetectConfig();
 
 /* Set corePath before loading any other module */
 var corePath = process.cwd();
-var config =
-    require('./src/serverroot/common/config.utils').compareAndMergeDefaultConfig(configFile);
+var config = configUtils.getConfig();
 
 exports.corePath = corePath;
-exports.config = config;
 
 var redisUtils = require('./src/serverroot/utils/redis.utils');
 var global = require('./src/serverroot/common/global');
@@ -59,7 +35,7 @@ var express = require('express')
     , async = require('async')
     , os = require('os')
     , commonUtils = require('./src/serverroot/utils/common.utils')
-    , contrailServ = require('./src/serverroot/jobs/core/contrailservice.api')
+    , contrailServ = require('./src/serverroot/common/contrailservice.api')
     , assert = require('assert')
     , jsonPath = require('JSONPath').eval
     , helmet = require('helmet')
@@ -113,6 +89,7 @@ if (config.server_options) {
         certFile = './keys/cs-cert.pem';
     }
 }
+
 var options = {
     key:fs.readFileSync(keyFile),
     cert:fs.readFileSync(certFile),
