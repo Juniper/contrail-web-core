@@ -329,10 +329,12 @@ define([
 
     function computeRankDir (nodes, links) {
         var rankDir;
-        if (nodes.length < 4 && (links == null || links.length == 0)) {
-            rankDir = ctwc.GRAPH_DIR_LR;
-        } else {
-            rankDir = (nodes.length > 12 || (links != null && (3 * (links.length) < nodes.length))) ? ctwc.GRAPH_DIR_TB : ctwc.GRAPH_DIR_LR;
+        if (nodes && nodes.length){
+            if (nodes.length < 4 && (links == null || links.length == 0)) {
+                rankDir = ctwc.GRAPH_DIR_LR;
+            } else {
+                rankDir = (nodes.length > 12 || (links != null && (3 * (links.length) < nodes.length))) ? ctwc.GRAPH_DIR_TB : ctwc.GRAPH_DIR_LR;
+            }
         }
         return rankDir;
     };

@@ -56,7 +56,10 @@ define(
                             self.updateAlarmBell(alarmCounts);
                             self.startUpdateBellTimer();
                         });
-                        self.fetchAlarms(alarmDeferredObj);
+                        if (globalObj.webServerInfo 
+                            && globalObj.webServerInfo.role.indexOf(cowc.MEMBER_ROLE) < 0){
+                            self.fetchAlarms(alarmDeferredObj);
+                        }
                     }
                 };
 
