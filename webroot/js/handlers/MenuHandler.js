@@ -26,6 +26,13 @@ define(['underscore'], function (_) {
             var featurePkgsInfo =
                 getValueByJsonPath(globalObj, 'webServerInfo;featurePkgsInfo',
                                    null);
+
+            var loggedInUserRoles = globalObj['webServerInfo']['role'];
+            if (loggedInUserRoles.indexOf('member') > -1) {
+                $('#alarms-popup-link').hide();
+            } else {
+                $('#alarms-popup-link').show();
+            }
             //processXMLJSON populates siteMapsearchStrings
             globalObj['siteMapSearchStrings'] = [];
             processXMLJSON(menuObj, optFeatureList);

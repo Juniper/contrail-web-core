@@ -2408,6 +2408,27 @@ define([
             }
             return new ContrailListModel(remoteConfig);
         }
+        /*
+        * This method accepts the tabConfig and filters the tabs based on loggedIn user role
+        * with the deniedRoles mentioned tabConfig 
+        * For CloudAdmin role all the tabs are allowed
+        */
+        self.getAllowedTabs = function (tabsConfig) {
+            var roles = _.result(globalObj, 'webServerInfo.role', []);
+            if (roles.indexOf('cloudAdmin') > -1) {
+                return tabsConfig;
+            } else if (roles.indexOf('member') > -1) {
+                tabsConfig = _.filter(tabsConfig, function (tabObj) {
+                    var deniedRoles = _.result(tabObj, 'tabConfig.deniedRoles', []);
+                    if (deniedRoles.indexOf('member') > -1) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                });
+                return tabsConfig;
+            }
+        };
     };
 
     function filterXML(xmlString, is4SystemLogs) {
