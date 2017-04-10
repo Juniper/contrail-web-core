@@ -6,7 +6,6 @@ var redisSub = require('./redisSub')
 	, global = require('../../common/global')
 	, redis = require("redis")
 	, longPoll = require('./longPolling.api')
-	, config = process.mainModule.exports.config
 	, commonUtils = require('../../utils/common.utils')
 	, logutils = require('../../utils/log.utils')
 	, util = require('util')

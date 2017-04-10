@@ -7,7 +7,7 @@ var configApiServer = require('./configServer.api');
 var commonUtils = require('../utils/common.utils');
 var logutils = require('../utils/log.utils');
 var appErrors = require('../errors/app.errors');
-var config = process.mainModule.exports.config;
+var configUtils = require('./config.utils');
 
 var diffpatcher = jsondiffpatch.create({
     objectHash: function(obj, index) {
@@ -290,8 +290,9 @@ function getConfigDiffAndMakeCall (url, appData, newJson, callback, headers)
 
 function doFeatureJsonDiffParamsInit ()
 {
-    var configJsonModifyObj = {};
-    var featurePkgList = config.featurePkg;
+    var configJsonModifyObj = {},
+        config = configUtils.getConfig(),
+        featurePkgList = config.featurePkg;
     for (key in featurePkgList) {
         if ((config.featurePkg[key]) && (config.featurePkg[key]['path']) &&
             ((null == config.featurePkg[key]['enable']) ||

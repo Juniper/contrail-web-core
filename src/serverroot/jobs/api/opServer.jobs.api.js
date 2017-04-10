@@ -3,21 +3,12 @@
  */
 
 var rest = require('../../common/rest.api'),
-    config = process.mainModule.exports.config,
+    configUtils = require('../../common/config.utils'),
     authApi = require('../../common/auth.api'),
     logutils = require('../../utils/log.utils'),
     commonUtils = require('../../utils/common.utils'),
     jobsUtils = require('../../common/jobs.utils'),
-    async = require('async'),
-    opServer;
-
-var opServerIP = ((config.analytics) && (config.analytics.server_ip)) ?
-    config.analytics.server_ip : global.DFLT_SERVER_IP;
-var opServerPort = ((config.analytics) && (config.analytics.server_port)) ?
-    config.analytics.server_port : '8081';
-
-opServer = rest.getAPIServer({apiName: global.label.OPSERVER,
-                              server: opServerIP, port: opServerPort});
+    async = require('async');
 
 function callApiByReqType (obj, reqType, stopRetry, callback)
 {
@@ -113,6 +104,13 @@ function serveAPIRequestCB (obj, callback)
 function serveAPIRequest (reqUrl, reqData, jobData, appHeaders, reqType,
                           stopRetry, callback)
 {
+    var config = configUtils.getConfig(),
+        opServerIP = ((config.analytics) && (config.analytics.server_ip)) ?
+            config.analytics.server_ip : global.DFLT_SERVER_IP,
+        opServerPort = ((config.analytics) && (config.analytics.server_port)) ?
+            config.analytics.server_port : '8081',
+        opServer = rest.getAPIServer({apiName: global.label.OPSERVER,
+                                      server: opServerIP, port: opServerPort});
     var dataObj = {
         apiName: global.label.OPSERVER,
         reqUrl: reqUrl,

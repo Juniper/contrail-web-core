@@ -216,10 +216,10 @@ function updateJobDataAuthObjToken (jobData, token)
 
 function createJobServerRedisClient ()
 {
-    var config = process.mainModule.exports.config;
+    var configUtils = require('./config.utils');
     var redisUtils = require('../utils/redis.utils');
     var commonUtils = require('../utils/common.utils');
-
+    var config = configUtils.getConfig();
     var server_port = (config.redis_server_port) ?
         config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
     var server_ip = (config.redis_server_ip) ?

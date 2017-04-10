@@ -4,10 +4,11 @@
 
 var redis = require("redis");
 var logutils = require('./log.utils');
-var config = process.mainModule.exports.config;
+var configUtils = require('../common/config.utils');
 
 function createDefRedisClientAndWait (callback)
 {
+    var config = configUtils.getConfig();
     var server_port = (config.redis_server_port) ?
         config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
     var server_ip = (config.redis_server_ip) ?
@@ -34,6 +35,7 @@ function createRedisClientAndWait (port, ip, uiDB, callback)
 function createRedisClient (port, ip, uiDB)
 {
     var doNotSelect = false;
+    var config = configUtils.getConfig();
     if (-1 == port) {
         doNotSelect = true;
         port = null;

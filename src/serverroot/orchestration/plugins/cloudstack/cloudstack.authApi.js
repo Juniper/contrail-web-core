@@ -7,7 +7,7 @@
  * cloudstack
  */
 
-var config = process.mainModule.exports['config'],
+var configUtils = require('../../../common/config.utils'),
     global = require('../../../common/global'),
     messages = require('../../../common/messages'),
     logutils = require('../../../utils/log.utils'),
@@ -16,17 +16,8 @@ var config = process.mainModule.exports['config'],
     rest = require('../../../common/rest.api'),
     assert = require('assert'),
     commonUtils = require('./../../../utils/common.utils'),
-    configUtils = require('../../../common/configServer.utils'),
+    configServerUtils = require('../../../common/configServer.utils'),
     cloudStackApi = require('./cloudstack.api');
-
-var authServerIP = ((config.identityManager) && (config.identityManager.ip)) ?
-    config.identityManager.ip : global.DFLT_SERVER_IP;
-var authServerPort =
-    ((config.identityManager) && (config.identityManager.port)) ?
-    config.identityManager.port : '8080';
-
-authAPIServer = rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
-                                   server:authServerIP, port:authServerPort});
 
 var CLOUDSTACK_USER_TYPE_ADMIN = 1;
 var CLOUDSTACK_USER_TYPE_USER  = 0;
@@ -41,6 +32,16 @@ function doAuth (userName, password, callback)
     };
 
     var reqUrl = '/client/api';
+    var config = configUtils.getConfig(),
+    authServerIP = ((config.identityManager) &&
+                        (config.identityManager.ip)) ?
+                        config.identityManager.ip : global.DFLT_SERVER_IP,
+    authServerPort = ((config.identityManager) &&
+                        (config.identityManager.port)) ?
+                        config.identityManager.port : '8080',
+    authAPIServer =
+                rest.getAPIServer({apiName:global.label.IDENTITY_SERVER,
+                      server: authServerIP, port: authServerPort});
 
     authAPIServer.api.post(reqUrl, postData, function(err, data, response) {
         callback(err, data, response); 
@@ -206,7 +207,7 @@ function getTenantList (req, appData, callback)
 function getProjectList (req, appData, callback)
 {
     getTenantList(req, appData, function(err, tenantList) {
-       configUtils.listProjectsAPIServer(err, tenantList, appData,
+        configServerUtils.listProjectsAPIServer(err, tenantList, appData,
                                              function(err, data) {
             formatTenantList(req, tenantList, data, function(projects) {
                 callback(null, projects);
@@ -217,6 +218,7 @@ function getProjectList (req, appData, callback)
 
 function getSessionExpiryTime (req, appData, callback)
 {
+    var config = configUtils.getConfig();
     var cfgSessTimeout =
         ((null != config.session) && (null != config.session.timeout)) ?
         config.session.timeout : null;
