@@ -2,11 +2,12 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var config = process.mainModule.exports['config'];
+var configUtils = require('../common/config.utils')
 
 function getOrchestrationModels ()
 {
-    var orchModels = [];
+    var orchModels = [],
+        config = configUtils.getConfig();
     if ((null != config.orchestration) &&
         (null != config.orchestration.Manager)) {
         orchModel = config.orchestration.Manager;

@@ -2,8 +2,10 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var path = require('path');
-
+var assert = require('assert'),
+    path = require('path'),
+    fs = require('fs'),
+    contrailConfig;
 /* Function: compareAndMergeDefaultConfig
    This function is used to compare and merge missing configuration from
    default.config.global.js with config file
@@ -62,5 +64,110 @@ function compareAndMergeFiles (fileToCmp, fileWithCmp)
     return config;
 }
 
+/* Function: subscribeAutoDetectConfig, implements fs.watchFile
+ * This function detects changes in config.global.js
+ * and updates contrailConfig variable
+ */
+function subscribeAutoDetectConfig(confFile)
+{
+    fs.watchFile(confFile, function(curr, prev){
+        getActualPath(confFile, function(err, actPath){
+            if(err){
+                console.error("subscribeAutoDetectConfig " + err);
+                return;
+            }
+            delete require.cache[actPath];
+            updateConfig(actPath);
+            var contrailServ = require('./contrailservice.api');
+            contrailServ.getContrailServices();
+            contrailServ.startWatchContrailServiceRetryList();
+        });
+    });
+}
+
+/* Function: getActualPath
+ * handling symlinks
+*/
+function getActualPath(path, callback) {
+    // Check if it's a link
+    fs.lstat(path, function(err, stats) {
+        if(err) {
+            // log errors
+            callback(err, null);
+            return;
+        } else if(stats.isSymbolicLink()) {
+            // Read symlink
+            fs.readlink(path, function(err, realPath) {
+                // Handle errors
+                if(err) {
+                    callback(err, null);
+                    return;
+                }
+                // the real file
+                callback(null, realPath);
+            });
+        } else {
+            // It's not a symlink
+            callback(null, path);
+        }
+    });
+}
+
+function updateConfig(confFile)
+{
+    contrailConfig = compareAndMergeDefaultConfig(confFile);
+}
+
+/* Function: getConfig
+ * This function gets the latest config
+ */
+function getConfig()
+{
+  return contrailConfig;
+}
+
+/* Function:getConfigFile
+ * It gets configFile with full path if it is provided through
+ * command line arguments else from default path.
+ */
+
+function getConfigFile(args)
+{
+    var configFile = null,
+        argsCnt = args.length;
+    for (var i = 0; i < argsCnt; i++) {
+        if (('--c' == args[i]) || ('--conf_file' == args[i])) {
+            if (null == args[i + 1]) {
+                console.error('Config file not provided');
+                assert(0);
+            } else {
+                configFile = args[i + 1];
+                try {
+                    var tmpConfig = require(configFile);
+                    if ((null == tmpConfig) ||
+                            (typeof tmpConfig !== 'object')) {
+                        console.error('Config file ' +
+                                configFile + ' is not valid');
+                        assert(0);
+                    }
+                    break;
+                } catch(e) {
+                    console.error('Config file ' + configFile + ' not found');
+                    assert(0);
+                }
+            }
+        }
+    }
+    if(configFile === null){
+        configFile =
+            path.normalize(__dirname + '/../../../config/config.global.js');
+    }
+    return configFile;
+}
+
 exports.compareAndMergeDefaultConfig = compareAndMergeDefaultConfig;
 exports.mergeObjects = mergeObjects;
+exports.subscribeAutoDetectConfig = subscribeAutoDetectConfig;
+exports.updateConfig = updateConfig;
+exports.getConfig = getConfig;
+exports.getConfigFile = getConfigFile;

@@ -7,15 +7,20 @@ var winston = require('winston'),
 	messages = require('../common/messages'),
 	util = require('util'),
     moment = require('moment'),
-    config = process.mainModule.exports.config;
-
-var logLevel = ((null != config) && (null != config.logs) &&
-                (null != config.logs.level) && ('' != config.logs.level))
-                ? config.logs.level : 'debug';
+    configUtils = require('../common/config.utils'),
+    commonUtils = require('./common.utils');
 
 function getLoggingTime ()
 {
     return moment().format('MM/DD/YYYY hh:mm:ss A');
+}
+
+function getLogLevel ()
+{
+    var config = configUtils.getConfig(),
+        logLevel = commonUtils.getValueByJsonPath(config,
+                'logs;level', 'debug');
+    return logLevel;
 }
 
 /**
@@ -24,7 +29,7 @@ function getLoggingTime ()
 logutils.logger = new (winston.Logger)({
 	transports:[
 		new (winston.transports.Console)({colorize:true,
-                                         timestamp:getLoggingTime, level: logLevel})
+                              timestamp:getLoggingTime, level: getLogLevel()})
 	]
 });
 

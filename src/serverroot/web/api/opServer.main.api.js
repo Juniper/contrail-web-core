@@ -3,25 +3,24 @@
  */
 
 var rest = require('../../common/rest.api'),
-    config = process.mainModule.exports.config,
+    configUtils = require('../../common/config.utils'),
     authApi = require('../../common/auth.api'),
     commonUtils = require('../../utils/common.utils'),
     async = require('async'),
     configServerApi = require('../../common/configServer.api'),
-    opServer,
     appErrors = require('../../errors/app.errors');
-var opServerIP = ((config.analytics) && (config.analytics.server_ip)) ?
-    config.analytics.server_ip : global.DFLT_SERVER_IP;
-var opServerPort = ((config.analytics) && (config.analytics.server_port)) ?
-    config.analytics.server_port : '8081';
-
-opServer = rest.getAPIServer({apiName: global.label.OPS_API_SERVER,
-                              server: opServerIP, port: opServerPort});
 
 function getHeaders(dataObj, callback)
 {
     var headers = {};
-    var appData = dataObj['appData'];
+    var appData = dataObj['appData'],
+        config = configUtils.getConfig(),
+        opServerIP = ((config.analytics) && (config.analytics.server_ip)) ?
+            config.analytics.server_ip : global.DFLT_SERVER_IP,
+        opServerPort = ((config.analytics) && (config.analytics.server_port)) ?
+            config.analytics.server_port : '8081',
+        opServer = rest.getAPIServer({apiName: global.label.OPS_API_SERVER,
+                                      server: opServerIP, port: opServerPort});
     headers = configServerApi.configAppHeaders(headers, appData);
     var appHeaders = dataObj['appHeaders'];
     for (key in appHeaders) {
