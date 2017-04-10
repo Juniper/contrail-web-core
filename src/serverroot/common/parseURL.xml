@@ -29,7 +29,7 @@
     </require>
     <require>
         <define>contrailService</define>
-        <path>../jobs/core/contrailservice.api</path>
+        <path>./contrailservice.api</path>
     </require>
     <require>
         <define>authApi</define>

@@ -3,27 +3,27 @@
  */
 
 var rest = require('../../common/rest.api'),
-    config = process.mainModule.exports.config,
+    configUtils = require('../../common/config.utils'),
     authApi = require('../../common/auth.api'),
     commonUtils = require('../../utils/common.utils'),
     async = require('async'),
-    configServer,
     configServerApi = require('../../common/configServer.api'),
     logutils = require('../../utils/log.utils'),
     appErrors = require('../../errors/app.errors');
 
-var configServerIP = ((config.cnfg) && (config.cnfg.server_ip)) ?
-    config.cnfg.server_ip : global.DFLT_SERVER_IP;
-var configServerPort = ((config.cnfg) && (config.cnfg.server_port)) ?
-    config.cnfg.server_port : '8082';
-configServer = rest.getAPIServer({apiName: global.label.VNCONFIG_API_SERVER,
-                                 server: configServerIP,
-                                 port: configServerPort});
-
 function getHeaders(dataObj, callback)
 {
     var headers = {};
-    var appData = dataObj['appData'];
+    var appData = dataObj['appData'],
+        config = configUtils.getConfig(),
+        configServerIP = ((config.cnfg) && (config.cnfg.server_ip)) ?
+            config.cnfg.server_ip : global.DFLT_SERVER_IP,
+        configServerPort = ((config.cnfg) && (config.cnfg.server_port)) ?
+            config.cnfg.server_port : '8082',
+        configServer = rest.getAPIServer({
+                           apiName: global.label.VNCONFIG_API_SERVER,
+                           server: configServerIP,
+                           port: configServerPort});
     headers = configServerApi.configAppHeaders(headers, appData);
     var appHeaders = dataObj['appHeaders'];
     for (key in appHeaders) {

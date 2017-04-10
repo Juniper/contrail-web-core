@@ -7,14 +7,13 @@ var jobsApi = module.exports;
 var redis = require("redis")
 	, kue = require('kue')
 	, assert = require('assert')
-	, config = process.mainModule.exports.config
 	, logutils = require('../../utils/log.utils')
 	, util = require('util')
     , redisPub = require('./redisPub')
     , commonUtils = require('../../utils/common.utils')
     , eventEmitter = require('events').EventEmitter
     , async = require('async')
-    , contrailServ = require('./contrailservice.api')
+    , contrailServ = require('../../common/contrailservice.api')
     , UUID = require('uuid-js')
     , jobUtils = require('../../common/jobs.utils')
 	, messages = require('../../common/messages')
@@ -48,9 +47,6 @@ kue.redis.createClient();
 jobsApi.jobs = kue.createQueue();
 jobsApi.jobs.promote();
 jobUtils.jobKueEventEmitter.emit('kueReady');
-
-/* kue UI listening port */
-var kuePort = config.kue.ui_port || 3002;
 //kue.app.listen(kuePort);
 //logutils.logger.info("KUE Jobs Infra UI listening on", kuePort);
 

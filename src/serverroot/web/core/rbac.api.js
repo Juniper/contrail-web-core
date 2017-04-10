@@ -31,7 +31,8 @@ String.prototype.trim=function() {
  */
 function getRoleValueByString (roleStr)
 {
-  var config = process.mainModule.exports.config;
+  var configUtils = require('../../common/config.utils');
+  var config = configUtils.getConfig();
   var roleListObjs = {};
   if (null == roleStr) {
     return null;

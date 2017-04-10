@@ -9,7 +9,7 @@ var http = require('http'),
     util = require('util'),
     redis = require("redis"),
     global = require('../../common/global'),
-    config = process.mainModule.exports.config,
+    configUtils = require('../../common/config.utils'),
     longPoll = require('../core/longPolling.api'),
     logutils = require('../../utils/log.utils'),
     commonUtils = require('../../utils/common.utils'),
@@ -81,7 +81,7 @@ exports.getMenuXML = function(req,res) {
 }
 
 exports.isAuthenticated = function(req,res) {
-    var retData = {}
+    var retData = {}, config = configUtils.getConfig();
     if(req.session.isAuthenticated == true) {
         commonUtils.getWebServerInfo(req,res)
         return;
@@ -110,6 +110,7 @@ function login (req, res, appData, redirectURL)
 function vcenter_login (req, res, appData)
 {
     //Move setting loggedInOrchestrationMode to longPolling??
+    var config = configUtils.getConfig();
     var orch = config.orchestration.Manager;
     var models = orch.split(',');
     //If vcenter orchestration is not set and user tries to launch "/vcenter/login",redirect to "/login"
@@ -126,6 +127,7 @@ function vcenter_login (req, res, appData)
 function logoutCB (req, res, appData, redURL)
 {
     var ajaxCall = req.headers['x-requested-with'];
+    var config = configUtils.getConfig();
     if ('XMLHttpRequest' == ajaxCall) {
         var retData = {
             isRegionListFromConfig: config.regionsFromConfig,
@@ -140,6 +142,7 @@ function logoutCB (req, res, appData, redURL)
 function vcenter_logout (req, res, appData)
 {
     /* First invalidate the session object */
+    var config = configUtils.getConfig();
     commonUtils.invalidateReqSession(req, res);
     var orch = config.orchestration.Manager;
     var models = orch.split(',');
@@ -343,6 +346,7 @@ function logout (req, res, appData)
     res.clearCookie('_csrf');
     res.clearCookie('connect.sid');
     var referer = req.headers['referer'];
+    var config = configUtils.getConfig();
     if (((null != referer) && (-1 != referer.indexOf('/vcenter'))) ||
         (-1 != req.url.indexOf('/vcenter'))) {
         vcenter_logout(req, res, appData);

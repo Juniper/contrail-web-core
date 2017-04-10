@@ -2,12 +2,13 @@
 
 var _ = require("lodash");
 var commonUtils = require(process.mainModule.exports.corePath + "/src/serverroot/utils/common.utils");
-var config = process.mainModule.exports.config;
+var configUtils = require(process.mainModule.exports.corePath +
+        "/src/serverroot/common/config.utils");
 var cassandra = require("cassandra-driver");
 
 var uddKeyspace = "config_webui";
 var tableName = "user_widgets";
-
+var config = configUtils.getConfig();
 var client = new cassandra.Client({ contactPoints: config.cassandra.server_ips, keyspace: "system" });
 client.execute("SELECT keyspace_name FROM system.schema_keyspaces;", function(err, result) {
     if (err) {
@@ -93,6 +94,7 @@ client.execute("SELECT keyspace_name FROM system.schema_keyspaces;", function(er
 });
 
 function connectDB() {
+    var config = configUtils.getConfig();
     return new cassandra.Client({ contactPoints: config.cassandra.server_ips, keyspace: uddKeyspace });
 }
 

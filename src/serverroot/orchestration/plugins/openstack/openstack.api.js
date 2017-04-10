@@ -7,7 +7,7 @@
  */
 
 var authApi = require('../../../common/auth.api');
-var config = process.mainModule.exports['config'];
+var configUtils = require('../../../common/config.utils');
 var httpsOp = require('../../../common/httpsoptions.api');
 var logutils = require('../../../utils/log.utils');
 var commonUtils = require('../../../utils/common.utils');
@@ -202,6 +202,7 @@ function getServiceAPIVersionByReqObj (req, appData, type, callback, reqBy)
     var redirectToLogout = true;
     var dataObjArr = [];
     var endPtList = [];
+    var config = configUtils.getConfig();
 
     var endPtFromConfig = config.serviceEndPointFromConfig;
     if (null == endPtFromConfig) {
@@ -302,6 +303,7 @@ function getServiceAPIVersionByReqObj (req, appData, type, callback, reqBy)
         var svcCatalog =
             keySt.getServiceCatalogByRegion(req, regionName, accessData);
         var firstRegion = null;
+        var config = configUtils.getConfig();
         if (null != svcCatalog) {
             for (var key in svcCatalog) {
                 if (null == firstRegion) {
@@ -347,6 +349,7 @@ function getApiVersion (suppVerList, verList, index, fallbackIndex, apiType)
 {
     var ip = null;
     var port = null;
+    var config = configUtils.getConfig();
     var endPtFromConfig = config.serviceEndPointFromConfig;
     
     try {
@@ -397,6 +400,7 @@ function getPublicUrlByRegionName (regionname, serviceName, req)
     }
     if (true == authApi.isRegionListFromConfig()) {
         var pubUrl = null;
+        var config = configUtils.getConfig();
         if (null == config.regions) {
             return null;
         }

@@ -7,7 +7,7 @@ var commonUtils = module.exports,
     http = require('https'),
     messages = require('../common/messages'),
     util = require('util'),
-    config = process.mainModule.exports.config,
+    configUtils = require('../common/config.utils'),
     fs = require('fs'),
     path = require('path'),
     global = require('../common/global'),
@@ -634,6 +634,7 @@ function download (req, res, appData)
         var passWord = req.param('passWord');
         var hostIPAddress = req.param("hostIPAddress");
         var fileSize = req.param('size');
+        var config = configUtils.getConfig();
 
         //read the log directory from the config
         var localDir = ((config.files) && (config.files.download_path)) ?
@@ -681,6 +682,7 @@ function download (req, res, appData)
 function upload (req, res, data)
 {
 	var fileName = req.param('filename');
+	var config = configUtils.getConfig();
 	var dir = ((config.files) && (config.files.download_path)) ?
 		config.files.download_path : global.DFLT_UPLOAD_PATH;
 	var filePath = dir + '/' + fileName;
@@ -1073,6 +1075,7 @@ function getRestAPIServer (ip, port, apiName) {
 
 function getWebUIRedisDBIndex ()
 {
+    var config = configUtils.getConfig();
     var dbIndex = config.redisDBIndex;
     if (null == dbIndex) {
         dbIndex = global.WEBUI_DFLT_REDIS_DB;
@@ -1085,6 +1088,7 @@ function getWebUIRedisDBIndex ()
  */
 function flushRedisDB (redisDB, callback)
 {
+    var config = configUtils.getConfig();
     var server_port = (config.redis_server_port) ?
         config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
     var server_ip = (config.redis_server_ip) ?
@@ -1376,6 +1380,7 @@ function getFeaturePkgs() {
  */
 function getWebServerInfo (req, res, appData)
 {
+    var config = configUtils.getConfig();
     var plugins = require('../orchestration/plugins/plugins.api');
     var serverObj = plugins.getOrchestrationPluginModel(),
         featurePackages = config.featurePkg,
@@ -1578,6 +1583,7 @@ function mergeAllPackageList (serverType)
 {
     var tmpPkgNameObjs = {};
     var pkgList = [];
+    var config = configUtils.getConfig();
     pkgList.push(require('../../../webroot/common/api/package.js').pkgList);
     for (key in config.featurePkg) {
         if (null != tmpPkgNameObjs[key]) {
@@ -1932,6 +1938,7 @@ function mergeFeatureMenuXMLFiles (pkgList, mergePath, mFileName, callback)
     var pkgLen = pkgList.length;
     var menuDirs = [];
     var writeFile = mergePath + '/' + mFileName;
+    var config = configUtils.getConfig();
 
     if (1 == pkgLen) {
         /* Only core package, nothing to do */
@@ -1981,6 +1988,7 @@ function getPkgPathByPkgName (pkgName)
     if (null == pkgName) {
         return process.mainModule.exports['corePath'];
     }
+    var config = configUtils.getConfig();
     return config.featurePkg[pkgName].path;
 }
 
@@ -2024,7 +2032,7 @@ function getWebConfigValueByName (req, res, appData)
 {
     var type = req.param('type'),
         variable = req.param('variable'),
-        configObj = {}, value;
+        configObj = {}, value, config = configUtils.getConfig();
     if(type != null && variable != null) {
         value = ((null != config[type]) && (null != config[type][variable])) ?
             config[type][variable] : null;
@@ -2035,6 +2043,7 @@ function getWebConfigValueByName (req, res, appData)
 
 function isMultiTenancyEnabled ()
 {
+    var config = configUtils.getConfig();
     return ((null != config.multi_tenancy) &&
             (null != config.multi_tenancy.enabled)) ?
         config.multi_tenancy.enabled : true;

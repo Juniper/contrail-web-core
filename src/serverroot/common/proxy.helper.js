@@ -7,10 +7,10 @@
   *     - Helper functions for Proxy API
   */
 
-var contrailService = require('../jobs/core/contrailservice.api');
+var contrailService = require('./contrailservice.api');
 var redisUtils  = require('../utils/redis.utils');
 var commonUtils = require('../utils/common.utils');
-var config      = process.mainModule.exports.config;
+var configUtils = require('./config.utils');
 var global      = require('./global');
 var authApi     = require("./auth.api");
 
@@ -135,6 +135,7 @@ function getSSLOptionsIntrospectPort (req, port)
 {
     var found = false;
     var sslOptions = null;
+    var config = configUtils.getConfig();
     var introspectSSLOptions =
         commonUtils.getValueByJsonPath(config, "introspect;ssl", null);
     var isIntrospectSSLEnabled =
@@ -173,6 +174,7 @@ function getSSLOptionsIntrospectPort (req, port)
 function getSSLOptionsByProxyPort (req, port)
 {
     var sslOptions = null;
+    var config = configUtils.getConfig();
     port = port.toString();
     var isSvcEndPtsFromConfig = config.serviceEndPointFromConfig;
     var sslOptions = getSSLOptionsIntrospectPort(req, port);

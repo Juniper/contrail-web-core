@@ -3,22 +3,13 @@
  */
 
 var rest = require('../../common/rest.api'),
-    config = process.mainModule.exports.config,
+    configUtils = require('../../common/config.utils'),
     authApi = require('../../common/auth.api'),
     redisPub = require('../core/redisPub'),
     logutils = require('../../utils/log.utils'),
     commonUtils = require('../../utils/common.utils'),
     jobsUtils = require('../../common/jobs.utils'),
-    async = require('async'),
-    configServer;
-
-var configServerIP = ((config.cnfg) && (config.cnfg.server_ip)) ?
-    config.cnfg.server_ip : global.DFLT_SERVER_IP;
-var configServerPort = ((config.cnfg) && (config.cnfg.server_port)) ?
-    config.cnfg.server_port : '8082';
-configServer = rest.getAPIServer({apiName: global.label.VNCONFIG_API_SERVER,
-                                 server: configServerIP,
-                                 port: configServerPort});
+    async = require('async');
 
 function callApiByReqType (obj, reqType, stopRetry, callback)
 {
@@ -114,6 +105,15 @@ function serveAPIRequestCB (obj, callback)
 function serveAPIRequest (reqUrl, reqData, jobData, appHeaders, reqType,
                           stopRetry, callback)
 {
+    var config = configUtils.getConfig(),
+        configServerIP = ((config.cnfg) && (config.cnfg.server_ip)) ?
+            config.cnfg.server_ip : global.DFLT_SERVER_IP,
+        configServerPort = ((config.cnfg) && (config.cnfg.server_port)) ?
+            config.cnfg.server_port : '8082',
+        configServer = rest.getAPIServer({
+                                    apiName: global.label.VNCONFIG_API_SERVER,
+                                    server: configServerIP,
+                                    port: configServerPort});
     var dataObj = {
         apiName: global.label.VNCONFIG_API_SERVER,
         reqUrl: reqUrl,
