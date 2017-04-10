@@ -6,7 +6,7 @@
  * This file contains the util functions for all plugins
  */
 
-var config = process.mainModule.exports['config'];
+var configUtils = require('../../common/config.utils');
 var configMainServer = require('../../web/api/configServer.main.api');
 var opMainServer = require('../../web/api/opServer.main.api');
 var configJobServer = require('../../jobs/api/configServer.jobs.api');
@@ -16,7 +16,6 @@ var assert = require('assert');
 var authApi = require('../../common/auth.api');
 var logutils = require('../../utils/log.utils');
 var orch = require('../orchestration.api');
-var configUtils = require('../../common/configServer.utils');
 var global = require('../../common/global');
 var commonUtils = require('../../utils/common.utils');
 var crypto = require('crypto');
@@ -191,6 +190,7 @@ function setAllCookies (req, res, appData, cookieObj, callback)
 {
     var loginErrFile = 'webroot/html/login-error.html';
     var adminProjectList = authApi.getAdminProjectList(req);
+    var config = configUtils.getConfig();
     if (null == appData['authObj']['defTokenObj']) {
         /* We have not got defTokenObj filled yet while sending to Auth
          * Module, so fill it up here
