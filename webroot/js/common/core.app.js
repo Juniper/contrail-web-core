@@ -204,7 +204,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'analyticsnode-viewconfig'    : 'empty:',
             'confignode-viewconfig'       : 'empty:',
             'monitor-infra-viewconfig'    : 'empty:',
-            'global-controller-viewconfig': 'empty:'
+            'global-controller-viewconfig': 'empty:',
+            'core-alarm-utils'            :  coreWebDir + '/js/common/core.alarms.utils'
 
         };
         //Merge common (for both prod & dev) alias
@@ -1026,7 +1027,7 @@ function changeRegion (regionName){
         if ((hashString.indexOf('config_infra') > -1)) {
             layoutHandler.setURLHashObj({'p' : 'config_gc_location', 'region' : region});
         }
-        else if ((hashString.indexOf('mon_infra') > -1)) {
+        else {
             layoutHandler.setURLHashObj({'p' : 'mon_gc_globalcontroller', 'region' : region});
         }
     }
