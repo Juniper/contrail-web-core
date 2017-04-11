@@ -290,7 +290,7 @@ define([
           self.$el.append(tabContentTemplate([tabViewConfig]));
           self.tabs.push(tabViewConfig);
 
-          if (tabViewConfig.tabConfig.editable) {
+          if (tabViewConfig.tabConfig != null && tabViewConfig.tabConfig.editable) {
             newIndex = _.sortedIndex(_.without(self.tabs, tabViewConfig), tabViewConfig, self._tabSortIteratee);
             tabsRefreshed = self.moveTab(self.tabs.length - 1, newIndex);
           }
