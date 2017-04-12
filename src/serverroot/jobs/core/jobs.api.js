@@ -17,7 +17,8 @@ var redis = require("redis")
     , contrailServ = require('./contrailservice.api')
     , UUID = require('uuid-js')
     , jobUtils = require('../../common/jobs.utils')
-	, messages = require('../../common/messages');
+	, messages = require('../../common/messages')
+    , parseJobsReq = require("../../common/parseJobsRequire");
 
 try {
     computeNode = require('../api/vrouternode.jobs.api');
@@ -192,6 +193,10 @@ function createJob (jobName, jobTitle, jobPriority, delayInMS, runCount, taskDat
 function createJobCB (jobName, jobTitle, jobPriority, delayInMS, runCount,
                       taskData)
 {
+    if (-1 === parseJobsReq.registeredJobs.indexOf(jobName)) {
+        /* If we are not registered to create this job, then return */
+        return;
+    }
     var jobTitleStr = (jobTitle == null) ? jobName : jobTitle;
     /* Update any jobData parameters if any changed in last iteration of job
      * processing
@@ -340,12 +345,16 @@ function checkAndRequeueJob (job, nextRunDelay)
  */
 function doCheckJobsProcess ()
 {
+    if (!parseJobsReq.registeredJobs.length) {
+        /* If there is no registered jobs, do not subscribe for jobs events */
+        return;
+    }
 	jobsApi.jobs.on('job complete', function (id) {
 		logutils.logger.info("We are on jobs.on for event 'job complete', id:" + id);
 		jobsApi.kue.Job.get(id, function (err, job) {
 			if ((err) || (null == job)) {
-				logutils.logger.error("Some error happened or job is null:",
-					err, process.pid);
+				logutils.logger.error("Some error happened or job is null: " +
+					err + " processID: " + process.pid);
 				return;
 			}
 			logutils.logger.debug("Job " + job.id + " completed by process: " + process.pid);
