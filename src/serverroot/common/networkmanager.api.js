@@ -48,7 +48,7 @@ function apiDelete (reqUrl, req, callback)
 
 function createNetworkPort (req, postData, project, callback)
 {
-    req.cookies.project = project;
+    req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME] = project;
     nwMgrApi.createNetworkPort(req, postData, callback);
 }
 

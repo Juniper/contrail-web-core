@@ -919,7 +919,8 @@ function getToken (authObj, callback)
     var lastKeystoneVerUsed = authObj['req'].session.authApiVersion;
     var tokenCB = getTokenCB[lastKeystoneVerUsed];
     if (null == authObj['domain']) {
-        authObj['domain'] = authObj['req'].cookies.domain;
+        authObj['domain'] =
+            authObj['req'].cookies[global.COOKIE_DOMAIN_DISPLAY_NAME];
     }
     if (null == tokenCB) {
         logutils.logger.error("Unexpected happened in getToken()");
@@ -985,7 +986,7 @@ function getUserAuthData (req, tenantName, callback)
     var authObj = {};
     authObj['tokenid'] = token.id;
     if (null == tenantName) {
-        tenantName = req.cookies.project;
+        tenantName = req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME];
     }
     authObj['tenant'] = tenantName;
     authObj['req'] = req;
@@ -1124,7 +1125,8 @@ function getCurrentTenant (req)
         commonUtils.getValueByJsonPath(req, 'session;def_token_used;tenant;name',
                                        null, false);
     var tenant =
-        commonUtils.getValueByJsonPath(req, 'cookies;project', defTenant,
+        commonUtils.getValueByJsonPath(req, 'cookies;' +
+                                       global.COOKIE_PROJECT_DISPLAY_NAME, defTenant,
                                        false);
     return tenant;
 }
@@ -1339,7 +1341,7 @@ function authenticate (req, res, appData, callback)
     var startIndex = 0;
 
     if ((domain != null) && (domain.length > 0)) {
-        req.cookies.domain = domain;
+        req.cookies[global.COOKIE_DOMAIN_DISPLAY_NAME] = domain;
     }
 
     makeAuth(req, startIndex, null, function(errStr) {
@@ -1559,7 +1561,8 @@ function doV3Auth (req, callback)
                 projects['projects'] = getEnabledProjects(projects['projects']);
                 var projectCookie =
                     commonUtils.getValueByJsonPath(req,
-                                                   'cookies;project',
+                                                   'cookies;' +
+                                                   global.COOKIE_PROJECT_DISPLAY_NAME,
                                                    null);
                 var lastTenantObj = projects['projects'][projects['projects'].length - 1];
                 var cookieProjObj = null;
@@ -1667,7 +1670,8 @@ function doV2Auth (req, callback)
             data.tenants = getEnabledProjects(data.tenants);
             var projectCookie =
                 commonUtils.getValueByJsonPath(req,
-                                               'cookies;project',
+                                               'cookies;' +
+                                               global.COOKIE_PROJECT_DISPLAY_NAME,
                                                null);
             var lastTenantObj = data.tenants[data.tenants.length - 1];
             var cookieProjObj = null;
@@ -2192,8 +2196,10 @@ function formatIdentityMgrProjects (error, request, projectLists, domList,
                 uuid = commonUtils.convertUUIDToString(tenant["domain_id"]);
                 domain = getDomainNameByUUID(request, uuid, domList['domains']);
                 if (null == domain) {
-                    if (null != request.cookies.domain) {
-                        domain = request.cookies.domain;
+                    if (null !=
+                        request.cookies[global.COOKIE_DOMAIN_DISPLAY_NAME]) {
+                        domain =
+                            request.cookies[global.COOKIE_DOMAIN_DISPLAY_NAME];
                     } else {
                         domain = defDomain;
                     }
@@ -2312,7 +2318,7 @@ function isAdminRoleProject (project, req)
 function getCookieObjs (req, appData, callback)
 {
     var cookieObjs = {};
-    var domCookie = req.cookies.domain;
+    var domCookie = req.cookies[global.COOKIE_DOMAIN_DISPLAY_NAME];
     getAdminProjectList(req, appData, function(adminProjectObjs, domainObjs,
                                                tenantList, domList) {
         /*
@@ -2353,22 +2359,24 @@ function getCookieObjs (req, appData, callback)
             /* Now check the tenantlist response, and if domain is there in
              * response, then set it, else set as default-domain
              */
-            cookieObjs['domain'] = defDomainId;
-            cookieObjs['project'] = defProj;
+            cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME] = defDomainId;
+            cookieObjs[global.COOKIE_PROJECT_DISPLAY_NAME] = defProj;
         } else {
-            if (null == req.cookies.domain) {
-                cookieObjs['domain'] = defDomainId;
+            if (null == req.cookies[global.COOKIE_DOMAIN_DISPLAY_NAME]) {
+                cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME] = defDomainId;
             } else {
                 /* First check if we have this domain now or not */
-                if (false == plugins.doDomainExist(req.cookies.domain,
+                if (false ==
+                    plugins.doDomainExist(req.cookies[global.COOKIE_DOMAIN_DISPLAY_NAME],
                                                    domainObjs)) {
-                    cookieObjs['domain'] = defDomainId;
+                    cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME] = defDomainId;
                 } else {
-                    cookieObjs['domain'] = req.cookies.domain;
+                    cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME] =
+                        req.cookies[global.COOKIE_DOMAIN_DISPLAY_NAME];
                 }
             }
-            if (null == req.cookies.project) {
-                cookieObjs['project'] = defProj;
+            if (null == req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME]) {
+                cookieObjs[global.COOKIE_PROJECT_DISPLAY_NAME] = defProj;
             } else {
                 if ('v2.0' == req.session.authApiVersion) {
                     /* Just check if the project exists or not */
@@ -2377,29 +2385,33 @@ function getCookieObjs (req, appData, callback)
                         if ((null != tenantList['tenants'][i]) &&
                             (null != tenantList['tenants'][i]['name']) &&
                             (tenantList['tenants'][i]['name'] ==
-                                req.cookies.project)) {
-                            cookieObjs['project'] = req.cookies.project;
+                                req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME])) {
+                            cookieObjs[global.COOKIE_PROJECT_DISPLAY_NAME] =
+                                req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME];
                             /* it is fine */
                             break;
                         }
                     }
                     if (i == projCnt) {
-                        cookieObjs['project'] = defProj;
+                        cookieObjs[global.COOKIE_PROJECT_DISPLAY_NAME] = defProj;
                     }
                 } else {
                     var domList =
                         plugins.formatDomainList(req, tenantList, domainObjs);
-                    var projList = domList[cookieObjs['domain']];
+                    var projList =
+                        domList[cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME]];
                     if (null == projList) {
-                        cookieObjs['project'] = defProj;
+                        cookieObjs[global.COOKIE_PROJECT_DISPLAY_NAME] = defProj;
                         callback(cookieObjs);
                         return;
                     }
                     var projCnt = projList.length;
                     for (var i = 0; i < projCnt; i++) {
-                        if (projList[i] == req.cookies.project) {
+                        if (projList[i] ==
+                            req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME]) {
                             /* It is fine */
-                            cookieObjs['project'] = req.cookies.project;
+                            cookieObjs[global.COOKIE_PROJECT_DISPLAY_NAME] =
+                                req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME];
                             break;
                         }
                     }
@@ -2407,7 +2419,7 @@ function getCookieObjs (req, appData, callback)
                         /* We did not find the already set project cookie value in
                          * our project list
                          */
-                        cookieObjs['project'] = defProj;
+                        cookieObjs[global.COOKIE_PROJECT_DISPLAY_NAME] = defProj;
                     }
                 }
             }

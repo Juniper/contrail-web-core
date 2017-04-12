@@ -217,17 +217,19 @@ function setAllCookies (req, res, appData, cookieObj, callback)
     res.setHeader('Set-Cookie', 'username=' + cookieObj.username +
                   '; expires=' + cookieExpStr + secureCookieStr);
     authApi.getCookieObjs(req, appData, function(cookieObjs) {
-        if (null != cookieObjs['domain']) {
-            res.setHeader('Set-Cookie', 'domain=' + cookieObjs['domain'] +
+        if (null != cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME]) {
+            res.setHeader('Set-Cookie', global.COOKIE_DOMAIN_DISPLAY_NAME +
+                          '=' + cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME] +
                           '; expires=' + cookieExpStr + secureCookieStr);
         }
-        var cookieProject = cookieObjs['project'];
+        var cookieProject = cookieObjs[global.COOKIE_PROJECT_DISPLAY_NAME];
         if ((null == cookieProject) ||
             (-1 == adminProjectList.indexOf(cookieProject))) {
             cookieProject = adminProjectList[0];
         }
         if (null != cookieProject) {
-            res.setHeader('Set-Cookie', 'project=' + cookieProject +
+            res.setHeader('Set-Cookie', global.COOKIE_PROJECT_DISPLAY_NAME +
+                          '=' + cookieProject +
                           '; expires=' + cookieExpStr + secureCookieStr);
         }
         res.setHeader('Set-Cookie', '_csrf=' + req.session._csrf +
