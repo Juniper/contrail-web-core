@@ -53,7 +53,8 @@ function apiDelete (url, appData, callback, appHeaders)
 function getDefProjectByAppData (appData)
 {
     return commonUtils.getValueByJsonPath(appData,
-                         'authObj;req;cookies;project',
+                         'authObj;req;cookies;' +
+                         global.COOKIE_PROJECT_DISPLAY_NAME,
                          commonUtils.getValueByJsonPath(appData,
                                  'authObj;defTokenObj;tenant;name',
                                  null));

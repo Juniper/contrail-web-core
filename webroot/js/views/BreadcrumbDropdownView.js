@@ -58,11 +58,11 @@ define([
                     urlDataKey = null, cookieDataKey = null;
 
                 $.each(dropdownData, function (key, value) {
-                    if (urlValue == value.name) {
+                    if (urlValue == value.display_name) {
                         urlDataKey = key;
                     }
 
-                    if (cookieValue == value.name) {
+                    if (cookieValue == value.display_name) {
                         cookieDataKey = key;
                     }
                 });
@@ -89,7 +89,8 @@ define([
                             }
 
                             if (cookieKey !== null) {
-                                contrail.setCookie(cookieKey, selectedValueData.name);
+                                contrail.setCookie(cookieKey,
+                                                   selectedValueData.display_name);
                             }
 
                             if (childViewConfig !== null) {
@@ -102,7 +103,7 @@ define([
                     selectedValueData = (selectedValueData == null && cookieDataKey != null) ? dropdownData[cookieDataKey] : selectedValueData;
                     selectedValueData = (selectedValueData == null) ? dropdownData[defaultValueIndex] : selectedValueData;
 
-                    dropdownElement.data('contrailDropdown').text(selectedValueData.name);
+                    dropdownElement.data('contrailDropdown').text(selectedValueData.display_name);
                     if(dropdownOptions.preSelectCB != null && typeof(dropdownOptions.preSelectCB) == 'function') {
                         $.when(dropdownOptions.preSelectCB(selectedValueData)).always(function() {
                             onBreadcrumbDropdownChange(selectedValueData, dropdownOptions, 'init')
@@ -131,15 +132,23 @@ define([
         breadcrumbElement.append('<li class="active breadcrumb-item"><div id="' + breadcrumbDropdownId + '" class="breadcrumb-dropdown"></div></li>');
 
         return $('#' + breadcrumbDropdownId).contrailDropdown({
-            dataTextField: "name",
+            dataTextField: "display_name",
             dataValueField: "value",
             data: dropdownData,
             dropdownCssClass: 'min-width-150',
             selecting: function (e) {
+                var fqName = getValueByJsonPath(e.object, "fq_name");
+                var displayName = getValueByJsonPath(e.object, "display_name",
+                                                     fqName);
                 var selectedValueData = {
                     name: e.object['name'],
-                    value: e.object['value']
+                    value: e.object['value'],
+                    display_name: displayName,
+                    fq_name: e.object['fq_name']
                 };
+                selectedValueData.parentSelectedValueData =
+                    (null != dropdownOptions) ?
+                        dropdownOptions.parentSelectedValueData : null;
 
                 if(dropdownOptions.preSelectCB != null && typeof(dropdownOptions.preSelectCB) == 'function') {
                     //Wrapping the return value inside $.when to handle the case if the function doesn't return a deferred object
