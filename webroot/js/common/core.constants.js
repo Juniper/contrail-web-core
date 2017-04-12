@@ -195,6 +195,8 @@ define([
 
         this.COOKIE_DOMAIN = 'domain';
         this.COOKIE_PROJECT = 'project';
+        this.COOKIE_DOMAIN_DISPLAY_NAME = 'domain-display-name';
+        this.COOKIE_PROJECT_DISPLAY_NAME = 'project-display-name';
         this.COOKIE_VIRTUAL_NETWORK = 'virtual-network';
 
         this.THEME_DETAIL_WIDGET = 'widget-box';
