@@ -113,10 +113,13 @@ define([
     };
 
     var getConfiguration = function (viewConfig) {
-        var gridTitle = cowl.TITLE_ALARMS_SUMMARY;
+        var gridTitle = cowl.TITLE_ALARMS_SUMMARY, showRegion = true;
         if (viewConfig != null && viewConfig['isUnderlayPage'] == true ) {
-            gridTitle = contrail.format('{0} ({1})',
+        	gridTitle = contrail.format('{0} ({1})',
                 cowl.TITLE_ALARMS_SUMMARY, ifNull(viewConfig['hostname'],'-'));
+        }
+        if(viewConfig  !== null && viewConfig.showRegion !== undefined){
+    		showRegion = viewConfig.showRegion;
         }
         var alarmColumns = [
                               {
@@ -137,11 +140,6 @@ define([
                                   }
                               },
 //                              {
-//                                  field: 'severity',
-//                                  name: 'Severity',
-//                                  hide:true
-//                              },
-//                              {
 //                                  field: 'ack',
 //                                  name: 'Acknowledged',
 //                                  hide:true
@@ -149,7 +147,7 @@ define([
                               {
                                   field: 'T',
                                   name: 'Time',
-                                  minWidth: 130,
+                                  minWidth: 100,
                                   formatter : function (r,c,v,cd,dc) {
                                       return getFormattedDate(v/1000);
                                   }
@@ -163,6 +161,12 @@ define([
                                   field: 'display_name',
                                   name: 'Source',
                                   minWidth: 100
+                              },
+                              {
+                                  field: 'regionName',
+                                  name: 'Region Name',
+                                  hide:showRegion,
+                                  minWidth: 50,
                               },
                               {
                                   field: 'acknowledge',
