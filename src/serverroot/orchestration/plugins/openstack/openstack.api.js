@@ -307,7 +307,8 @@ function getServiceAPIVersionByReqObj (req, type, callback, reqBy)
         }
         var mappedObjs = null;
         if (-1 != global.keystoneServiceListByProject.indexOf(type)) {
-            var domProject = req.cookies.domain + ':' + req.cookies.project;
+            var domProject = req.cookies[global.COOKIE_DOMAIN_DISPLAY_NAME] + ':' +
+                req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME];
             mappedObjs =
                 commonUtils.getValueByJsonPath(svcCatalog, regionName + ';' +
                                                domProject + ';' + type +
