@@ -116,7 +116,8 @@ function getCGCAuthReq (req, res, next)
  
     if (-1 != reqUrl.indexOf('/tokens')) {
         /* This is a token get request */
-        var authObj = {req: req, project: req.cookies.project};
+        var authObj = {req: req, project:
+            req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME]};
         authApi.getTokenObj(authObj, function(error, token, tokenObj) {
             commonUtils.handleJSONResponse(error, res, tokenObj);
             return;
