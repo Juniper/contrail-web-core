@@ -74,10 +74,17 @@ function getAllowedProxyPortListByNodeType (nodeType)
         defPorts = defConfigNodePorts;
         break;
     }
-    return ((null != config.proxy) &&
-            (null != config.proxy[nodePortsLabel]) &&
-            (config.proxy[nodePortsLabel].length > 0)) ?
-            config.proxy[nodePortsLabel] : defPorts;
+    var portObjs = commonUtils.getValueByJsonPath(config, "proxy;" +
+                                                  nodePortsLabel, {});
+    var portList = [];
+    for (var key in portObjs) {
+        if ("object" == typeof portObjs[key]) {
+            portList = portList.concat(_.values(portObjs[key]));
+        } else {
+            portList.push(portObjs[key]);
+        }
+    }
+    return (portList.length > 0) ? portList : defPorts;
 }
 
 function sendProxyRequest (request, response, appData, options, userData)

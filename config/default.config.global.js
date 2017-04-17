@@ -453,45 +453,49 @@ config.network.router_L3Enable = true;
  *           ......
  *       };
  *
+ *       The below configuration is used to build the introspect page in
+ *       Contrail WebUI.
  *****************************************************************************/
 config.proxy = {};
 config.proxy.enabled = true;
 config.proxy.vrouter_node_ports = {
-    "introspect": [
+    "introspect": {
         /* All introspect ports for processes in vrouter/agent */
-        "8085",             /* HttpPortAgent */
-        "8102",             /* HttpPortVRouterNodemgr */
-    ]
+        "agent"             :"8085",            /* HttpPortAgent */
+        "node-manager"      :"8102"             /* HttpPortVRouterNodemgr */
+    }
 };
 config.proxy.control_node_ports = {
-    "introspect": [
+    "introspect": {
         /* All introspect ports for processes in control node */
-        "8083",             /* HttpPortControl */
-        "8092",             /* HttpPortDns */
-        "8101",             /* HttpPortControlNodemgr */
-    ]
+        "control-node"      :"8083",            /* HttpPortControl */
+        "dns"               :"8092",            /* HttpPortDns */
+        "node-manager"      :"8101"             /* HttpPortControlNodemgr */
+    }
 };
 config.proxy.analytics_node_ports = {
-    "analytics": ["8081"],  /* OpServerPort */
-    "introspect": [
+    "analytics"             :"8081",  /* OpServerPort */
+    "introspect": {
         /* All introspect ports for processes in analytics */
-        "8089",             /* HttpPortCollector */
-        "8090",             /* HttpPortOpserver */
-        "8091",             /* HttpPortQueryEngine */
-        "8104",             /* HttpPortAnalyticsNodemgr */
-        "9081"              /* HttpPortAnalyticsHA */
-    ]
+        "collector"         :"8089",            /* HttpPortCollector */
+        "analytics-api"     :"8090",            /* HttpPortOpserver */
+        "query-engine"      :"8091",            /* HttpPortQueryEngine */
+        "node-manager"      :"8104",            /* HttpPortAnalyticsNodemgr */
+        "alarm-generator"   :"5995",            /* HttpPortAlarmGenerator */
+        "SNMP-collector"    :"5920",            /* HttpPortSnmpCollector */
+        "topology"          :"5921"             /* HttpPortTopology */
+    }
 };
 config.proxy.config_node_ports = {
-    "api-server": ["8082"],   /* ApiServerPort */
-    "introspect": [
+    "api-server"            :"8082",            /* ApiServerPort */
+    "introspect": {
         /* All introspect ports for processes in config */
-        "8084",             /* HttpPortApiServer */
-        "8087",             /* HttpPortSchemaTransformer */
-        "8088",             /* HttpPortSvcMonitor */
-        "8096",             /* HttpPortDeviceManager */
-        "8100"              /* HttpPortConfigNodemgr */
-    ]
+        "api"               :"8084",            /* HttpPortApiServer */
+        "schema"            :"8087",            /* HttpPortSchemaTransformer */
+        "service-monitor"   :"8088",            /* HttpPortSvcMonitor */
+        "device-manager"    :"8096",            /* HttpPortDeviceManager */
+        "node-manager"      :"8100"             /* HttpPortConfigNodemgr */
+    }
 };
 
 /*****************************************************************************
