@@ -91,7 +91,7 @@ define([
             if (!contrail.checkIfExist(self.chartModel)) {
                 $(selector).html(contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART));
 
-                chartConfig = getChartConfig(selector, chartOptions);
+                chartConfig = getChartConfig(selector, chartOptions, viewConfig);
                 self.chartModel = new ZoomScatterChartModel(dataListModel, chartConfig);
                 self.zm = self.chartModel.zoomBehavior.on("zoom", getChartZoomFn(self, chartConfig));
                 if(typeof(self.zoomBySelection) == "undefined")
@@ -99,7 +99,7 @@ define([
                 renderControlPanel(self, chartConfig, chartOptions, selector);
             } else {
                 $(selector).find('.chart-container').empty();
-                chartConfig = getChartConfig(selector, chartOptions);
+                chartConfig = getChartConfig(selector, chartOptions, viewConfig);
                 self.chartModel.refresh(chartConfig);
                 self.zm = self.chartModel.zoomBehavior.on("zoom", getChartZoomFn(self, chartConfig));
                 if(typeof(self.zoomBySelection) == "undefined")
@@ -227,7 +227,7 @@ define([
         if(chartOptions['showColorFilter'] == true) {
             if($(selector).find('.zs-chart-settings').length == 0) {
                 var zsChartSettingsTmpl = contrail.getTemplate4Id('zs-chart-settings');
-                $(selector).prepend(zsChartSettingsTmpl());
+                $(chartSelector).closest('.zoom-scatter-chart-container').prepend(zsChartSettingsTmpl());
             }
 
             /*
@@ -678,7 +678,7 @@ define([
     function updateFilteredCntInHeader(chartView) {
         var cfDataSource = chartView.attributes.viewConfig.cfDataSource;
         //Update cnt in title
-        var headerElem = chartView.$el.parents('.widget-body').siblings('.widget-header')[0];
+        var headerElem = chartView.$el.find('.widget-body').siblings('.widget-header')[0];
         if(headerElem != null && cfDataSource != null) {
             var filteredCnt = cfDataSource.getFilteredRecordCnt(),
                 totalCnt = cfDataSource.getRecordCnt();
@@ -1337,14 +1337,18 @@ define([
         }
     };
 
-    function getChartConfig(selector, chartOptions) {
+    function getChartConfig(selector, chartOptions, viewConfig) {
         var margin = $.extend(true, {}, {top: 20, right: 5, bottom: 50, left: 50}, chartOptions['margin']),
             chartSelector = $(selector).find('.chart-container'),
             width = $(chartSelector).width() - 10,
+            widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
             height = ($(selector).closest('.custom-grid-stack-item').length > 0 )? 
                     $(selector).closest('.custom-grid-stack-item').height() - 25:
                         (chartOptions['height'])? chartOptions['height'] : 275;
-
+        if (widgetConfig != null) {
+          //Reduce the height of the chart to accomodate the widget header.
+            height = height - 33;
+        }
         var chartViewConfig = {
             maxCircleRadius: 10,
             maxScale: 5,
