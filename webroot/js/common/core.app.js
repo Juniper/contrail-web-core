@@ -103,9 +103,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'jquery-linedtextarea'        : coreWebDir + '/assets/jquery-linedtextarea/js/jquery-linedtextarea',
         'qe-module'                   : coreWebDir + '/reports/qe/ui/js/qe.module',
         'udd-module'                  : coreWebDir + '/reports/udd/ui/js/udd.module',
-        'chart-config'                : coreWebDir + '/js/chartconfig',
-        'legend-view'                 : coreWebDir + '/js/views/LegendView',
-        'alarms-viewconfig'           : coreWebDir + '/js/views/alarms/alarms.viewconfig'
+        'chart-config'                : coreWebDir + '/js/chartconfig'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -206,9 +204,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'analyticsnode-viewconfig'    : 'empty:',
             'confignode-viewconfig'       : 'empty:',
             'monitor-infra-viewconfig'    : 'empty:',
-            'global-controller-viewconfig': 'empty:',
-            'core-alarm-utils'            :  coreWebDir + '/js/common/core.alarms.utils',
-            'alarms-viewconfig'           : coreWebDir + '/js/views/alarms/alarms.viewconfig'
+            'global-controller-viewconfig': 'empty:'
 
         };
         //Merge common (for both prod & dev) alias
@@ -1030,7 +1026,7 @@ function changeRegion (regionName){
         if ((hashString.indexOf('config_infra') > -1)) {
             layoutHandler.setURLHashObj({'p' : 'config_gc_location', 'region' : region});
         }
-        else {
+        else if ((hashString.indexOf('mon_infra') > -1)) {
             layoutHandler.setURLHashObj({'p' : 'mon_gc_globalcontroller', 'region' : region});
         }
     }
@@ -1039,20 +1035,8 @@ function changeRegion (regionName){
     $("#nav-search").show();
     $("#alarms-popup-link").show();
     $("#main-content").show();
-    $('#gohan-config-role').hide();
 }
 
-function changeGohanRole(roleName){
-    contrail.setCookie('gohanRole', roleName.val);
-    var role = $("#gohanRole").select2('data').text;
-    contrail.setCookie('project', role);
-    var modRole = '\"'+role+'\"';
-    sessionStorage.setItem('tenant',JSON.stringify(modRole));
-    var currentHash = layoutHandler.getURLHashObj().p;
-    var defObj = $.Deferred();
-    var currMenuObj = menuHandler.getMenuObjByHash(currentHash);
-    contentHandler.loadViewFromMenuObj(currMenuObj, defObj, defObj);
-}
 /**
  * This file is also require-d during build script.
  * Run following only when its loaded in client side.
@@ -1154,10 +1138,8 @@ if (typeof document !== 'undefined' && document) {
     }
     var orchPrefix = window.location.pathname;
     //Even with URL as <https://localhost:8143>,pathname is returning as "/"
-    //Strip-off the trailing /
+    //Strip-offf the trailing /
     orchPrefix = orchPrefix.replace(/\/$/,'');
-    //Strip off "/proxy" at the end
-    orchPrefix = orchPrefix.replace(/\/proxy$/,'');
 
     (function() {
         var menuXMLLoadDefObj,layoutHandlerLoadDefObj,featurePkgs;
@@ -1233,40 +1215,7 @@ if (typeof document !== 'undefined' && document) {
                                                             width: '100px',
                                                             data: ddRegionList,
                                                             }).on("change", changeRegion);
-                            $("#regionDD").select2("val", loadUtils.getCookie('region'));
-                            if(globalObj['webServerInfo']['cgcEnabled'] == true) {
-                                $.ajax({
-                                    type: "GET",
-                                    url: '/api/tenants/config/projects'
-                                }).done(function(response,textStatus,xhr) {
-                                    var roleList = response[Object.keys(response)[0]], gohanRoleList = [], selectedKey;
-                                    var projectName = loadUtils.getCookie('project');
-                                    for(var k = 0; k < roleList.length; k++){
-                                        var roleName = roleList[k].fq_name;
-                                        var drpText = roleName[roleName.length - 1];
-                                        if(projectName === drpText){
-                                             var key = roleList[k].uuid.split('-');
-                                             selectedKey = key.join('');
-                                        }
-                                        var uuid = roleList[k].uuid.split('-');
-                                        var roleId = uuid.join('');
-                                        gohanRoleList.push({id: roleId, text: drpText});
-                                    }
-                                    $('#gohanRole').select2({dataTextField:"text",
-                                        dataValueField:"id",
-                                        width: '100px',
-                                        data: gohanRoleList
-                                        }).off("change",changeGohanRole)
-                                          .on("change",changeGohanRole);
-                                    $("#gohanRole").select2("val", selectedKey);
-                                    loadUtils.setCookie('gohanRole', selectedKey);
-                                    if(loadUtils.getCookie('region') !== 'All Regions'){
-                                     $('#gohan-config-role').hide()
-                                    }else{
-                                     $('#gohan-config-role').show()
-                                    }
-                                });
-                            }
+                            $("#regionDD").select2("val", loadUtils.getCookie('region')); 
                         }
                     webServerInfoDefObj.resolve();
 
@@ -1524,4 +1473,3 @@ if (typeof exports !== 'undefined' && module.exports) {
     exports.coreAppMap = coreAppMap;
     exports.coreAppShim = coreAppShim;
 }
-
