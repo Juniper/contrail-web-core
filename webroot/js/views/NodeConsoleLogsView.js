@@ -38,7 +38,7 @@ define([
                     self.renderQueryResult();
                 });
                 self.getLastLogTimeStampAndRenderResults(self,consoleLogsModel);
-
+                subscribeCustomTimeChangeEvent(self.model);
             });
         },
 
@@ -85,7 +85,7 @@ define([
                     lastMsgLogTime = lastTimeStamp;
                     if(lastMsgLogTime != null && lastLogLevel != null){
                         consoleLogsModel.to_time(new Date(lastMsgLogTime));
-                        consoleLogsModel.from_time(moment(new Date(lastMsgLogTime)).subtract('s', defaultTimeRange));
+                        consoleLogsModel.from_time(moment(new Date(lastMsgLogTime)).subtract(defaultTimeRange, 's'));
                         consoleLogsModel.log_level(self.getLogLevelValueFromLogLevel(lastLogLevel));
                         consoleLogsModel.time_range('-1');
                     }
@@ -187,8 +187,21 @@ define([
                                 {
                                     elementId: 'time_range', view: "FormDropdownView",
                                     viewConfig: {
-                                        path: 'time_range', dataBindValue: 'time_range', class: "col-xs-2",
-                                        elementConfig: {dataTextField: "text", dataValueField: "id", data: coreConstants.TIMERANGE_DROPDOWN_VALUES}}
+                                        path: 'time_range',
+                                        dataBindValue: 'time_range',
+                                        class: "col-xs-2",
+                                        elementConfig: {
+                                            dataTextField: "text",
+                                            dataValueField: "id",
+                                            data: coreConstants.TIMERANGE_DROPDOWN_VALUES,
+                                            change: function(e){
+                                                var from = moment().subtract(e.val,'s'),
+                                                     to = moment();
+                                                if (e.val !== '-1')
+                                                 getLogCategory(from.valueOf(), to.valueOf(), self.model);
+                                             }
+                                        }
+                                    }
                                 },
                                 {
                                     elementId: 'from_time', view: "FormDateTimePickerView",
@@ -218,36 +231,14 @@ define([
                                 {
                                     elementId: 'log_category', view: "FormDropdownView",
                                     viewConfig: {
-                                        path: 'log_category', dataBindValue: 'log_category', class: "col-xs-2",
+                                        path: 'log_category', 
+                                        dataBindValue: 'log_category', 
+                                        class: "col-xs-2",
+                                        dataBindOptionList : "logCategorySource()",
                                         elementConfig: {
                                             dataTextField: "text",
                                             dataValueField: "value",
-                                            defaultValueId: 0,
-                                            dataSource: {
-                                                type:'remote',
-                                                url: monitorInfraConstants.
-                                                        monitorInfraUrls
-                                                            ['MSGTABLE_CATEGORY'],
-                                                async:true,
-                                                parse:function(response){
-                                                    var ret = [{text:'All',value:'All'}];
-                                                    var catList = [];
-                                                    if (nodeType == monitorInfraConstants.CONTROL_NODE){
-                                                        catList = ifNull(response[coreConstants.UVEModuleIds['CONTROLNODE']], []);
-                                                    } else if (nodeType == monitorInfraConstants.COMPUTE_NODE) {
-                                                        catList = ifNull(response[coreConstants.UVEModuleIds['VROUTER_AGENT']], []);
-                                                    } else if (nodeType == monitorInfraConstants.ANALYTICS_NODE) {
-                                                        catList = ifNull(response[coreConstants.UVEModuleIds['COLLECTOR']], []);
-                                                    } else if (nodeType == monitorInfraConstants.CONFIG_NODE) {
-                                                        catList = ifNull(response[coreConstants.UVEModuleIds['APISERVER']], []);
-                                                    }
-                                                    $.each(catList, function (key, value) {
-                                                        if(key != '')
-                                                            ret.push({text:value, value:value});
-                                                    });
-                                                    return ret;
-                                                }
-                                            }
+                                            defaultValueId: 0
                                         }
                                     }
                                 },
@@ -327,66 +318,55 @@ define([
         var msgType = model.log_type();
         var hostname = model.hostname();
         var nodeType = model.node_type();
+        var logCateg = model.log_category();
+        var whereClauseStr = '';
+
         if(msgType == 'any'){
             msgType = '';
+        }
+        if (logCateg === 'All') {
+            logCateg = '';
         }
         if(keywords != '') {
             filters += ",keywords:" + keywords;
         }
         if(nodeType == monitorInfraConstants.CONTROL_NODE) {
-            if(msgType != ''){
-                model.where ('(ModuleId=' + coreConstants.UVEModuleIds['CONTROLNODE']
-                    + ' AND Source='+ hostname +' AND Messagetype='+ msgType +')');
-            } else {
-                model.where( '(ModuleId=' + coreConstants.UVEModuleIds['CONTROLNODE']
-                    + ' AND Source='+ hostname +')' );
-            }
+            whereClauseStr = '(ModuleId=' +coreConstants.UVEModuleIds['CONTROLNODE']+' AND Source='+ hostname+
+                ((msgType !== '') ? ' AND Messagetype='+msgType : '')+
+                ((logCateg !== '') ? ' AND Category='+logCateg : '' )+')';
+            model.where(whereClauseStr);
         } else if (nodeType == monitorInfraConstants.COMPUTE_NODE) {
             var moduleId = coreConstants.UVEModuleIds['VROUTER_AGENT'];
             var msgType = model.log_type();
             var hostname = model.hostname();
-            //TODO check if the below is needed
-//            if(obj['vrouterModuleId'] != null && obj['vrouterModuleId'] != ''){
-//                moduleId = obj['vrouterModuleId'];
-//            }
-            if(msgType != ''){
-                model.where('(ModuleId=' + moduleId + ' AND Source='+ hostname
-                        +' AND Messagetype='+ msgType +')' );
-            } else {
-                model.where( '(ModuleId=' + moduleId + ' AND Source='+ hostname +')' );
-            }
+
+            whereClauseStr = '(ModuleId=' +moduleId+' AND Source='+ hostname+
+                ((msgType !== '') ? ' AND Messagetype='+msgType : '')+
+                ((logCateg !== '') ? ' AND Category='+logCateg : '' )+')';
+            model.where(whereClauseStr);
         } else if (nodeType == monitorInfraConstants.CONFIG_NODE) {
-            if(msgType != ''){
-                model.where( '(ModuleId=' + coreConstants.UVEModuleIds['SCHEMA']
-                    + ' AND Source='+hostname+' AND Messagetype='+ msgType
-                    +') OR (ModuleId=' + coreConstants.UVEModuleIds['APISERVER']
-                    + ' AND Source='+hostname+' AND Messagetype='+ msgType
-                    +') OR (ModuleId=' + coreConstants.UVEModuleIds['SERVICE_MONITOR']
-                    + ' AND Source='+hostname+' AND Messagetype='+ msgType
-                    +') OR (ModuleId=' + coreConstants.UVEModuleIds['DISCOVERY_SERVICE']
-                    + ' AND Source='+hostname+' AND Messagetype='+ msgType +')');
-            } else {
-                model.where( '(ModuleId=' + coreConstants.UVEModuleIds['SCHEMA']
-                    + ' AND Source='+hostname+') OR (ModuleId='
-                    + coreConstants.UVEModuleIds['APISERVER']
-                    + ' AND Source='+hostname+') OR (ModuleId='
-                    + coreConstants.UVEModuleIds['SERVICE_MONITOR']
-                    + ' AND Source='+hostname+') OR (ModuleId='
-                    + coreConstants.UVEModuleIds['DISCOVERY_SERVICE']
-                    + ' AND Source='+hostname+')' );
-            }
+            whereClauseStr = '(ModuleId='+coreConstants.UVEModuleIds['SCHEMA']+
+                ' AND Source='+hostname+ ((msgType !== '') ? ' AND Messagetype='+msgType : '')+
+                ((logCateg !== '') ? ' AND Category='+logCateg : '' )+') OR '+
+                ' (ModuleId='+coreConstants.UVEModuleIds['APISERVER']+
+                'AND Source='+hostname+ ((msgType !== '') ? ' AND Messagetype='+msgType : '')+
+                ((logCateg !== '') ? ' AND Category='+logCateg : '' )+') OR '+
+                '(ModuleId='+coreConstants.UVEModuleIds['SERVICE_MONITOR']+
+                ' AND Source='+hostname+ ((msgType !== '') ? ' AND Messagetype='+msgType : '')+
+                ((logCateg !== '') ? ' AND Category='+logCateg : '' )+') OR '+
+                '(ModuleId='+coreConstants.UVEModuleIds['DISCOVERY_SERVICE']+
+                ' AND Source='+hostname+ ((msgType !== '') ? ' AND Messagetype='+msgType : '')+
+                ((logCateg !== '') ? ' AND Category='+logCateg : '' )+')';
+
+            model.where(whereClauseStr);
         } else if (nodeType == monitorInfraConstants.ANALYTICS_NODE) {
-            if(msgType != ''){
-                model.where( '(ModuleId=' + coreConstants.UVEModuleIds['OPSERVER']
-                    + ' AND Source='+hostname+' AND Messagetype='+ msgType
-                    +') OR (ModuleId=' + coreConstants.UVEModuleIds['COLLECTOR']
-                    + ' AND Source='+hostname+' AND Messagetype='+ msgType +')' );
-            } else {
-                model.where( '(ModuleId=' + coreConstants.UVEModuleIds['OPSERVER']
-                    + ' AND Source='+hostname+') OR (ModuleId='
-                    + coreConstants.UVEModuleIds['COLLECTOR']
-                    + ' AND Source='+hostname+')');
-            }
+            whereClauseStr = '(ModuleId='+coreConstants.UVEModuleIds['OPSERVER']+
+                ' AND Source='+hostname+((msgType !== '') ? ' AND Messagetype='+msgType : '')+
+                ((logCateg !== '') ? ' AND Category='+logCateg : '' )+') OR '+
+                '(ModuleId=' + coreConstants.UVEModuleIds['COLLECTOR']+' AND Source='+hostname+
+                ((msgType !== '') ? ' AND Messagetype='+msgType : '')+
+                ((logCateg !== '') ? ' AND Category='+logCateg : '' )+')';
+            model.where(whereClauseStr);
         }
         model.filters(filters);
 
@@ -422,6 +402,45 @@ define([
                 }
             }
         }
+    }
+
+    function subscribeCustomTimeChangeEvent(model){
+        var from, to;
+        model.__kb.view_model.model().on('change:from_time', function(m, newValue) {
+            from = m.attributes.from_time_utc;
+            to = m.attributes.to_time_utc;
+            if (from < to)
+                getLogCategory(from, to, model);
+        });
+        model.__kb.view_model.model().on('change:to_time', function(m, newValue) {
+            from = m.attributes.from_time_utc;
+            to = m.attributes.to_time_utc;
+            if (from < to)
+                getLogCategory(from, to, model);
+        });
+    }
+
+    function getLogCategory(from, to, model) {
+        var postData = {fromTimeUTC: from, toTimeUTC: to,
+                table_name: "StatTable.FieldNames.fields", 
+                select: ["name", "fields.value"], 
+                where: [[{name: "name", value: "MessageTable:Category", op: 7 }]]},
+            ajaxConfig = {
+                url: "/api/qe/table/column/values",
+                type: "POST",
+                data: JSON.stringify(postData)
+            };
+
+        contrail.ajaxHandler(ajaxConfig, null, function (response) {
+            var ret = [{text:'All',value:'All'}];
+            $.each(response['data'], function (key, value) {
+                if(value['fields.value'])
+                    ret.push({text:value['fields.value'], value:value['fields.value']});
+            });
+            model.logCategorySource(ret);
+        }, function (error) {
+            console.log("Failed to get data: ", error);
+        });
     }
 
     return NodeConsoleLogsView;

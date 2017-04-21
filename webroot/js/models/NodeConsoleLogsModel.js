@@ -27,7 +27,8 @@ define([
                 log_level: "5",
                 limit: "50",
                 keywords: "",
-                where:""
+                where:"",
+                logCategorySource : []
             });
 
             modelData = $.extend(true, {}, defaultConfig, modelData);
