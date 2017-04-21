@@ -1031,24 +1031,8 @@ function changeRegion (regionName){
     $("#nav-search").show();
     $("#alarms-popup-link").show();
     $("#main-content").show();
-    $('#gohan-config-role').hide();
 }
-function clickNodesDetails (nodesHash,region){
-    contrail.setCookie('region', region);
-    $("#regionDD").select2("val", loadUtils.getCookie('region'));
-    layoutHandler.setURLHashObj({'p' : nodesHash, 'region' : region});
-}
-function changeGohanRole(roleName){
-    contrail.setCookie('gohanRole', roleName.val);
-    var role = $("#gohanRole").select2('data').text;
-    contrail.setCookie('project', role);
-    var modRole = '\"'+role+'\"';
-    sessionStorage.setItem('tenant',JSON.stringify(modRole));
-    var currentHash = layoutHandler.getURLHashObj().p;
-    var defObj = $.Deferred();
-    var currMenuObj = menuHandler.getMenuObjByHash(currentHash);
-    contentHandler.loadViewFromMenuObj(currMenuObj, defObj, defObj);
-}
+
 /**
  * This file is also require-d during build script.
  * Run following only when its loaded in client side.
@@ -1230,39 +1214,6 @@ if (typeof document !== 'undefined' && document) {
                                                             data: ddRegionList,
                                                             }).on("change", changeRegion);
                             $("#regionDD").select2("val", loadUtils.getCookie('region'));
-                            if(globalObj['webServerInfo']['cgcEnabled'] == true) {
-                                $.ajax({
-                                    type: "GET",
-                                    url: '/api/tenants/config/projects'
-                                }).done(function(response,textStatus,xhr) {
-                                    var roleList = response[Object.keys(response)[0]], gohanRoleList = [], selectedKey;
-                                    var projectName = loadUtils.getCookie('project');
-                                    for(var k = 0; k < roleList.length; k++){
-                                        var roleName = roleList[k].fq_name;
-                                        var drpText = roleName[roleName.length - 1];
-                                        if(projectName === drpText){
-                                             var key = roleList[k].uuid.split('-');
-                                             selectedKey = key.join('');
-                                        }
-                                        var uuid = roleList[k].uuid.split('-');
-                                        var roleId = uuid.join('');
-                                        gohanRoleList.push({id: roleId, text: drpText});
-                                    }
-                                    $('#gohanRole').select2({dataTextField:"text",
-                                        dataValueField:"id",
-                                        width: '100px',
-                                        data: gohanRoleList
-                                        }).off("change",changeGohanRole)
-                                          .on("change",changeGohanRole);
-                                    $("#gohanRole").select2("val", selectedKey);
-                                    loadUtils.setCookie('gohanRole', selectedKey);
-                                    if(loadUtils.getCookie('region') !== 'All Regions'){
-                                     $('#gohan-config-role').hide()
-                                    }else{
-                                     $('#gohan-config-role').show()
-                                    }
-                                });
-                            }
                         }
                     webServerInfoDefObj.resolve();
 
