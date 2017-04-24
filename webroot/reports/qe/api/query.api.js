@@ -267,6 +267,16 @@ function getQueryOptions(queryReqObj) {
     return queryOptions;
 }
 
+function getQueryDataByCacheOrServer (req, queryJSON, appData, callback)
+{
+    var isCachedData = req.query['takeCachedData'];
+    if ('true' == isCachedData) {
+        qUtils.getQueryDataByCache(queryJSON, appData, callback);
+    } else {
+        opApiServer.apiPost(global.RUN_QUERY_URL, queryJSON, appData, callback);
+    }
+}
+
 function executeQuery(req, queryOptions, appData, isGetQ, callback) {
     var queryJSON = queryOptions.queryJSON,
         async = queryOptions.async,
@@ -275,7 +285,7 @@ function executeQuery(req, queryOptions, appData, isGetQ, callback) {
     logutils.logger.debug("Query sent to Opserver at " + new Date() + " " +
                           JSON.stringify(queryJSON));
     queryOptions.startTime = new Date().getTime();
-    opApiServer.apiPost(global.RUN_QUERY_URL, queryJSON, appData,
+    getQueryDataByCacheOrServer(req, queryJSON, appData,
         function (error, jsonData) {
             if (error) {
                 logutils.logger.error("Error Run Query: " + error.stack);
