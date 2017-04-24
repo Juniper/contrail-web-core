@@ -180,42 +180,43 @@ define([
 
     var initMouseEvents = function(graphSelectorElement, tooltipConfig, graphView) {
         cowu.bindPopoverInTopology(tooltipConfig, graphView);
-        $(graphSelectorElement).find("text").on('mousedown touchstart', function (e) {
+        var dragEvents = "mousedown touchstart pointerdown";
+        $(graphSelectorElement).find("text").on(dragEvents, function (e) {
             e.stopImmediatePropagation();
             if($(this).closest('.no-drag-element').length == 0) {
                 graphView.pointerdown(e);
             }
         });
 
-        $(graphSelectorElement).find("image").on('mousedown touchstart', function (e) {
+        $(graphSelectorElement).find("image").on(dragEvents, function (e) {
             e.stopImmediatePropagation();
             if($(this).closest('.no-drag-element').length == 0) {
                 graphView.pointerdown(e);
             }
         });
 
-        $(graphSelectorElement).find("polygon").on('mousedown touchstart', function (e) {
+        $(graphSelectorElement).find("polygon").on(dragEvents, function (e) {
             e.stopImmediatePropagation();
             if($(this).closest('.no-drag-element').length == 0) {
                 graphView.pointerdown(e);
             }
         });
 
-        $(graphSelectorElement).find("path").on('mousedown touchstart', function (e) {
+        $(graphSelectorElement).find("path").on(dragEvents, function (e) {
             e.stopImmediatePropagation();
             if($(this).closest('.no-drag-element').length == 0) {
                 graphView.pointerdown(e);
             }
         });
 
-        $(graphSelectorElement).find("rect").on('mousedown touchstart', function (e) {
+        $(graphSelectorElement).find("rect").on(dragEvents, function (e) {
             e.stopImmediatePropagation();
             if($(this).closest('.no-drag-element').length == 0) {
                 graphView.pointerdown(e);
             }
         });
 
-        $(graphSelectorElement).find(".font-element").on('mousedown touchstart', function (e) {
+        $(graphSelectorElement).find(".font-element").on(dragEvents, function (e) {
             e.stopImmediatePropagation();
             if($(this).closest('.no-drag-element').length == 0) {
                 graphView.pointerdown(e);
