@@ -1766,7 +1766,7 @@ define([
             if (parsedData.length > 0) {
                 parsedData = _.indexBy(parsedData, 'key');
             }
-            var lastTimeStamp = _.keys(buckets)[_.keys(buckets).length - 1];
+            var lastTimeStamp = _.max(_.keys(buckets));
             for(var i  in buckets) {
                 var timestampExtent = buckets[i]['timestampExtent'],
                     failedBarCnt = 0, total = 0;
@@ -2215,6 +2215,7 @@ define([
             for (var i = 0; i < config.length; i++) {
                 var statsConfig = config[i];
                 var noSanitize = cowu.getValueByJsonPath(statsConfig,'no_sanitize',false);
+                var queryType = cowu.getValueByJsonPath(statsConfig,'type','Aggregate');
                 var postData = {
                     "autoSort": true,
                     "async": false,
@@ -2225,11 +2226,13 @@ define([
                       "from_time_utc": timeRange[0],
                       "to_time": timeRange[1],
                       "to_time_utc": timeRange[1],
-                      "time_granularity_unit": "secs",
-                      "time_granularity": 150,
                       "limit": "150000"
                     }
                 };
+                if (queryType.toUpperCase() != 'NONAGGREGATE') {
+                    postData['formModelAttrs']['time_granularity_unit'] = "secs";
+                    postData['formModelAttrs']['time_granularity'] = 150;
+                } 
                 var remoteConfig ;
                 if (statsConfig['type'] != null && statsConfig['type'] == "non-stats-query") {
                     if(statsConfig['remoteConfig']) {

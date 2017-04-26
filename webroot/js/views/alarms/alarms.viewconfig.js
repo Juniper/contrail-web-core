@@ -176,19 +176,19 @@ define(['underscore',
                             barWidth: 6,
                             onClickBar : true,
                             showLegend: false,
-                            yAxisLabel: "Current Alarms",
+                            yAxisLabel: "Active Alarms",
                             showControls: false,
                             groupBy: 'severity',
                             insertEmptyBuckets:false,
                             yAxisFormatter: d3.format('d'),
-                            title: 'Current Alarms',
+                            title: 'Active Alarms',
 //                            subTitle:"Severity",
                             stripLastBucket: false,
                             showXMinMax: false,
                             showYMinMax: false,
                             useCustomTimeFormat: true,
 //                            hideTicks:true,
-                            ticks:1,
+//                            ticks:1,
                             applySettings: false,
                             colors: {
                                 '0': '#dc6660',//Critical Red
@@ -218,15 +218,21 @@ define(['underscore',
             "alarms-historical-chart" : function() {
                 return {
                     modelCfg: {
+                       modelId: 'alarms-table-stats-model',
                        source:"STATTABLE",
+//                       config: {
+//                               table_name: 'StatTable.AlarmgenUpdate.alarm_stats',
+//                               select: 'T=,SUM(alarm_stats.set_count),SUM(alarm_stats.reset_count)'
+//                           },
                        config: {
-                               table_name: 'StatTable.AlarmgenUpdate.alarm_stats',
-                               select: 'T=,SUM(alarm_stats.set_count),SUM(alarm_stats.reset_count)'
-                           },
+                           table_name: 'StatTable.AlarmgenStatus.counters.table_stats',
+                           select: 'T=, SUM(counters.table_stats.set_count), SUM(counters.table_stats.reset_count), MAX(counters.table_stats.active_count)',
+                           time_granularity: 60
+                       }
                    },
                    viewCfg: {
                      elementId : 'alarms-historical-line-chart',
-                     view: "StackedAreaChartView",
+                     view: "StackedBarChartWithFocusView",
                      viewConfig: {
                          parseFn : function(data, chartOptions) {
                                var data = cowu.parsePercentilesDataForStack(data,chartOptions);
@@ -235,9 +241,11 @@ define(['underscore',
                          title: 'Historical Alarms',
                          chartOptions: {
                              colors: [
-                                 '#dc6660',
-                                 '#7dc48a'
+                                 cowc.SINGLE_NODE_COLOR,
+                                 cowc.FAILURE_COLOR,
+                                 '#7dc48a',//Green
                              ],
+//                             colors:cowc.THREE_NODE_COLOR,
                              showLegend: false,
                              listenToHistory:true,
                              applySettings: false,
@@ -248,10 +256,12 @@ define(['underscore',
                              xAxisLabel: '',
                              yAxisLabel: 'Alarm Events',
                              groupBy: 'Source',
-                             grouped: true,
-                             yLabels: ['Cleared','Added'],
+//                             grouped: true,
+                             yLabels: ['Added','Cleared','Active'],
+//                             yLabels: ['Active'],
                              yField:'plotValue',
-                             yFields: ['SUM(alarm_stats.reset_count)', 'SUM(alarm_stats.set_count)']
+//                             yFields: ['SUM(alarm_stats.reset_count)', 'SUM(alarm_stats.set_count)']
+                             yFields: ['SUM(counters.table_stats.set_count)','SUM(counters.table_stats.reset_count)','MAX(counters.table_stats.active_count)']
                          }
                      }
                    },
@@ -264,6 +274,7 @@ define(['underscore',
                    }
                 }
             },
+            //Event logs with object logs query
             'alarms-object-logs': function () {
                 if(self.objectLogsModel == null) {
                     self.populateObjectLogsModel();
@@ -308,6 +319,77 @@ define(['underscore',
                     }
                 }
             },
+            //Event drops chart with stats data
+            'alarms-event-drops': function () {
+                return {
+//                    modelCfg: {
+//                        source:"STATTABLE",
+//                        config: {
+//                            type: 'NonAggregate',
+//                            table_name: 'StatTable.AlarmgenUpdate.alarm_stats',
+//                            select: 'T, Source, alarm_stats.__key, alarm_stats.set_count, alarm_stats.reset_count, table'
+//                        }
+//                    },
+                    modelCfg: {
+                        modelId: 'alarms-table-stats-model-non-aggregate',
+                        source:"STATTABLE",
+                        config: {
+                            type: 'NonAggregate',
+                            table_name: 'StatTable.AlarmgenStatus.counters.table_stats',
+                            select: 'T, Source, counters.table_stats.table_name, counters.table_stats.alarm_name, counters.table_stats.set_count, counters.table_stats.reset_count, counters.table_stats.active_count',
+                            parser: function(response) {
+                                var data = response['data'];
+                                data = _.filter(data, function(d){
+                                    //include only with set or reset count
+                                    if(d['counters.table_stats.set_count'] > 0 || d['counters.table_stats.reset_count'] > 0){
+                                        if(d['counters.table_stats.reset_count'] > 0) {
+                                            d['color'] = '#7dc48a';//Green
+                                        }
+                                        if(d['counters.table_stats.set_count'] > 0) {
+                                            d['color'] = cowc.FAILURE_COLOR//Major Red
+                                        }
+                                        return d;
+                                    }
+                                });
+                                return data;
+                            }
+                        }
+                    },
+                    viewCfg: {
+                        view : "eventDropsView",
+                        groupBy: 'counters.table_stats.table_name',
+                        viewConfig: {
+                            groupBy: 'counters.table_stats.table_name',
+                            timeField:'T',
+                            title: 'Events',
+                            target: 'alarms-event-log-content',//div where we want to show the tooltip content
+                            chartOptions: {
+                                listenToHistory:true,
+                                tooltipFn: eventDropsTooltipContent,
+                                detailsFn: eventDropsDetailsContent,
+                                isDetailsFromRemoteCall:true
+                            }
+                        },
+                        tooltip:{
+                            tooltipColumns: [
+                                { field:'T',
+                                    label: 'Time',
+                                    formatter: function(d) {
+                                      return d3.time.format("%d/%m/%y %H:%M:%S")(new Date(d/1000))
+                                    }
+                                  }
+                            ]
+                        }
+                    },
+                    itemAttr: {
+                        title: "Event Logs",
+                        width: 16,
+                        height: 31,
+                        x:0,
+                        y:19
+                    }
+                }
+            },
             "alarms-active-alarm-chart" : function() {
                 if (self.alarmsListModel == null) {
                     self.populateAlarmModels();
@@ -323,7 +405,6 @@ define(['underscore',
                                 viewConfig: {
                                     header: {
                                         title: 'Alarms',
-                                        // iconClass: "icon-search"
                                     },
                                     controls: {
                                         top: {
@@ -459,9 +540,16 @@ define(['underscore',
             }
             primaryDS.updateData(primaryData);
         };
-        function getModelConfigForObjectLogs (self) {
+        function getModelConfigForObjectLogs (objectList) {
             var queryConfig = [];
-            $.each(cowc.OBJECT_TABLE_LIST, function(i,tableName) {
+            if(objectList != null && objectList.length > 0) {
+                objectList = _.map(objectList,function(d){
+                    return (cowc.OBJECT_TYPE_MAP[d] != null)? cowc.OBJECT_TYPE_MAP[d]: d;
+                });
+            } else {
+                objectList = cowc.OBJECT_TABLE_LIST;
+            }
+            $.each(objectList, function(i,tableName) {
                 var config = {
                         table_name: tableName,
                         table_type: 'OBJECT',
@@ -587,7 +675,44 @@ define(['underscore',
               tooltipData: getAlarmInfoFromJson(xmlMessageJSON)
           });
         }
-
+        function eventDropsTooltipContent(d) {
+//            var xmlMessageJSON = getXMLJson(d);
+//            var xmlMessage = '<pre class="pre-format-JSON2HTML">' + contrail.formatJsonObject(xmlMessageJSON) + '</pre>';
+            var date = d3.time.format("%d/%m/%y %H:%M:%S")(new Date(d.T / 1000));
+            var title = d.Source + ' (' + d['counters.table_stats.table_name'] + ')';
+            var tooltipData = [];
+            var toolTipTemplate = contrail.getTemplate4Id('alarms-history-eventdrop-tooltip-template');
+            return toolTipTemplate({
+              subTitle: date,
+              title:title,
+              time:date,
+              tooltipData: getAlarmTooltipData(d)
+          });
+        }
+        function getAlarmTooltipData (d) {
+            return [
+                {
+                    label: 'Source',
+                    value: d.Source
+                },
+                {
+                    label: 'Table',
+                    value: d['counters.table_stats.table_name']
+                },
+                {
+                    label: 'Added',
+                    value: d['counters.table_stats.set_count']
+                },
+                {
+                    label: 'Cleared',
+                    value: d['counters.table_stats.reset_count']
+                }
+//                {
+//                    label: 'Active',
+//                    value: d['counters.table_stats.active_count']
+//                }
+            ]
+        }
         function objectLogsDetailsContent(d) {
             var xmlMessageJSON = getXMLJson(d);
             var xmlMessage = '<pre class="pre-format-JSON2HTML">' + contrail.formatJsonObject(xmlMessageJSON,5) + '</pre>';
@@ -606,6 +731,44 @@ define(['underscore',
                 tooltipData: getAlarmInfoFromJson(xmlMessageJSON),
                 xmlMessage:xmlMessage});
             return tooltipContent;
+        }
+        function eventDropsDetailsContent(d,deferredObj) {
+            //make the call to fetch the object logs for a duration a min range
+            var selectedTime = d.T/1000;
+            var timeRange = [selectedTime - 30 * 1000, selectedTime + 30 * 1000];
+            var eventsListModel = new ContrailListModel(cowu.getStatsModelConfig(getModelConfigForObjectLogs([d['counters.table_stats.table_name']]),timeRange));
+            eventsListModel.onAllRequestsComplete.subscribe(function(){
+                var objectData = eventsListModel.getItems();
+                var tooltipContent = '';
+                tooltipContent += '<div class="event-drops popover-remove">' +
+                    '<i class="fa fa-remove pull-right popover-remove-icon"></i>'+
+                '</div>';
+                var dataTmpl= contrail.getTemplate4Id('alarms-tooltip-data-template');
+                if(objectData == null || objectData.length == 0) {
+                    tooltipContent += dataTmpl({
+                        subTitle: d3.time.format("%d/%m/%y %H:%M:%S")(new Date(selectedTime)),
+                        title:'Event Log',
+                        time: d3.time.format("%d/%m/%y %H:%M:%S")(new Date(selectedTime)),
+                        tooltipData: getAlarmInfoFromJson(xmlMessageJSON),
+                        xmlMessage:"No Data Found"});
+                    deferredObj.resolve(tooltipContent);
+                    return;
+                } else {
+                    objectData = objectData[0];
+                }
+                var xmlMessageJSON = getXMLJson(objectData);
+                var xmlMessage = '<pre class="pre-format-JSON2HTML">' + contrail.formatJsonObject(xmlMessageJSON,5) + '</pre>';
+                //Get tooltip contents
+                var date = d3.time.format("%d/%m/%y %H:%M:%S")(new Date(objectData.MessageTS / 1000));
+                var title = objectData.ObjectId;
+                tooltipContent += dataTmpl({
+                    subTitle: date,
+                    title:title,
+                    time:date,
+                    tooltipData: getAlarmInfoFromJson(xmlMessageJSON),
+                    xmlMessage:xmlMessage});
+                deferredObj.resolve(tooltipContent);
+            });
         }
     };
     return (new AlarmsViewConfig()).viewConfig;

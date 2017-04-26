@@ -33,9 +33,34 @@ define([
                 self = this, deferredObj = $.Deferred(),
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
                 resizeId;
+            var chartOptions = getValueByJsonPath(viewConfig, 'chartOptions', {});
+            var listenToHistory = getValueByJsonPath(chartOptions,'listenToHistory',false);
+
             //settings
             if (cowu.getValueByJsonPath(viewConfig, 'chartOptions;applySettings', true)) {
                 cowu.updateSettingsWithCookie(viewConfig);
+            }
+            if(listenToHistory) {
+                var postData, remoteConfig;
+                if (self.model === null && viewConfig['modelConfig'] != null) {
+                    remoteConfig = viewConfig['modelConfig'];
+                    postData = JSON.parse(getValueByJsonPath(pRemoteConfig,'remote;ajaxConfig;data'));
+                } else {
+                  //get the models ajax config and then modify the timeextent
+                    remoteConfig = self.model.getRemoteConfig();
+                    var pRemoteConfig = getValueByJsonPath(remoteConfig,'remote');
+                    postData = JSON.parse(getValueByJsonPath(pRemoteConfig,'ajaxConfig;data'));
+                }
+                chUtils.listenToHistory(function(event) {
+                  //create a new model and then bind to self.
+                    var timeExtent = getValueByJsonPath(event,'state;timeExtent',null);
+                    if(timeExtent != null && timeExtent.length > 0) {
+                        self.model = cowu.buildNewModelForTimeRange (self.model,viewConfig,timeExtent);
+                        self.model.onAllRequestsComplete.subscribe(function () {
+                            self.renderChart($(self.$el), viewConfig, self.model);
+                        });
+                    }
+                });
             }
             cfDataSource = viewConfig.cfDataSource;
             if (self.model === null && viewConfig['modelConfig'] != null) {
@@ -76,7 +101,7 @@ define([
                 });
                 var prevDimensions = chUtils.getDimensionsObj(self.$el);
 
-                self.resizeFunction = _.debounce(function (e) {
+                self.resizeFunction = _.debounce(function (e, refreshSource) {
                    $('.stack-bar-chart-tooltip').remove();
                     if(!chUtils.isReRenderRequired({
                         prevDimensions:prevDimensions,
@@ -84,15 +109,15 @@ define([
                         return;
                     }
                     prevDimensions = chUtils.getDimensionsObj(self.$el);
-                    self.renderChart($(self.$el), viewConfig, self.model);
+                    self.renderChart($(self.$el), viewConfig, self.model, refreshSource);
                 },cowc.THROTTLE_RESIZE_EVENT_TIME);
 
-                window.addEventListener('resize',self.resizeFunction);
+//                window.addEventListener('resize',function(e){self.resizeFunction(e,'windowResize')});
                 $(self.$el).parents('.custom-grid-stack-item').on('resize',self.resizeFunction);
             }
         },
 
-        renderChart: function (selector, viewConfig, chartViewModel) {
+        renderChart: function (selector, viewConfig, chartViewModel, refreshSource) {
             if (!($(selector).is(':visible'))) {
                 return;
             }
@@ -459,7 +484,9 @@ define([
                 if (brushRangeLimit) {
                     brush2Main.extent(chUtils.getTimeExtentForDuration(brushRangeLimit));
                     main.select('.brush').call(brush2Main);
-                    brushed2Main();
+//                    if(refreshSource != 'windowResize') {
+                        brushed2Main();
+//                    }
                 }
             }
             if (self.stackedData != null && self.stackedData.length > 0) {

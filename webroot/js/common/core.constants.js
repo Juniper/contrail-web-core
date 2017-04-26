@@ -2067,6 +2067,15 @@ define([
             'ObjectBgpRouter',
             'ObjectDatabaseInfo'
         ];
+
+        this.OBJECT_TYPE_MAP = {
+            'vrouter'           : 'ObjectVRouter',
+            'control-node'      : 'ObjectBgpRouter',
+            'analytics-node'    : 'ObjectCollectorInfo',
+            'database-node'     : 'ObjectDatabaseInfo',
+            'config-node'       : 'ObjectConfigNode',
+            'virtual-network'   : 'ObjectVNTable',
+        }
     };
     //Export to global scope
     cowc = new CoreConstants();

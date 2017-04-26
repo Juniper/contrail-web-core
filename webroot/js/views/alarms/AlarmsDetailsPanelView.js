@@ -41,7 +41,7 @@ define([
                             {
                                 elementId: 'current-alarms-tab',
                                 view: "NotificationTextView",
-                                viewConfig: $.extend(viewConfig,{title: 'Current Alarms'}),
+                                viewConfig: $.extend(viewConfig,{title: 'Active Alarms'}),
                                 tabConfig: {
                                 }
                             }
