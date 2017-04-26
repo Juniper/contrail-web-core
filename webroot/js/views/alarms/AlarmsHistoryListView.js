@@ -37,7 +37,7 @@ define(
                                                                 {id:'alarms-historical-chart'},
                                                                 {id:'alarms-notification-view'},
                                                                 {id:'alarms-active-alarm-filter-chart'},
-                                                                {id:'alarms-object-logs'},
+                                                                {id:'alarms-event-drops'},
                                                             ]
                                                          }
                                                      }

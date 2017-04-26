@@ -2669,8 +2669,8 @@
 </script>
 <script type="text/x-handlebars-template" id="alarms-eventdrop-tooltip-template">
  <div class="nvtooltip xy-tooltip nv-pointer-events-none popover popover-tooltip popover-tooltip-no-icon ">
- <!-- <div class="event-drops popover-remove"> 
-     <i class="fa fa-remove pull-right popover-remove-icon"></i> 
+ <!-- <div class="event-drops popover-remove">
+     <i class="fa fa-remove pull-right popover-remove-icon"></i>
  </div> -->
     <div class="popover-title no-background">
         <p class="heading">{{{this.title}}}</p>
@@ -2701,6 +2701,31 @@
         </div>
     </div>
 </div>
+</script>
+<script type="text/x-handlebars-template" id="alarms-history-eventdrop-tooltip-template">
+    <div class="nvtooltip xy-tooltip nv-pointer-events-none popover popover-tooltip popover-tooltip-no-icon ">
+    <!-- <div class="event-drops popover-remove">
+        <i class="fa fa-remove pull-right popover-remove-icon"></i>
+    </div> -->
+       <div class="popover-title no-background">
+           <p class="heading">{{{this.title}}}</p>
+           <p class="sub-heading">{{{this.subTitle}}}</p>
+       </div>
+       <div class="popover-content">
+           <div class="popover-tooltip-icon font-element">
+               <i class="false"></i>
+           </div>
+           <div class="popover-info ">
+              <div class="tooltip-data">
+                  {{#each this.tooltipData}}
+                       <div class="popover-tooltip-row">
+                           <span class="key">{{{this.label}}}</span>
+                           <span class="value">{{{this.value}}}</span>
+                       </div>
+                   {{/each}}
+             </div>
+       </div>
+    </div>
 </script>
 <script type="text/x-handlebars-template" id="alarms-tooltip-data-template">
 <div class="alarms-details-panel">

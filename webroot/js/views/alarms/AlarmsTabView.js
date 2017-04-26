@@ -47,7 +47,7 @@ define([
             tabs: [
                    {
                        elementId: 'current-alarms-tab',
-                       title: 'Current',
+                       title: 'Active',
                        view: "CurrentAlarmsListView",
                        viewPathPrefix: cowc.ALARMS_VIEWPATH_PREFIX,
                        viewConfig: viewConfig,
