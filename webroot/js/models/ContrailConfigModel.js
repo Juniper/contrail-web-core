@@ -106,8 +106,9 @@ define([
                         cfgObj["perms2"]["owner_access"]);
                 cfgObj["perms2"]["global_access"] = self.getConsolidatedNumber(
                         cfgObj["perms2"]["global_access"]);
-                cfgObj["perms2"]["share"] = self.getShare(cfgObj)
+                cfgObj["perms2"]["share"] = self.getShare(cfgObj);
                 delete cfgObj.share_list;
+                delete cfgObj.owner_visible;
             }
         },
 
