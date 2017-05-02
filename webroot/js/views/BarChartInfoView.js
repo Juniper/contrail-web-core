@@ -26,6 +26,9 @@ define([
             var dataCF = crossfilter(data);
             var chartInfoTmpl = contrail.getTemplate4Id(cowc.TMPL_CHARTINFO);
             var totalCntMap = {};
+            infoChartCfg.forEach(function(obj,idx) {
+                totalCntMap[obj['field']] = 0;
+            });
             //Sum-up each field across all records
             $.each(data,function(idx,obj) {
                 for(var i=0;i<infoChartCfg.length;i++) {
