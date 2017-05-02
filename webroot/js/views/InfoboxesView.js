@@ -39,23 +39,30 @@ define([
             });
         },
 
-        add: function(cfg) {
+        add: function(cfg,positionCfg) {
             var self = this;
             self.loadedInfoboxes.push(cfg);
+            var prepend = _.result(positionCfg,'prepend',false);
             var infoboxTemplate = contrail.getTemplate4Id(cowc.TMPL_INFOBOX);
-            self.$el.find('.infobox-container:first').append(infoboxTemplate(cfg));
-            self.$el.find('.infobox-detail-container').append($('<div>',{
-                    class:'infobox-detail-item',
-                }));
+            var infoboxElem = $(infoboxTemplate(cfg));
+            var detailElem = $('<div>',{
+                        class:'infobox-detail-item',
+                    });
+            if(prepend == true) {
+                self.$el.find('.infobox-container:first').prepend(infoboxElem);
+                self.$el.find('.infobox-detail-container').prepend(detailElem);
+            } else {
+                self.$el.find('.infobox-container:first').append(infoboxElem);
+                self.$el.find('.infobox-detail-container').append(detailElem);
+            }
 
-            //Revisit - Highlight first infobox
-            // self.$el.find('.infobox').removeClass('infobox-blue infobox-dark active').addClass('infobox-grey');
-            // $(self.$el.find('.infobox')[0]).removeClass('infobox-grey').addClass('infobox-blue infobox-dark active');
-            $(self.$el.find('.infobox')[0]).removeClass('infobox-grey').
+            //Highlight first infobox
+             self.$el.find('.infobox-widget .infobox:not(:nth-child(1))').removeClass('infobox-blue infobox-dark active').addClass('infobox-grey');
+             $(self.$el.find('.infobox')[0]).removeClass('infobox-grey').
                 addClass('infobox-blue infobox-dark active');
 
             //make infobox part of config itself. during update use it
-            cfg['infobox'] = self.$el.find('.infobox-container:first .infobox:last');
+            cfg['infobox'] = infoboxElem;
 
             //Listen for changes on model to show/hide down count
             if(cfg['model'].loadedFromCache) {
@@ -68,7 +75,7 @@ define([
             //Initialize view
             var chartView = new cfg['view']({
                 model: cfg['model'],
-                el: self.$el.find('.infobox-detail-container .infobox-detail-item:last')
+                el: detailElem
             });
 
             var renderFn = ifNull(cfg['renderfn'],'render');

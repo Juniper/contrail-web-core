@@ -56,10 +56,10 @@ define([
                 logListView.render();
             },100);
         },
-        addInfoboxes: function(infoBoxesCfg) {
-            var self = this
+        addInfoboxes: function(infoBoxesCfg, positionCfg) {
+            var self = this;
             for(var i=0;i<infoBoxesCfg.length;i++) {
-                self.infoBoxView.add(infoBoxesCfg[i]);
+                self.infoBoxView.add(infoBoxesCfg[i],positionCfg);
                 //For each of the infoboxesCfg,add the model to NodeListModel 
                 self.nodeListModel.addListModel(infoBoxesCfg[i]['model']);
             }
