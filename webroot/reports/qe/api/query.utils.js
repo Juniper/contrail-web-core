@@ -416,3 +416,4 @@ exports.createTimeQueryJsonObjByAppData = createTimeQueryJsonObjByAppData;
 exports.formatQEUIQuery = formatQEUIQuery;
 exports.createTimeObjByAppData = createTimeObjByAppData;
 exports.formQEQueryData = formQEQueryData;
+exports.getTimeGranByTimeSlice = getTimeGranByTimeSlice;
