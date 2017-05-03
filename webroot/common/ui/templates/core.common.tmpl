@@ -2875,37 +2875,37 @@
  <script type="text/x-handlebars-template" id="nodeCntView-template">
    <ul>
        <li>
-       <span>{{{this.dataNodesCnt.vRoutersCnt}}}&nbsp;&nbsp;</span>vRouters&nbsp;
-       {{#IfCompare this.dataNodesCnt.vRoutersNodesDownCnt 0 operator='>'}}
-            {{{this.dataNodesCnt.vRoutersNodesDownCnt}}}<span><img src="/img/down_arrow.svg"></img></span>
+       <span>{{{this.regionsInfo.data.vRoutersCnt}}}&nbsp;&nbsp;</span><a onclick="javascript:clickNodesDetails('mon_infra_vrouter','{{{this.regionsInfo.regionName}}}')">vRouters</a>&nbsp;
+       {{#IfCompare this.regionsInfo.data.vRoutersNodesDownCnt 0 operator='>'}}
+            {{{this.regionsInfo.data.vRoutersNodesDownCnt}}}<span><img src="/img/down_arrow.svg"></img></span>
        {{else}}
             <span></span>
        {{/IfCompare}}
        </li>
-       <li><span>{{{this.dataNodesCnt.configNodesCnt}}}&nbsp;&nbsp;</span>Config Nodes&nbsp;
-        {{#IfCompare this.dataNodesCnt.configNodesDownCnt 0 operator='>'}}
-            {{{this.dataNodesCnt.configNodesDownCnt}}}<span><img src="/img/down_arrow.svg"></img></span>
+       <li><span>{{{this.regionsInfo.data.configNodesCnt}}}&nbsp;&nbsp;</span><a onclick="javascript:clickNodesDetails('mon_infra_config','{{{this.regionsInfo.regionName}}}')">Config Nodes</a>&nbsp;
+        {{#IfCompare this.regionsInfo.data.configNodesDownCnt 0 operator='>'}}
+            {{{this.regionsInfo.data.configNodesDownCnt}}}<span><img src="/img/down_arrow.svg"></img></span>
        {{else}}
             <span></span>
        {{/IfCompare}}
        </li>
-       <li><span>{{{this.dataNodesCnt.controlNodesCnt}}}</span>&nbsp;&nbsp;Control Nodes&nbsp;
-         {{#IfCompare this.dataNodesCnt.controlNodesDownCnt 0 operator='>'}}
-            {{{this.dataNodesCnt.controlNodesDownCnt}}}<span><img src="/img/down_arrow.svg"></img></span>
+       <li><span>{{{this.regionsInfo.data.controlNodesCnt}}}</span>&nbsp;&nbsp;<a onclick="javascript:clickNodesDetails('mon_infra_control','{{{this.regionsInfo.regionName}}}')">Control Nodes</a>&nbsp;
+         {{#IfCompare this.regionsInfo.data.controlNodesDownCnt 0 operator='>'}}
+            {{{this.regionsInfo.data.controlNodesDownCnt}}}<span><img src="/img/down_arrow.svg"></img></span>
        {{else}}
             <span></span>
        {{/IfCompare}}
        </li>
-       <li><span>{{{this.dataNodesCnt.analyticsNodesCnt}}}</span>&nbsp;&nbsp;Analytics Nodes&nbsp;
-        {{#IfCompare this.dataNodesCnt.analyticsNodesDownCnt 0 operator='>'}}
-            {{{this.dataNodesCnt.analyticsNodesDownCnt}}}<span><img src="/img/down_arrow.svg"></img></span>
+       <li><span>{{{this.regionsInfo.data.analyticsNodesCnt}}}</span>&nbsp;&nbsp;<a onclick="javascript:clickNodesDetails('mon_infra_analytics','{{{this.regionsInfo.regionName}}}')">Analytics Nodes</a>&nbsp;
+        {{#IfCompare this.regionsInfo.data.analyticsNodesDownCnt 0 operator='>'}}
+            {{{this.regionsInfo.data.analyticsNodesDownCnt}}}<span><img src="/img/down_arrow.svg"></img></span>
        {{else}}
             <span></span>
        {{/IfCompare}}
        </li>
-       <li><span>{{{this.dataNodesCnt.databaseNodesCnt}}}</span>&nbsp;&nbsp;DB Nodes&nbsp;
-        {{#IfCompare this.dataNodesCnt.databaseNodesDownCnt 0 operator='>'}}
-            {{{this.dataNodesCnt.databaseNodesDownCnt}}}<span><img src="/img/down_arrow.svg"></img></span>
+       <li><span>{{{this.regionsInfo.data.databaseNodesCnt}}}</span>&nbsp;&nbsp;<a onclick="javascript:clickNodesDetails('mon_infra_database','{{{this.regionsInfo.regionName}}}')">DB Nodes</a>&nbsp;
+        {{#IfCompare this.regionsInfo.data.databaseNodesDownCnt 0 operator='>'}}
+            {{{this.regionsInfo.data.databaseNodesDownCnt}}}<span><img src="/img/down_arrow.svg"></img></span>
        {{else}}
             <span></span>
        {{/IfCompare}}

@@ -1041,7 +1041,11 @@ function changeRegion (regionName){
     $("#main-content").show();
     $('#gohan-config-role').hide();
 }
-
+function clickNodesDetails (nodesHash,region){
+    contrail.setCookie('region', region);
+    $("#regionDD").select2("val", loadUtils.getCookie('region'));
+    layoutHandler.setURLHashObj({'p' : nodesHash, 'region' : region});
+}
 function changeGohanRole(roleName){
     contrail.setCookie('gohanRole', roleName.val);
     var role = $("#gohanRole").select2('data').text;

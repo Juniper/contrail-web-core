@@ -1790,11 +1790,17 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
         font-size:11px;
         color:#787878;
       }
-    li span{
+    li span:nth-child(1){
         display:inline-block;
         font-size:11px;
         color:#787878;
         letter-spacing:-1px;
+    }
+    li a{
+        color:#787878;
+    }
+    li a:hover{
+        color:#3182bd;
     }
  }
 #globalcontroller-carousel-view {
