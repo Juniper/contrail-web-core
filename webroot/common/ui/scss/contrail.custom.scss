@@ -1232,6 +1232,12 @@ button#close-error-popup{
     cursor: move;
 }
 
+.custom-grid-stack {
+    .custom-grid-stack-item {
+        overflow: hidden;
+    }
+}
+
 .custom-grid-stack .custom-grid-stack-item .item-content .nv-axislabel,
 .custom-grid-stack .custom-grid-stack-item .item-content .axis-label,
 .custom-grid-stack .custom-grid-stack-item .item-content .contrail-chart-title text {
