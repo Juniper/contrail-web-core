@@ -20,12 +20,14 @@ define(['underscore'], function (_) {
         this.loadMenu = function (xml, cfg) {
             menuXML = xml;
             menuObj = $.xml2json(xml);
-            var optFeatureList =
-                getValueByJsonPath(globalObj, 'webServerInfo;optFeatureList',
-                                   null);
-            var featurePkgsInfo =
-                getValueByJsonPath(globalObj, 'webServerInfo;featurePkgsInfo',
-                                   null);
+            var optFeatureList = getValueByJsonPath(globalObj, 'webServerInfo;optFeatureList', null);
+            var featurePkgsInfo = getValueByJsonPath(globalObj, 'webServerInfo;featurePkgsInfo', null),
+                featurePkgs = getValueByJsonPath(globalObj, 'webServerInfo;featurePkg', null);
+
+            if (Object.keys(featurePkgs).length === 1
+                && featurePkgs[FEATURE_PCK_WEB_SERVER_MANAGER] === true) {
+                $('#alarms-popup-link').hide();
+            }
             //processXMLJSON populates siteMapsearchStrings
             globalObj['siteMapSearchStrings'] = [];
             processXMLJSON(menuObj, optFeatureList);
@@ -33,7 +35,8 @@ define(['underscore'], function (_) {
             if(cfg != null && cfg['reload'] != true) {
                 enableSearchAhead();
             }
-            var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'], 'menushortcut', featurePkgsInfo));
+            var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(
+                 menuHandler.filterMenuItems(menuObj['items']['item'], 'menushortcut', featurePkgsInfo));
             //Load top-level menu buttons (Configure,Monitor,Settings,Query)
             $("#sidebar-shortcuts").html(menuShortcuts);
             menuHandler.filterMenuItems(menuObj['items']['item']);
