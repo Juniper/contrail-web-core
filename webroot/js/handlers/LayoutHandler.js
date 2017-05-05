@@ -10,11 +10,16 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
         //noEscape(":[]");
 
         this.load = function (menuObj) {
-            var webServerInfo = globalObj['webServerInfo'];
+            var webServerInfo = globalObj['webServerInfo'],
+                featurePkgs = getValueByJsonPath(globalObj, 'webServerInfo;featurePkg', null);
             menuHandler = new MenuHandler();
             //reset the cache
             if(typeof(cowch) != "undefined")
                 cowch.reset();
+            if (Object.keys(featurePkgs).length === 1
+                && featurePkgs[FEATURE_PCK_WEB_SERVER_MANAGER] === true) {
+                $('#alarms-popup-link').hide();
+            }
             cowu.updateMultiViewSettingsFromCookie();
             menuHandler.loadMenu(menuObj);
             menuHandler.handleSideMenu();
