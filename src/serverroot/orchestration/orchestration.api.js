@@ -2,7 +2,7 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var configUtils = require('../common/config.utils')
+var configUtils = require('../common/config.utils');
 
 function getOrchestrationModels ()
 {

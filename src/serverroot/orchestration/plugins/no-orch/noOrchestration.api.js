@@ -8,10 +8,10 @@
  *
  */
 var plugins = require('../plugins.api');
-var config = process.mainModule.exports['config'];
+var configUtils = require('../../../common/config.utils');
 var commonUtils = require('../../../utils/common.utils');
 var messages = require('../../../common/messages');
-var configUtils = require('../../../common/configServer.utils');
+var configServerUtils = require('../../../common/configServer.utils');
 
 function authenticate (req, res, appData, callback)
 {
@@ -19,7 +19,7 @@ function authenticate (req, res, appData, callback)
     var post = req.body;
     var username = post.username;
     var password = post.password;
-
+    var config = configUtils.getConfig();
     var userList = config.staticAuth;
     if ((null == userList) || (!userList.length)) {
         req.session.isAuthenticated = false;
@@ -71,7 +71,7 @@ function getAPIServerAuthParamsByReq (req)
 
 function getProjectList (req, appData, callback)
 {
-    configUtils.getProjectsFromApiServer(req, appData,
+    configServerUtils.getProjectsFromApiServer(req, appData,
                                          function(error, data) {
         callback(error, data);
     });
@@ -175,6 +175,7 @@ function getVMStatsByProject (projUUID, req, callback)
 
 function getSessionExpiryTime (req, appData, callback)
 {
+    var config = configUtils.getConfig();
     var cfgSessTimeout =
         ((null != config.session) && (null != config.session.timeout)) ?
         config.session.timeout : null;

@@ -9,9 +9,7 @@ var configUtils = require('./config.utils'),
     commonUtils = require('../utils/common.utils'),
     redisUtils = require('../utils/redis.utils'),
     os = require('os'),
-    _ = require('underscore'),
-    timers = require('timers');
-
+    _ = require('underscore');
 var serviceRespData = {},
     activeServiceRespData = {},
     unChangedActiveSvcRespData = {},
@@ -411,7 +409,7 @@ function startWatchContrailServiceRetryList ()
 {
     var config = configUtils.getConfig();
     if(null != contrailSvcTimer) {
-        timers.clearInterval(contrailSvcTimer);
+        clearInterval(contrailSvcTimer);
     }
     contrailSvcTimer = setInterval (function() {
         getContrailServices();
