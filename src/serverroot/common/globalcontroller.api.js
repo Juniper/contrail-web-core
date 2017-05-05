@@ -3,24 +3,30 @@
  */
 var rest        = require('../common/rest.api');
 var global      = require('./global');
-var config      = process.mainModule.exports.config;
 var authApi     = require('./auth.api');
 var logutils    = require('../utils/log.utils');
 var appErrors   = require('../errors/app.errors');
 var cgcConfig   = require('../../../webroot/config.json');
 var commonUtils = require('../utils/common.utils');
-
-var cgcServerIP = ((config.cgc) && (config.cgc.server_ip)) ?
-    config.cgc.server_ip : global.DFLT_SERVER_IP;
-var cgcServerPort = ((config.cgc) && (config.cgc.server_port)) ?
-    config.cgc.server_port : '9500';
-var cgcServer = rest.getAPIServer({apiName: global.label.CGC,
-                                    server: cgcServerIP,
-                                    port: cgcServerPort});
-
+var cgcServer = null;
 function getCGCRestApiInst (req)
 {
     var oStack = require('../orchestration/plugins/openstack/openstack.api');
+    if (null == cgcServer) {
+        var cgcDetails =
+            commonUtils.getValueByJsonPath(req, "session;serviceCatalog;" +
+                                           global.REGION_ALL + ";" +
+                                           global.SERVICE_ENDPT_TYPE_CGC + ";" +
+                                           "maps;0", null);
+        var cgcServerIP = commonUtils.getValueByJsonPath(cgcDetails, "ip",
+                                                         global.DFLT_SERVER_IP);
+        var cgcServerPort = commonUtils.getValueByJsonPath(cgcDetails, "port",
+                                                           "9500");
+        cgcServer = rest.getAPIServer({apiName: global.label.CGC,
+                                       server: cgcServerIP,
+                                       port: cgcServerPort});
+    }
+
     if (true == authApi.isMultiRegionSupported()) {
         var regionName = authApi.getCurrentRegion(req);
         var pubUrl = oStack.getPublicUrlByRegionName(regionName,

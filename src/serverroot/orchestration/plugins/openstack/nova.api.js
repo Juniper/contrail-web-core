@@ -3,7 +3,7 @@
  */
 
 var rest = require('../../../common/rest.api'),
-    config = process.mainModule.exports.config,
+    configUtils = require('../../../common/config.utils'),
     authApi = require('../../../common/auth.api'),
     url = require('url'),
     logutils = require('../../../utils/log.utils'),
@@ -13,17 +13,9 @@ var rest = require('../../../common/rest.api'),
     httpsOp = require('../../../common/httpsoptions.api'),
     oStack = require('./openstack.api')
     ;
-var novaAPIServer;
 
 novaApi = module.exports;
 
-var novaIP = ((config.computeManager) && (config.computeManager.ip)) ? 
-    config.computeManager.ip : global.DFLT_SERVER_IP;
-var novaPort = ((config.computeManager) && (config.computeManager.port)) ? 
-    config.computeManager.port : '8774';
-
-novaAPIServer = rest.getAPIServer({apiName:global.label.COMPUTE_SERVER,
-                                      server:novaIP, port:novaPort});
 function getTenantIdByReqCookie (req)
 {
     if (req.cookies && req.cookies.project) {
@@ -38,6 +30,18 @@ function getTenantIdByReqCookie (req)
         }
         return null;
     }
+}
+
+function getNovaAPIServer ()
+{
+    var config = configUtils.getConfig(),
+        novaIP = ((config.computeManager) && (config.computeManager.ip)) ?
+            config.computeManager.ip : global.DFLT_SERVER_IP,
+        novaPort = ((config.computeManager) && (config.computeManager.port)) ?
+            config.computeManager.port : '8774',
+        novaAPIServer = rest.getAPIServer({apiName:global.label.COMPUTE_SERVER,
+                                              server:novaIP, port:novaPort});
+    return novaAPIServer;
 }
 
 function getHeaders(defHeaders, appHeaders)
@@ -83,6 +87,7 @@ novaApi.get = function(reqUrl, apiProtoIP, req, callback, stopRetry, appHeaders)
     var headers = {};
     var forceAuth = stopRetry;
     var tenantId = getTenantIdByReqCookie(req);
+    var novaAPIServer = getNovaAPIServer();
     if (null == tenantId) {
         /* Just return as we will be redirected to login page */
         return;
@@ -122,6 +127,7 @@ novaApi.post = function(reqUrl, reqData, apiProtoIP, req, callback, stopRetry,
     var headers = {};
     var i = 0;
     var tenantId = getTenantIdByReqCookie(req);
+    var novaAPIServer = getNovaAPIServer();
     if (null == tenantId) {
         /* Just return as we will be redirected to login page */
         return;
@@ -162,6 +168,7 @@ novaApi.delete = function (reqUrl, apiProtoIP, req, callback, stopRetry,
     var headers = {};
     var i = 0;
     var tenantId = getTenantIdByReqCookie(req);
+    var novaAPIServer = getNovaAPIServer();
     if (null == tenantId) {
         /* Just return as we will be redirected to login page */
         return;

@@ -8,7 +8,7 @@
  */
 
 var plugins = require('../plugins.api');
-var config = process.mainModule.exports["config"],
+var configUtils = require('../../../common/config.utils'),
     global = require('../../../common/global'),
     messages = require('../../../common/messages'),
     logutils = require('../../../utils/log.utils'),
@@ -21,12 +21,6 @@ var config = process.mainModule.exports["config"],
     vCenterPluginApi = require('./vcenter.api'),
     configUtils = require('../../../common/configServer.utils'),
     authSoapServer = require('../../../common/auth.api');
-
-var authServerIP = ((config.identityManager) && (config.identityManager.ip)) ?
-    config.identityManager.ip : global.DFLT_SERVER_IP;
-var authServerPort =
-    ((config.identityManager) && (config.identityManager.port)) ?
-    config.identityManager.port : '8080';
 
 //authSOAPServer = rest.getSoapAPiServer({apiName:global.label.VCENTER_SERVER,
  //                                       vcenterParams: config.vcenter});
@@ -178,6 +172,7 @@ function getVMStatsByProject (projUUID, req, callback)
 
 function getSessionExpiryTime (req, appData, callback)
 {
+    var config = configUtils.getConfig();
     var cfgSessTimeout =
         ((null != config.session) && (null != config.session.timeout)) ?
         config.session.timeout : null;

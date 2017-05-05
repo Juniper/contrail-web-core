@@ -8,7 +8,7 @@
  * corresponding module is loaded via this file.
  */
 
-var config = process.mainModule.exports['config'],
+var configUtils = require('./config.utils'),
     crypto = require('crypto'),
     redis = require('redis'),
     logutils = require('../utils/log.utils'),
@@ -221,7 +221,8 @@ function getServiceAPIVersionByReqObj (request, appData, svcType, callback, reqB
 
 function getAdminProjectList (req)
 {
-    var adminProjectList = [];
+    var adminProjectList = [],
+        config = configUtils.getConfig();
     var adminRoleProjects = config.roleMaps['cloudAdmin'];
     var adminRoleProjectsInUpper = adminRoleProjects.map(function(x) {
         return x.toUpperCase();
@@ -273,7 +274,8 @@ function getAdminProjectList (req)
 
 function getEndpointServiceType (type)
 {
-    var svcType = null;
+    var svcType = null,
+        config = configUtils.getConfig();
     switch (type) {
     case 'OpServer':
         svcType =
@@ -295,12 +297,14 @@ function getEndpointServiceType (type)
 
 function isRegionListFromConfig ()
 {
+    var config = configUtils.getConfig();
     return ((false == config.serviceEndPointFromConfig) &&
             (true == config.regionsFromConfig));
 }
 
 function isRegionListFromIdentity ()
 {
+    var config = configUtils.getConfig();
     return ((false == config.serviceEndPointFromConfig) &&
             (false == config.regionsFromConfig));
 }

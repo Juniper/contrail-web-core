@@ -1,12 +1,13 @@
 /*
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
-var config = process.mainModule.exports.config;
+var configUtils = require('../serverroot/common/config.utils');
 var fs = require('fs');
 var logutils = require('../serverroot/utils/log.utils');
 
 function createRegionFile (callback)
 {
+    var config = configUtils.getConfig();
     var commentStr = "";
     commentStr += "/*\n";
     commentStr += " * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.\n";
@@ -75,7 +76,9 @@ function createRegionFile (callback)
         '/webroot/common/api/regions.js';
     var finalStr = commentStr + regionStr;
     fs.writeFile(fileToGen, finalStr, function(err) {
-        logutils.logger.error('Region file creation error: ' + err);
+        if(err) {
+            logutils.logger.error('Region file creation error: ' + err);
+        }
         console.log("Done, creating file: " + fileToGen);
         callback(err);
     });

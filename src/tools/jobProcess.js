@@ -73,7 +73,7 @@ function parseJobListFile (result, fileToGen, cb)
   jobCbStr += "\n";
   jobCbStr += "\n";
   jobCbStr += "\nvar defMaxActiveJobs = 10;";
-  jobCbStr += "\nvar maxActiveJobs = parseJobsReq.config.maxActiveJobs || defMaxActiveJobs;\n";
+  jobCbStr += "\nvar maxActiveJobs = parseJobsReq.configUtils.getConfig().maxActiveJobs || defMaxActiveJobs;\n";
   jobCbStr += "\n";
 
   jobChannel += "\n  /* Publish the data on pubChannel And Save the data key as \n";

@@ -4,7 +4,7 @@
 
 var http = require('http'),
     https = require('https'),
-	config = process.mainModule.exports.config,
+    configUtils = require('./config.utils'),
 	logutils = require('../utils/log.utils'),
 	messages = require('./messages'),
 	appErrors = require('../errors/app.errors'),
@@ -15,7 +15,7 @@ var http = require('http'),
     global = require('./global'),
     httpsOp = require('./httpsoptions.api'),
     request = require('request'),
-    contrailService = require('../jobs/core/contrailservice.api');
+    contrailService = require('./contrailservice.api');
 
 if (!module.parent) {
 	logutils.logger.warn(util.format(messages.warn.invalid_mod_call, module.filename));
@@ -109,6 +109,7 @@ APIServer.prototype.updateContrailServiceParams = function (params)
     var self = this;
     var apiServerType = self.name;
     var contrailServ = null;
+    var config = configUtils.getConfig();
 
     if (false == config.serviceEndPointFromConfig) {
         /* Do not update through Discovery */
@@ -185,11 +186,12 @@ APIServer.prototype.retryMakeCall = function(err, restApi, params,
                                              response, callback, isRetry)
 {
     var self = this;
-    /* Check if the error code is ECONNREFUSED or ETIMEDOUT, if yes then
-     * issue once again discovery subscribe request, the remote server
-     * may be down, so discovery server should send the Up Servers now
+    /* Check if the error code is ECONNREFUSED or ETIMEDOUT or ENETUNREACH,
+     * if yes then remove the server entry from the operational list and serve
+     * the current request with next available server from the list
      */
-    if (('ECONNREFUSED' == err.code) || ('ETIMEDOUT' == err.code)) {
+    if (('ECONNREFUSED' == err.code) || ('ETIMEDOUT' == err.code)
+            || ('ENETUNREACH' == err.code)) {
        var reqParams = null;
         reqParams =
             contrailService.resetServicesByParams(params, self.name);

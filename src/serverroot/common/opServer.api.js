@@ -8,7 +8,6 @@
 
 var global = require('./global');
 var assert = require('assert');
-var config = process.mainModule.exports.config;
 var plugins = require('../orchestration/plugins/plugins.api');
 var commonUtils = require('../utils/common.utils');
 

@@ -13,7 +13,8 @@ var assert = require("assert"), util = require("util"),
     global = require(process.mainModule.exports.corePath + "/src/serverroot/common/global"),
     opApiServer = require(process.mainModule.exports.corePath + "/src/serverroot/common/opServer.api"),
     redisUtils = require(process.mainModule.exports.corePath + "/src/serverroot/utils/redis.utils"),
-    config = process.mainModule.exports.config,
+    configUtils = require(process.mainModule.exports.corePath +
+            "/src/serverroot/common/config.utils"),
     redisReadStream = require("redis-rstream"),
     threadApi = require(process.mainModule.exports.corePath + "/src/serverroot/common/threads.api"),
     crypto = require("crypto"),
@@ -21,7 +22,8 @@ var assert = require("assert"), util = require("util"),
                      "/webroot/reports/qe/api/query.utils.js"),
     _ = require("lodash");
 
-var redisServerPort = (config.redis_server_port) ? config.redis_server_port : global.DFLT_REDIS_SERVER_PORT,
+var config = configUtils.getConfig(),
+    redisServerPort = (config.redis_server_port) ? config.redis_server_port : global.DFLT_REDIS_SERVER_PORT,
     redisServerIP = (config.redis_server_ip) ? config.redis_server_ip : global.DFLT_REDIS_SERVER_IP,
     redisClient = redisUtils.createRedisClient(redisServerPort, redisServerIP, global.QE_DFLT_REDIS_DB);
 

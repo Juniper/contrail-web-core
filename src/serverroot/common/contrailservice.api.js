@@ -2,19 +2,19 @@
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
 
-var config = process.mainModule.exports.config,
-    rest = require('../../common/rest.api'),
+var configUtils = require('./config.utils'),
+    rest = require('./rest.api'),
     async = require('async'),
-    logutils = require('../../utils/log.utils'),
-    commonUtils = require('../../utils/common.utils'),
-    redisUtils = require('../../utils/redis.utils'),
+    logutils = require('../utils/log.utils'),
+    commonUtils = require('../utils/common.utils'),
+    redisUtils = require('../utils/redis.utils'),
     os = require('os'),
     _ = require('underscore');
-
 var serviceRespData = {},
     activeServiceRespData = {},
     unChangedActiveSvcRespData = {},
-    gServerHeaders = {};
+    gServerHeaders = {},
+    contrailSvcTimer = null;
 
 function checkIfActiveServiceRespDataChanged (serviceType)
 {
@@ -23,7 +23,7 @@ function checkIfActiveServiceRespDataChanged (serviceType)
             oldData = commonUtils.getValueByJsonPath(unChangedActiveSvcRespData,
                     serviceType +';data;' + serviceType, [], false),
             newDataCnt = newData.length, oldDataCnt = oldData.length, i;
-        if (!newDataCnt || !oldDataCnt) {
+        if (!newDataCnt || !oldDataCnt || newDataCnt !== oldDataCnt) {
             return true;
         }
         for (i = 0; i < newDataCnt; i++) {
@@ -214,7 +214,7 @@ function resetServicesByParams (params, apiName)
 
 function getTokenAndServerResponse (serviceObj, callback, stopRetry)
 {
-    var authApi = require("../../common/auth.api");
+    var authApi = require("./auth.api");
     var apiServer = serviceObj.apiServer;
     var headers = (null != serviceObj.headers) ? serviceObj.headers : {};
     var serviceType = serviceObj.serviceType;
@@ -379,7 +379,8 @@ function formatDataForContrailServices (serviceType, dataObjArr)
 
 function formatConfigData (data, serviceId, dataObjArr, serviceType)
 {
-    var serverDetails  = commonUtils.getValueByJsonPath(config, serviceId, {}),
+    var config = configUtils.getConfig(),
+        serverDetails  = commonUtils.getValueByJsonPath(config, serviceId, {}),
         ipList = commonUtils.getValueByJsonPath(serverDetails, "server_ip", []),
         port = commonUtils.getValueByJsonPath(serverDetails, "server_port", ""),
         statusUrl = commonUtils.getValueByJsonPath(serverDetails,
@@ -406,7 +407,11 @@ function formatConfigData (data, serviceId, dataObjArr, serviceType)
 
 function startWatchContrailServiceRetryList ()
 {
-    setInterval (function() {
+    var config = configUtils.getConfig();
+    if(null != contrailSvcTimer) {
+        clearInterval(contrailSvcTimer);
+    }
+    contrailSvcTimer = setInterval (function() {
         getContrailServices();
     }, config.CONTRAIL_SERVICE_RETRY_TIME ? config.CONTRAIL_SERVICE_RETRY_TIME
             : global.CONTRAIL_SERVICE_RETRY_TIME);
