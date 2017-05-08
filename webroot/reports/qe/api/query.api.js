@@ -34,8 +34,7 @@ if (!module.parent) {
 
 function runGETQuery(req, res, appData) {
     var reqQuery = req.query;
-    req.query = qUtils.formatQEUIQuery(reqQuery);
-    runQuery(req, req.query, appData, null, function(error, data) {
+    runQuery(req, reqQuery, appData, null, function(error, data) {
         commonUtils.handleJSONResponse(error, res, data);
     });
 }
