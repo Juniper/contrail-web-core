@@ -8,10 +8,12 @@ define([
     'handlebars',
     'lodash',
     "core-constants",
-    "contrail-list-model"
-], function (_, moment, Handlebars, lodash, cowc, ContrailListModel) {
+    'contrail-list-model',
+    'core-alarm-parsers'
+    
+], function (_, moment, Handlebars, lodash, cowc, ContrailListModel, CoreAlarmsParsers) {
     var serializer = new XMLSerializer(),
-        domParser = new DOMParser();
+    domParser = new DOMParser();
 
     var CoreUtils = function () {
         var self = this;
@@ -1231,23 +1233,23 @@ define([
         };
         this.loadAlertsPopup = function(cfgObj) {
            var region = contrail.getCookie('region');
+           var prefixId = 'dashboard-alerts';
+           var notificationView = false;
+           var cfgObj = ifNull(cfgObj,{});
+           var modalTemplate =
+               contrail.getTemplate4Id('core-modal-template');
+           var modalId = 'dashboard-alerts-modal';
+           var modalLayout = modalTemplate({prefixId: prefixId, modalId: modalId});
+           var formId = prefixId + '_modal';
+           var modalConfig = {
+                   'modalId': modalId,
+                   'className': 'modal-840',
+                   'body': modalLayout,
+                   'onCancel': function() {
+                       $("#" + modalId).modal('hide');
+                   }
+               }
            if(region != 'All Regions') {
-                var prefixId = 'dashboard-alerts';
-                var notificationView = false;
-                var cfgObj = ifNull(cfgObj,{});
-                var modalTemplate =
-                    contrail.getTemplate4Id('core-modal-template');
-                var modalId = 'dashboard-alerts-modal';
-                var modalLayout = modalTemplate({prefixId: prefixId, modalId: modalId});
-                var formId = prefixId + '_modal';
-                var modalConfig = {
-                        'modalId': modalId,
-                        'className': 'modal-840',
-                        'body': modalLayout,
-                        'onCancel': function() {
-                            $("#" + modalId).modal('hide');
-                        }
-                    }
                 if (notificationView) {
                     require(['js/views/NotificationView', 'core-alarm-parsers', 'core-alarm-utils'],
                      function (NotificationView, coreAlarmParsers, coreAlarmUtils) {
@@ -1270,9 +1272,76 @@ define([
                             alarmGridView.render();
                         });
                 }
+           }else{
+             require(['core-alarm-utils'], function (coreAlarmUtils) {
+               var regionList = globalObj.webServerInfo.regionList;
+               var primaryRemoteConfig ;
+               var vlRemoteList = [];
+               for (var i = 0; i < regionList.length; i++) {
+                   var remoteConfig ;
+                   if(i == 0) {
+                       var remoteObj = {
+                               ajaxConfig : {
+                                   url : './api/tenant/monitoring/alarms?reqRegion='+ regionList[i],
+                                   type: 'GET',
+                                },
+                               dataParser : function(response){
+                                        var regionName = response.regionName;
+                                           var parsedAlarms = CoreAlarmsParsers.alarmDataParser(getValueByJsonPath(response,'data'));
+                                           for(var i = 0; i < parsedAlarms.length; i++){
+                                               parsedAlarms[i]['regionName'] = regionName;
+                                           }
+                                           return parsedAlarms;
+                               }
+                           };
+                           primaryRemoteConfig = remoteObj;
+                   }else {
+                       var vlRemoteObj = {
+                               ajaxConfig: {
+                                       url : './api/tenant/monitoring/alarms?reqRegion=' + regionList[i],
+                                       type: 'GET'
+                               },
+                           dataParser : function(response){
+                                var regionName = response.regionName;
+                                  var parsedAlarms = CoreAlarmsParsers.alarmDataParser(getValueByJsonPath(response,'data'));
+                                  for(var i = 0; i < parsedAlarms.length; i++){
+                                      parsedAlarms[i]['regionName'] = regionName;
+                                  }
+                                  return parsedAlarms;
+                           },
+                           successCallback: function(data, contrailListModel) {
+                               var oldData = contrailListModel.getItems();
+                               data = oldData.concat(data);
+                               contrailListModel.setData(coreAlarmUtils.alarmsSort(data));
+                           }
+                       };
+                       vlRemoteList.push (vlRemoteObj);
+                   }
+               }
+               var listModelConfig =  {
+                   remote : primaryRemoteConfig,
+                   cacheConfig:{
+                       cacheTimeout: 5*60*1000
+                   }
+               };
+               if(vlRemoteList.length > 0) {
+                   var vlRemoteConfig = {vlRemoteList:vlRemoteList};
+                   listModelConfig['vlRemoteConfig'] = vlRemoteConfig;
+               }
+               cowu.createModal(modalConfig);
+               self.renderView4Config($("#" + modalId).find('#' + formId),
+                           new ContrailListModel(listModelConfig),function() {
+                                   return {
+                                        elementId : ctwl.CONTROL_NODE_ALARMS_GRID_SECTION_ID,
+                                        view : "AlarmGridView",
+                                        viewPathPrefix: cowc.ALARMS_VIEWPATH_PREFIX,
+                                        viewConfig : { showRegion: false }
+                                    };
+                            }());
+               });
            }
         };
-
+        
         this.delete_cookie = function(name) {
             document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
         };
