@@ -143,7 +143,7 @@ define([
         beforeActivate: function(event, ui) {
           var tab = self.tabs[ui.newTab.index()];
 
-          if (!tab._rendered) self.renderTab(tab);
+          if (tab && !tab._rendered) self.renderTab(tab);
         },
 
         create: function(event, ui) {
@@ -238,7 +238,7 @@ define([
       self.$(self.selectors.tabs + " li:eq(" + tabIndex + ")").remove();
       $("#" + panelId).remove();
       self.tabs.splice(tabIndex, 1);
-      self.$el.data("contrailTabs").refresh();
+      $("#"+elId).data('contrailTabs') != null ? $("#"+elId).data('contrailTabs').refresh() : self.$el.data("contrailTabs").refresh();
 
       if (self.tabs.length === 0 && !self.attributes.viewConfig.extendable) {
         self.$el.hide();
@@ -287,14 +287,16 @@ define([
           self.$el.data("contrailTabs").activateTab(tabIndex);
         } else {
           self.$(self.selectors.linkList).append(tabLinkTemplate([tabViewConfig]));
-          self.$el.append(tabContentTemplate([tabViewConfig]));
+          self.$('#'+elId).append(tabContentTemplate([tabViewConfig]));
           self.tabs.push(tabViewConfig);
 
           if (tabViewConfig.tabConfig != null && tabViewConfig.tabConfig.editable) {
             newIndex = _.sortedIndex(_.without(self.tabs, tabViewConfig), tabViewConfig, self._tabSortIteratee);
             tabsRefreshed = self.moveTab(self.tabs.length - 1, newIndex);
           }
-          if (!tabsRefreshed) self.$el.data("contrailTabs").refresh();
+          if (!tabsRefreshed) {
+            $("#"+elId).data('contrailTabs') != null ? $("#"+elId).data('contrailTabs').refresh() : self.$el.data("contrailTabs").refresh();
+          }
 
           if (contrail.checkIfKeyExistInObject(true, tabViewConfig, "tabConfig.renderOnActivate") &&
             tabViewConfig.tabConfig.renderOnActivate === true) {
@@ -317,7 +319,8 @@ define([
     },
     // Move tab by indexes
     moveTab: function (from, to) {
-      var self = this;
+      var self = this,
+          elId = self.attributes.elementId;
       if (from === to) return false;
 
       var links = self.$(self.selectors.linkList + " li");
@@ -330,7 +333,7 @@ define([
       self.$el.append(panels);
 
       self.tabs.splice(to, 0, self.tabs.splice(from, 1)[0]);
-      self.$el.data("contrailTabs").refresh();
+      $("#"+elId).data('contrailTabs') != null ? $("#"+elId).data('contrailTabs').refresh() : self.$el.data("contrailTabs").refresh();
       return true;
     },
 
