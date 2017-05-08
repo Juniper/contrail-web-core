@@ -179,7 +179,7 @@ define([
                 }
             }
             $(".res-icon").remove();
-            $(this).closest(".select2-search").prepend('<i class="'+
+            $(".select2-search").prepend('<i class="'+
                 currentIcon +' res-icon"> </i>');
         },
         retainExpandedGroup : function() {
