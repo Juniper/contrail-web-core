@@ -396,12 +396,12 @@ function getApiVersion (suppVerList, verList, index, fallbackIndex, apiType)
 
 function getPublicUrlByRegionName (regionname, serviceName, req)
 {
+    var config = configUtils.getConfig();
     if (false == authApi.isMultiRegionSupported()) {
         return null;
     }
     if (true == authApi.isRegionListFromConfig()) {
         var pubUrl = null;
-        var config = configUtils.getConfig();
         if (null == config.regions) {
             return null;
         }
