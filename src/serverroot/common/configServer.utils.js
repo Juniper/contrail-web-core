@@ -126,8 +126,10 @@ function getTenantListAndSyncDomain (request, appData, callback)
                         var domFqn = authApi.getDomainNameByUUID(request, domId,
                                                         domList['domains']);
                         if (null == domFqn) {
-                            if (null != request.cookies.domain) {
-                                domFqn = request.cookies.domain;
+                            if (null !=
+                                request.cookies[global.COOKIE_DOMAIN_DISPLAY_NAME]) {
+                                domFqn =
+                                    request.cookies[global.COOKIE_DOMAIN_DISPLAY_NAME];
                             } else {
                                 domFqn = authApi.getDefaultDomain(request);
                             }

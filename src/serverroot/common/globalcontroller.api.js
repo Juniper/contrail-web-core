@@ -46,7 +46,7 @@ function getCGCRestApiInst (req)
 
 function getCGCAllReq (req, res, next)
 {
-    var projectCookie = req.cookies.project;
+    var projectCookie = req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME];
     var authObj = {req: req, project: projectCookie};
     authApi.getTokenAndUpdateLastToken(authObj, function(error, tokenObj,
                                                          dataAccess) {
@@ -142,7 +142,8 @@ function getCGCAuthReq (req, res, next)
  
     if (-1 != reqUrl.indexOf('/tokens')) {
         /* This is a token get request */
-        var authObj = {req: req, project: req.cookies.project};
+        var authObj = {req: req, project:
+            req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME]};
         authApi.getTokenAndUpdateLastToken(authObj, function(error, tokenObj,
                                                              dataAccess) {
             commonUtils.handleJSONResponse(error, res, dataAccess);

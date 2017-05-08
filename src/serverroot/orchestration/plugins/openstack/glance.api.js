@@ -17,8 +17,8 @@ glanceApi = module.exports;
 
 function getTenantIdByReqCookie (req)
 {
-    if (req.cookies && req.cookies.project) {
-        return req.cookies.project;
+    if (req.cookies && req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME]) {
+        return req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME];
     } else {
         var ajaxCall = req.headers['x-requested-with'];
         if (ajaxCall == 'XMLHttpRequest') {
