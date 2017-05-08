@@ -11,7 +11,8 @@ define([
             hlContrailListModel, contrailDataHandler = null, newContrailDataHandler, self = this,
             cachedData, remoteHandlerConfig, hlModelConfig,
             cacheUsedStatus = {isCacheUsed: false, reload: true},
-            sortConfig = listModelConfig['sortConfig'];
+            sortConfig = listModelConfig['sortConfig'],
+            isDataWrapped = (listModelConfig['isDataWrapped'] != undefined) ? listModelConfig['isDataWrapped'] : false;
 
         var defaultCacheConfig = {
             cacheConfig: {
@@ -40,7 +41,6 @@ define([
                     });
                 }
             }
-
             if (modelConfig.data != null) {
                 contrailListModel.setData(modelConfig.data);
                 bindDataHandler2Model(contrailListModel);
@@ -48,7 +48,6 @@ define([
                 hlModelConfig = modelConfig['remote']['hlRemoteConfig'];
                 cachedData = (contrailListModel.ucid != null) ? cowch.getDataFromCache(contrailListModel.ucid) : null;
                 cacheUsedStatus = setCachedData2Model(contrailListModel, cacheConfig);
-
                 if (cacheUsedStatus['isCacheUsed']) {
                     if (cacheUsedStatus['reload']) {
                         var cachedContrailListModel = cachedData['dataObject']['listModel'],
@@ -56,6 +55,7 @@ define([
 
                         newContrailListModel = initContrailListModel(cacheConfig, sortConfig, offset);
                         remoteHandlerConfig = getUpdateRemoteHandlerConfig(modelConfig, newContrailListModel, contrailListModel, parentModelList);
+                        remoteHandlerConfig['isDataWrapped'] = isDataWrapped;
                         newContrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
 
                         if (hlModelConfig != null) {
@@ -81,6 +81,7 @@ define([
                 hlContrailListModel = getNewContrailListModel(childModelConfig, [contrailListModel]);
             }
             remoteHandlerConfig = getRemoteHandlerConfig(modelConfig, contrailListModel, parentModelList, autoFetchData);
+            remoteHandlerConfig['isDataWrapped'] = isDataWrapped;
             contrailDataHandler = new ContrailRemoteDataHandler(remoteHandlerConfig);
 
             bindDataHandler2Model(contrailListModel, contrailDataHandler, hlContrailListModel);

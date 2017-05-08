@@ -2052,6 +2052,7 @@ define([
         this.LAYOUT_PREFERENCE = 'layout-preference';
         //Global controller constants
         this.GLOBAL_CONTROLLER_ALL_REGIONS = "All Regions";
+        this.REGION = "region";
         this.GLOBAL_CONTROLLER_ROLE = "globalController";
         this.CLOUDADMIN_ROLE = "cloudAdmin";
 
