@@ -262,7 +262,7 @@ define(
                         } else if (a.severity > b.severity){
                             return 1;
                         } else {
-                            if (a.timestamp > b.timestamp) {
+                            if (a.T > b.T) {
                                 return -1;
                             } else {
                                 return 1;

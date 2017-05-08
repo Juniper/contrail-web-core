@@ -66,7 +66,7 @@ define([
             },cowc.THROTTLE_RESIZE_EVENT_TIME);
             window.addEventListener('resize',self.resizeFunction);
             $(self.$el).parents('.custom-grid-stack-item').on('resize',self.resizeFunction);
-            self.renderChart();
+            self.renderChart(true);
         },
         showLoading: function (self) {
             self.$el.find('.event-drops-header > .loading').show();
@@ -78,14 +78,30 @@ define([
 //            d3.select('body').selectAll('.event-drops-tooltip').remove();
             var targetSelector = cowu.getValueByJsonPath(self.viewCfg,'target','.alarms-event-log-container');
             var detailsFn = getValueByJsonPath(viewCfg,'chartOptions;detailsFn');
-            var tooltipContent = (detailsFn)? detailsFn(d): getTooltipContent(d);
-            $(targetSelector).html(tooltipContent);
-            $(targetSelector).parent().children().hide();
-            $(targetSelector).show();
-            $('.event-drops.popover-remove').on('click',function() {
-                $(targetSelector).hide();
-                $($(targetSelector).parent().children()[0]).show();
-            });
+            var isRemoteCall = cowu.getValueByJsonPath(viewCfg,'chartOptions;isDetailsFromRemoteCall',false);
+            var detailsDeferredObj;
+            if(isRemoteCall) {
+                detailsDeferredObj = $.Deferred();
+                (detailsFn)? detailsFn(d,detailsDeferredObj): getTooltipContent(d);
+                detailsDeferredObj.done(function(tooltipContent){
+                    $(targetSelector).html(tooltipContent);
+                    $(targetSelector).parent().children().hide();
+                    $(targetSelector).show();
+                    $('.event-drops.popover-remove').on('click',function() {
+                        $(targetSelector).hide();
+                        $($(targetSelector).parent().children()[0]).show();
+                    });
+                });
+            } else {
+                var tooltipContent = (detailsFn)? detailsFn(d): getTooltipContent(d);
+                $(targetSelector).html(tooltipContent);
+                $(targetSelector).parent().children().hide();
+                $(targetSelector).show();
+                $('.event-drops.popover-remove').on('click',function() {
+                    $(targetSelector).hide();
+                    $($(targetSelector).parent().children()[0]).show();
+                });
+            }
         },
         showTooltip : function(d,viewCfg) {
             d3.select('body').selectAll('.event-drops-tooltip').remove();
@@ -166,15 +182,15 @@ define([
                 }]
                 labelsWidth = 0;
             }
+            var timeField = cowu.getValueByJsonPath(self.viewCfg,'timeField','MessageTS')
             var eventDropsChart = d3.chart.eventDrops()
                 .start(self.timeExtent[0])
-                .end(self.timeExtent[1])
-                // .eventLineColor(function(d, i) { return colors[i]})
-                .labelsWidth(200)
-                // .zoomable(false)
-                //.eventLineColor(function(d, i) { return colors(i)})
-                .eventLineColor(function(d, i) { return colors[i%colors.length]})
-                // .labelsWidth(labelsWidth)
+                //Adding a buffer of 10mins since the scale plotting 10 mins before may be a bug in eventdrops
+                .end(new Date(self.timeExtent[1].getTime() + (10 * 60 * 1000)))
+                .labelsWidth(100)
+//                .eventLineColor(function(d, i) { return colors[i%colors.length]})
+                .eventColor(function(d,i){return d.color})//to pick the color from the data
+                 .labelsWidth(labelsWidth)
                 .mouseover(function(d){
                     self.showTooltip(d,self.viewCfg);
                 })
@@ -182,8 +198,10 @@ define([
                 .click(function(d){
                     self.showDetailsInTarget(d,self.viewCfg);
                 })
+//                .tickFormat(d3.time.format("%H:%M"))
+//                .zoomable(false)
                 .date(function(d){
-                    return new Date(d.MessageTS/1000);
+                    return new Date(d[timeField]/1000);
                 });
             self.$el.find('.eventdrops-widget-title').text(self.viewCfg['title']);
             self.$el.find('.eventdrops-widget-title').addClass('drag-handle');
