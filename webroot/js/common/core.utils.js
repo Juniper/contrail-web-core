@@ -2282,14 +2282,18 @@ define([
                 return _.result(JSON.parse(localStorage.getItem(cowc.LAYOUT_PREFERENCE)), elementId);
             }
         };
-        self.updateLayoutPreference = function (elementId, preferences) {
+        self.updateLayoutPreference = function (elementId, preferences, cfg) {
             var layoutPref = localStorage.getItem(cowc.LAYOUT_PREFERENCE);
             if (layoutPref != null) {
                 layoutPref = JSON.parse(layoutPref);
             } else {
                 layoutPref = {};
             }
-            layoutPref[elementId] = preferences;
+            if(_.result(cfg,'delete',false) == true) {
+                delete layoutPref[elementId];
+            } else {
+                layoutPref[elementId] = preferences;
+            }
             localStorage.setItem(cowc.LAYOUT_PREFERENCE, JSON.stringify(layoutPref));
         }
         /**
