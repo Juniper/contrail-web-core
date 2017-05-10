@@ -854,7 +854,6 @@ define([
             }
 
             function brushed2Main() {
-                clearToolTip(false);
                 if(brush2Main.empty()){
                     cfDataSource.removeFilter('timeFilter');
                     if(updateToHistory) {

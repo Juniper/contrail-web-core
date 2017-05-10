@@ -45,9 +45,25 @@ define([
             theme: 'default',
             active: 0,
             tabs: [
+                    {
+                        elementId:'historical-alarms-tab',
+                        title: 'Events',
+                        view: "AlarmsHistoryListView",
+                        viewPathPrefix: cowc.ALARMS_VIEWPATH_PREFIX,
+                        viewConfig: viewConfig,
+                        tabConfig: {
+                            activate: function(event, ui) {
+                                if ( $('#historical-alarms-carousel-view')) {
+                                    $('#historical-alarms-carousel-view').
+                                                        trigger('refresh');
+                                }
+                                $('#historical-alarms-carousel-view').find('.grid-stack-item-content > .item-content').trigger('refresh');
+                            }
+                        }
+                    },
                    {
                        elementId: 'current-alarms-tab',
-                       title: 'Active',
+                       title: 'Alarms',
                        view: "CurrentAlarmsListView",
                        viewPathPrefix: cowc.ALARMS_VIEWPATH_PREFIX,
                        viewConfig: viewConfig,
@@ -62,26 +78,10 @@ define([
                                if ($('#' + cowl.ALARMS_GRID_ID).data('contrailGrid')) {
                                    $('#' + cowl.ALARMS_GRID_ID).data('contrailGrid').refreshView();
                                }
-                           }
-                       }
-                   },
-                   {
-                       elementId:'historical-alarms-tab',
-                       title: 'Alarms History',
-                       view: "AlarmsHistoryListView",
-                       viewPathPrefix: cowc.ALARMS_VIEWPATH_PREFIX,
-                       viewConfig: viewConfig,
-                       tabConfig: {
-                           activate: function(event, ui) {
-                               if ( $('#historical-alarms-carousel-view')) {
-                                   $('#historical-alarms-carousel-view').
-                                                       trigger('refresh');
-                               }
-                               $('#historical-alarms-carousel-view').find('.grid-stack-item-content > .item-content').trigger('refresh');
                            },
-                           renderOnActivate: true
+                           renderOnActivate: false
                        }
-                   },
+                   }
             ]
         }
     }
