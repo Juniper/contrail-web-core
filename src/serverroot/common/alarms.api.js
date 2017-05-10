@@ -6,7 +6,6 @@ var cacheApi = require(process.mainModule.exports["corePath"] + '/src/serverroot
     global   = require(process.mainModule.exports["corePath"] + '/src/serverroot/common/global'),
     messages = require(process.mainModule.exports["corePath"] + '/src/serverroot/common/messages'),
     commonUtils = require(process.mainModule.exports["corePath"] + '/src/serverroot/utils/common.utils'),
-    config = process.mainModule.exports["config"],
     rest = require(process.mainModule.exports["corePath"] + '/src/serverroot/common/rest.api'),
     async = require('async'),
     jsonPath = require('JSONPath').eval,

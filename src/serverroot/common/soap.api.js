@@ -3,7 +3,6 @@
  */
 
 var http = require('http'),
-    config = process.mainModule.exports["config"],
     logutils = require('../utils/log.utils'),
     messages = require('./messages'),
     appErrors = require('../errors/app.errors'),
