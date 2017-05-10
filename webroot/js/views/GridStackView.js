@@ -148,8 +148,12 @@ define([
             if(cowu.getLayoutPreference(self.elementId) != null) {
                 var serializedData = cowu.getLayoutPreference(self.elementId),
                     tmpData = serializedData;
-                if(tmpData.length > 0){
-                    widgetCfgList = tmpData;
+                if(tmpData.length > 0) {
+                    if(self.isLayoutValid(serializedData) == true) {
+                        widgetCfgList = tmpData;
+                    } else {
+                        cowu.updateLayoutPreference(self.elementId,null,{delete:true});
+                    }
                 }
             }
             // currWidgetCfg['itemAttr'] - Defined in viewconfig.js / Read from localstorage
