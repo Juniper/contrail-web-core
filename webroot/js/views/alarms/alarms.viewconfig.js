@@ -222,7 +222,7 @@ define(['underscore',
                        source:"STATTABLE",
                        config: {
                            table_name: 'StatTable.AlarmgenStatus.counters.table_stats',
-                           select: 'T=, SUM(counters.table_stats.set_count), SUM(counters.table_stats.reset_count), MAX(counters.table_stats.active_count)',
+                           select: 'T=, SUM(counters.table_stats.set_count), SUM(counters.table_stats.reset_count), SUM(counters.table_stats.active_count)',
                            time_granularity: 60
                        }
                    },
@@ -241,19 +241,21 @@ define(['underscore',
                                  cowc.FAILURE_COLOR,
                                  '#7dc48a',//Green
                              ],
+                             bucketSize:3,
                              showLegend: false,
                              listenToHistory:true,
                              applySettings: false,
                              barWidth: 6,
                              title: 'Historical Alarms',
-//                             subTitle: 'Alarms count',
+                             yAxisFormatter: Math.ceil,
                              xAxisLabel: '',
                              yAxisLabel: 'Alarm Events',
                              groupBy: 'Source',
 //                             grouped: true,
                              yLabels: ['Added','Cleared','Active'],
                              yField:'plotValue',
-                             yFields: ['SUM(counters.table_stats.set_count)','SUM(counters.table_stats.reset_count)','MAX(counters.table_stats.active_count)']
+                             yFieldOperation:'average',
+                             yFields: ['SUM(counters.table_stats.set_count)','SUM(counters.table_stats.reset_count)','SUM(counters.table_stats.active_count)']
                          }
                      }
                    },
@@ -351,7 +353,8 @@ define(['underscore',
                                 listenToHistory:true,
                                 tooltipFn: eventDropsTooltipContent,
                                 detailsFn: eventDropsDetailsContent,
-                                isDetailsFromRemoteCall:true
+                                isDetailsFromRemoteCall:true,
+                                colors: ['rgb(111,151,174)']
                             }
                         },
                         tooltip:{
@@ -414,11 +417,12 @@ define(['underscore',
                     self.populateAlarmModels();
                 }
                 return {
-                    modelCfg: {listModel: alarmsUIListModel},
+                    modelCfg: {listModel: alarmsListModel},
                     viewCfg: $.extend(true,{},activeAlarmViewConfig,{
                         elementId: 'active-alarms-filter-chart-id',
                         viewConfig: {
                             chartOptions: {
+                                xAxisLabel: '',
                                 hideTicks:true,
                                 zoomIn: false,
                                 brushRangeLimit: 7200,
@@ -676,10 +680,6 @@ define(['underscore',
                 {
                     label: 'Source',
                     value: d.Source
-                },
-                {
-                    label: 'Table',
-                    value: d['counters.table_stats.table_name']
                 },
                 {
                     label: 'Added',
