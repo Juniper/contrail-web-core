@@ -2037,7 +2037,6 @@ define([
         this.FIVE_NODE_COLOR = ['rgb(168,192,209)', 'rgb(111,151,174)', 'rgb(97,118,131)', 'rgb(185,213,232)', 'rgb(209,230,245)'];
         this.FAILURE_COLOR = '#d95436';
         this.OTHERS_COLORS = 'rgb(177, 189, 197)';
-        
         this.DEFAULT_CHART_DURATION = 2;
 
         this.OTHERS = 'Others';
