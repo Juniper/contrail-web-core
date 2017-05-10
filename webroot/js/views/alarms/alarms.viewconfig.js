@@ -419,6 +419,7 @@ define(['underscore',
                         elementId: 'active-alarms-filter-chart-id',
                         viewConfig: {
                             chartOptions: {
+                                xAxisLabel: '',
                                 hideTicks:true,
                                 zoomIn: false,
                                 brushRangeLimit: 7200,

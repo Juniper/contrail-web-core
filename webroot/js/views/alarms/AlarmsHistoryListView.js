@@ -33,6 +33,8 @@ define(
 //                                                                defaultWidth : 12,
 //                                                                defaultHeight : 8
                                                             },
+                                                            disableResize: true,
+                                                            disableDrag: true,
                                                             widgetCfgList: [
                                                                 {id:'alarms-historical-chart'},
                                                                 {id:'alarms-notification-view'},
