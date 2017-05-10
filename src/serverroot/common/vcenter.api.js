@@ -8,7 +8,7 @@
 
 var global = require('./global');
 var assert = require('assert');
-var config = process.mainModule.exports["config"];
+var configUtils = require('./config.utils');
 var plugins = require('../orchestration/plugins/plugins.api');
 var soap = require('./soap.api');
 var fs = require('fs');
@@ -33,6 +33,7 @@ function doCall (userData, appData, callback)
 function createvCenterSoapApi (serverType)
 {
     var orchMods = orchApi.getOrchestrationModels();
+    var config = configUtils.getConfig();
     if (-1 == orchMods.indexOf('vcenter')) {
         return null;
     }
