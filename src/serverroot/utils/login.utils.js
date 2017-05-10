@@ -2,7 +2,7 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var config = process.mainModule.exports['config'],
+var configUtils = require('../common/config.utils'),
 	messages = require('../common/messages'),
 	logutils = require('./log.utils'),
 	util = require('util');
@@ -16,6 +16,7 @@ if (!module.parent) {
  * Check if user is logged in: If yes, handle HTTP request. If no, go to login page.
  */
 exports.checkAuth = function (req, res, next) {
+    var config =  configUtils.getConfig();
 	if (config.require_auth && !req.session.userid) {
 		res.redirect('/');
 	} else {
