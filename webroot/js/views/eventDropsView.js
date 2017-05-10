@@ -155,16 +155,14 @@ define([
 
         renderChart: function(hideLoading) {
             var self = this;
-            var colors =  d3.scale.category10();
             var eventDropsWidgetTmpl;
             if ($(self.$el).find('.eventdrops-widget').length == 0){
                 eventDropsWidgetTmpl = contrail.getTemplate4Id('eventdrops-widget-template');
                 self.$el.html(eventDropsWidgetTmpl);
             }
-            colors = cowc.FIVE_NODE_COLOR;
-            colors = ["rgb(13,81,156)","rgb(50,129,189)","rgb(106,174,214)"]
+            var colors = cowu.getValueByJsonPath(self.viewCfg,'chartOptions;colors',cowc.FIVE_NODE_COLOR);
             var data = self.model.getItems();
-            var labelsWidth = 160;
+            var labelsWidth = 130;
             if(self.viewCfg.groupBy != null) {
                 data = _.groupBy(data,function(d) {
                     return _.result(d,self.viewCfg.groupBy,d.Messagetype);
@@ -182,15 +180,14 @@ define([
                 }]
                 labelsWidth = 0;
             }
-            var timeField = cowu.getValueByJsonPath(self.viewCfg,'timeField','MessageTS')
+            var timeField = cowu.getValueByJsonPath(self.viewCfg,'timeField','MessageTS');
             var eventDropsChart = d3.chart.eventDrops()
                 .start(self.timeExtent[0])
                 //Adding a buffer of 10mins since the scale plotting 10 mins before may be a bug in eventdrops
-                .end(new Date(self.timeExtent[1].getTime() + (10 * 60 * 1000)))
-                .labelsWidth(100)
-//                .eventLineColor(function(d, i) { return colors[i%colors.length]})
-                .eventColor(function(d,i){return d.color})//to pick the color from the data
-                 .labelsWidth(labelsWidth)
+                .end(new Date(self.timeExtent[1].getTime() + (30 * 60 * 1000)))
+                .eventLineColor(function(d, i) { return colors[i%colors.length]})
+//                .eventColor(function(d,i){return d.color})//to pick the color from the data
+                .labelsWidth(labelsWidth)
                 .mouseover(function(d){
                     self.showTooltip(d,self.viewCfg);
                 })
@@ -198,8 +195,11 @@ define([
                 .click(function(d){
                     self.showDetailsInTarget(d,self.viewCfg);
                 })
-//                .tickFormat(d3.time.format("%H:%M"))
-//                .zoomable(false)
+                .tickFormat([["%H:%M", function(d){return d.getHours();}]])
+//                .axisFormat(function(axis){
+////                    axis.tickValues(axis.scale().domain())
+//                    return axis;
+//                })
                 .date(function(d){
                     return new Date(d[timeField]/1000);
                 });
@@ -208,9 +208,10 @@ define([
             if(hideLoading) {
                 self.$el.find('.event-drops-header > .loading').hide();
             }
+            //Render the chart inside the container
             d3.select(self.$el.find('.eventdrops-chart')[0])
-            .datum(data)
-            .call(eventDropsChart);
+                .datum(data)
+                .call(eventDropsChart);
         }
     });
     function getXMLMessageContent(d) {
