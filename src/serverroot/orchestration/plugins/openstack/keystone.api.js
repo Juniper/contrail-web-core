@@ -2806,24 +2806,24 @@ function getCookieObjs (req, appData, callback)
             /* Now check the tenantlist response, and if domain is there in
              * response, then set it, else set as default-domain
              */
-            cookieObjs['domain'] = defDomainId;
-            cookieObjs['project'] = defProj;
+            cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME] = defDomainId;
+            cookieObjs[global.COOKIE_PROJECT_DISPLAY_NAME] = defProj;
         } else {
             if (null == req.cookies[global.COOKIE_DOMAIN_DISPLAY_NAME]) {
-                cookieObjs['domain'] = defDomainId;
+                cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME] = defDomainId;
             } else {
                 /* First check if we have this domain now or not */
                 if (false ==
                     plugins.doDomainExist(req.cookies[global.COOKIE_DOMAIN_DISPLAY_NAME],
                                                    domainObjs)) {
-                    cookieObjs['domain'] = defDomainId;
+                    cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME] = defDomainId;
                 } else {
-                    cookieObjs['domain'] =
+                    cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME] =
                         req.cookies[global.COOKIE_DOMAIN_DISPLAY_NAME];
                 }
             }
             if (null == req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME]) {
-                cookieObjs['project'] = defProj;
+                cookieObjs[global.COOKIE_PROJECT_DISPLAY_NAME] = defProj;
             } else {
                 if ('v2.0' == req.session.authApiVersion) {
                     /* Just check if the project exists or not */
@@ -2833,21 +2833,22 @@ function getCookieObjs (req, appData, callback)
                             (null != tenantList['tenants'][i]['name']) &&
                             (tenantList['tenants'][i]['name'] ==
                                 req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME])) {
-                            cookieObjs['project'] =
+                            cookieObjs[global.COOKIE_PROJECT_DISPLAY_NAME] =
                                 req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME];
                             /* it is fine */
                             break;
                         }
                     }
                     if (i == projCnt) {
-                        cookieObjs['project'] = defProj;
+                        cookieObjs[global.COOKIE_PROJECT_DISPLAY_NAME] = defProj;
                     }
                 } else {
                     var domList =
                         plugins.formatDomainList(req, tenantList, domainObjs);
-                    var projList = domList[cookieObjs['domain']];
+                    var projList =
+                        domList[cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME]];
                     if (null == projList) {
-                        cookieObjs['project'] = defProj;
+                        cookieObjs[global.COOKIE_PROJECT_DISPLAY_NAME] = defProj;
                         callback(cookieObjs);
                         return;
                     }
@@ -2856,7 +2857,7 @@ function getCookieObjs (req, appData, callback)
                         if (projList[i] ==
                             req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME]) {
                             /* It is fine */
-                            cookieObjs['project'] =
+                            cookieObjs[global.COOKIE_PROJECT_DISPLAY_NAME] =
                                 req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME];
                             break;
                         }
@@ -2865,7 +2866,7 @@ function getCookieObjs (req, appData, callback)
                         /* We did not find the already set project cookie value in
                          * our project list
                          */
-                        cookieObjs['project'] = defProj;
+                        cookieObjs[global.COOKIE_PROJECT_DISPLAY_NAME] = defProj;
                     }
                 }
             }
