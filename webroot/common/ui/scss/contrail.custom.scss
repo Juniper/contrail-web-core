@@ -1234,7 +1234,9 @@ button#close-error-popup{
 
 .custom-grid-stack {
     .custom-grid-stack-item {
-        overflow: hidden;
+        .contrail-grid {
+            overflow: hidden;
+        }
     }
 }
 
@@ -2278,9 +2280,35 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
     color:#3182bd;
 }
 /*Ends here*/
+
 .select2-container-multi .select2-choices .select2-search-field input {
      font-family: 'Open Sans';
      font-size:13px;}
 .collection-label{
     font-size:13px;
     margin:0px;}
+
+.eventdrops-widget .chart-wrapper .tick text {
+    font-size: 10px;
+    fill: #777;
+}
+
+.eventdrops .line-separator, .x-axis, .y-tick {
+    stroke: #000;
+    fill: none;
+    stroke-width: .1px;
+}
+#alarms-notification-view{
+ max-width:350px;
+ right:0px;
+ left:auto;
+ }
+.notification-title{
+ padding-left:30px;
+ }
+div#alarms-event-drops .grid-stack-item-content {
+    margin-top: 40px;
+}
+#alarms-event-drops .eventdrops-chart {
+    margin-top: -15px;
+}
