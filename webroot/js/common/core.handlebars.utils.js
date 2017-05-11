@@ -117,7 +117,13 @@ define([
     });
 
     Handlebars.registerHelper('formatGridJSON2HTML', function (rawdata, options) {
-        var rawDataClone = $.extend(true, {}, rawdata);
+        var rawDataClone;
+        if(_.isArray(rawdata) === true){
+            rawDataClone = $.extend(true, [], rawdata);
+        }
+        else{
+            rawDataClone = $.extend(true, {}, rawdata);
+        }
         if (contrail.checkIfExist(rawDataClone.cgrid)) {
             delete rawDataClone.cgrid;
         }
