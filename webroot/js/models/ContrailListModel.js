@@ -141,6 +141,8 @@ define([
                 setId4Idx(data, this);
                 this.beginUpdate();
                 this.setItems(data);
+                //Retain applied sort
+                this.reSort();
                 this.endUpdate();
             },
             setSearchFilter: function (searchColumns, searchFilter) {
@@ -157,6 +159,7 @@ define([
                 $.each(data, function (key, val) {
                     dis.addItem(val);
                 });
+                this.reSort();
                 this.endUpdate();
             },
             updateData: function (data) {
@@ -165,6 +168,7 @@ define([
                 $.each(data, function (key, val) {
                     dis.updateItem(val.cgrid, val);
                 });
+                this.reSort();
                 this.endUpdate();
             },
             deleteDataByIds: function (ids) {
@@ -173,6 +177,7 @@ define([
                 $.each(ids, function (key, val) {
                     dis.deleteItem(val);
                 });
+                this.reSort();
                 this.endUpdate();
             },
             performDefaultSort: function() {
