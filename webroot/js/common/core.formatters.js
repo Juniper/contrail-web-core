@@ -283,6 +283,10 @@ define([
                     case 'packet' :
                         return cowu.addUnits2Packets(value);
                         break;
+                    
+                    case 'link' :
+                        return value;
+                        break;
 
                     //run the user defined formatter function
                     default :
