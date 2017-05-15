@@ -193,6 +193,15 @@ config.dns.server_ip = ['127.0.0.1'];
 config.dns.server_port = '8092';
 config.dns.statusURL = "/Snh_PageReq?x=AllEntries%20VdnsServersReq";
 
+/*
+    Ceph Storage Rest API configurations
+*/
+config.ceph = {};
+config.ceph.server_ip = ['127.0.0.1'];
+config.ceph.server_port = '5005';
+config.ceph.statusURL = '/api/v0.1/status';
+
+
 // vcenter related parameters
 config.vcenter = {};
 config.vcenter.server_ip = '127.0.0.1';         //vCenter IP
@@ -252,7 +261,7 @@ config.kue.ui_port = '3002'
 /* IP List to listen on */
 config.webui_addresses = ['0.0.0.0'];
 
-/* Is insecure access to WebUI? 
+/* Is insecure access to WebUI?
  * If set as false, then all http request will be redirected
  * to https, if set true, then no https request will be processed, but only http
  * request
@@ -297,6 +306,10 @@ config.featurePkg = {};
 config.featurePkg.webController = {};
 config.featurePkg.webController.path = '/usr/src/contrail/contrail-web-controller';
 config.featurePkg.webController.enable = true;
+
+config.featurePkg.webStorage= {};
+config.featurePkg.webStorage.path = '/usr/src/contrail/contrail-web-storage';
+config.featurePkg.webStorage.enable = false;
 
 /* Enable/disable Stat Query Links in Sidebar*/
 config.qe = {};
@@ -345,4 +358,3 @@ config.jsonSchemaPath = "/usr/src/contrail/contrail-web-core/src/serverroot/conf
 
 // Export this as a module.
 module.exports = config;
-
