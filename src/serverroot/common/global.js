@@ -49,6 +49,7 @@ global.STR_SEND_TO_JOB_SERVER = 'sendToJobServer';
 global.CONTRAIL_SERVICE_TYPE_OP_SERVER = 'OpServer';
 global.CONTRAIL_SERVICE_TYPE_API_SERVER = 'ApiServer';
 global.CONTRAIL_SERVICE_TYPE_DNS_SERVER = 'dns-server';
+global.CONTRAIL_SERVICE_TYPE_CEPH_REST_API_SERVER = 'ceph-rest-server';
 global.CONTRAIL_SERVER_SUB_CLINET = 'contrailServiceSubscribeClient';
 global.CONTRAIL_SERVICE_RETRY_TIME = 300000; //5 minutes
 
@@ -163,7 +164,7 @@ global.DFLT_SERVER_IP = '127.0.0.1';
 /* 1 Minute 55 Seconds */
 global.DFLT_HTTP_REQUEST_TIMEOUT_TIME = 115 * 1000;
 /* 5 minutes 10 secs */
-global.NODEJS_HTTP_REQUEST_TIMEOUT_TIME = (5 * 60 + 10) * 1000; 
+global.NODEJS_HTTP_REQUEST_TIMEOUT_TIME = (5 * 60 + 10) * 1000;
 /* 20 Minutes - From Middleware, do callback timeout of 20 minutes */
 global.DEFAULT_MIDDLEWARE_API_TIMEOUT = 20 * 60 * 1000;
 
@@ -197,6 +198,8 @@ global.label.VCENTER_SERVER = 'vCenter-server'
 global.label.VROUTER = 'vrouter';
 global.label.CONTROL_NODE = 'control-node';
 global.label.CGC = 'contrail-global-controller';
+global.label.CEPH_REST_API_SERVER = 'ceph-rest-api-server';
+
 global.SANDESH_CONTROL_NODE_PORT = '8083';
 global.SANDESH_COMPUTE_NODE_PORT = '8085';
 global.SANDESH_DNS_AGENT_PORT = '8092';
@@ -242,19 +245,19 @@ global.QUERY_JSON = {
     StatTable_UveVirtualNetworkAgent_vn_stats: {
                                                     "table": 'StatTable.UveVirtualNetworkAgent.vn_stats',
                                                     "start_time": "",
-                                                    "end_time": "", 
+                                                    "end_time": "",
                                                     "select_fields": []
                                                 },
     StatTable_VirtualMachineStats_if_stats: {
                                                     "table": 'StatTable.VirtualMachineStats.if_stats',
                                                     "start_time": "",
-                                                    "end_time": "", 
+                                                    "end_time": "",
                                                     "select_fields": []
                                              },
     StatTable_VirtualMachineStats_fip_stats: {
                                                     "table": 'StatTable.VirtualMachineStats.fip_stats',
                                                     "start_time": "",
-                                                    "end_time": "", 
+                                                    "end_time": "",
                                                     "select_fields": []
                                              },
     OverlayToUnderlayFlowMap: {"table": 'OverlayToUnderlayFlowMap', "start_time": "",
