@@ -130,7 +130,7 @@ APIServer.prototype.updateContrailServiceParams = function (params)
         if (contrailServ['ip-address'] != null) {
             params.url = contrailServ['ip-address'];
         }
-        if (contrailService['port'] != null) {
+        if (contrailServ['port'] != null) {
             params.port = contrailServ['port'];
         }
     }
