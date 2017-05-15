@@ -10,6 +10,54 @@ var Connection  = require('ssh2');
 var async       = require('async');
 var commonUtils = require('../utils/common.utils');
 var appErrors   = require('../errors/app.errors.js');
+var configUtils = require('./config.utils');
+
+var defDockerContNames = ["controller", "analytics", "analyticsdb"];
+var containerNotFoundStr = "Error response from daemon: No such container";
+var contrailStatusNotFoundStr = "contrail-status: command not found";
+var dockerNotFoundStr = "docker: command not found";
+var openstackStatusNotFoundStr = "openstack-status: command not found";
+
+function fillSSHDockerCmdObjs (cmdObjs, req, cmd)
+{
+    var config = configUtils.getConfig();
+    var data = req.body;
+    var username = data['username'];
+    var password = data['password'];
+    var host = req.param('ip');
+    if (null == cmdObjs) {
+        cmdObjs = [];
+    }
+    var dockerContNames = commonUtils.getValueByJsonPath(config,
+                                                         "docker;container_list",
+                                                         defDockerContNames);
+    switch (cmd) {
+    case "contrail-status":
+        var dockerContNamesLen = dockerContNames.length;
+        var startLen = cmdObjs.length;
+        for (var i = startLen; i < startLen + dockerContNamesLen; i++) {
+            if (null == cmdObjs[i]) {
+                cmdObjs[i] = {};
+            }
+            cmdObjs[i]["cmd"] = "docker exec " + dockerContNames[i - startLen] +
+                " " + cmd;
+            cmdObjs[i]['host'] = host;
+            cmdObjs[i]['username'] = username;
+            cmdObjs[i]['password'] = password;
+        }
+        break;
+    case "openstack-status":
+        var host = commonUtils.getValueByJsonPath(config, "identityManager;ip",
+                                                  null);
+        /* In Docker environment, openstack does not run in container */
+        if (null == cmdObjs) {
+            cmdObjs = [];
+        }
+        cmdObjs.push({cmd: cmd, host: host, username: username,
+                      password: password});
+        break;
+    }
+}
 
 function getServiceStatus (req, res, appData)
 {
@@ -17,21 +65,29 @@ function getServiceStatus (req, res, appData)
     var username = data['username'];
     var password = data['password'];
     var host = req.param('ip');
-    var cmdObj = [];
+    var cmdObjs = [];
 
     var cmdList = ['contrail-status', 'openstack-status'];        
     var len = cmdList.length;
     for (var i = 0; i < len; i++) {
-        cmdObj[i] ={};
-        cmdObj[i]['host'] = host;
-        cmdObj[i]['username'] = username;
-        cmdObj[i]['password'] = password;
-        cmdObj[i]['cmd'] = cmdList[i];
+        cmdObjs[i] ={};
+        cmdObjs[i]['host'] = host;
+        cmdObjs[i]['username'] = username;
+        cmdObjs[i]['password'] = password;
+        cmdObjs[i]['cmd'] = cmdList[i];
     }
-    async.mapSeries(cmdObj, issueSSHCmd, function(err, result) {
-        if ((null == err) && (null != result)) {
-            commonUtils.handleResponse(err, res, result.toString());
-        } else {
+    /* In Docker environment, openstack and vrouter does not run in
+     * container, so we need to merge all the contents
+     */
+    var config = configUtils.getConfig();
+    fillSSHDockerCmdObjs(cmdObjs, req, "contrail-status");
+    var idHost = commonUtils.getValueByJsonPath(config, "identityManager;ip",
+                                                null);
+    if (idHost != host) {
+        fillSSHDockerCmdObjs(cmdObjs, req, "openstack-status");
+    }
+    async.map(cmdObjs, issueSSHCmd, function(err, result) {
+        if ((null != err) || (null == result)) {
             try {
                 error = new appErrors.RESTServerError((err.toString()));
             } catch(e) {
@@ -39,7 +95,48 @@ function getServiceStatus (req, res, appData)
                                                       " service status");
             }
             commonUtils.handleJSONResponse(error, res, null);
+            return;
         }
+        var totalCnt = result.length;
+        var contrailStatusData = result[0];
+        var openstackStatusData = result[1];
+        var openstackStatusContData = result[totalCnt - 1];
+
+        var finalResult = "";
+        if (-1 == contrailStatusData.indexOf(contrailStatusNotFoundStr)) {
+            if ((null != contrailStatusData) && (contrailStatusData.length > 0)) {
+                finalResult += contrailStatusData.toString();
+            }
+        }
+        for (i = cmdList.length; i < totalCnt - 1; i++) {
+            var partialData = result[i];
+            if ((null != partialData) && (partialData.length > 0)) {
+                var dockerContrailStatusFoundIdx =
+                    partialData.indexOf(contrailStatusNotFoundStr);
+                var containerFoundIdx = partialData.indexOf(containerNotFoundStr);
+                var dockerFoundIdx = partialData.indexOf(dockerNotFoundStr);
+                if ((-1 == dockerContrailStatusFoundIdx) &&
+                    (-1 == containerFoundIdx) && (-1 == dockerFoundIdx)) {
+                    finalResult += partialData.toString();
+                }
+            }
+        }
+        if (-1 == openstackStatusData.indexOf(openstackStatusNotFoundStr)) {
+            if ((null != openstackStatusData) &&
+                (openstackStatusData.length > 0)) {
+                finalResult += "\nopenstack-status on host:" + idHost + "\n";
+                finalResult += openstackStatusData.toString();
+            }
+        }
+        var dockerOpenstackStatusData = result[totalCnt - 1];
+        if ((null != dockerOpenstackStatusData) &&
+            (dockerOpenstackStatusData.length > 0) && (idHost != host)) {
+            if (-1 == dockerOpenstackStatusData.indexOf(openstackStatusNotFoundStr)) {
+                finalResult += "\nopenstack-status on host:" + host + "\n";
+                finalResult += dockerOpenstackStatusData.toString();
+            }
+        }
+        commonUtils.handleResponse(null, res, finalResult);
     });
 }
 
@@ -81,7 +178,9 @@ function issueSSHCmd (cmdObj, callback)
     c.on('end', function() {
     });
     c.on('close', function(had_error) {
-        callback(null, result);
+        if (false == had_error) {
+            callback(null, result);
+        }
     });
 }
 
