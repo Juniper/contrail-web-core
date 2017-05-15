@@ -1016,6 +1016,9 @@ function changeRegion (regionName){
         region = regionName;
     }
     contrail.setCookie('region', region);
+    require(['core-alarm-utils'],function(alarmUtil) {
+        alarmUtil.fetchAndUpdateAlarmBell();
+    });
     if(region != cowc.GLOBAL_CONTROLLER_ALL_REGIONS) {
         if($('.iframe-view').length != 0){
                 $('.iframe-view').remove();
