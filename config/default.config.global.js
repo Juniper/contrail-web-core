@@ -18,7 +18,7 @@ config.orchestration.Manager = 'openstack';
  *
  * true  - These values should be taken from this config
  *         file.
- * false - These values should be taken from auth catalog list 
+ * false - These values should be taken from auth catalog list
  *
 *****************************************************************************/
 config.serviceEndPointFromConfig = true;
@@ -64,7 +64,7 @@ config.regions.RegionOne = 'http://127.0.0.1:5000/v2.0';
 
 /****************************************************************************
  * This boolean flag indicates if serviceEndPointFromConfig is set as false,
- * then to take IP/Port/Protocol/Version information from auth catalog, 
+ * then to take IP/Port/Protocol/Version information from auth catalog,
  * should publicURL OR internalURL will be used.
  *
  * true  - publicURL in endpoint will be used to retrieve IP/Port/Protocol/
@@ -93,7 +93,7 @@ config.serviceEndPointTakePublicURL = true;
  *      IP to connect to for this Server.
  * port:
  *      Port to connect to for this server
- * authProtocol:        
+ * authProtocol:
  *      Specify authProtocol either 'http' or 'https'
  * apiVersion:
  *      REST API Version for this server to connect to.
@@ -107,7 +107,7 @@ config.serviceEndPointTakePublicURL = true;
  *      Not applicable for cnfg/analytics as of now
  * strictSSL:
  *      If true, requires certificates to be valid
- * ca: 
+ * ca:
  *      An authority certificate to check the remote host against,
  *      if you do not want to specify then use ''
 *****************************************************************************/
@@ -140,10 +140,10 @@ config.identityManager.ip = '127.0.0.1';
 config.identityManager.port = '5000';
 config.identityManager.authProtocol = 'http';
 /******************************************************************************
- * Note: config.identityManager.apiVersion is not controlled by boolean flag 
+ * Note: config.identityManager.apiVersion is not controlled by boolean flag
  * config.serviceEndPointFromConfig. If specified apiVersion here, then these
  * API versions will be used while using REST API to identityManager.
- * If want to use with default apiVersion(v2.0), then can specify it as 
+ * If want to use with default apiVersion(v2.0), then can specify it as
  * empty array.
 ******************************************************************************/
 config.identityManager.apiVersion = ['v2.0'];
@@ -194,6 +194,14 @@ config.dns.server_ip = ['127.0.0.1'];
 config.dns.server_port = '8092';
 config.dns.statusURL = "/Snh_PageReq?x=AllEntries%20VdnsServersReq";
 
+/*
+    Ceph Storage Rest API configurations
+*/
+config.ceph = {};
+config.ceph.server_ip = ['127.0.0.1'];
+config.ceph.server_port = '5005';
+config.ceph.statusURL = '/api/v0.1/status';
+
 /* Job Server */
 config.jobServer = {};
 config.jobServer.server_ip = '127.0.0.1';
@@ -216,7 +224,7 @@ config.kue.ui_port = '3002'
 /* IP List to listen on */
 config.webui_addresses = ['0.0.0.0'];
 
-/* Is insecure access to WebUI? 
+/* Is insecure access to WebUI?
  * If set as false, then all http request will be redirected
  * to https, if set true, then no https request will be processed, but only http
  * request
@@ -258,6 +266,10 @@ config.featurePkg.webController = {};
 config.featurePkg.webController.path = '/usr/src/contrail/contrail-web-controller';
 config.featurePkg.webController.enable = true;
 
+config.featurePkg.webStorage= {};
+config.featurePkg.webStorage.path = '/usr/src/contrail/contrail-web-storage';
+config.featurePkg.webStorage.enable = false;
+
 /* Enable/disable Stat Query Links in Sidebar*/
 config.qe = {};
 config.qe.enable_stat_queries = false;
@@ -271,7 +283,7 @@ config.logs.level = 'debug';
 /******************************************************************************
  * Boolean flag getDomainProjectsFromApiServer indicates wheather the project
  * list should come from API Server or Identity Manager.
- * If Set 
+ * If Set
  *      - true, then project list will come from API Server
  *      - false, then project list will come from Identity Manager
  * Default: false
@@ -424,7 +436,7 @@ config.session.secret_key =
 'enterasupbK3xg8qescJK.dUbdgfVq0D70UaLTMGTzO4yx5vVJral2zIhVersecretkey';
 
 /*****************************************************************************
- * router_L3Enable flag indicates whether to update external gateway 
+ * router_L3Enable flag indicates whether to update external gateway
  * information on router in neutron.
  *
  * true - Will update external gateway information on router in neutron.

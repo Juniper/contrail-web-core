@@ -156,7 +156,9 @@ function getContrailServiceByApiServerType (apiServerType)
     case global.label.DNS_SERVER:
         serviceType = global.CONTRAIL_SERVICE_TYPE_DNS_SERVER;
         break;
-
+    case global.label.CEPH_REST_API_SERVER:
+        serviceType = global.CONTRAIL_SERVICE_TYPE_CEPH_REST_API_SERVER;
+        break;
     default:
         return null;
     }
@@ -173,6 +175,8 @@ function getServerTypeByServerName (serverName)
         return global.CONTRAIL_SERVICE_TYPE_API_SERVER;
     case global.label.DNS_SERVER:
         return global.CONTRAIL_SERVICE_TYPE_DNS_SERVER;
+    case global.label.CEPH_REST_API_SERVER:
+        return global.CONTRAIL_SERVICE_TYPE_CEPH_REST_API_SERVER;
     default:
         return null;
     }
@@ -305,6 +309,8 @@ function getContrailServices ()
 {
     var dataObjArr = [];
 
+    var config = configUtils.getConfig();
+
     /* opserver */
     processContrailService(global.CONTRAIL_SERVICE_TYPE_OP_SERVER, dataObjArr);
 
@@ -315,6 +321,14 @@ function getContrailServices ()
     /* dnsserver */
     dataObjArr = [];
     processContrailService(global.CONTRAIL_SERVICE_TYPE_DNS_SERVER, dataObjArr);
+
+    /* ceph-rest-api-server */
+    var cephEnabled = commonUtils.getValueByJsonPath(config, 'featurePkg;webStorage;enable', false);
+    if(cephEnabled === true){
+      dataObjArr = [];
+      processContrailService(global.CONTRAIL_SERVICE_TYPE_CEPH_REST_API_SERVER, dataObjArr);
+    }
+
 }
 
 function processContrailService (serviceType, dataObjArr)
@@ -372,6 +386,10 @@ function formatDataForContrailServices (serviceType, dataObjArr)
         case global.CONTRAIL_SERVICE_TYPE_DNS_SERVER:
             data[serviceType] = [];
             formatConfigData(data[serviceType], "dns", dataObjArr, serviceType);
+            break;
+        case global.CONTRAIL_SERVICE_TYPE_CEPH_REST_API_SERVER:
+            data[serviceType] = [];
+            formatConfigData(data[serviceType], "ceph", dataObjArr, serviceType);
             break;
     }
     return data;
@@ -434,6 +452,3 @@ exports.getContrailServiceByApiServerType = getContrailServiceByApiServerType;
 exports.getActiveServiceRespDataList = getActiveServiceRespDataList;
 exports.resetServicesByParams = resetServicesByParams;
 exports.getContrailServiceRespDataList = getContrailServiceRespDataList;
-
-
-
