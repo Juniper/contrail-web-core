@@ -1399,33 +1399,33 @@
     </div>
 </script>
 
-<script type="text/x-handlebars-template" id="core-grid-group-delete-modal-body-template"> 
-    <div class="row-fluid"> 
-        <p>Are you sure you want to delete the following rows?</p> 
-        <table class="table table-bordered table-condensed"> 
-            <thead> 
-                <tr> 
-                    {{#each columns}} 
-                        <th>{{this}}</th> 
-                    {{/each}} 
-                </tr> 
-            </thead> 
-            <tbody> 
-                {{#each rows}} 
-                    <tr> 
-                        {{#each ../columnIds}} 
-                            <td>{{#getValueFromObject this ../this}}{{/getValueFromObject}}</td> 
-                        {{/each}} 
-                    </tr> 
-                {{/each}} 
-            </tbody> 
-        </table> 
-    </div> 
-  </script> 
+<script type="text/x-handlebars-template" id="core-grid-group-delete-modal-body-template">
+    <div class="row-fluid">
+        <p>Are you sure you want to delete the following rows?</p>
+        <table class="table table-bordered table-condensed">
+            <thead>
+                <tr>
+                    {{#each columns}}
+                        <th>{{this}}</th>
+                    {{/each}}
+                </tr>
+            </thead>
+            <tbody>
+                {{#each rows}}
+                    <tr>
+                        {{#each ../columnIds}}
+                            <td>{{#getValueFromObject this ../this}}{{/getValueFromObject}}</td>
+                        {{/each}}
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</script>
 
 <script type="text/x-handlebars-template" id="core-editable-grid-view-template">
     {{#IfCompare label null operator='!='}}
-    <label style="margin:0px">{{label}}</label>
+    <label class="collection-label">{{label}}</label>
     {{/IfCompare}}
     <table class="contrail-editable-grid-table" {{#if width}} width='{{width}}' {{/if}}>
         <thead style="background:#f9f9f9">
@@ -1475,7 +1475,7 @@
 
 <script type="text/x-handlebars-template" id="core-editable-grid-action-view-template">
     {{#IfCompare label null operator='!='}}
-    <label style="margin:0px">{{label}}</label>
+    <label class="collection-label">{{label}}</label>
     {{/IfCompare}}
     <table class="contrail-editable-grid-table" {{#if width}} width='{{width}}' {{/if}}>
         <thead style="background:#fafafa">
@@ -1564,7 +1564,7 @@
 
 <script type="text/x-handlebars-template" id="core-collection-view-heading-template">
     {{#IfCompare viewConfig.label null operator='!='}}
-    <label style="margin:0px">{{viewConfig.label}}</label>
+    <label class="collection-label">{{viewConfig.label}}</label>
     {{/IfCompare}}
     <table class="contrail-editable-grid-table">
         <thead>
@@ -1636,7 +1636,7 @@
 
 <script type="text/x-handlebars-template" id="core-collection-view-grid-action-heading-template">
     {{#IfCompare viewConfig.label null operator='!='}}
-    <label style="margin:0px">{{viewConfig.label}}</label>
+    <label class="collection-label">{{viewConfig.label}}</label>
     {{/IfCompare}}
     <table class="contrail-editable-grid-table">
         <thead>
@@ -2401,7 +2401,7 @@
 <script type="text/x-handlebars-template" id="core-collection-common-heading-view-template">
     <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
     {{#IfCompare viewConfig.label null operator='!='}}
-    <label style="margin:0px" class="text-left">{{viewConfig.label}}</label>
+    <label class="collection-label text-left" >{{viewConfig.label}}</label>
     {{/IfCompare}}
     <table class="contrail-editable-grid-table" >
         <thead style="background:#fafafa">
