@@ -4,7 +4,7 @@
 
 var vCenterApi = require('../../../common/vcenter.api'),
     configApiServer = require('../../../common/configServer.api'),
-    config = process.mainModule.exports["config"],
+    configUtils = require('../../../common/config.utils'),
     logutils = require('../../../utils/log.utils');
 var commonUtils = require('../../../utils/common.utils');
 var async = require('async');
@@ -394,6 +394,7 @@ function getIdByMobName(appData,objType,name,folderName) {
 }
 
 function populatevCenterParams(appData) {
+    var config = configUtils.getConfig();
     return new Promise(function(resolve,reject) {
         if(dataCenterName != null && vSwitchName != null)
             resolve();

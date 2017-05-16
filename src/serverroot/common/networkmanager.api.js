@@ -6,7 +6,6 @@
  * This file contains the wrapper function for network manager 
  */
 
-var config = process.mainModule.exports['config'];
 var orch = require('../orchestration/orchestration.api');
 
 var orchModels = orch.getOrchestrationModels();

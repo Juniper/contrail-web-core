@@ -3,7 +3,6 @@
  */
 
 var rest = require('../../common/rest.api'),
-    config = process.mainModule.exports["config"],
     authApi = require('../../common/auth.api'),
     commonUtils = require('../../utils/common.utils'),
     vcenterApi = require('../../common/vcenter.api'),

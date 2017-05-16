@@ -2,9 +2,9 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var config = process.mainModule.exports['config'],
+var configUtils = require('../../common/config.utils'),
     logutils = require('../../utils/log.utils');
-
+var config = configUtils.getConfig();
 var  topoCache = require(config.featurePkg.webController.path +
                          '/webroot/monitor/tenant-network/jobs/topoCache.api')
 	, bgpNode = require(config.featurePkg.webController.path +
