@@ -2046,7 +2046,7 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
                        }
 .select2-container-multi .select2-choices .select2-search-choice+ .select2-search-field{
     width: auto;/*overwrites previous class when one/more item(s) are added*/}
-#ecmp_hashing_include_fields .select2-search-field input, #ecmpHashingIncFields .select2-search-field input {
+#ecmp_hashing_include_fields .select2-search-field input, #ecmpHashingIncFields .select2-search-field input, #connectedNetwork .select2-search-field input {
     width:100%!important }
 
 
