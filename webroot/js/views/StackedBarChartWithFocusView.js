@@ -607,14 +607,14 @@ define([
                      })
                     .attr("y", function(d) {
                         if(d.name != cowc.FAILURE_LABEL && d.total === 0){
-                            return Math.floor(height - yAxisMaxValue * 0.01);
+                            return height;
                         }else{
                             return y(d.y0) + y(d.y) - height;
                         }
                      })
                     .attr("height", function(d) {
                         if(d.name != cowc.FAILURE_LABEL && d.total === 0){
-                            return Math.ceil(yAxisMaxValue * 0.01);
+                            return (height * 0.01);
                         }else{
                             return height - y(d.y);
                         }
