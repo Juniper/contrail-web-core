@@ -1032,7 +1032,11 @@ function changeRegion (regionName){
     $("#alarms-popup-link").show();
     $("#main-content").show();
 }
-
+function clickNodesDetails (nodesHash,region){
+    contrail.setCookie('region', region);
+    $("#regionDD").select2("val", loadUtils.getCookie('region'));
+    layoutHandler.setURLHashObj({'p' : nodesHash, 'region' : region});
+}
 /**
  * This file is also require-d during build script.
  * Run following only when its loaded in client side.
