@@ -147,9 +147,11 @@ function getSSLOptionsIntrospectPort (req, port)
          */
         for (var key in config.proxy) {
             var portListObjs = config.proxy[key];
+            var portList = [];
             var introspectPorts =
                 commonUtils.getValueByJsonPath(portListObjs, "introspect", []);
-            if (introspectPorts.indexOf(port) > -1) {
+            portList = _.values(introspectPorts);
+            if (portList.indexOf(port) > -1) {
                 found = true;
                 break;
             }
