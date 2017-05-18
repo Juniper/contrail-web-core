@@ -2284,3 +2284,9 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
 .collection-label{
     font-size:13px;
     margin:0px;}
+/*ie10 and ie11 specific styles*/
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+#networking-graph svg:not(:root), .stacked-area-chart-container svg:not(:root){
+    overflow:auto;}
+.grid-stack > .grid-stack-item > .grid-stack-item-content, .custom-grid-stack .custom-grid-stack-item, .grid-stack-item-content{overflow:visible;}
+    }
