@@ -85,12 +85,6 @@ function sendGohanRequest (req, res, tokenId)
     }
 
     var reqUrl = splitArr[1];
-    if(reqUrl.indexOf('sort_key') !== -1 &&
-    		reqUrl.indexOf('tenant_id') === -1 &&
-    		reqUrl.indexOf('locations') === -1 &&
-    		reqUrl.indexOf('local_') === -1) {
-        reqUrl +='&tenant_id=' + req.cookies.gohanRole;
-    }
     if (global.HTTP_REQUEST_GET == method) {
         tmpCGCRestObj.cgcRestAPI.api.get(reqUrl, function(error, data) {
             commonUtils.handleJSONResponse(error, res, data);
