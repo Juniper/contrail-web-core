@@ -15,7 +15,8 @@ define([
                 "owner_access": "",
                 "global_access": "",
                 "share": []
-            }
+            },
+            "tag_refs":[]
         },
 
         formatRBACPermsModelConfig: function(modelData) {
@@ -46,7 +47,60 @@ define([
             });
             modelData["share_list"] =
                 new Backbone.Collection(shareModelCol);
-            return modelData
+            var editApplicationRefs = "" , editagSiteRefs = "", 
+                editagDeploymentRefs = "", editagTierRefs = "", editagLabelsRef = '';
+            var editTagsRefsArray = [];
+            var tagrefs = getValueByJsonPath(modelData,
+                    "tag_refs", []);
+            if(tagrefs.length > 0) {
+                _.each(tagrefs, function(refs){
+                    var fqName = refs.to;
+                    if((fqName[fqName.length -1].indexOf('application') > -1)) {
+                        if(editApplicationRefs === '') {
+                            editApplicationRefs = fqName.join(":");
+                        } else {
+                            editApplicationRefs += ',' + fqName.join(":");
+                        }
+                    }
+                    if((fqName[fqName.length -1].indexOf('site') > -1)) {
+                        if(editagSiteRefs === '') {
+                            editagSiteRefs = fqName.join(":");
+                        } else {
+                            editagSiteRefs += ',' + fqName.join(":");
+                        }
+                    }
+                    if((fqName[fqName.length -1].indexOf('deployment') > -1)) {
+                        if(editagDeploymentRefs === '') {
+                            editagDeploymentRefs = fqName.join(":");
+                        } else {
+                            editagDeploymentRefs += ',' + fqName.join(":");
+                        }
+                    }
+                    if((fqName[fqName.length -1].indexOf('tier') > -1)) {
+                        if(editagTierRefs === '') {
+                            editagTierRefs = fqName.join(":");
+                        } else {
+                            editagTierRefs += ',' + fqName.join(":");
+                        }
+                    } 
+                    if((fqName[fqName.length -1].indexOf('label') > -1)) {
+                        if(editagLabelsRef === '') {
+                            editagLabelsRef = fqName.join(":");
+                        } else {
+                            editagLabelsRef += ',' + fqName.join(":");
+                        }
+                    }     
+                });
+            }
+            
+            //modelData["tag_refs"] = editTagsRefsArray;
+            modelData["Application"] = editApplicationRefs;
+            modelData["Site"] = editagSiteRefs;
+            modelData["Deployment"] = editagDeploymentRefs;
+            modelData["Tier"] = editagTierRefs;
+            modelData["Labels"] = editagLabelsRef;
+            //editagApplicationRefs , editagSiteRefs, editagDeploymentRefs, editagTierRefs;
+            return modelData;
         },
 
         formatAccessList: function(access) {
@@ -110,6 +164,45 @@ define([
                 delete cfgObj.share_list;
                 delete cfgObj.owner_visible;
             }
+            //tags
+            tagList = [];
+            var appRefs, siteRefs, deploymentRefs, tierRefs, labelRefs;
+             if(cfgObj.Application && cfgObj.Application != "None"){
+                 appRefs = cfgObj.Application.split(',');
+                 _.each(appRefs, function(refs){
+                         var actRef = refs.split(':');
+                          tagList.push({to: actRef});
+                 });
+            }
+            if(cfgObj.Site && cfgObj.Site != "None"){
+                siteRefs = cfgObj.Site.split(',');
+                _.each(siteRefs, function(refs){
+                        var actRef = refs.split(':');
+                         tagList.push({to: actRef});
+                });
+            }
+             if(cfgObj.Deployment && cfgObj.Deployment != "None"){
+                 deploymentRefs = cfgObj.Deployment.split(',');
+                 _.each(deploymentRefs, function(refs){
+                         var actRef = refs.split(':');
+                          tagList.push({to: actRef});
+                 });
+            }
+             if(cfgObj.Tier && cfgObj.Tier != "None"){
+                 tierRefs = cfgObj.Tier.split(',');
+                 _.each(tierRefs, function(refs){
+                         var actRef = refs.split(':');
+                          tagList.push({to: actRef});
+                 });
+            } 
+             if(cfgObj.Labels && cfgObj.Labels != "None"){
+                 labelRefs = cfgObj.Labels.split(',');
+                 _.each(labelRefs, function(refs){
+                         var actRef = refs.split(':');
+                          tagList.push({to: actRef});
+                 });
+            } 
+            cfgObj.tag_refs = tagList;
         },
 
         getConsolidatedNumber: function(access) {

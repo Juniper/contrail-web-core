@@ -19,6 +19,9 @@ define([
         this.FORM_SUFFIX_ID = "_form";
         this.JSON_SUFFIX_ID = "_json";
 
+        this.TRAFFIC_GROUP_COLOR_LEVEL1 = ['#74abd2', '#9fa8da', '#f8bbd0', '#c5e1a5'];
+        this.TRAFFIC_GROUP_COLOR_LEVEL2 = ['#5282a7', '#91cd99', '#80d4f9', '#80deea'];
+
         this.SEV_LEVELS = {
             ERROR   : 3, //Red
             WARNING : 4, //Orange
@@ -2035,6 +2038,7 @@ define([
         this.SINGLE_NODE_COLOR = ['#6f97ae'];
         this.THREE_NODE_COLOR = ['#a8c0d1', '#6f97ae', '#617683'];
         this.FIVE_NODE_COLOR = ['rgb(168,192,209)', 'rgb(111,151,174)', 'rgb(97,118,131)', 'rgb(185,213,232)', 'rgb(209,230,245)'];
+        this.TRAFFIC_GROUP_COLOR = ['#5282a7', '#91cd99', '#80d4f9', '#d0abd6'];
         this.FAILURE_COLOR = '#d95436';
         this.OTHERS_COLORS = 'rgb(177, 189, 197)';
         this.DEFAULT_CHART_DURATION = 2;

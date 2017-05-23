@@ -7,6 +7,9 @@
 /*
  * NVD3 Styles
  */
+
+$color_external_label: #000;
+$color_external_arc: #d0abd6;
 .nvd3 .nv-axis path {
     stroke: #ccc;
 }
@@ -354,4 +357,45 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
     stroke: none;
     fill: #777;
     font-weight: normal;
+}
+#traffic-groups-radial-chart #chartBox {
+    width:80vh;
+    margin: 0 auto;
+    .cc-svg .radial-dendrogram {
+		.arc-label {
+	        text-anchor: middle;
+		    font-size: 12px;
+		    fill: #787878;
+		}
+        .arc-label.arc-label-2 {
+            font-size: 11px;
+        }
+        .ribbon {
+            fill: #80d4f9;
+            fill-opacity: .3;
+        }
+        .ribbon:hover, .ribbon.active {
+            fill: #ecd76c;
+            fill-opacity: .7;
+            stroke:#ecd76c;
+            stroke-width:1;
+        }
+        .ribbon.active {
+            fill-opacity: .45;
+        }
+		.external.arc, .externalProject.arc {
+			fill: $color_external_arc !important;
+		}
+		.arc-label {
+			.external, .externalProject {
+				fill: $color_external_label !important;
+                font-weight: 600;
+			}
+		}
+        .arc.active {
+            stroke: #ecd76c !important;
+            stroke-width:2;
+            stroke-opacity:1;
+        }
+	}
 }

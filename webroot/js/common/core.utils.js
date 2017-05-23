@@ -2508,6 +2508,69 @@ define([
             }
             return new ContrailListModel(remoteConfig);
         }
+
+        this.populateTrafficGroupsData = function(data) {
+            var applicationArr = ['HR','Finance','Oracle','SAP'],
+                siteArr = ['Bangalore','Sunnyvale'],
+                tierArr = ['FrontEnd','Web','Database'],
+                deploymentArr = ['Production','Development'];
+            $.each(data,function(idx,value) {
+                value['eps.traffic.remote_app_id'] = _.sample(applicationArr); 
+                value['eps.traffic.remote_deployment_id'] = _.sample(deploymentArr);
+                value['eps.traffic.remote_site_id'] = _.sample(siteArr);
+                value['eps.traffic.remote_tier_id'] = _.sample(tierArr);
+
+                value['app'] = _.sample(applicationArr); 
+                value['deployment'] = _.sample(deploymentArr);
+                value['site'] = _.sample(siteArr);
+                value['tier'] = _.sample(tierArr);
+            });
+            return data;
+        }
+
+        this.getTrafficGroupsData = function() {
+            var applicationArr = ['HR','Finance','Oracle','SAP'],
+                siteArr = ['Bangalore','Sunnyvale'],
+                tierArr = ['FrontEnd','Web','Database'],
+                deploymentArr = ['Production','Development'];
+            var flowCount = 100,data = [];    
+            for (var i = 0; i < flowCount; i++) {
+                const bytes = _.random(74325736, 474325736)
+
+                var dst = {
+                    application: _.sample(applicationArr),
+                    site: _.sample(siteArr),
+                    tier: _.sample(tierArr),
+                    deployment: _.sample(deploymentArr)
+                }
+                if (i % 2 == 0) {
+                    dst = {};
+                }
+                const flow = {
+                    /*src_application: _.sample(applicationArr),
+                    src_site: _.sample(siteArr),
+                    src_tier: _.sample(tierArr),
+                    src_deployment: _.sample(deploymentArr),*/
+                    src: {
+                        application: _.sample(applicationArr),
+                        site: _.sample(siteArr),
+                        tier: _.sample(tierArr),
+                        deployment: _.sample(deploymentArr)
+                    },
+                    dst: dst,
+                    /*dst_application: _.sample(applicationArr),
+                    dst_site: _.sample(siteArr),
+                    dst_tier: _.sample(tierArr),
+                    dst_deployment: _.sample(deploymentArr),*/
+                    'agg-packets': _.round((bytes / 330), 0),
+                    'agg-bytes': bytes,
+                }
+
+                data.push(flow)
+            }
+
+            return data;
+        }
     };
 
     function filterXML(xmlString, is4SystemLogs) {
@@ -2827,5 +2890,7 @@ define([
           return r;
         }
    });
+
+
     return CoreUtils;
 });
