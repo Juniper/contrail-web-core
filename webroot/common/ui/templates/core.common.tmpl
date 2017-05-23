@@ -18,6 +18,17 @@
                     <span class="btn btn-{{this.id}}"></span>
                 {{/each}}
             </div>
+            <div class="sidebar-shortcuts-large-hover" id="sidebar-shortcuts-large-hover">
+               {{#each this}}
+                    {{#IfCompare this.cssClass 'disabledBtn' operator='!='}}
+                        <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');">
+                    {{else}}
+                        <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');" disabled>
+                    {{/IfCompare}}
+                            <i class="{{this.iconClass}} fa fa-lg"></i>
+                    </button>
+                {{/each}}
+            </div>
 </script>
 
 <!-- main-container-template renders the content below page header -->
@@ -84,10 +95,16 @@
    {{#if @last}}
       <li class="active">
           <a href={{href}}>{{link}}</a>
+          <i class="fa fa-caret-down"></i>
+          <div id="drop-down-l{{@index}}-menu-area" class="dropdown-menu dropdown-closer breadcrum-drop-down-menu dropdown-caret"></div>
       </li>
    {{else}}
       <li>
           <a href={{href}}>{{link}}</a>
+          <i class="fa fa-caret-down"></i>
+          <div id="drop-down-l{{@index}}-menu-area" class="dropdown dropdown-menu dropdown-closer breadcrum-drop-down-menu dropdown-caret">
+            <div class="container"><div class="row"></div></div>
+          </div>
           <span class="divider"><i class="fa fa-angle-right"></i></span>
       </li>
    {{/if}}
@@ -3111,3 +3128,76 @@
     <div class="alarms-event-log-container">
     </div>
 </script>
+<!--Breadcrumb DD Starts -->
+<script type="text/x-handlebars-template" id="l0menu-template">
+    <div>
+        <div id="nav-search" class="bdd-menu-search">
+            <span class="input-icon">
+                <input id="nav-search-input" type="text" placeholder="Search Menu" class="input-medium search-query nav-search-input" autocomplete="on">
+                <i class="fa fa-search" id="nav-search-icon"></i>
+            </span>
+        </div>
+    </div>
+    {{#each this.items.item}}
+            {{#IfCompare @index 1 operator='!='}}
+            <div class="item mainMenu col-md-15" {{#if this.hash}}id="{{this.hash}}"{{/if}} data-help="{{#if this.help}} {{this.help}} {{/if}}">
+                <span class="l1menu-header">{{this.label}}</span>
+                {{#IfCompare this.items null operator='!='}}
+                    <!--<ul class="submenu">-->
+                        {{#each this.items.item}}
+                            <div id="{{this.hash}}" data-help="{{#if this.help}} {{this.help}} {{/if}}">
+                                <!--<span class="l2menu-header">{{this.label}}<span>-->
+                                <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
+                                    <div  class="l2menu-header">{{this.label}}</div>
+                                </a>
+                                {{#IfCompare this.items null operator='!='}}
+                                    <!--<ul class="submenu">-->
+                                        {{#each this.items.item}}
+                                            <div id="{{this.hash}}" data-help="{{#if this.help}} {{this.help}} {{/if}}">
+                                                <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
+                                                    <div  class="l3menu-header">{{this.label}}</div>
+                                                </a>
+                                            </div>
+                                       {{/each}}
+                                   <!--</ul>-->
+                               {{/IfCompare}}
+                            </div>
+                       {{/each}}
+                   <!--</ul>-->
+                {{/IfCompare}}
+            </div>
+            {{/IfCompare}}
+    {{/each}}
+</script>
+<script type="text/x-handlebars-template" id="l1menu-template">
+    {{#each this.items.item}}
+            <div class="item mainMenu col-md-3" {{#if this.hash}}id="{{this.hash}}"{{/if}} data-help="{{#if this.help}} {{this.help}} {{/if}}">
+                <!--<span class="l2menu-header">{{this.label}}</span>-->
+                <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
+                    <div  class="l2menu-header">{{this.label}}</div>
+                </a>
+                {{#IfCompare this.items null operator='!='}}
+                    <!--<ul class="submenu">-->
+                        {{#each this.items.item}}
+                            <div id="{{this.hash}}" data-help="{{#if this.help}} {{this.help}} {{/if}}">
+                                <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
+                                    <div  class="l3menu-header">{{this.label}}</div>
+                                </a>
+                            </div>
+                       {{/each}}
+                   <!--</ul>-->
+               {{/IfCompare}}
+            </div>
+    {{/each}}
+</script>
+<script type="text/x-handlebars-template" id="l2menu-template">
+    {{#each this.items.item}}
+            <div class="item mainMenu" {{#if this.hash}}id="{{this.hash}}"{{/if}} data-help="{{#if this.help}} {{this.help}} {{/if}}">
+                <!--<span class="l3menu-header">{{this.label}}</span>-->
+                <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
+                    <div  class="l3menu-header">{{this.label}}</div>
+                </a>
+            </div>
+    {{/each}}
+</script>
+<!--Breadcrumb DD Ends -->

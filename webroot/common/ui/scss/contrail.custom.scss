@@ -2273,6 +2273,7 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
     margin-top: 1px;
     padding: 0px;
 }
+<<<<<<< 9e7e0f781b4b7209c01113cc00eedcc887c75dd6
 /*Region name label formatting in Grid expansion for All regions Networking page*/
 .grid-regionname-heading{
     font-weight:600;
@@ -2325,6 +2326,7 @@ div#alarms-event-drops .grid-stack-item-content {
 #alarms-event-drops .eventdrops-chart {
     margin-top: -15px;
 }
+<<<<<<< b51efb339746f78c639754c9622a4ebb42090b98
 $label_color: #3182bd;
 .traffic-groups-view {
    /* .widget-toolbar {
@@ -2583,3 +2585,148 @@ font-style:normal;}
 .padding-bottom-15 {
     padding-bottom: 15px;
 }
+/*Breadcrumb Dropdown*/
+.sidebar #sidebar-shortcuts .sidebar-shortcuts-large-hover{
+    display:none;
+    background-color: #FFF;
+    -webkit-box-shadow: 2px 1px 2px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 1px 2px 0 rgba(0, 0, 0, 0.1);
+    border-color: #CCC;
+    position: absolute;
+    width: 175px;
+    margin-left:43px;
+    margin-top:-40px;
+}
+
+.sidebar #sidebar-shortcuts .sidebar-shortcuts-large-hover > .btn {
+    text-align: center;
+    width: 41px;
+    line-height: 33px;
+    padding: 0;
+    margin-bottom: 2px;
+    border-width: 0;
+}
+
+.breadcrum-drop-down-menu{
+    display: none;
+    position: absolute;
+    background-color: white;
+    left: 14px !important;
+    max-height: 800px;
+    width: auto;
+    margin: 5px auto;
+    padding: 0px;
+}
+.breadcrum-drop-down-menu ul{
+    list-style:none;
+}
+.l1menu-header{
+    font-size: 14px;
+    font-weight: 600;
+}
+.l2menu-header{
+    font-size: 13px;
+    font-weight:600;
+    color: #393939;
+}
+.l3menu-header{
+    font-size: 12px;
+    font-weight: 500;
+    color: #393939;
+}
+.l2menu-header:hover,
+.l3menu-header:hover{
+    color: #3182bd;
+    cursor: pointer;
+}
+.breadcrumbs .breadcrumb > li:hover .breadcrum-drop-down-menu{
+    display: block;
+}
+#drop-down-l0-menu-area div:first-child{
+    overflow-y: auto;
+    overflow-x: none;
+    max-height: 800px;
+}
+#drop-down-l0-menu-area #nav-search-input{
+    width: 300px;
+}
+#drop-down-l0-menu-area{
+    left: 0px !important;
+}
+#drop-down-l0-menu-area .row{
+    padding: 10px;
+}
+#drop-down-l1-menu-area{
+    width: 750px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+#drop-down-l2-menu-area{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+}
+.breadcrumbs .breadcrumb > li{
+    line-height: 27px;
+    position: relative;
+}
+.breadcrumb-menu-highlight-search{
+    text-decoration: none;
+    background-color:rgba(234, 219, 78, 0.89);
+}
+.breadcrumb-menu-highlight-search div{
+    color: #000 !important;
+    font-weight: 600;
+}
+.breadcrumb-menu-highlight{
+    color: #3182bd;
+}
+.col-xs-15,
+.col-sm-15,
+.col-md-15,
+.col-lg-15 {
+    position: relative;
+    min-height: 1px;
+    padding-right: 10px;
+    padding-left: 10px;
+    border-right: 1px solid #f5f5f5;
+}
+.col-xs-15 {
+    width: 20%;
+    float: left;
+}
+@media (min-width: 768px) {
+    .col-sm-15 {
+        width: 20%;
+        float: left;
+    }
+}
+@media (min-width: 992px) {
+    .col-md-15 {
+        width: 20%;
+        float: left;
+    }
+}
+@media (min-width: 1200px) {
+    .col-lg-15 {
+        width: 20%;
+        float: left;
+    }
+}
+.bdd-menu-search {
+    float: left;
+    line-height: 15px;
+    display: inline-block;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+.col-xs-15:last-child,
+.col-sm-15:last-child,
+.col-md-15:last-child,
+.col-lg-15:last-child {
+    border-right: none;
+}
+.mainMenu + .col-md-15  {
+    padding-left: 35px;
+}
+/*Breadcrumb Dropdown CSS Ends*/
