@@ -402,6 +402,7 @@ function getPublicUrlByRegionName (regionname, serviceName, req)
     }
     if (true == authApi.isRegionListFromConfig()) {
         var pubUrl = null;
+        var config = configUtils.getConfig();
         if (null == config.regions) {
             return null;
         }

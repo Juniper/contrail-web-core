@@ -16,6 +16,8 @@ define([
                 validation = self.attributes.validation,
                 path = viewConfig[cowc.KEY_PATH],
                 placeHolder = contrail.checkIfExist(viewConfig['placeHolder']) ? viewConfig['placeHolder'] : null,
+                rows = contrail.checkIfExist(viewConfig['rows']) ? viewConfig['rows'] : "",
+                cols = contrail.checkIfExist(viewConfig['cols']) ? viewConfig['cols'] : "",
                 type = (viewConfig[cowc.KEY_TYPE] != null) ? viewConfig[cowc.KEY_TYPE] : 'text',
                 lockEditingByDefault = self.attributes.lockEditingByDefault,
                 label = viewConfig.label,
@@ -32,7 +34,7 @@ define([
             tmplParameters = {
                 label: labelValue, id: elId, name: elId, placeHolder: placeHolder, viewConfig: viewConfig,
                 dataBindValue: viewConfig[cowc.KEY_DATABIND_VALUE], lockAttr: lockEditingByDefault, type: type,
-                path: path, validation: validation, showEditIcon: showEditIcon,
+                path: path, validation: validation, showEditIcon: showEditIcon,rows: rows,cols: cols,
                 help: helpUrl
             };
 

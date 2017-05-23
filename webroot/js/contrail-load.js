@@ -486,4 +486,14 @@ $(document).on('click', '.pre-format-JSON2HTML .collapser', function(){
             }
         }
     })(window.history);
+
+    $.fn.wrapCollapsibleWidget = function(cfg) {
+        var collapsableWidgetTmpl = contrail.getTemplate4Id('collapsable-widget-template');
+        $(this).wrap(collapsableWidgetTmpl());
+        $(this).parents('.widget-box').prepend($('<div/>',{class:'widget-header'}));
+		$(this).parents('.widget-box').find(".widget-header").initWidgetHeader({
+			title:cfg['title']
+		});
+    }
+	
 })(jQuery);

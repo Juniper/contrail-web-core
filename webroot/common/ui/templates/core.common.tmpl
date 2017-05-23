@@ -492,6 +492,16 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="collapsable-widget-template">
+    <div class="widget-box transparent">
+        <!--<div class="widget-header"></div>-->
+        <div class="widget-body">
+            <div class="widget-main padding-4">
+            </div>
+        </div>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="mon-infra-dashboard">
     <div id='dashboard-infoboxes' style="/*height:430px*/">
     </div>
@@ -1268,7 +1278,7 @@
         {{> coreFormLabel}}
         <div class="textarea-input-group input-group inset theme-addon">
             <textarea
-                name="{{id}}" value="" placeholder="{{placeHolder}}" rows="1" class="form-control"
+                name="{{id}}" value="" placeholder="{{placeHolder}}" rows={{rows}} cols={{cols}} class="form-control"
                 data-bind="{{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}} value: {{dataBindValue}}, event: { focusout: function() { validateAttr('{{path}}', '{{validation}}') } }">
             </textarea>
             <span class="input-group-addon theme-addon" data-bind="visible:{{showEditIcon}}, css: { {{#if viewConfig.disabled}}disabled: {{viewConfig.disabled}} == true {{/if}} }"><i class="fa fa-pencil"></i></span>
@@ -2456,6 +2466,104 @@
 <script type="text/x-handlebars-template" id="alarm-severity-template">
     <div data-color={{{color}}} class="circle {{{color}}} {{#IfCompare ack false}}filled{{/IfCompare}} alarms-circle-grid-style alarms-circle-display-flex"></div>
     {{#if showText}}<div class="alarms-display-inline">&nbsp;{{{text}}}</div>{{/if}}
+</script>
+
+<script type="text/x-handlebars-template" id="traffic-groups-template">
+    <div name="search-form">
+    <!--
+        <label for="multiselect-2">
+            Scope
+            <div class="where-dropdown" id="multiselect-2"></div>
+        </label>
+        <label for="multiselect-1">
+            Categorization
+            <div class="select-dropdown" id="multiselect-1"></div>
+        </label>
+        <div class="btn-bar">
+            <button type="submit" id="widget-update-button" class="btn btn-mini btn-update btn-primary">Update</button>
+            <button type="submit" id="widget-cancel-button" class="btn btn-mini btn-reset btn-primary">Reset</button>
+        </div>
+    -->
+    </div>
+
+    <div id="traffic-groups-radial-chart"></div>
+    <div id="traffic-groups-link-info"></div>
+</script>
+
+
+
+<script type="text/x-handlebars-template" id="traffic-link-tooltip-template">
+    <div class="cc-title linkTitle">{{this.src}} <img src="/img/double_arrow_white.svg"/> {{this.dst}}</div>
+    <hr/>
+    {{#each this.items}}
+    <div class="item-head">{{this.name}}</div>
+    <div class="tooltip-item linkItem">
+        <span class="tooltip-item-label">Traffic In</span>
+        <span class="tooltip-item-value">{{this.trafficIn}}</span>
+    </div>
+    <div class="tooltip-item linkItem">
+        <span class="tooltip-item-label">Traffic Out</span>
+        <span class="tooltip-item-value">{{this.trafficOut}}</span>
+    </div>
+    {{/each}}
+</script>
+
+<script type="text/x-handlebars-template" id="traffic-link-info-template">
+   <div class="trafficGroups_content">
+        <div class="trafficGroups_main">
+        </div>
+        <section class="trafficGroups_sidePanel">
+            <header>
+                <span> {{this.src}} </span>
+                <!--<i class="fa fa-arrows-h"></i>-->
+                <img src="/img/double_arrow.svg"/>
+            <span> {{this.dest}} </span>
+            </header>
+            <!--<ul class="linkInfo">
+               {{#each this.linkData}}
+                <li>
+                    <div>Traffic statistics from "{{this.app_name}}"</div>
+                    <div class="trafficInfo">
+	                    Traffic In: {{this.trafficIn}}
+                    </div>
+                    <div class="trafficInfo">
+	                    Traffic Out: {{this.trafficOut}}
+                    </div>
+                </li>
+               {{/each}}
+            </ul>-->
+            <div class="traffic-rules">
+
+            </div>
+        </section>
+    </div>
+</script>
+<script type="text/x-handlebars-template" id="traffic-rule-template">
+    <h1> Matched Rules:</h1>
+    <ul class="policyRules">
+       {{#each this.policyRules}}
+        <li>
+            <h2>Policy: {{this.policy_name}}</h2>
+            <div class="row col-xs-12 padding-bottom-15">
+                <dl>
+                    <dt>Rule: {{this.rule_name}}</dt>
+                </dl>
+            </div>
+            <h3>{{this.simple_action}}</h3>
+            <div class="row">
+                <dl class="col-xs-4">
+                    <dt>src {{this.srcType}}</dt><dd>{{this.src}}</dd>
+                </dl>
+                <div class="rulesBiArrow col-xs-2">
+                  <img src="/img/double_arrow.svg"/>
+                </div>
+                <dl class="col-xs-4">
+                    <dt>dst {{this.dstType}}</dt><dd>{{this.dst}}</dd>
+                </dl>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
 </script>
 
 <script type="text/x-handlebars-template" id="gridstack-widget-template">

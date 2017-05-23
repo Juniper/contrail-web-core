@@ -58,6 +58,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         //'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
         //'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.9.1.min',
         'jquery'                      : coreWebDir + '/assets/jquery/js/jquery.min',
+        'lodashv4'                      : coreWebDir + '/js/coCharts/js/lodash',
+        'd3v4'                        : coreWebDir + '/js/coCharts/js/d3',
         'contrail-load'               : coreWebDir + '/js/contrail-load',
         'vis'                         : coreWebDir + '/assets/vis-v4.9.0/js/vis.min',
         'vis-node-model'              : coreWebDir + '/js/models/VisNodeModel',
@@ -105,7 +107,9 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'udd-module'                  : coreWebDir + '/reports/udd/ui/js/udd.module',
         'chart-config'                : coreWebDir + '/js/chartconfig',
         'legend-view'                 : coreWebDir + '/js/views/LegendView',
-        'alarms-viewconfig'           : coreWebDir + '/js/views/alarms/alarms.viewconfig'
+        'alarms-viewconfig'           : coreWebDir + '/js/views/alarms/alarms.viewconfig',
+        'contrail-charts-view'        : coreWebDir + '/js/views/ContrailChartsView',
+        'contrail-charts'             :  coreWebDir + '/js/coCharts/js/contrail-charts'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -129,6 +133,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'contrail-list-model'         : coreWebDir + '/js/models/ContrailListModel',
             'contrail-element'            : coreWebDir + '/js/models/ContrailElement',
             'lodash'                      : coreWebDir + '/assets/lodash/lodash.min',
+            'lodashv4'                      : coreWebDir + '/js/coCharts/js/lodash',
+            'd3v4'                        : coreWebDir + '/js/coCharts/js/d3',
             'crossfilter'                 : coreWebDir + '/assets/crossfilter/js/crossfilter',
             'backbone'                    : coreWebDir + '/assets/backbone/backbone-min',
             'text'                        : coreWebDir + '/assets/requirejs/text',
@@ -208,8 +214,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'monitor-infra-viewconfig'    : 'empty:',
             'global-controller-viewconfig': 'empty:',
             'core-alarm-utils'            :  coreWebDir + '/js/common/core.alarms.utils',
-            'alarms-viewconfig'           : coreWebDir + '/js/views/alarms/alarms.viewconfig'
-
+            'alarms-viewconfig'           : coreWebDir + '/js/views/alarms/alarms.viewconfig',
+            'contrail-charts'             :  coreWebDir + '/js/coCharts/js/contrail-charts'
         };
         //Merge common (for both prod & dev) alias
         for(var currAlias in devAliasMap)
@@ -239,6 +245,9 @@ var coreAppMap = {
 var coreAppShim =  {
     'core-bundle': {
         deps:['nonamd-libs', 'jquery-ui']
+    },
+    'd3v4' : {
+        exports: 'd3v4'
     },
     'jquery' : {
         exports: 'jQuery'
@@ -1234,6 +1243,9 @@ if (typeof document !== 'undefined' && document) {
                         if(globalObj['featureAppDefObj'] == null)
                             globalObj['featureAppDefObj'] = $.Deferred();
                         require(['core-bundle','thirdparty-libs'],function() {
+                                require(['d3v4'],function(d3) { d3v4 = d3;});
+                                require(['contrail-charts'],function(contrailCharts) { coCharts = contrailCharts;});
+                                require(['lodashv4'],function(lodashv4) { lodashv4 = lodashv4;});
                                 layoutHandler.load(menuXML);
                         });
                     });
