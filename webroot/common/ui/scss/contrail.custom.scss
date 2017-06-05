@@ -22,6 +22,7 @@ $bar-title-font-size: 13px;
 $dashboard-info-label-color:#3183bd;
 $dashboard-alarms-color:#e4564f;
 $dashboard-default-color:#000;
+$traffic-link-info-width:330px;
 /*
  * Styles moved from vcon-web.css
  * TODO Cleanup required to remove unused styles
@@ -2345,7 +2346,7 @@ $label_color: #3182bd;
         margin-right: 20px;
     }
     .showLinkInfo{
-        margin-right:312px;
+        margin-right: $traffic-link-info-width;
     }
     @-webkit-keyframes slideInRight {
         0% {
@@ -2408,19 +2409,21 @@ $label_color: #3182bd;
     }
     .trafficGroups_sidePanel{
         height:100%;
-        width:330px;
+        width:$traffic-link-info-width;
         padding:10px 20px;
         background-color: #fdfdfd;
         overflow:auto;
         -webkit-box-shadow: -3px 0px 2px -2px rgba(0,0,0,0.1);
         -moz-box-shadow: -3px 0px 2px -2px rgba(0,0,0,0.1);
         box-shadow: -3px 0px 2px -2px rgba(0,0,0,0.1);
-        -webkit-animation-name: slideInRight;
-        animation-name: slideInRight;
         -webkit-animation-duration: 1s;
         animation-duration: 1s;
         -webkit-animation-fill-mode: both;
         animation-fill-mode: both;
+    }
+    .trafficGroups_sidePanel.animateLinkInfo{
+        -webkit-animation-name: slideInRight;
+        animation-name: slideInRight;
     }
     .trafficGroups_sidePanel header{
         margin:0px; padding:3px 10px;
@@ -2449,6 +2452,14 @@ $label_color: #3182bd;
         font-weight:600;
         margin:0px;
         line-height:1;
+    }
+    .trafficGroups_sidePanel h6{
+        font-size:12px;
+        font-weight:600;
+        color: #58a8db;
+        padding: 5px 0px 5px 15px;
+        line-height:1;
+        margin: 0px;
     }
     .trafficGroups_sidePanel ul{
         padding:15px 0px;

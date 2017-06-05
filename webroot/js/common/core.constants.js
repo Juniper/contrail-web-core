@@ -22,6 +22,17 @@ define([
         this.TRAFFIC_GROUP_COLOR_LEVEL1 = ['#74abd2', '#9fa8da', '#f8bbd0', '#c5e1a5'];
         this.TRAFFIC_GROUP_COLOR_LEVEL2 = ['#5282a7', '#91cd99', '#80d4f9', '#80deea'];
 
+        this.DEFAULT_FIREWALL_RULES = {
+            '00000000-0000-0000-0000-000000000002': {
+                name: 'Implicit Deny',
+                uuid: '00000000-0000-0000-0000-000000000002'
+            },
+             '00000000-0000-0000-0000-000000000001': {
+                name: 'Implicit Allow',
+                uuid: '00000000-0000-0000-0000-000000000001'
+            }
+        };
+
         this.SEV_LEVELS = {
             ERROR   : 3, //Red
             WARNING : 4, //Orange

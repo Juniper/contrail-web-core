@@ -49,14 +49,15 @@ define([
             var self = this;
             $.extend(true,self.chartConfig,config);
         },
-        render: function() {
+        render: function(data) {
             var self = this;
             this.$el.empty();
             this.$el.append($('<div>',{id:'chartBox'}));
 
-            var chartView = new coCharts.ChartView();
+            var chartView = new coCharts.ChartView(),
+                data  = data ? data : this.model.getItems();
             chartView.setConfig(self.chartConfig);
-            chartView.setData(this.model.getItems());
+            chartView.setData(data);
             if (self.model === null && viewConfig['modelConfig'] !== null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
             }
