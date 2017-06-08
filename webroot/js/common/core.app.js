@@ -1174,7 +1174,7 @@ if (typeof document !== 'undefined' && document) {
                 return false;
             },
             setCookie: function(name,value){
-                document.cookie = name + "=" + escape(value) + "; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/";
+                document.cookie = name + "=" + escape(value) + "; path=/";
             },
             postAuthenticate: function(response) {
                 require(['jquery', 'thirdparty-libs', 'nonamd-libs'],function() {
