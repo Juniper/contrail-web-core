@@ -216,19 +216,18 @@ function setAllCookies (req, res, appData, cookieObj, callback)
     var cookieExpStr = new Date(new Date().getTime() + cookieExp).toUTCString();
     var secureCookieStr = (false == config.insecure_access) ? "; secure" : "";
     res.setHeader('Set-Cookie', 'username=' + cookieObj.username +
-                  '; expires=' + cookieExpStr + secureCookieStr);
+                  secureCookieStr);
     var region = authApi.getCurrentRegion(req);
     if (null != region) {
         res.setHeader('Set-Cookie', 'region=' + region +
-                      '; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/' +
-                      secureCookieStr);
+                      '; path=/' + secureCookieStr);
         req.cookies.region = region;
     }
     authApi.getCookieObjs(req, appData, function(cookieObjs) {
         if (null != cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME]) {
             res.setHeader('Set-Cookie', global.COOKIE_DOMAIN_DISPLAY_NAME +
                           '=' + cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME] +
-                          '; expires=' + cookieExpStr + secureCookieStr);
+                          secureCookieStr);
         }
         var cookieProject = cookieObjs[global.COOKIE_PROJECT_DISPLAY_NAME];
         if ((null == cookieProject) ||
@@ -237,15 +236,14 @@ function setAllCookies (req, res, appData, cookieObj, callback)
         }
         if (null != cookieProject) {
             res.setHeader('Set-Cookie', global.COOKIE_PROJECT_DISPLAY_NAME +
-                          '=' + cookieProject +
-                          '; expires=' + cookieExpStr + secureCookieStr);
+                          '=' + cookieProject + secureCookieStr);
         }
         if(req.session._csrf == null)
             req.session._csrf = crypto.randomBytes(Math.ceil(24 * 3 / 4))
                 .toString('base64')
                     .slice(0, 24);
         res.setHeader('Set-Cookie', '_csrf=' + req.session._csrf +
-                      '; expires=' + cookieExpStr + secureCookieStr);
+                      secureCookieStr);
         callback();
     });
 }
