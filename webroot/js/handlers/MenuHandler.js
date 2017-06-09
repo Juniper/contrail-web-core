@@ -277,31 +277,39 @@ define(['underscore'], function (_) {
                     json['resources']['resource'] = [json['resources']['resource']];
             }
             if ((json['items'] != null) && (json['items']['item'] != null)) {
-                if (json['items']['item'] instanceof Array) {
-                    var currItem = json['items']['item'];
-                    for (var i = (currItem.length - 1); i > -1; i--) {
-                        //remove diabled features from the menu obeject
-                        var isOptional =
-                            getValueByJsonPath(currItem, i +
-                                               ';menuAttr;optional', false);
-                        var hash =
-                            getValueByJsonPath(currItem, i + ';hash', null);
-                        var ifFeatureEnabled =
-                            getValueByJsonPath(optFeatureList, hash, false);
-                        if (("true" == isOptional) &&
-                            (false == ifFeatureEnabled)) {
-                            currItem.splice(i, 1);
-                        } else {
-                            if (currItem[i] != undefined) {
-                                processXMLJSON(currItem[i], optFeatureList);
+                if (!(json['items']['item'] instanceof Array)) {
+                    add2SiteMap(json['items']['item']);
+                    json['items']['item'] = [json['items']['item']];
+                }
+
+                var currItem = json['items']['item'];
+                for (var i = (currItem.length - 1); i > -1; i--) {
+                    //remove diabled features from the menu obeject
+                    var isOptional =
+                        getValueByJsonPath(currItem, i +
+                                           ';menuAttr;optional', false);
+                    var hash =
+                        getValueByJsonPath(currItem, i + ';hash', null);
+                    var ifFeatureEnabled =
+                        getValueByJsonPath(optFeatureList, hash, false);
+                    if (("true" == isOptional) &&
+                        (false == ifFeatureEnabled)) {
+                        currItem.splice(i, 1);
+                    } else {
+                        if (currItem[i] != undefined) {
+                            processXMLJSON(currItem[i], optFeatureList);
+                            var items = getValueByJsonPath(currItem[i],
+                                                           "items;item", null);
+                            if ((items instanceof Array) && (!items.length)) {
+                                /* If no items.item available, then remove that
+                                 * menu item
+                                 */
+                                currItem.splice(i, 1);
+                            } else {
                                 add2SiteMap(currItem[i]);
                             }
                         }
                     }
-                } else {
-                    processXMLJSON(json['items']['item'], optFeatureList);
-                    add2SiteMap(json['items']['item']);
-                    json['items']['item'] = [json['items']['item']];
                 }
             }
         }
