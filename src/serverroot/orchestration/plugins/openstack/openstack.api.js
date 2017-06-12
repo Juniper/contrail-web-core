@@ -331,8 +331,7 @@ function getServiceAPIVersionByReqObj (req, appData, type, callback, reqBy)
                 : "";
             if (global.REGION_ALL != regionCookie) {
                 req.res.setHeader('Set-Cookie', 'region=' +  firstRegion +
-                                '; expires=Sun, 17 Jan 2038 00:00:00 UTC; path=/'
-                                + secureCookieStr);
+                                  '; path=/' + secureCookieStr);
             }
             callback(null, null, redirectToLogout);
             return;

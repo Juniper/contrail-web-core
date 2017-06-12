@@ -127,9 +127,13 @@ function initializeAppConfig (appObj)
     }
     app.set('port', process.env.PORT || port);
     app.use(express.cookieParser());
+    var maxAgeTime =
+        ((null != config.session) && (null != config.session.timeout)) ?
+        config.session.timeout : global.MAX_AGE_SESSION_ID;
     store = new RedisStore({host:redisIP, port:redisPort,
                            db:global.WEBUI_SESSION_REDIS_DB,
                            prefix:global.STR_REDIS_STORE_SESSION_ID_PREFIX,
+                           ttl: (maxAgeTime / 1000), /* ttl is in seconds */
                            eventEmitter:sessEvent});
 
     // Implement X-XSS-Protection
@@ -137,9 +141,6 @@ function initializeAppConfig (appObj)
     // Implement X-Frame: SameOrigin
     app.use(helmet.xframe('sameorigin'));
     // Implement Strict-Transport-Security
-    var maxAgeTime =
-        ((null != config.session) && (null != config.session.timeout)) ?
-        config.session.timeout : global.MAX_AGE_SESSION_ID;
 
     var compressOptions = {
         filter: function(req, res) {
@@ -154,7 +155,7 @@ function initializeAppConfig (appObj)
         maxAge: maxAgeTime,
         includeSubdomains: true
     }));
-    var cookieObj = {maxAge: maxAgeTime, httpOnly: true};
+    var cookieObj = {maxAge: null, httpOnly: true};
     if (false == insecureAccessFlag) {
         cookieObj['secure'] = true;
     }

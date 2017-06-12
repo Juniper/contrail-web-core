@@ -191,6 +191,8 @@ function routeAll (req, res, next)
     req.session.loggedInOrchestrationMode =
         orch.getOrchestrationModelsByReqURL(req.url, req);
   }
+  /* Do not set expiry for cookie */
+  /*
   if (null == req.session.sessionExpSyncToIdentityToken) {
       if (null != authApi.getSessionExpiryTime) {
         var sessExp = authApi.getSessionExpiryTime(req);
@@ -201,6 +203,7 @@ function routeAll (req, res, next)
         }
       }
   }
+  */
   var u = url.parse(req.url, true);
   if ((null == req.route) || (null == handler.checkURLInAllowedList(req))) {
       /* Not a Valid URL */
