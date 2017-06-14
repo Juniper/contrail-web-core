@@ -12988,11 +12988,22 @@ var RadialDendrogramView = function (_ContrailChartsView) {
             innerPoints.push([_n.angleScale(_valueStart2), _n.y]);
           }
         }
+        var linkCssClass = '';
+        _lodash2.default.each(_this7.params.linkCssClasses, function (cssClass) {
+          var linkCssNode = src && src.data && _lodash2.default.find(src.data.dataChildren, function (child) {
+            return child.linkCssClass === cssClass;
+          });
+          if (linkCssNode) {
+            linkCssClass = cssClass;
+            return false;
+          }
+        });
         _this7.ribbons.push({
           outerPoints: outerPoints,
           innerPoints: innerPoints,
           id: src.data.linkId,
-          link: [src, dst]
+          link: [src, dst],
+          linkCssClass: linkCssClass
         });
       });
       if (ribbons) {
@@ -13094,7 +13105,7 @@ var RadialDendrogramView = function (_ContrailChartsView) {
           return 'ribbon' + (d.active ? ' active' : '');
         }).merge(_svgLinks) // .transition().ease(this.config.get('ease')).duration(this.params.duration)
         .attr('class', function (d) {
-          return 'ribbon' + (d.active ? ' active' : '');
+          return 'ribbon' + (d.active ? ' active' : '') + (d.linkCssClass ? ' ' + d.linkCssClass : '');
         }).classed(this.selectorClass('interactive'), this.config.hasAction('link')).attr('d', function (d) {
           // var lastPoint = d.outerPoints[1];
           // var controlPoint = d.outerPoints[1] = [0,0];

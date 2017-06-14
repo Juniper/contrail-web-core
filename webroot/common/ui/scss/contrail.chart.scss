@@ -374,6 +374,10 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
             fill: #80d4f9;
             fill-opacity: .3;
         }
+        .ribbon.implicitDeny {
+            fill: #ff6f00;
+            fill-opacity: .2;
+        }
         .ribbon:hover, .ribbon.active {
             fill: #ecd76c;
             fill-opacity: .7;
