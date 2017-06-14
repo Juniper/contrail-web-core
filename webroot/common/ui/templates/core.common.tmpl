@@ -2531,16 +2531,16 @@
        {{#each this.policyRules}}
         <li>
             <h2>Policy: {{this.policy_name}}</h2>
-            <div class="row col-xs-12 padding-bottom-15">
+            <div class="row col-xs-12 padding-bottom-5">
                 <dl>
                     <dt>Rule: {{this.rule_name}}</dt>
                 </dl>
             </div>
             {{#IfCompare this.src null operator = '!='}}
                 <h3>{{this.simple_action}}</h3>
-                <div class="row padding-bottom-15">
+                <div class="row simpleAction padding-bottom-5">
                     <dl class="col-xs-5">
-                        <dt>src {{this.srcType}}</dt><dd>{{this.src}}</dd>
+                        <dt>{{this.srcType}}</dt><dd>{{this.src}}</dd>
                     </dl>
                     <div class="rulesBiArrow col-xs-2">
                       {{#IfCompare this.direction 'uni' operator='=='}}
@@ -2551,47 +2551,41 @@
                       {{/IfCompare}}
                     </div>
                     <dl class="col-xs-5">
-                        <dt>dst {{this.dstType}}</dt><dd>{{this.dst}}</dd>
+                        <dt>{{this.dstType}}</dt><dd>{{this.dst}}</dd>
                     </dl>
                 </div>
             {{/IfCompare}}
             {{#IfCompare this.service null operator='!='}}
-                <h3> Service </h3>
-                <div class="row padding-bottom-15">
-                    <dl class="col-xs-8">
+                <div class="row padding-bottom-5">
+                    <h3 class="col-xs-2"> Service </h3>
+                    <dl class="col-xs-10">
                         <dt>{{this.service}}</dt>
                     </dl>
                 </div>
             {{/IfCompare}}
             <h3> Statistics </h3>
-            <h6 class="row text-right">{{this.srcId}}</h6>
-            <div class="row padding-bottom-15">
-                <dl class="col-xs-12">
-                    <div class="row">
-                        <dt class="col-xs-6"> Sessions Initiated: </dt>
+            <div class="row padding-bottom-5">
+                <div class="col-xs-6 no-padding">
+                    <h6>{{this.srcId}}</h6>
+                    <dl class="row">
+                        <dt class="col-xs-9"> Sessions Initiated: </dt>
                         <dd class="col-xs-2"> {{this.src_session_initiated}}</dd>
-                    </div>
-                    <div class="row">
-                        <dt class="col-xs-6"> Sessions Responded: </dt>
+                        <dt class="col-xs-9"> Sessions Responded: </dt>
                         <dd class="col-xs-2"> {{this.src_session_responded}}</dd>
-                    </div>
-                </dl>
-            </div>
-            {{#IfCompare this.srcId this.dstId operator='!='}}
-                <h6 class="row text-right">{{this.dstId}}</h6>
-                <div class="row padding-bottom-15">
-                    <dl class="col-xs-12">
-                        <div class="row">
-                            <dt class="col-xs-6"> Sessions Initiated: </dt>
-                            <dd class="col-xs-2"> {{this.dst_session_initiated}}</dd>
-                        </div>
-                        <div class="row">
-                            <dt class="col-xs-6"> Sessions Responded: </dt>
-                            <dd class="col-xs-2"> {{this.dst_session_responded}}</dd>
-                        </div>
                     </dl>
                 </div>
-            {{/IfCompare}}
+                {{#IfCompare this.srcId this.dstId operator='!='}}
+                    <div class="col-xs-6 no-padding borderLeft">
+                        <h6>{{this.dstId}}</h6>
+                        <dl class="row">
+                            <dt class="col-xs-9"> Sessions Initiated: </dt>
+                            <dd class="col-xs-2"> {{this.dst_session_initiated}}</dd>
+                            <dt class="col-xs-9"> Sessions Responded: </dt>
+                            <dd class="col-xs-2"> {{this.dst_session_responded}}</dd>
+                        </dl>
+                    </div>
+                {{/IfCompare}}
+            </div>
         </li>
         {{/each}}
     </ul>

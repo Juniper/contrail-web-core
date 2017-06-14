@@ -22,7 +22,7 @@ $bar-title-font-size: 13px;
 $dashboard-info-label-color:#3183bd;
 $dashboard-alarms-color:#e4564f;
 $dashboard-default-color:#000;
-$traffic-link-info-width:330px;
+$traffic-link-info-width:400px;
 /*
  * Styles moved from vcon-web.css
  * TODO Cleanup required to remove unused styles
@@ -2437,7 +2437,7 @@ $label_color: #3182bd;
     .trafficGroups_sidePanel h1{
         font-size:14px;
         margin:0px;
-        padding:20px 0px 10px 0px ;
+        padding:10px 0px;
         color:#58a8db;
     }
     .trafficGroups_sidePanel h2{
@@ -2479,7 +2479,6 @@ $label_color: #3182bd;
     .trafficGroups_sidePanel ul.policyRules dd{
         margin:0px;
         -webkit-margin-start: 0px;
-        line-height:1;
     }
     .trafficGroups_sidePanel ul.policyRules dl{
         display:inline-block;
@@ -2487,11 +2486,17 @@ $label_color: #3182bd;
         font-size:11px;
         color: #787878;
     }
+    .simpleAction{
+        display: flex;
+        align-items: center;
+    }
     .rulesBiArrow{
-        position:relative;
         display:inline-block;
-        top:-10px;
-        padding:10px 20px;
+        text-align: center;
+        padding:0;
+    }
+    .borderLeft {
+        border-left:#e5e5e5 solid 1px;
     }
 }
 .btn-bar {
@@ -2583,7 +2588,6 @@ font-style:normal;}
 .padding-bottom-15 {
     padding-bottom: 15px;
 }
-
 #widget-layout-tabs-view {
     button.ui-multiselect {
         vertical-align: baseline;
@@ -2604,4 +2608,7 @@ font-style:normal;}
     width:100vw;
     color:#888;
     border-top:solid 1px #f9f9f9;
+}
+.padding-bottom-5 {
+    padding-bottom: 5px;
 }
