@@ -168,7 +168,14 @@ function getAuthRestApiInst (req, reqUrl, isSvcPortReq)
                                     apiName: global.label.IDENTITY_SERVER,
                                     server: authServerDetails.authServerIP,
                                     port: authServerDetails.authServerPort});
-        if (true == authApi.isMultiRegionSupported()) {
+        var sessAuthed = commonUtils.getValueByJsonPath(req,
+                                                        "session;isAuthenticated",
+                                                        false);
+        var regionToCheck = authApi.isMultiRegionToCheck();
+        if (true == sessAuthed) {
+            regionToCheck = authApi.isCGCEnabled(req);
+        }
+        if (true == regionToCheck) {
             var regionName = authApi.getCurrentRegion(req);
             var pubUrl =
                 oStack.getPublicUrlByRegionName(regionName,
@@ -1071,7 +1078,8 @@ function getServiceCatalogByRegion (req, region, accessData, doFormat)
             }
             svcApiObj = commonUtils.cloneObj(svcApiObj);
             endpoints[j] = commonUtils.cloneObj(endpoints[j]);
-            if (true == authApi.isMultiRegionSupported()) {
+            if ((false == authApi.isOrchEndptFromConfig()) ||
+                (false == authApi.isContrailEndptFromConfig())) {
                 if (type == global.SERVICE_ENDPT_TYPE_CGC) {
                     svcCatalogBySvcType[global.REGION_ALL] = {};
                     svcCatalogBySvcType[global.REGION_ALL][type] = {};
@@ -1728,29 +1736,32 @@ function authenticate (req, res, appData, callback)
          */
         appData['req'] = req;
         appData['defTokenObj'] = getAPIServerAuthParamsByReq(req);
-        if (true == authApi.isMultiRegionSupported()) {
-            /* Check if we have apiServer and opServer provisioned
-             * in endpoint list
-             */
-            var regionName = req.session.regionname;
-            var svcCatalogs =
+        /* Check if we have apiServer and opServer provisioned
+         * in endpoint list
+         */
+        var regionName = req.session.regionname;
+        var svcCatalogs =
+        commonUtils.getValueByJsonPath(req,
+                                       'session;serviceCatalog;' +
+                                       regionName, null, false);
+        var errStr = null;
+        if (null == svcCatalogs) {
+            errStr = 'Region: ' + regionName + ' - ' +
+                'All endpoints not provisioned.';
+            var svcsNotFoundList =
                 commonUtils.getValueByJsonPath(req,
-                                               'session;serviceCatalog;' +
-                                               regionName, null, false);
-            var errStr = null;
-            if (null == svcCatalogs) {
+                                               'session;servicesNotFound;' +
+                                               regionName, [], false);
+            if (svcsNotFoundList.length > 0) {
                 errStr = 'Region: ' + regionName + ' - ' +
-                    'All endpoints not provisioned.';
-                var svcsNotFoundList =
-                    commonUtils.getValueByJsonPath(req,
-                                                   'session;servicesNotFound;' +
-                                                   regionName, [], false);
-                if (svcsNotFoundList.length > 0) {
-                    errStr = 'Region: ' + regionName + ' - ' +
-                        'endpoint not provisioned for ' +
-                        req.session.servicesNotFound[regionName].join(', ');
-                }
+                    'endpoint not provisioned for ' + svcsNotFoundList.join(', ');
             }
+        }
+        var contrailServices = [config.endpoints.apiServiceType,
+            config.endpoints.opServiceType];
+        if (((false == authApi.isContrailEndptFromConfig()) &&
+            (_.intersection(svcsNotFoundList, contrailServices) > 0)) ||
+            (false == authApi.isOrchEndptFromConfig())) {
             if (null != errStr) {
                 req.session.isAuthenticated = false;
                 callback(errStr);

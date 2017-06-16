@@ -9,19 +9,38 @@ config.orchestration.Manager = 'openstack';
 
 /****************************************************************************
  * This boolean flag indicates to communicate with Orchestration
- * modules(networkManager, imageManager, computeManager, identityManager,
+ * modules(networkManager, imageManager, computeManager,
  * storageManager), should the webServer communicate using the
  * ip/port/authProtocol/apiVersion as specified in this file, or as returned
  * from auth catalog list.
- * Note: config.identityManager.apiVersion is not controlled by this boolean
+ * Note: config.identityManager is not controlled by this boolean
  * flag.
  *
  * true  - These values should be taken from this config
  *         file.
  * false - These values should be taken from auth catalog list 
  *
-*****************************************************************************/
-config.serviceEndPointFromConfig = true;
+ * Default: false
+ ****************************************************************************/
+config.orchestrationModuleEndPointFromConfig = false;
+
+/****************************************************************************
+ * This boolean flag indicates to communicate with contrail services Api Server
+ * and Analytics Server, should the webServer communicate using the
+ * ip/port/authProtocol as specified in this file, or as returned  from auth
+ * catalog list.
+ *
+ * true  - These values should be taken from this config
+ *         file.
+ * false - These values should be taken from auth catalog list
+ *
+ * Note: If this flag is set as false, we must have two services ApiServer and
+ * OpServer, variables as defined in config.endpoints to be provisioned in
+ * keystone
+ *
+ * Default: true
+ ****************************************************************************/
+config.contrailEndPointFromConfig = true;
 
 /****************************************************************************
  * This boolean flag specifies wheather region list should be taken from config

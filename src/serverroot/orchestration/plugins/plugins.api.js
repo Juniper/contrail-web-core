@@ -209,11 +209,6 @@ function setAllCookies (req, res, appData, cookieObj, callback)
         }
     }
     var defDomainId;
-    var cookieExp =
-        ((null != config.session) && (null != config.session.timeout)) ?
-        config.session.timeout : global.MAX_AGE_SESSION_ID;
-
-    var cookieExpStr = new Date(new Date().getTime() + cookieExp).toUTCString();
     var secureCookieStr = (false == config.insecure_access) ? "; secure" : "";
     res.setHeader('Set-Cookie', 'username=' + cookieObj.username +
                   secureCookieStr);
