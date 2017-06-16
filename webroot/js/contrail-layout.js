@@ -384,6 +384,8 @@ function loadFeature(hashParams) {
     if (JSON.stringify(layoutHandler.getURLHashObj()) != JSON.stringify(hashParams)) {
         globalObj['hashUpdated'] = 1;
     }
+    //Manipulate hash params for custom requirements
+    hashParams = cowu.overrideHashParams(hashParams, lastHash);
     layoutHandler.setURLHashObj(hashParams);
     //Hiding the last updated time and refresh icon on click of an item left menu
     //hideHardRefresh();

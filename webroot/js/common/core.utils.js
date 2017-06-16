@@ -775,6 +775,17 @@ define([
                $("#page-content").removeClass("dashboard-padding").addClass("dashboard-no-padding");
            }
         }
+        /* It is used to manipulate the hashparams for custom requirements*/
+        this.overrideHashParams = function(hashParams, lastHash){
+            var prevTab = getValueByJsonPath(lastHash,
+                    'q;tab;security-policy-tab', '', false);
+            /* retain selected tab when navigating between
+            global policies and project scoped policies pages */
+            if(prevTab) {
+                hashParams.q = {tab: {'security-policy-tab' : prevTab}};
+            }
+            return hashParams;
+        }
 
         /* Detail Template Generator*/
         this.generateBlockListTemplate = function (config, app, parentConfig) {

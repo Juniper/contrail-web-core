@@ -92,17 +92,20 @@ define([
                 initClientSidePagination();
                 initGridFooter();
                 dataView.setData(dataViewData);
-            }
+                setInitFilter();
+             }
 
             if (contrailListModel.isRequestInProgress()) {
                 gridContainer.addClass('grid-state-fetching');
                 if (gridOptions.disableRowsOnLoading) {
                     gridContainer.addClass('grid-state-fetching-rows');
                 }
+                setInitFilter();
             }
 
             if (contrailListModel.loadedFromCache || !(contrailListModel.isRequestInProgress())) {
                 if (contrail.checkIfExist(gridContainer.data('contrailGrid'))) {
+                	setInitFilter();
                     gridContainer.data('contrailGrid').removeGridLoading();
                     handleGridMessage();
                     performSort(gridSortColumns);
@@ -111,6 +114,7 @@ define([
 
             contrailListModel.onAllRequestsComplete.subscribe(function () {
                 if (contrail.checkIfExist(gridContainer.data('contrailGrid'))) {
+                	setInitFilter();
                     gridContainer.data('contrailGrid').removeGridLoading();
                     handleGridMessage();
 
@@ -123,7 +127,22 @@ define([
                     }
                 }
             });
-
+            
+            function setInitFilter(){
+            	if(gridConfig.onInitFilter != null){
+                	var searchItem = gridConfig.onInitFilter;
+                    dataView.setFilterArgs({
+                        searchString: searchItem,
+                        searchColumns: searchColumns
+                    });
+                    dataView.setFilter(searchFilter);
+                    dataView.refresh();
+                    gridContainer.find('.input-searchbox').showElement();
+                    gridContainer.find('.link-searchbox').hideElement();
+                    gridContainer.find('.input-searchbox').find('input').val(searchItem);
+                }
+            };
+            
             function handleGridMessage() {
                 if(contrailListModel.error) {
                     if(contrailListModel.errorList.length > 0) {

@@ -203,6 +203,11 @@ define([
                  });
             } 
             cfgObj.tag_refs = tagList;
+            delete cfgObj.Application;
+            delete cfgObj.Deployment;
+            delete cfgObj.Labels;
+            delete cfgObj.Site;
+            delete cfgObj.Tier;
         },
 
         getConsolidatedNumber: function(access) {

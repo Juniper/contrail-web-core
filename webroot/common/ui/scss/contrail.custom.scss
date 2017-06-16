@@ -23,6 +23,7 @@ $dashboard-info-label-color:#3183bd;
 $dashboard-alarms-color:#e4564f;
 $dashboard-default-color:#000;
 $traffic-link-info-width:400px;
+$traffic-group-implit-rule: #ff6f00;
 /*
  * Styles moved from vcon-web.css
  * TODO Cleanup required to remove unused styles
@@ -2325,6 +2326,14 @@ div#alarms-event-drops .grid-stack-item-content {
     margin-top: -15px;
 }
 $label_color: #3182bd;
+#traffic-groups-endpoint-statistics-tabs {
+    .grid-header .grid-header-text, .contrail-tab-link {
+        font-family: "FontAwesome", Open Sans !important;
+    }
+    .slick-row-detail .slick-cell {
+        width: 100%;
+    }
+}
 .traffic-groups-view {
    /* .widget-toolbar {
         display: none;
@@ -2346,6 +2355,19 @@ $label_color: #3182bd;
     }
     .showLinkInfo{
         margin-right: $traffic-link-info-width;
+    }
+    .arc-label.along-arc textPath, .cc-title, .iconFontStyle {
+        font-family: "FontAwesome", Open Sans !important;
+    }
+    .traffic-stats-duration, .clear-traffic-stats {
+        font-size: 13px;
+    }
+    .traffic-stats-duration {
+        margin-right: 15px;
+        color: #888888;
+    }
+    .implicitRuleStyle {
+        color: $traffic-group-implit-rule;
     }
     @-webkit-keyframes slideInRight {
         0% {
@@ -2398,6 +2420,19 @@ $label_color: #3182bd;
         }
     }
     #traffic-groups-radial-chart{transition: all 700ms;}
+    .trafficGroupsTagIcons {
+        display: flex;
+        display: -webkit-flex;
+        display: -ms-flex;
+        padding-top: 20px;
+        li {
+            list-style: none;
+            padding:0 8px;
+            i {
+                padding-right: 3px;
+            }
+        }
+    }
     .trafficGroups_content {
         position: absolute;
         height: calc(100vh - 128px);
@@ -2605,4 +2640,8 @@ font-style:normal;}
 }
 .padding-bottom-5 {
     padding-bottom: 5px;
+}
+button.ui-multiselect {
+    vertical-align: baseline;
+    height: 25px !important;
 }

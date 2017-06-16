@@ -45,18 +45,25 @@ define([
                 }]
             };
         },
-        updateConfig: function(config) {
-            var self = this;
-            $.extend(true,self.chartConfig,config);
-        },
-        render: function(data) {
+        getChartViewInfo: function(config, chartId, additionalEvents) {
             var self = this;
             this.$el.empty();
             this.$el.append($('<div>',{id:'chartBox'}));
-
-            var chartView = new coCharts.ChartView(),
-                data  = data ? data : this.model.getItems();
+            $.extend(true,self.chartConfig,config);
+            var chartView = new coCharts.ChartView();
             chartView.setConfig(self.chartConfig);
+            var component = chartView.getComponent(chartId);
+            if(additionalEvents) {
+                _.each(additionalEvents, function(eventInfo) {
+                    component.delegate(eventInfo.event, eventInfo.selector,
+                                eventInfo.handler, eventInfo.handlerName);
+                });
+            }
+            return { chartView: chartView, component:component };
+        },
+        render: function(data, chartView) {
+            var self = this,
+                data  = data ? data : this.model.getItems();
             chartView.setData(data);
             if (self.model === null && viewConfig['modelConfig'] !== null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);

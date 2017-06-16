@@ -9,7 +9,7 @@
  */
 
 $color_external_label: #000;
-$color_external_arc: #d0abd6;
+$color_external_arc: #f7f7f7;
 .nvd3 .nv-axis path {
     stroke: #ccc;
 }
@@ -359,7 +359,7 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
     font-weight: normal;
 }
 #traffic-groups-radial-chart #chartBox {
-    width:80vh;
+    width:74vh;
     margin: 0 auto;
     .cc-svg .radial-dendrogram {
 		.arc-label {
@@ -374,7 +374,7 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
             fill: #80d4f9;
             fill-opacity: .3;
         }
-        .ribbon.implicitDeny {
+        .ribbon.implicitDeny, .ribbon.implicitAllow {
             fill: #ff6f00;
             fill-opacity: .2;
         }
@@ -389,6 +389,7 @@ input.ace-input[type=radio] + .ace-lbl.inactive::before {
         }
 		.external.arc, .externalProject.arc {
 			fill: $color_external_arc !important;
+			stroke: #cdcdcd !important;
 		}
 		.arc-label {
 			.external, .externalProject {
