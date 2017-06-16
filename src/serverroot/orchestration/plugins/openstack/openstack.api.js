@@ -204,21 +204,11 @@ function getServiceAPIVersionByReqObj (req, appData, type, callback, reqBy)
     var endPtList = [];
     var config = configUtils.getConfig();
 
-    var endPtFromConfig = config.serviceEndPointFromConfig;
+    var endPtFromConfig = authApi.isOrchEndptFromConfig();
     if (null == endPtFromConfig) {
         endPtFromConfig = true;
     }
     if (true == endPtFromConfig) {
-        if ((type ==
-             authApi.getEndpointServiceType(global.DEFAULT_CONTRAIL_API_IDENTIFIER)) ||
-            (type ==
-             authApi.getEndpointServiceType(global.DEFAULT_CONTRAIL_ANALYTICS_IDENTIFIER))) {
-            /* for opServer and apiServer, we will be getting directly from
-             * apiRestApi
-             */
-            callback(null);
-            return;
-        }
         var apiType = getApiTypeByServiceType(type);
         ip = httpsOp.getHttpsOptionsByAPIType(apiType, 'ip');
         port = httpsOp.getHttpsOptionsByAPIType(apiType, 'port');
@@ -350,7 +340,6 @@ function getApiVersion (suppVerList, verList, index, fallbackIndex, apiType)
     var ip = null;
     var port = null;
     var config = configUtils.getConfig();
-    var endPtFromConfig = config.serviceEndPointFromConfig;
     
     try {
         var verCnt = verList.length;
@@ -396,7 +385,7 @@ function getApiVersion (suppVerList, verList, index, fallbackIndex, apiType)
 function getPublicUrlByRegionName (regionname, serviceName, req)
 {
     var config = configUtils.getConfig();
-    if (false == authApi.isMultiRegionSupported()) {
+    if (false == authApi.isCGCEnabled(req)) {
         return null;
     }
     if (true == authApi.isRegionListFromConfig()) {
@@ -428,7 +417,7 @@ function getPublicUrlByRegionName (regionname, serviceName, req)
 
 function shiftServiceEndpointList (req, serviceType, regionName)
 {
-    if (false == authApi.isMultiRegionSupported()) {
+    if (false == authApi.isCGCEnabled(req)) {
         return;
     }
     var mappedObjs =

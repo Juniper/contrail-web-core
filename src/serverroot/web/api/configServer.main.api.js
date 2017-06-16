@@ -39,8 +39,16 @@ function getHeaders(dataObj, callback)
         return;
     }
 
+    var endPtFromConfig = authApi.isContrailEndptFromConfig();
+    if (null == endPtFromConfig) {
+        endPtFromConfig = true;
+    }
     var apiServiceType =
         authApi.getEndpointServiceType(global.DEFAULT_CONTRAIL_API_IDENTIFIER);
+    if (true == endPtFromConfig) {
+        callback(null, dataObj);
+        return;
+    }
     authApi.getServiceAPIVersionByReqObj(req, appData, apiServiceType,
                                          function(verObjs, regionName,
                                                   redirectToLogout) {
@@ -81,8 +89,12 @@ function doSendApiServerRespToApp (error, data, obj, appData, callback)
     var isRetry = obj.isRetry;
     var appHeaders = obj.appHeaders;
 
+    var req =
+        commonUtils.getValueByJsonPath(appData, 'authObj;req', null, false);
+    var res =
+        commonUtils.getValueByJsonPath(appData, 'authObj;req;res', null, false);
     if ((null != error) && (null == isRetry) &&
-        (true == authApi.isMultiRegionSupported())) {
+        (true == authApi.isCGCEnabled(req))) {
         var errCode = error.code;
         if (('ECONNREFUSED' == errCode) || ('ETIMEDOUT' == errCode)) {
             serveAPIRequest(reqUrl, reqData, appData, appHeaders, reqType,
@@ -94,12 +106,6 @@ function doSendApiServerRespToApp (error, data, obj, appData, callback)
     if (null != error) {
         if (global.HTTP_STATUS_AUTHORIZATION_FAILURE ==
             error.responseCode) {
-            var req =
-                commonUtils.getValueByJsonPath(appData, 'authObj;req', null,
-                                               false);
-            var res =
-                commonUtils.getValueByJsonPath(appData, 'authObj;req;res', null,
-                                               false);
             if ((true == multiTenancyEnabled) && (null != req) &&
                 (null != res)) {
                 commonUtils.invalidateReqSession(req, res);
