@@ -178,7 +178,7 @@ function getSSLOptionsByProxyPort (req, port)
     var sslOptions = null;
     var config = configUtils.getConfig();
     port = port.toString();
-    var isSvcEndPtsFromConfig = config.serviceEndPointFromConfig;
+    var isSvcEndPtsFromConfig = authApi.isOrchEndptFromConfig();
     var sslOptions = getSSLOptionsIntrospectPort(req, port);
     if (null != sslOptions) {
         /* Introspect Port */

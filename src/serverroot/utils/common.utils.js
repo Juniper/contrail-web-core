@@ -1215,6 +1215,10 @@ function getApiPostData (url, postData)
 
 function redirectToLogout (req, res, callback)
 {
+    req.session.isAuthenticated = false;
+    res.clearCookie('_csrf');
+    res.clearCookie('connect.sid');
+
     //If URL has '/vcenter',then redirect to /vcenter/logout
     //x-orchestrationmode is set only for ajax requests,so if user changes browser URL then we need to check for loggedInOrchestrationMode
     if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'vcenter') {
@@ -1382,6 +1386,7 @@ function getWebServerInfo (req, res, appData)
 {
     var config = configUtils.getConfig();
     var plugins = require('../orchestration/plugins/plugins.api');
+    var authApi = require('../common/auth.api');
     var serverObj = plugins.getOrchestrationPluginModel(),
         featurePackages = config.featurePkg,
         ui = config.ui;
@@ -1414,33 +1419,16 @@ function getWebServerInfo (req, res, appData)
     serverObj['_csrf'] = req.session._csrf;
     serverObj['serviceEndPointFromConfig'] =
         (null != config.serviceEndPointFromConfig) ?
-        config.serviceEndPointFromConfig : true;
+        config.serviceEndPointFromConfig :
+        ((false == authApi.isOrchEndptFromConfig()) &&
+         (false == authApi.isContrailEndptFromConfig()));
     serverObj['regionList'] = getValueByJsonPath(req.session,'regionList', []);
     serverObj['isRegionListFromConfig'] = config.regionsFromConfig;
-    var cgcData =
-        commonUtils.getValueByJsonPath(req,
-                                       'session;serviceCatalog;' +
-                                       global.REGION_ALL + ';' +
-                                       global.SERVICE_ENDPT_TYPE_CGC + ';maps;'
-                                       + 0, null, false);
-    var cgcIP =
-        commonUtils.getValueByJsonPath(cgcData, 'ip', null);
-    var cgcPort =
-        commonUtils.getValueByJsonPath(cgcData, 'port', null);
-    if ((null != cgcIP) && (null != cgcPort)) {
-        serverObj['cgcEnabled'] = true;
-    } else {
-        serverObj['cgcEnabled'] = false;
-    }
+    serverObj['cgcEnabled'] = authApi.isCGCEnabled(req);
     serverObj['configRegionList'] = config.regions;
-    if(serverObj['cgcEnabled'] == true){
+    if (true == serverObj['cgcEnabled']) {
         serverObj['regionList'].unshift("All Regions");
     }
-    else{
-        res.setHeader('Set-Cookie', 'region= ' +
-                '; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/');
-    }
-    var authApi = require('../common/auth.api');
     serverObj['currentRegionName'] = authApi.getCurrentRegion(req);
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;

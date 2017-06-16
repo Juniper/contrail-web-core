@@ -295,23 +295,63 @@ function getEndpointServiceType (type)
     return svcType;
 }
 
+function isOrchEndptFromConfig ()
+{
+    var config = configUtils.getConfig();
+    var isOrchModEndPtFromConfig =
+        commonUtils.getValueByJsonPath(config,
+                                       "orchestrationModuleEndPointFromConfig",
+                                       false);
+    return commonUtils.getValueByJsonPath(config, "serviceEndPointFromConfig",
+                                          isOrchModEndPtFromConfig);
+}
+
+function getContrailEndPoints ()
+{
+    var endPtList = [];
+    var config = configUtils.getConfig();
+    for (var key in config.endpoints) {
+        endPtList.push(config.endpoints[key]);
+    }
+    return endPtList;
+}
+
+function isContrailEndptFromConfig ()
+{
+    var config = configUtils.getConfig();
+    var contrailEndPtFromConfig =
+        commonUtils.getValueByJsonPath(config,
+                                       "contrailEndPointFromConfig", true);
+    return commonUtils.getValueByJsonPath(config, "serviceEndPointFromConfig",
+                                          contrailEndPtFromConfig);
+}
+
+function isServiceEndptsFromOrchestrationModule ()
+{
+    return ((false == isOrchEndptFromConfig()) ||
+            (false == isContrailEndptFromConfig()));
+}
+
 function isRegionListFromConfig ()
 {
     var config = configUtils.getConfig();
-    return ((false == config.serviceEndPointFromConfig) &&
+    return ((false == isContrailEndptFromConfig()) &&
             (true == config.regionsFromConfig));
 }
 
-function isRegionListFromIdentity ()
+function isCGCEnabled (req)
 {
-    var config = configUtils.getConfig();
-    return ((false == config.serviceEndPointFromConfig) &&
-            (false == config.regionsFromConfig));
-}
-
-function isMultiRegionSupported ()
-{
-    return isRegionListFromConfig() || isRegionListFromIdentity();
+    var cgcData =
+        commonUtils.getValueByJsonPath(req, 'session;serviceCatalog;' +
+                                       global.REGION_ALL + ';' +
+                                       global.SERVICE_ENDPT_TYPE_CGC +
+                                       ';maps;' + 0, null, false);
+    var cgcIP = commonUtils.getValueByJsonPath(cgcData, 'ip', null);
+    var cgcPort = commonUtils.getValueByJsonPath(cgcData, 'port', null);
+    if ((null != cgcIP) && (null != cgcPort)) {
+        return true;
+    }
+    return false;
 }
 
 function getRegionList (req, res, appData)
@@ -380,8 +420,7 @@ exports.getAdminProjectList = getAdminProjectList;
 exports.getServiceAPIVersionByReqObj = getServiceAPIVersionByReqObj;
 exports.getEndpointServiceType = getEndpointServiceType;
 exports.isRegionListFromConfig = isRegionListFromConfig;
-exports.isRegionListFromIdentity = isRegionListFromIdentity;
-exports.isMultiRegionSupported = isMultiRegionSupported;
+exports.isCGCEnabled = isCGCEnabled;
 exports.getRegionList = getRegionList;
 exports.getCurrentRegion = getCurrentRegion;
 exports.shiftServiceEndpointList = shiftServiceEndpointList;
@@ -389,4 +428,8 @@ exports.getRoleList = getRoleList;
 exports.getAuthRetryData = getAuthRetryData;
 exports.getPortToProcessMapByReqObj = getPortToProcessMapByReqObj;
 exports.getConfigEntityByServiceEndpoint = getConfigEntityByServiceEndpoint;
+exports.isOrchEndptFromConfig = isOrchEndptFromConfig;
+exports.isContrailEndptFromConfig = isContrailEndptFromConfig;
+exports.isServiceEndptsFromOrchestrationModule = isServiceEndptsFromOrchestrationModule;
+exports.getContrailEndPoints = getContrailEndPoints;
 

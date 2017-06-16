@@ -27,7 +27,7 @@ function getCGCRestApiInst (req)
                                        port: cgcServerPort});
     }
 
-    if (true == authApi.isMultiRegionSupported()) {
+    if (true == authApi.isCGCEnabled(req)) {
         var regionName = authApi.getCurrentRegion(req);
         var pubUrl = oStack.getPublicUrlByRegionName(regionName,
                                                      global.SERVICE_ENDPT_TYPE_CGC,
