@@ -153,6 +153,7 @@ define([
 
                 queryRequestPostData = queryFormModel.getQueryRequestPostData(serverCurrentTime);
                 queryRequestPostData.chunkSize = coreConstants.QE_RESULT_CHUNK_SIZE_10K;
+                queryRequestPostData.async = true;
                 self.renderView4Config($(queryResultId), queryFormModel,
                     getQueryResultTabViewConfig(queryRequestPostData, queryResultTabId), null, null, modelMap,
                     function() {
