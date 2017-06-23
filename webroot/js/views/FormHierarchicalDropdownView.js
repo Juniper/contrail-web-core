@@ -10,6 +10,7 @@ define([
     var FormHierarchicalDropdownView = ContrailView.extend({
         render: function () {
             self = this;
+            self._ = _;
             var viewConfig = this.attributes.viewConfig,
                 dropdownTemplate =
                     contrail.getTemplate4Id((viewConfig.templateId) ?
@@ -163,8 +164,11 @@ define([
                 parent : grpValue
             };
             for(var i = 0; i < data.length ; i++) {
-                if(data[i].text === grpName &&  data[i].children.length === 1) {
-                    data[i].children.push(newItem);
+                if(data[i].text === grpName) {
+                    var children = self._.pluck(data[i].children, 'text');
+                    if($.inArray(newItem.text, children) === -1) {
+                        data[i].children.push(newItem);
+                    }
                     break;
                 }
             }
@@ -202,7 +206,7 @@ define([
             var t = query.term,filtered = { results: [] }, process;
             var data = {results: []};
             var grpName = self.getSelectedGroupName();
-
+            self.elementConfig.queryMap = this.queryMap;
             if(query.term != undefined) {
                 var filteredResults = [];
                 for(var i = 0; i < this.data.length;i++) {
