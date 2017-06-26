@@ -19,7 +19,6 @@ var configUtils = require('../../../common/config.utils'),
     commonUtils = require('./../../../utils/common.utils'),
     vcenterApi = require('../../../common/vcenter.api'),
     vCenterPluginApi = require('./vcenter.api'),
-    configUtils = require('../../../common/configServer.utils'),
     authSoapServer = require('../../../common/auth.api');
 
 //authSOAPServer = rest.getSoapAPiServer({apiName:global.label.VCENTER_SERVER,
