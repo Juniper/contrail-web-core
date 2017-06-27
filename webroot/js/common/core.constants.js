@@ -494,6 +494,18 @@ define([
         this.UMID_SA_SUMMARY_LINE_CHART_MODEL = "qe:sa:" + this.SESSION_ANALYZER_KEY + "-line-chart-model";
 
         this.SESSION_ANALYZER_CHART_DATA_KEY = ["ingress", "egress", "reverse_ingress", "reverse_egress"];
+        
+        //config Editor constants
+        this.CONFIG_EDITOR_MODAL_LAYOUT = '<div id="config-error-container" class="alert-error clearfix">'+
+        '<div id="config-msg-container"><span class="error-font-weight">Error : </span><span id="config-error-msg-container"></span></div>'+
+        '<div id="error-remove-icon"><button id="remove-error-popup" class="btn btn-mini"><i class="fa fa-remove"></i></button></div></div>'+
+        '<div id="editorContainer"><div class="json-editor-form-view-header">'+
+        '<div><input type="radio" name="switchFormJson" id="configFormMode" checked="true"></input><label>Form</label><input type="radio" name="switchFormJson" id="configJsonMode"></input><label>JSON</label></div></div>'+
+        '<div id="jsonEditorContainer"></div><div id="rawJsonEdit" style="display:none;"><textarea id="rawJsonTextArea" spellcheck="false"></textarea></div>'+
+        '</div>';
+        this.EDIT_DISABLE_KEYS = ['to','security_group_id','parent_href','uuid','href','fq_name','owner','creator','created','last_modified','timer','parent_uuid','parent_type'];
+        this.ADD_DISABLE_KEYS = ['security_group_id','uuid','href','fq_name','owner','creator','created','last_modified','timer','parent_uuid','parent_type'];
+        this.EMPTY_SCHEMA = 'Please provide the schema for particular object';
 
         //order of the key matters. should match with the above chart data key.
         this.MAP_SESSION_ANALYZER_DATA_KEY = {
@@ -2093,6 +2105,20 @@ define([
             'config-node'       : 'ObjectConfigNode',
             'virtual-network'   : 'ObjectVNTable',
         }
+        
+        //config editor constants
+        this.CONFIG_EDITOR_MODAL_LAYOUT = '<div id="config-error-container" class="alert-error clearfix">'+
+                                            '<div id="config-msg-container"><span class="error-font-weight">Error : </span><span id="config-error-msg-container"></span></div>'+
+                                            '<div id="error-remove-icon"><button id="remove-error-popup" class="btn btn-mini"><i class="fa fa-remove"></i></button></div></div>'+
+                                            '<div id="editorContainer"><div class="json-editor-form-view-header">'+
+                                            '<div><input type="radio" name="switchFormJson" id="configFormMode" checked="true"></input><label>Form</label><input type="radio" name="switchFormJson" id="configJsonMode"></input><label>JSON</label></div></div>'+
+                                            '<div id="jsonEditorContainer"></div><div id="rawJsonEdit" style="display:none;"><textarea id="rawJsonTextArea" spellcheck="false"></textarea></div>'+
+                                            '</div>';
+        this.EDIT_DISABLE_KEYS = ['to','security_group_id','parent_href','uuid','href','fq_name','owner','creator','created','last_modified','timer','parent_uuid','parent_type'];
+        this.ADD_DISABLE_KEYS = ['security_group_id','uuid','href','fq_name','owner','creator','created','last_modified','timer','parent_uuid','parent_type'];
+        this.EMPTY_SCHEMA = 'Please provide the schema for particular object';
+        this.URL_CREATE_CONFIG_OBJECT = "/api/tenants/config/create-config-object";
+        this.URL_UPDATE_CONFIG_OBJECT = "/api/tenants/config/update-config-object";
     };
     //Export to global scope
     cowc = new CoreConstants();
