@@ -531,6 +531,7 @@ var coreBundles = {
             'core-basedir/js/views/FormCompositeView',
             'core-basedir/js/views/FormDateTimePickerView',
             'core-basedir/js/views/FormDropdownView',
+            'core-basedir/js/views/configEditor/ConfigEditorModalView',
             'core-basedir/js/views/FormEditableGridView',
             'core-basedir/js/views/FormGridView',
             'core-basedir/js/views/FormHierarchicalDropdownView',
