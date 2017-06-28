@@ -494,6 +494,15 @@ globalObj['menuAccessFns'] = {
             return false;
         }
     },
+    hideInNoneOrchestrationModel: function() {
+        var orchMode = getValueByJsonPath(globalObj,
+                                          'webServerInfo;loggedInOrchestrationMode',
+                                          null);
+        if ('none' == orchMode) {
+            return false;
+        }
+        return true;
+    },
     hideInGlobalController: function() {
         var region = contrail.getCookie(cowc.REGION);
         if(region !== cowc.GLOBAL_CONTROLLER_ALL_REGIONS) {
