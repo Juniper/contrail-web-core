@@ -87,10 +87,16 @@ define([
                                     childViewConfig = dropdownOptions.childView[type];
                                 }
                             }
-
-                            if (cookieKey !== null) {
-                                contrail.setCookie(cookieKey,
-                                                   selectedValueData.display_name);
+                            var cookieVal = selectedValueData.display_name;
+                            if ((null != cookieKey) && (null != cookieVal)) {
+                                if (null != selectedValueData.error_string) {
+                                    /* Do not set the error string in cookie,
+                                     * error_string is only for display
+                                     */
+                                    var cookieVal =
+                                        (selectedValueData.display_name.split(selectedValueData.error_string)[0]).trim();
+                                }
+                                contrail.setCookie(cookieKey, cookieVal);
                             }
 
                             if (childViewConfig !== null) {
@@ -140,12 +146,17 @@ define([
                 var fqName = getValueByJsonPath(e.object, "fq_name");
                 var displayName = getValueByJsonPath(e.object, "display_name",
                                                      fqName);
+                var errorStr = getValueByJsonPath(e.object, "error_string",
+                                                  null);
                 var selectedValueData = {
                     name: e.object['name'],
                     value: e.object['value'],
                     display_name: displayName,
                     fq_name: e.object['fq_name']
                 };
+                if (null != errorStr) {
+                    selectedValueData["error_string"] = errorStr;
+                }
                 selectedValueData.parentSelectedValueData =
                     (null != dropdownOptions) ?
                         dropdownOptions.parentSelectedValueData : null;
