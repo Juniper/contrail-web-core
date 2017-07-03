@@ -153,6 +153,7 @@ define([
 
                 queryRequestPostData = queryFormModel.getQueryRequestPostData(serverCurrentTime);
                 queryRequestPostData.chunkSize = coreConstants.QE_RESULT_CHUNK_SIZE_10K;
+                queryRequestPostData.async = true;
                 self.renderView4Config($(queryResultId), queryFormModel,
                     getQueryResultTabViewConfig(queryRequestPostData, queryResultTabId), null, null, modelMap,
                     function() {
@@ -395,6 +396,8 @@ define([
             },
             viewConfig: {
                 queryRequestPostData: queryRequestPostData,
+                pollHere: true,
+                pollQueue: cowc.QE_LOG_QUERY_QUEUE,
                 gridOptions: {
                     titleText: cowl.TITLE_SYSTEM_LOGS,
                     queryQueueUrl: coreConstants.URL_QUERY_LOG_QUEUE,

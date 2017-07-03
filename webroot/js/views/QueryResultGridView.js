@@ -52,12 +52,19 @@ define([
                             return response['data'];
                         },
                         successCallback: function(resultJSON, contrailListModel, response) {
+                            var grid = $('#' + queryResultGridId).data('contrailGrid');
                             if (response.status === 'queued') {
-                                $('#' + queryResultGridId).data('contrailGrid').showGridMessage(response.status)
+                                if (viewConfig.pollHere 
+                                        && viewConfig.pollQueue && viewConfig.pollQueue.length > 0) {
+                                    grid.showGridMessage('Your query has been queued, 0% Complete');
+                                    self.initiatePollingForResult(grid, queryRequestPostData.queryId, viewConfig.pollQueue);
+                                } else {
+                                    grid.showGridMessage(response.status);
+                                }
                             } else if (contrailListModel.getItems().length == 0) {
                                 //TODO - get rid of this
                                 setTimeout(function(){
-                                    $('#' + queryResultGridId).data('contrailGrid').showGridMessage('empty')
+                                    grid.showGridMessage('empty')
                                 }, 1000);
                             }
                         }
@@ -69,7 +76,35 @@ define([
 
             modelMap[cowc.UMID_QUERY_RESULT_LIST_MODEL] = queryGridListModel;
 
-            self.renderView4Config(self.$el, queryGridListModel, getQueryResultGridViewConfig(queryResultRemoteConfig, queryResultGridId, queryFormAttributes, gridOptions), null, null, modelMap);
+            self.renderView4Config(self.$el, queryGridListModel, 
+                    getQueryResultGridViewConfig(queryResultRemoteConfig, 
+                            queryResultGridId, queryFormAttributes, gridOptions), null, null, modelMap);
+        },
+
+        initiatePollingForResult : function (grid, queryId, queue) {
+            var self = this,
+                ajaxConfig = {
+                   url: "/api/qe/query/queue?queryQueue="+queue+"&_="+(new Date().getTime()),
+                   type:'GET',
+                   async: false
+                },
+                checkProgress = function () {
+                    contrail.ajaxHandler(ajaxConfig, null, function (response) {
+                        var len = response.length, idx = 0;
+                        for (idx = 0; idx < len; idx ++) {
+                            if (response[idx].queryReqObj.queryId === queryId) {
+                                grid.showGridMessage('Your query has been queued, '
+                                        +response[idx].progress+'% Complete');
+                                console.log('initiatePollingForResult: ', response[idx]);
+                                if (response[idx].progress == 100) {
+                                    clearInterval(poll);
+                                    self.render();
+                                }
+                            }
+                        }
+                    });
+                },
+                poll = setInterval(function () {checkProgress()}, 2000);
         }
     });
 
