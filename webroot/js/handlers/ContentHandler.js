@@ -15,7 +15,10 @@ define(['underscore'], function (_) {
             globalObj.currMenuObj = currMenuObj; //Store in globalObj
             try {
                 self.initFeatureModule(currMenuObj, function() {
-                    contentHandler.loadResourcesFromMenuObj(currMenuObj, resourcesDefObj);
+                    //If user has moved away from the current feature page, before feature module is initialized, don't load the feature page
+                    if(layoutHandler.getURLHashObj()['p'] == null || currMenuObj['hash'] == layoutHandler.getURLHashObj()['p']) {
+                        contentHandler.loadResourcesFromMenuObj(currMenuObj, resourcesDefObj);
+                    }
                 });
                 resourcesDefObj.done(function () {
                     //set the global variable
@@ -120,7 +123,10 @@ define(['underscore'], function (_) {
                 //If hashchange is within the same page
                 if ((lastPageHash == currPageHash) && (globalObj['menuClicked'] == null || globalObj['menuClicked'] == false)) {
                     self.initFeatureModule(currMenuObj, function() {
-                        contentHandler.loadResourcesFromMenuObj(currMenuObj, resourcesDefObj);
+                        //If user has moved away from the current feature page, before feature module is initialized, don't load the feature page
+                        if(layoutHandler.getURLHashObj()['p'] == null || currMenuObj['hash'] == layoutHandler.getURLHashObj()['p']) {
+                            contentHandler.loadResourcesFromMenuObj(currMenuObj, resourcesDefObj);
+                        }
                     });
                     resourcesDefObj.done(function() {
                         //If hashchange is within the same page
@@ -183,13 +189,14 @@ define(['underscore'], function (_) {
                     self.initFeatureModuleMap[initJSPath] = initStatus;
 
                     require([initJSPath], function() {});
-                } else if(initStatus['isInProgress']) {
-                    initStatus['deferredObject'].done(function() {
-                        loadContentCB();
-                    });
                 } else if (initStatus['isComplete']) {
                     loadContentCB()
-                }
+                } else {
+                    //If user quickly jumps to other menu, that time also need to call callback once completed
+                    initStatus['deferredObj'].done(function() {
+                        loadContentCB();
+                    });
+                } 
             } else {
                 loadContentCB();
             }
