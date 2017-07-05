@@ -208,7 +208,7 @@ define([
         //TODO: We should not edit graohModel in generateElements
         var elementsDataObj = contrailGraphModel.generateElements($.extend(true, {}, response), contrailGraphModel.elementMap, contrailGraphModel.rankDir);
 
-        contrailGraphModel.resetCells(elementsDataObj['elements']);
+        contrailGraphModel.resetCells(elementsDataObj['elements'], {async: true});
         contrailGraphModel.elementsDataObj = elementsDataObj;
         contrailGraphModel.rawData = response;
     };
@@ -228,7 +228,7 @@ define([
             cachedCells = cachedCells.concat(cachedGraphModel.elementMap.linkedElements);
         }
 
-        contrailGraphModel.resetCells(cachedCells);
+        contrailGraphModel.resetCells(cachedCells, {async: true});
 
         contrailGraphModel.rawData = cachedGraphModel.rawData;
         contrailGraphModel.directedGraphSize = cachedGraphModel.directedGraphSize;
@@ -258,7 +258,7 @@ define([
                 zoomedElementValue.translate(xOrigin, yOrigin);
             });
 
-            contrailGraphModel.addCells(elementsDataObj['zoomedElements']);
+            contrailGraphModel.resetCells(elementsDataObj['zoomedElements'], {async: true});
 
         }
     };
