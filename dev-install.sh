@@ -13,6 +13,26 @@ cp -af node_modules/ipv6/lib/browser/sprintf.js webroot/assets/ip/
 cp -af node_modules/ipv6/ipv6.js webroot/assets/ip/
 #End - copy javascript-ipv6 node module files for IPv4/v6 address manipulations/validations
 
+#Start - copy d3-v4.4.3 from node_modules 
+rm -rf webroot/assets/d3-v4.4.3
+mkdir -p webroot/assets/d3-v4.4.3/js
+cp -af node_modules/d3/build/d3.min.js webroot/assets/d3-v4.4.3/js/
+#End - copy d3-v4.4.3 from node_modules 
+
+#Start - copy lodash-v4.17.2 from node_modules 
+rm -rf webroot/assets/lodash-v4.17.2
+mkdir -p webroot/assets/lodash-v4.17.2/js
+cp -af node_modules/lodash-v4.17.2/lodash.js webroot/assets/lodash-v4.17.2/js/
+#End - copy lodash-v4.17.2 from node_modules 
+
+#Start - copy contrail-charts from $THIRD_PARTY
+rm -rf webroot/assets/contrail-charts
+mkdir -p webroot/assets/contrail-charts/js
+mkdir -p webroot/assets/contrail-charts/css
+cp -af ./$THIRD_PARTY/contrail-charts/js/contrail-charts.js webroot/assets/contrail-charts/js/
+cp -af ./$THIRD_PARTY/contrail-charts/css/contrail-charts.css webroot/assets/contrail-charts/css/
+#End - copy contrail-charts from $THIRD_PARTY
+
 #Start - copy event drops files from node_module
 rm -rf webroot/assets/event-drops
 mkdir -p webroot/assets/event-drops/js
