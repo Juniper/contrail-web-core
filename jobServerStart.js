@@ -146,9 +146,12 @@ function startServers ()
     contrailServ.getContrailServices();
     contrailServ.startWatchContrailServiceRetryList();
     redisPub.createRedisPubClient(function() {
-        connectToMainServer();
-        doFeatureTaskInit();
-        process.send("INIT IS DONE");
+        redisUtils.createDefRedisClientAndWait(function(redisClient) {
+            exports.redisClient = redisClient;
+            connectToMainServer();
+            doFeatureTaskInit();
+            process.send("INIT IS DONE");
+        });
     });
 }
 }
