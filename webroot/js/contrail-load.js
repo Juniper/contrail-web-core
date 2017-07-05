@@ -401,7 +401,7 @@ $(document).on('click', '.pre-format-JSON2HTML .collapser', function(){
 	 * Determine whether any of the matched SVG elements are assigned the given class.
 	 */
 	$.fn.hasClassSVG = function(className){
-		var existingClassNames = $(this).attr('class').split(' ');
+		var existingClassNames = $(this).attr('class') != null ? $(this).attr('class').split(' '): '';
 		return (existingClassNames.indexOf(className) > -1 ? true : false);
 	};
 	
