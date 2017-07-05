@@ -130,17 +130,35 @@ define([
     });
 
     joint.shapes.contrail.VirtualNetwork = joint.shapes.contrail.FontElement.extend({
-        markup: '<g class="rotatable"><text/><g class="scalable"><rect class="VirtualNetwork"/></g></g>',
+        markup: '<g class="rotatable"><text/><g class="scalable"><text class="vn-icon"/></g></g>',
         defaults: joint.util.deepSupplement({
             type: 'contrail.VirtualNetwork'
-        }, joint.shapes.contrail.FontElement.prototype.defaults)
+        }, joint.util.deepSupplement({
+            size: {width: 35, height: 35},
+            attrs: {
+                //rect: {stroke: 0, 'fill-opacity': 0, width: 35, height: 35},
+                text: {
+                    'font-family': 'Arial, helvetica, sans-serif',
+                    'font-size': '14px',
+                    'stroke': '#333',
+                    'fill': '#333',
+                    'stoke-width': '0.4px',
+                    'y': '0.2em'
+                },
+                '.vn-icon':{
+                    'html' : '&#xe606',
+                    'y': '1.1em',
+                    'font-family' : 'contrailFonts'
+                }
+            }
+        }, joint.shapes.basic.Generic.prototype.defaults))
     });
 
-    joint.shapes.contrail.VirtualNetworkView = joint.shapes.contrail.FontElementView.extend({
+    /*joint.shapes.contrail.VirtualNetworkView = joint.shapes.contrail.FontElementView.extend({
         defaults: joint.util.deepSupplement({
             type: 'contrail.VirtualNetworkView'
         }, joint.shapes.contrail.FontElementView.prototype.defaults)
-    });
+    });*/
 
 
     joint.shapes.contrail.VirtualMachine = joint.shapes.contrail.FontElement.extend({

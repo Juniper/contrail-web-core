@@ -52,6 +52,11 @@ define([
 
                     initClickEvents(graphSelectorElement, clickEventsConfig, self);
                     initMouseEvents(graphSelectorElement, tooltipConfig, self);
+                    // Since we are rendering the elements in batches (asynchronously)
+                    // we have to bind the mouse events once all the elements are rendered.
+                    self.listenTo(self, 'render:done', function () {
+                        initMouseEvents(graphSelectorElement, tooltipConfig, self);
+                    });
 
                     if (contrail.checkIfFunction(viewConfig.successCallback)) {
                         viewConfig.successCallback(self);
@@ -181,7 +186,7 @@ define([
     var initMouseEvents = function(graphSelectorElement, tooltipConfig, graphView) {
         cowu.bindPopoverInTopology(tooltipConfig, graphView);
         var dragEvents = "mousedown touchstart pointerdown";
-        $(graphSelectorElement).find("text").on(dragEvents, function (e) {
+        $(graphSelectorElement).on(dragEvents, 'text', function (e) {
             e.stopImmediatePropagation();
             if($(this).closest('.no-drag-element').length == 0) {
                 graphView.pointerdown(e);
