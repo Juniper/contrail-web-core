@@ -2583,3 +2583,10 @@ font-style:normal;}
 .padding-bottom-15 {
     padding-bottom: 15px;
 }
+
+#widget-layout-tabs-view {
+    button.ui-multiselect {
+        vertical-align: baseline;
+        height: 25px !important;
+    }
+}
