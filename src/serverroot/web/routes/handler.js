@@ -18,6 +18,7 @@ var http = require('http'),
     authApi = require('../../common/auth.api'),
     vCenterApi = require('../../orchestration/plugins/vcenter/vcenter.api');
     fs = require('fs'),
+    configUtils = require("../../common/config.utils"),
     messages = require('../../common/messages');
 
 if (!module.parent) {
@@ -95,6 +96,12 @@ exports.isAuthenticated = function(req,res) {
             isRegionListFromConfig: config.regionsFromConfig,
             configRegionList: config.regions
         };
+        var motdConfig = configUtils.getConfig();
+        var motdText = commonUtils.getValueByJsonPath(motdConfig, "motd_string",
+                                                      null);
+        if ((null != motdText) && (motdText.length > 0)) {
+            retData.motdText = motdText;
+        }
         commonUtils.handleJSONResponse(null,res,retData);
     }
 }

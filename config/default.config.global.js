@@ -480,5 +480,13 @@ config.server_options.ciphers =
 config.server_options.key_file = '/usr/src/contrail/contrail-web-core/keys/cs-key.pem';
 config.server_options.cert_file = '/usr/src/contrail/contrail-web-core/keys/cs-cert.pem';
 
+/*
+ * This is Message of the day(MOTD) configuration
+ * file_path: Path of the file where MOTD is specified.
+ *
+ */
+config.motd = {};
+config.motd.file_path = "/etc/contrail/contrail-webui-motd";
+
 // Export this as a module.
 module.exports = config;
