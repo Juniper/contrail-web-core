@@ -2317,3 +2317,19 @@ div#alarms-event-drops .grid-stack-item-content {
     overflow:auto;}
 .grid-stack > .grid-stack-item > .grid-stack-item-content, .custom-grid-stack .custom-grid-stack-item, .grid-stack-item-content{overflow:visible;}
     }
+#back-to-top, .footer-links{
+    margin-bottom:30px;
+}
+.proprietary-info{
+    position:fixed;
+    left:0px;
+    bottom:0px;
+    height:30px;
+    background:#fdfdfd;
+    font-size:12px;
+    padding:6px 15px 6px 15px;
+    width:100vw;
+    color:#888;
+    border-top:solid 1px #f9f9f9;
+}
+
