@@ -1176,6 +1176,17 @@ if (typeof document !== 'undefined' && document) {
             setCookie: function(name,value){
                 document.cookie = name + "=" + escape(value) + "; path=/";
             },
+            appendMotdText: function (text) {
+                if (text != null && text != "") {
+                    $('.proprietary-info').html(text);
+                    $('.proprietary-info').removeClass('hide');
+                    $('.page-content').css('padding-bottom', $('.proprietary-info').height());
+                    // To avoid overlap with the menu we are adding left padding
+                    if ($('#sidebar').is(':visible')) {
+                        $('.proprietary-info').css('padding-left', '200px');
+                    }
+                }
+            },
             postAuthenticate: function(response) {
                 require(['jquery', 'thirdparty-libs', 'nonamd-libs'],function() {
                     //To fetch alarmtypes
@@ -1183,6 +1194,7 @@ if (typeof document !== 'undefined' && document) {
                       //Call the update alarm bell after user authentication
                         alarmUtil.fetchAndUpdateAlarmBell();
                     });
+
                     $('#signin-container').empty();
                     //If #content-container already exists,just show it
                     if($('#content-container').length == 0) {
@@ -1192,6 +1204,9 @@ if (typeof document !== 'undefined' && document) {
                         $('#app-container').removeClass('hide');
                         //Reset content-container
                         $('#content-container').html('');
+                        if (null != response) {
+                            loadUtils.appendMotdText(response['motdText']);
+                        }
                     $.ajaxSetup({
                         beforeSend: function (xhr, settings) {
                             if (globalObj['webServerInfo'] != null && globalObj['webServerInfo']['loggedInOrchestrationMode'] != null)
@@ -1246,6 +1261,9 @@ if (typeof document !== 'undefined' && document) {
                     if (null != loadCfg) {
                         isRegionsFromConfig = loadCfg.isRegionListFromConfig;
                         configRegionList = loadCfg.configRegionList;
+                    }
+                    if (null != loadCfg) {
+                        loadUtils.appendMotdText(loadCfg['motdText']);
                     }
                     var regionList = [];
                     if (true == isRegionsFromConfig) {
