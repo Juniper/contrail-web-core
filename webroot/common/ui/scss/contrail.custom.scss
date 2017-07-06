@@ -2583,3 +2583,18 @@ font-style:normal;}
 .padding-bottom-15 {
     padding-bottom: 15px;
 }
+#back-to-top, .footer-links{
+    margin-bottom:30px;
+}
+.proprietary-info{
+    position:fixed;
+    left:0px;
+    bottom:0px;
+    height:30px;
+    background:#fdfdfd;
+    font-size:12px;
+    padding:6px 15px 6px 15px;
+    width:100vw;
+    color:#888;
+    border-top:solid 1px #f9f9f9;
+}
