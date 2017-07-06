@@ -30,6 +30,7 @@ var commonUtils = module.exports,
     v6 = require('ipv6').v6;
     contrailPath = '/contrail',
     _ = require('underscore'),
+    configUtils = require("../common/config.utils"),
     redisUtils = require('./redis.utils');
 
 if (!module.parent) {
@@ -1428,6 +1429,12 @@ function getWebServerInfo (req, res, appData)
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;
     var activePkgs = [];
+    var motdConfig = configUtils.getConfig();
+    var motdText = commonUtils.getValueByJsonPath(motdConfig, "motd_string", null);
+    if ((null != motdText) && (motdText.length > 0)) {
+        serverObj["motdText"] = motdText;
+    }
+
     for (var i = 1; i < pkgLen; i++) {
         activePkgs.push(pkgList[i]['pkgName']);
     }

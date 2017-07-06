@@ -431,6 +431,8 @@ function startWebCluster ()
             redisSub.createRedisClientAndSubscribeMsg(function() {
                 discClient.sendWebServerReadyMessage();
             });
+            var configUtils = require("./src/serverroot/common/config.utils");
+            configUtils.subscribeMOTDFileChange();
             /* All the config should be set before this line */
             startServer();
         });
