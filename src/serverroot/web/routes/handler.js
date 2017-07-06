@@ -95,6 +95,11 @@ exports.isAuthenticated = function(req,res) {
             isRegionListFromConfig: config.regionsFromConfig,
             configRegionList: config.regions
         };
+        var motdText = commonUtils.getValueByJsonPath(config, "motd_string",
+                                                      null);
+        if ((null != motdText) && (motdText.length > 0)) {
+            retData.motdText = motdText;
+        }
         commonUtils.handleJSONResponse(null,res,retData);
     }
 }

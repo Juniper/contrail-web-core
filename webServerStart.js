@@ -409,6 +409,7 @@ function startWebCluster ()
             });
             contrailServ.getContrailServices();
             contrailServ.startWatchContrailServiceRetryList();
+            configUtils.subscribeMOTDFileChange();
             /* All the config should be set before this line */
             startServer();
         });
