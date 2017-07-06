@@ -1445,6 +1445,11 @@ function getWebServerInfo (req, res, appData)
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;
     var activePkgs = [];
+    var motdText = commonUtils.getValueByJsonPath(config, "motd_string", null);
+    if ((null != motdText) && (motdText.length > 0)) {
+        serverObj["motdText"] = motdText;
+    }
+
     for (var i = 1; i < pkgLen; i++) {
         activePkgs.push(pkgList[i]['pkgName']);
     }
