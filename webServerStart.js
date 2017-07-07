@@ -6,6 +6,8 @@ var configUtils = require('./src/serverroot/common/config.utils'),
     configFile = configUtils.getConfigFile(args);
 configUtils.updateConfig(configFile);
 configUtils.subscribeAutoDetectConfig(configFile);
+/* Set maxListener to unlimited */
+process.setMaxListeners(0);
 
 /* Set corePath before loading any other module */
 var corePath = process.cwd();
@@ -402,8 +404,6 @@ function startWebCluster ()
             jsonDiff.doFeatureJsonDiffParamsInit();
             registerSessionDeleteEvent();
             registerReqToApp();
-            /* Set maxListener to unlimited */
-            process.setMaxListeners(0);
             registerFeatureLists();
             redisSub.createRedisClientAndSubscribeMsg(function() {
             });
