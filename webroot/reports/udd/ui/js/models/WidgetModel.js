@@ -216,6 +216,10 @@ define([
                 _.set(data, propPath, JSON.parse(_.get(data, propPath)));
             });
 
+            if(data.customizedTabListOrder) {
+                data.customizedTabListOrder = cowu.deSanitize(data.customizedTabListOrder);
+            }
+
             return data;
         },
 

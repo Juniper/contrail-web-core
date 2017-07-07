@@ -107,7 +107,7 @@ define([
                     tabId: tabId,
                     tabName: model.collection._tabName,
                     tabCreationTime: model.collection._tabCreationTime,
-                    customizedTabListOrder: this.models[0] ? this.model[0].get("customizedTabListOrder") : ""
+                    customizedTabListOrder: this.models[0] ? this.models[0].get("customizedTabListOrder") : ""
                 };
 
                 model.set(this.tabModels[tabId].info);
@@ -124,7 +124,7 @@ define([
         },
         getCustomizedTabListOrder: function() {
             if (this.models.length > 0) {
-                var deserialized = this.models[0].get("customizedTabListOrder").split(/&?UUID=/img);
+                var deserialized = cowu.deSanitize(this.models[0].get("customizedTabListOrder")).split(/&?UUID=/img);
                 _.remove(deserialized, _.isEmpty);
                 return deserialized;
             } else {

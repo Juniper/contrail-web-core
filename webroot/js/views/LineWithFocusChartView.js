@@ -211,7 +211,7 @@ define([
 
         resize: function() {
             var self = this;
-            _.isFuntion(self.resizeFn) && self.resizeFn();
+            _.isFunction(self.resizeFn) && self.resizeFn();
         },
 
         getChartViewConfig: function(chartData, viewConfig, isRequestInProgress) {
