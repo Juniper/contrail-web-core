@@ -26,8 +26,9 @@ define([
                     cowl.get(elId, app) : cowl.get(path, app)),
                 tmplParameters;
                 self.elementConfig = viewConfig[cowc.KEY_ELEMENT_CONFIG];
+                self.selectOnBlur = cowu.getValueByJsonPath(viewConfig,'selectOnBlur',true);
                 /*Merge hierarchical opts with defaults*/
-                 $.extend(self.elementConfig, self.hierarchicalOptions());
+                 $.extend(self.elementConfig, self.hierarchicalOptions(self.selectOnBlur));
             if (!(contrail.checkIfExist(lockEditingByDefault) &&
                 lockEditingByDefault)) {
                 lockEditingByDefault = false;
@@ -65,12 +66,12 @@ define([
                 self.elementConfig.onInit(this.model.model());
             }
         },
-        hierarchicalOptions : function() {
+        hierarchicalOptions : function(selectOnBlurVal) {
             var opts = {};
             opts.query = self.select2Query;
             opts.formatResult = self.select2ResultFormat;
             opts.formatSelection = self.select2Format;
-            opts.selectOnBlur =  true;
+            opts.selectOnBlur =  selectOnBlurVal;
             opts.close = self.loadSelect2CloseActions;
             opts.open = self.loadSelect2OpenActions;
             return opts;
