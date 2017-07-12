@@ -352,4 +352,7 @@ global.VCENTER_WSDL = 'webroot/js/vim.wsdl';
 /* Async map limit Count */
 global.ASYNC_MAP_LIMIT_COUNT = 100;
 
+/* UVE Stream */
+global.STR_UVE_STREAM = "uveStream";
+
 module.exports = global;
