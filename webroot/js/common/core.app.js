@@ -1107,6 +1107,11 @@ if (typeof document !== 'undefined' && document) {
                 if (text != null && text != "") {
                     $('.proprietary-info').html(text);
                     $('.proprietary-info').removeClass('hide');
+                    $('.page-content').css('padding-bottom', $('.proprietary-info').height());
+                    // To avoid overlap with the menu we are adding left padding
+                    if ($('#sidebar').is(':visible')) {
+                        $('.proprietary-info').css('padding-left', '200px');
+                    }
                 }
             },
             postAuthenticate: function(response) {
