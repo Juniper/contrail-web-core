@@ -1107,6 +1107,7 @@ if (typeof document !== 'undefined' && document) {
                 if (text != null && text != "") {
                     $('.proprietary-info').html(text);
                     $('.proprietary-info').removeClass('hide');
+                    $('.page-content').css('padding-bottom', $('.proprietary-info').height());
                 }
             },
             postAuthenticate: function(response) {
