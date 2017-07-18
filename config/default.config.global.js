@@ -269,6 +269,15 @@ config.logs = {};
 config.logs.level = 'debug';
 
 /******************************************************************************
+ * Container List
+ * This list is used to fetch contrail-status and openstack-status in docker
+ * environment
+ *
+ ******************************************************************************/
+config.docker = {};
+config.docker.container_list = ["controller", "analytics", "analyticsdb"];
+
+/******************************************************************************
  * Boolean flag getDomainProjectsFromApiServer indicates wheather the project
  * list should come from API Server or Identity Manager.
  * If Set 
