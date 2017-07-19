@@ -363,11 +363,17 @@ function logout (req, res, appData)
         /* Need to destroy the session after redirectToLogin as login page depends
            on orchestrationModel
          */
+        var motdConfig = configUtils.getConfig();
+        var motdText = commonUtils.getValueByJsonPath(motdConfig, "motd_string",
+                                                      null);
         req.session.destroy();
         var retData = {
             isRegionListFromConfig: config.regionsFromConfig,
             configRegionList: config.regions
         };
+        if ((null != motdText) && (motdText.length > 0)) {
+            retData.motdText = motdText;
+        }
         var ajaxCall = req.headers['x-requested-with'];
         if ('XMLHttpRequest' == ajaxCall) {
             commonUtils.handleJSONResponse(null, res, retData);

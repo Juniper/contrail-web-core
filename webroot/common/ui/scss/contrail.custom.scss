@@ -2232,7 +2232,6 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
 .alarms-details-panel{
     padding-left: 60px;
 }
-
 .alarms-notification-view .fa-remove {
     font-size: 14px;
     padding: 10px;
@@ -2590,18 +2589,13 @@ font-style:normal;}
         height: 25px !important;
     }
 }
-#back-to-top, .footer-links{
-    margin-bottom:30px;
-}
 .proprietary-info{
-    position:fixed;
+    position: absolute;
     left:0px;
-    bottom:0px;
-    height:30px;
-    background:#fdfdfd;
-    font-size:12px;
-    padding:6px 15px 6px 15px;
+    bottom: 0px;
+    font-size:13px;
+    padding: 15px 100px 6px 80px;
     width:100vw;
     color:#888;
-    border-top:solid 1px #f9f9f9;
+    text-align: center;
 }
