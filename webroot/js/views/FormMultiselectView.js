@@ -48,6 +48,7 @@ define([
             if (contrail.checkIfFunction(elementConfig.onInit)) {
                 elementConfig.onInit(self.model.model());
             }
+            self.$el.find('[data-toggle="tooltip"]').tooltip();
 
         }
     });

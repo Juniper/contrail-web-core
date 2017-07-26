@@ -23,7 +23,7 @@ $dashboard-info-label-color:#3183bd;
 $dashboard-alarms-color:#e4564f;
 $dashboard-default-color:#000;
 $traffic-link-info-width:400px;
-$traffic-group-implit-rule: #ff6f00;
+$traffic-group-implit-rule: #feab6c;
 /*
  * Styles moved from vcon-web.css
  * TODO Cleanup required to remove unused styles
@@ -2328,7 +2328,7 @@ div#alarms-event-drops .grid-stack-item-content {
 $label_color: #3182bd;
 #traffic-groups-endpoint-statistics-tabs {
     .grid-header .grid-header-text, .contrail-tab-link {
-        font-family: "FontAwesome", Open Sans !important;
+        font-family: "contrailGlyph", "FontAwesome", Open Sans !important;
     }
     .slick-row-detail .slick-cell {
         width: 100%;
@@ -2360,6 +2360,7 @@ $label_color: #3182bd;
     .arc-label.along-arc textPath, .cc-title, .iconFontStyle,
     .iconFontStyle span, .link-arrow-start textPath, .link-arrow-end textPath {
         font-family: "FontAwesome", Open Sans !important;
+        font-family: "contrailGlyph", "FontAwesome", Open Sans !important;
     }
     .link-arrow-start textPath, .link-arrow-end textPath {
         fill: #939393;
@@ -2370,6 +2371,10 @@ $label_color: #3182bd;
     #filterByTagNameSec {
         width: 600px;
         text-align: right;
+        .noFiltersApplied {
+            opacity: .4;
+            color: #898989;
+        }
         .select2-container-multi {
             margin: 3px 5px 0 0;
         }
@@ -2440,12 +2445,36 @@ $label_color: #3182bd;
         display: -webkit-flex;
         display: -ms-flex;
         padding-top: 20px;
+        font-size: 12px;
         li {
             list-style: none;
             padding:0 8px;
             i {
                 padding-right: 3px;
+                cursor: default;
             }
+            .customIcon {
+                border: 1px solid #ccc;
+                height: 10px;
+                width: 15px;
+                display: inline-block;
+                margin: -1px 5px;
+            }
+            .customIcon.implictRule {
+                border: 1px solid $traffic-group-implit-rule;
+                background: $traffic-group-implit-rule;
+                opacity: 0.6;
+            }
+            .customIcon.external{
+              background-image: repeating-linear-gradient(135deg, #888, #888 0,
+                transparent 1px, transparent 2px, #888 3px);
+              background-size: 4px 4px;
+            }
+        }
+        .seperator {
+            border-left: 1px solid green;
+            margin-left: 15px;
+            padding-left: 20px;
         }
     }
     .trafficGroups_content {
@@ -2662,14 +2691,8 @@ button.ui-multiselect {
     height: 25px !important;
 }
 .multiSelectViewWithIcon {
-    .select2-container.select2-container-multi {
-        width: 90%;
-    }
-    .infoIcon {
-        position: relative;
-        display: inline-block;
-        font-size: 18px;
-        vertical-align: middle;
+    label {
+        width: auto;
     }
 }
 $disable-color: #898989;
