@@ -2346,21 +2346,36 @@ $label_color: #3182bd;
             color: $label_color;
         }
     }
-    .select2-container {
-        margin-top: 8px;
-    }
     label {
         //display: block;
         margin-right: 20px;
     }
+    h4.noStatsMsg {
+        text-align: center;
+        padding-top: 25%;
+    }
     .showLinkInfo{
         margin-right: $traffic-link-info-width;
     }
-    .arc-label.along-arc textPath, .cc-title, .iconFontStyle {
+    .arc-label.along-arc textPath, .cc-title, .iconFontStyle,
+    .iconFontStyle span, .link-arrow-start textPath, .link-arrow-end textPath {
         font-family: "FontAwesome", Open Sans !important;
     }
-    .traffic-stats-duration, .clear-traffic-stats {
+    .link-arrow-start textPath, .link-arrow-end textPath {
+        fill: #939393;
+    }
+    .traffic-stats-duration, .clear-traffic-stats, #filterByTagNameSec {
         font-size: 13px;
+    }
+    #filterByTagNameSec {
+        width: 600px;
+        text-align: right;
+        .select2-container-multi {
+            margin: 3px 5px 0 0;
+        }
+        .dropdown-menu {
+            left: auto;
+        }
     }
     .traffic-stats-duration {
         margin-right: 15px;
@@ -2645,4 +2660,24 @@ font-style:normal;}
 button.ui-multiselect {
     vertical-align: baseline;
     height: 25px !important;
+}
+.multiSelectViewWithIcon {
+    .select2-container.select2-container-multi {
+        width: 90%;
+    }
+    .infoIcon {
+        position: relative;
+        display: inline-block;
+        font-size: 18px;
+        vertical-align: middle;
+    }
+}
+$disable-color: #898989;
+$active-color: #3182bd;
+
+.disable-color {
+    color: $disable-color !important;
+}
+.active-color {
+    color: $active-color !important;
 }

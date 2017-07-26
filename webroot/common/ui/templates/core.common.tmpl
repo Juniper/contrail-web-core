@@ -1189,6 +1189,22 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-editable-grid-multiselect-with-icon-view-template">
+   <div class="form-group multiSelectViewWithIcon" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+       {{> coreFormLabel}}
+        <input id="{{id}}" name="{{name}}" class="{{class}}"
+            data-bind="
+                {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                value: {{viewConfig.dataBindValue}},
+                optionList: {{viewConfig.dataBindOptionList}},
+                event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
+                contrailMultiselect: {}"
+        />
+        <i class="{{viewConfig.icon}} margin-0-0-0-15 infoIcon" title="{{viewConfig.iconInfo}}"></i>
+        <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-editable-grid-multiselect-view-template">
     <div data-bind="
         {{#if viewConfig.visible}} visible: {{viewConfig.visible}}, {{/if}}
@@ -2478,25 +2494,70 @@
                 </a>
             </div>
             <div class="widget-toolbar pull-right">
-                <span class="traffic-stats-duration">
-                   <i>Stats for last <span class="statsTimeDuration"></span></i>
-                </span>
-                <a class="clear-traffic-stats" class="widget-toolbar-icon" title="Reset">
-                    <i class="fa fa-refresh"></i>
-                    Reset Stats
+                <a class="widget-toolbar-icon settings-traffic-stats" title="Settings" data-action="settings">
+                    <i class="fa fa-cog"></i>
                 </a>
+            </div>
+            <div class="widget-toolbar viewchange pull-right">
+                <a class="widget-toolbar-icon chart-stats" title="Chart View">
+                    <i class="fa fa-bar-chart-o"></i>
+                </a>
+            </div>
+            <div class="widget-toolbar viewchange pull-right">
+                <a class="widget-toolbar-icon grid-stats" title="Table View">
+                    <i class="fa fa-table"></i>
+                </a>
+            </div>
+            <div class="widget-toolbar pull-right">
+                <span class="traffic-stats-duration">
+                   <span id="statsFromOnly">
+                        <i>Stats for <span class="statsFromTime"></span></i>
+                   </span>
+                   <span id="statsFromTo" class="hidden">
+                        <i>Stats from <span class="statsFromTime"></span>
+                        to <span class="statsToTime"></span></i>
+                    </span>
+                </span>
+            </div>
+            <div class="widget-toolbar pull-right" id="filterByTagNameSec">
+                <a data-toggle="dropdown" class="dropdown-toggle" title="Clear Filter" data-action="clear">
+                    <i class="fa fa-filter"></i>
+                </a>
+                <div class="pull-right dropdown-menu dropdown-caret dropdown-closer">
+                </div>
             </div>
         </div>
     </div>
+    <div id="traffic-groups-grid-view"></div>
     <div id="traffic-groups-radial-chart"></div>
-    <div id="traffic-groups-legend-info">
+    <div id="traffic-groups-legend-info" class="hidden">
         <ul class="trafficGroupsTagIcons">
             <li><i class="fa fa-list-alt"></i>Application</li>
             <li><i class="fa fa-database"></i>Deployment</li>
+            <li><i class="fa fa-life-bouy"></i>Site</li>
             <li><i class="fa fa-clone"></i>Tier</li>
         </ul>
     </div>
     <div id="traffic-groups-link-info"></div>
+</script>
+
+<script type="text/x-handlebars-template" id="traffic-filter-view-template">
+    {{#IfCompare endpoints '' operator = '!='}}
+    <div class="select2-container-multi pull-left">
+        {{#each endpoints}}
+        <ul class="select2-choices margin-0-0-5">
+            {{#each this.tags}}
+            <li class="select2-search-choice">
+                <div data-tag="{{this.tag}}" data-index={{this.index}}>{{this.value}}</div>
+                <a class="select2-search-choice-close tgRemoveFilter"></a>
+            </li>
+            {{/each}}
+        </ul>
+        {{/each}}
+    </div>
+    {{else}}
+        <div class="text-center">No filters applied</div>
+    {{/IfCompare}}
 </script>
 
 <script type="text/x-handlebars-template" id="traffic-link-tooltip-template">
