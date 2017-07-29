@@ -1573,6 +1573,7 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
 }
 .proprietary-info{
     position: absolute;
+    pointer-events: none;
     left:0px;
     bottom: 0px;
     font-size:13px;
