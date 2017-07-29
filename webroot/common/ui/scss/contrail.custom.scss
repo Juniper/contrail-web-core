@@ -2319,6 +2319,7 @@ div#alarms-event-drops .grid-stack-item-content {
     }
 .proprietary-info{
     position: absolute;
+    pointer-events: none;
     left:0px;
     bottom: 0px;
     font-size:13px;
