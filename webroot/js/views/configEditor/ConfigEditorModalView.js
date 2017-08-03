@@ -192,7 +192,7 @@ define([
                                 "type": "string",
                                 "propertyOrder": 3,
                         };
-                        self.setNewHrefConfigObject(schema, viewConfig, ctwc.ADD_DISABLE_KEYS, refs, oldJson, enumKeys, objConfig);
+                        self.setNewHrefConfigObject(schema, viewConfig, cowc.ADD_DISABLE_KEYS, refs, oldJson, enumKeys, objConfig);
                     }
                 }
 

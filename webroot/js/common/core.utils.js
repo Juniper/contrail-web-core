@@ -2878,6 +2878,7 @@ define([
           }
             if(value != undefined){
                 if(typeof value === 'object' && value.constructor !== Array && Object.keys(value).length == 0){
+                    r[k] = {};
                 }else{
                    r[k] = value;
                 }
