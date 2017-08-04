@@ -54,7 +54,7 @@ define([
                     initMouseEvents(graphSelectorElement, tooltipConfig, self);
                     // Since we are rendering the elements in batches (asynchronously)
                     // we have to bind the mouse events once all the elements are rendered.
-                    self.listenTo(self, 'render:done', function () {
+                    self.listenTo(self, 'batch:rendered', function () {
                         initMouseEvents(graphSelectorElement, tooltipConfig, self);
                     });
 

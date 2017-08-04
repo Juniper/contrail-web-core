@@ -1368,10 +1368,8 @@ define([
 
         this.bindPopoverInTopology = function (tooltipConfig, graphView) {
             var timer = null;
-            $('.popover').remove();
             $.each(tooltipConfig, function (keyConfig, valueConfig) {
                 valueConfig = $.extend(true, {}, cowc.DEFAULT_CONFIG_ELEMENT_TOOLTIP, valueConfig);
-                $('g.' + keyConfig).popover('destroy');
                 $('g.' + keyConfig).popover({
                     trigger: 'manual',
                     html: true,
