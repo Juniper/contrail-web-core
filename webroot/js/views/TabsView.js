@@ -284,7 +284,7 @@ define([
 
         if (tabIndex >= 0) {
           // activate existing tab
-          self.$el.data("contrailTabs").activateTab(tabIndex);
+          $("#"+elId).data('contrailTabs') != null ? $("#"+elId).data('contrailTabs').activateTab(tabIndex) : self.$el.data("contrailTabs").activateTab(tabIndex);
         } else {
           self.$(self.selectors.linkList).append(tabLinkTemplate([tabViewConfig]));
           self.$('#'+elId).append(tabContentTemplate([tabViewConfig]));
