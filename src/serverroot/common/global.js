@@ -206,6 +206,8 @@ global.PKI_ASN1_PREFIX = 'MII';
 global.PKIZ_PREFIX = 'PKIZ_';
 
 global.ALL_PROJECT_UUID = 'all';
+global.COOKIE_PROJECT_DISPLAY_NAME = "project-display-name";
+global.COOKIE_DOMAIN_DISPLAY_NAME = "domain-display-name";
 
 global.label = {};
 global.label.VNCONFIG_API_SERVER = 'vnconfig-api-server';

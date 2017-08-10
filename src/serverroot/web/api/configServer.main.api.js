@@ -146,7 +146,8 @@ function getDefProjectByAppData (appData)
     var defProject = null;
 
     try {
-        defProject = appData['authObj']['req']['cookies']['project'];
+        defProject =
+            appData['authObj']['req']['cookies'][global.COOKIE_PROJECT_DISPLAY_NAME];
         if (null == defProject) {
             defProject = appData['authObj']['defTokenObj']['tenant']['name'];
         }

@@ -61,7 +61,7 @@ function apiDelete (reqUrl, req, callback)
 function createNetworkPort (req, postData, project, callback)
 {
     var loggedInOrchMode = orch.getLoggedInOrchestrationMode(req);
-    req.cookies.project = project;
+    req.cookies[global.COOKIE_PROJECT_DISPLAY_NAME] = project;
     getNetworkMethod[loggedInOrchMode].createNetworkPort(req, postData, callback);
 }
 
