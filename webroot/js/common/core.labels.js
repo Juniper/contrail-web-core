@@ -105,6 +105,13 @@ define([
             'agg-bytes': 'Aggregate Bytes',
             'agg-packets': 'Aggregate Packets',
             'vmi_uuid': 'VMI UUID',
+            'mirror-id': 'Mirror Index',
+            'agg-mir-bytes': 'Aggregate Mirror Bytes',
+            'agg-mir-packets': 'Aggregate Mirror Packets',
+            'sec-mirror-id': 'Secondary Mirror Index',
+            'agg-sec-mir-bytes': 'Aggregate Sec Mirror Bytes',
+            'agg-sec-mir-packets': 'Aggregate Sec Mirror Packets',
+
 
             //Object log
             'ObjectLog': 'Object Log',
