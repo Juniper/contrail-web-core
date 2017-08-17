@@ -551,6 +551,13 @@ define([
 
             "agg-bytes": "byte",
             "agg-packets": "number",
+            "analyzer-name": "string",
+            "agg-mir-bytes": "byte",
+            "agg-mir-packets": "number",
+            "sec-analyzer-name": "string",
+            "agg-sec-mir-bytes": "byte",
+            "agg-sec-mir-packets": "number",
+
 
             // cpu_info
             "COUNT(cpu_info)": "number",

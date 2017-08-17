@@ -93,6 +93,12 @@ define([
             {select:"agg-packets", display:{ width:140}},
             {select:"vmi_uuid", display:{width:140}},
             {select:"drop_reason", display:{ width:140}}
+            {select:"analyzer-name", display:{ width:280}}
+            {select:"agg-mir-bytes", display:{width:120}},
+            {select:"agg-mir-packets", display:{ width:140}},
+            {select:"sec-analyzer-name", display:{ width:280}}
+            {select:"agg-sec-mir-bytes", display:{width:120}},
+            {select:"agg-sec-mir-packets", display:{ width:140}},
         ],
         "StatTable.PRouterEntry.ifStats" : [
             {select:"COUNT(ifStats)", display:{width:120}},
