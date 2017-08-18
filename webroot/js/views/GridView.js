@@ -624,7 +624,8 @@ define([
                 source = source.replace(/ }}/g, "}}");
                 source = source.replace(/{{ /g, "{{");
 
-                var template = contrail.getTemplate4Source(source, templateKey),
+                var template = contrail.getTemplate4Source(source, templateKey,
+                                   gridOptions.detail.noCache),
                     dc = dataView.getItemById(id);
 
                 if (contrail.checkIfExist(dc)) {
