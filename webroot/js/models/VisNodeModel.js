@@ -52,6 +52,11 @@ function(_, ContrailModel, VisTooltipModel) {
                         modelConfig["image"] =
                             "/img/virtual-router-default.svg";
                         break;
+                    case "bare-metal-server":
+                        modelConfig["level"] = 5;
+                        modelConfig["image"] =
+                            "/img/virtual-machine-default.svg";
+                        break;
                     case "virtual-machine":
                         modelConfig["level"] = 6;
                         modelConfig["image"] =
