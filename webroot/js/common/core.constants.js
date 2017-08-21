@@ -2099,10 +2099,12 @@ define([
             'virtual-network'   : 'ObjectVNTable',
         }
 
-        //config editor constants
+      //config editor constants
         this.CONFIG_EDITOR_MODAL_LAYOUT = '<div id="config-error-container" class="alert-error clearfix">'+
                                             '<div id="config-msg-container"><span class="error-font-weight">Error : </span><span id="config-error-msg-container"></span></div>'+
                                             '<div id="error-remove-icon"><button id="remove-error-popup" class="btn btn-mini"><i class="fa fa-remove"></i></button></div></div>'+
+                                            '<div id="config-warning-container" class="alert-warning">'+
+                                            '<div class="config-warning-msg-container"><span class="error-font-weight">Warning : </span><span id="config-editor-warningMsg">Only for advanced users, changing any parameter can have adverse effect on the system.</span></div></div>'+
                                             '<div id="editorContainer"><div class="json-editor-form-view-header">'+
                                             '<div><input type="radio" name="switchFormJson" id="configFormMode" checked="true"></input><label>Form</label><input type="radio" name="switchFormJson" id="configJsonMode"></input><label>JSON</label></div></div>'+
                                             '<div id="jsonEditorContainer"></div><div id="rawJsonEdit" style="display:none;"><textarea id="rawJsonTextArea" spellcheck="false"></textarea></div>'+

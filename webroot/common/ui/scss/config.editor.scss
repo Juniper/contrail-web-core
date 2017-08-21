@@ -465,3 +465,14 @@ button#remove-error-popup{
 .collectionListTrash:HOVER .hideTrashIcon{
    display:inline;
 }
+#config-warning-container{
+  min-height: 35px;
+  height: auto;
+  margin-bottom: 5px;
+  width: 100%;
+}
+.config-warning-msg-container{
+   width:95%;
+   float:left;
+   padding-top: 8px;padding-left: 14px;padding-bottom: 9px;
+}

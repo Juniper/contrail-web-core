@@ -875,6 +875,9 @@ define([
                     }
                 }
             });
+            if(viewConfig.warningMsg != undefined){
+                $('#config-editor-warningMsg').text(viewConfig.warningMsg);
+            }
         },
 
         saveConfigObject: function(data, viewConfig, objConfig){
