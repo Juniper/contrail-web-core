@@ -23,8 +23,8 @@ define([
             }
             return template;
         };
-        this.getTemplate4Source = function (source, key) {
-            if (!contrail.checkIfExist(templates[key])) {
+        this.getTemplate4Source = function (source, key, noCache) {
+            if (noCache || !contrail.checkIfExist(templates[key])) {
                 templates[key] = Handlebars.compile(source)
             }
             return templates[key];
