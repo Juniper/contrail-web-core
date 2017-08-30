@@ -120,10 +120,11 @@ define([
         return dateObj;
     }
 
-    function getFromTimeShowOptions(toTimeId) {
+    function getFromTimeShowOptions(toTimeId, cdt, format) {
         var d = new Date($("#" + toTimeId + "_datetimepicker").val()),
+            format = format ? format : "hh:mm:ss A",
             dateString = moment(d).format("MMM DD, YYYY"),
-            timeString = moment(d).format("hh:mm:ss A");
+            timeString = moment(d).format(format);
 
         return {
             maxDate: dateString ? dateString : false,
@@ -131,10 +132,11 @@ define([
         };
     }
 
-    function getFromTimeSelectOptions(toTimeId, cdt) {
+    function getFromTimeSelectOptions(toTimeId, cdt, format) {
         var d = new Date($("#" + toTimeId + "_datetimepicker").val()),
+            format = format ? format : "hh:mm:ss A",
             toDateString = moment(d).format("MMM DD, YYYY"),
-            timeString = moment(d).format("hh:mm:ss A"),
+            timeString = moment(d).format(format),
             fromDateString = moment(cdt).format("MMM DD, YYYY");
 
         return {
@@ -143,10 +145,11 @@ define([
         };
     }
 
-    function getToTimeShowOptions(fromTimeId) {
+    function getToTimeShowOptions(fromTimeId, cdt, format) {
         var d = new Date($("#" + fromTimeId + "_datetimepicker").val()),
+            format = format ? format : "hh:mm:ss A",
             dateString = moment(d).format("MMM DD, YYYY"),
-            timeString = moment(d).format("hh:mm:ss A");
+            timeString = moment(d).format(format);
 
         return {
             minDate: dateString ? dateString : false,
@@ -154,10 +157,11 @@ define([
         };
     }
 
-    function getToTimeSelectOptions(fromTimeId, cdt) {
+    function getToTimeSelectOptions(fromTimeId, cdt, format) {
         var d = new Date($("#" + fromTimeId + "_datetimepicker").val()),
+            format = format ? format : "hh:mm:ss A",
             fromDateString = moment(d).format("MMM dd, yyyy"),
-            timeString = moment(d).format("hh:mm:ss A"),
+            timeString = moment(d).format(format),
             toDateString = moment(cdt).format("MMM DD, YYYY");
 
         return {
@@ -583,36 +587,36 @@ define([
             });
         },
 
-        getFromTimeElementConfig: function(fromTimeId, toTimeId) {
+        getFromTimeElementConfig: function(fromTimeId, toTimeId, format) {
             return {
                 formatTime: "h:i A",
                 format: "M d, Y h:i A",
                 displayFormat: "MMM DD, YYYY hh:mm A",
                 onShow: function(cdt) {
-                    this.setOptions(getFromTimeShowOptions(toTimeId, cdt));
+                    this.setOptions(getFromTimeShowOptions(toTimeId, cdt, format));
                 },
                 onClose: function(cdt) {
-                    this.setOptions(getFromTimeShowOptions(toTimeId, cdt));
+                    this.setOptions(getFromTimeShowOptions(toTimeId, cdt, format));
                 },
                 onSelectDate: function(cdt) {
-                    this.setOptions(getFromTimeSelectOptions(toTimeId, cdt));
+                    this.setOptions(getFromTimeSelectOptions(toTimeId, cdt, format));
                 }
             };
         },
 
-        getToTimeElementConfig: function(fromTimeId) {
+        getToTimeElementConfig: function(fromTimeId, toTimeId, format) {
             return {
                 formatTime: "h:i A",
                 format: "M d, Y h:i A",
                 displayFormat: "MMM DD, YYYY hh:mm A",
                 onShow: function(cdt) {
-                    this.setOptions(getToTimeShowOptions(fromTimeId, cdt));
+                    this.setOptions(getToTimeShowOptions(fromTimeId, cdt, format));
                 },
                 onClose: function(cdt) {
-                    this.setOptions(getToTimeShowOptions(fromTimeId, cdt));
+                    this.setOptions(getToTimeShowOptions(fromTimeId, cdt, format));
                 },
                 onSelectDate: function(cdt) {
-                    this.setOptions(getToTimeSelectOptions(fromTimeId, cdt));
+                    this.setOptions(getToTimeSelectOptions(fromTimeId, cdt, format));
                 }
             };
         },

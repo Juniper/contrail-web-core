@@ -15,7 +15,7 @@ define([
                 dropdownTemplate =
                     contrail.getTemplate4Id((viewConfig.templateId) ?
                     viewConfig.templateId: cowc.TMPL_DROPDOWN_VIEW),
-                label = this.attributes.label,
+                label = viewConfig.label,
                 elId = this.attributes.elementId,
                 app = this.attributes.app,
                 validation = this.attributes.validation,

@@ -24,7 +24,29 @@ define([
         this.APPLICATION_ICON = '\uf022';
         this.DEPLOYMENT_ICON = '\uf1c0';
         this.TIER_ICON = '\uf24d';
+        this.SITE_ICON = '\uf1cd';
         this.ARROW_RIGHT_ICON = '\uf178';
+        this.TRAFFIC_GROUP_TAG_TYPES = [{
+            'text': 'Application',
+            'value': 'app',
+            'showVNonEmpty' : true,
+            'showIcononEmpty': true
+        },{
+            'text': 'Tier',
+            'value': 'tier',
+            'showVNonEmpty' : true,
+            'showIcononEmpty': true
+        },{
+            'text': 'Deployment',
+            'value': 'deployment',
+            'showVNonEmpty' : true,
+            'showIcononEmpty': true
+        },{
+            'text': 'Site',
+            'value': 'site',
+            'showVNonEmpty' : true,
+            'showIcononEmpty': true
+        }];
 
         this.DEFAULT_FIREWALL_RULES = {
             '00000000-0000-0000-0000-000000000002': {
@@ -119,6 +141,7 @@ define([
         this.TMPL_MULTISELECT_VIEW = "core-multiselect-view-template";
         this.TMPL_EDITABLE_GRID_MULTISELECT_LEFT_LABEL_VIEW = "core-editable-grid-label-left-multiselect-view-template";
         this.TMPL_EDITABLE_GRID_MULTISELECT_VIEW = "core-editable-grid-multiselect-view-template";
+        this.TMPL_EDITABLE_GRID_MULTISELECT_WITH_ICON_VIEW = "core-editable-grid-multiselect-with-icon-view-template";
         this.TMPL_COMBOBOX_VIEW = "core-combobox-view-template";
         this.TMPL_EDITABLE_GRID_COMBOBOX_VIEW = "core-editable-grid-combobox-view-template";
         this.TMPL_CHECKBOX_VIEW = "core-checkbox-view-template";

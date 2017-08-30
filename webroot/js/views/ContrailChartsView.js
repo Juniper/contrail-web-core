@@ -74,7 +74,6 @@ define([
                 }
 
                 self.model.onAllRequestsComplete.subscribe(function() {
-                    chartView.setData(self.model.getItems());
                     chartView.render();
                 });
                 var prevDimensions = chUtils.getDimensionsObj(self.$el);
