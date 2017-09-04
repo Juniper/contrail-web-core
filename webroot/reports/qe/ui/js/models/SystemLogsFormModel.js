@@ -10,8 +10,8 @@ define([
 ], function (_, coreConstants, QueryFormModel, qeModelConfig) {
     var SystemLogsFormModel = QueryFormModel.extend({
         defaultSelectFields: ["Type"],
-        disableSelectFields: ["SequenceNum", "Context", "Keyword"],
-        disableWhereFields: ["Level", "Keyword"],
+        disableSelectFields: ["SequenceNum"],
+        disableWhereFields: ["Level"],
 
         constructor: function (modelConfig, _queryReqConfig) {
             var defaultConfig = qeModelConfig.getQueryModelConfig(coreConstants.QE_SL_DEFAULT_MODEL_CONFIG);

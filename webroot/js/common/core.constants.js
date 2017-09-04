@@ -473,7 +473,6 @@ define([
             table_name: self.MESSAGE_TABLE,
             table_type: self.QE_LOG_TABLE_TYPE,
             query_prefix: self.SYSTEM_LOGS_PREFIX,
-            keywords: "",
             log_level: "7",
             limit: self.QE_DEFAULT_LIMIT_50K,
             select: self.DEFAULT_SL_SELECT_FIELDS,

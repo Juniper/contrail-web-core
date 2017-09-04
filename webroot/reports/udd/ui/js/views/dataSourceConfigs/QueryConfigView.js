@@ -135,16 +135,7 @@ define([
                                     data: coreConstants.QE_LOG_LEVELS,
                                 },
                             },
-                        }, {
-                            elementId: "keywords",
-                            view: "FormInputView",
-                            viewConfig: {
-                                path: "keywords",
-                                dataBindValue: "keywords",
-                                class: "col-xs-6",
-                                placeholder: coreLabelProcessor.TITLE_QE_KEYWORDS_PLACEHOLDER,
-                            },
-                        } ],
+                        }],
                     }, {
                         viewConfig: {
                             visible: 'isAttrAvailable("table_name")',

@@ -129,10 +129,6 @@ define([
                             elementId: "log_level",
                             view: "FormDropdownView",
                             viewConfig: { path: "log_level", dataBindValue: "log_level", class: "col-xs-3", elementConfig: { dataTextField: "name", dataValueField: "value", data: cowc.QE_LOG_LEVELS } }
-                        }, {
-                            elementId: "keywords",
-                            view: "FormInputView",
-                            viewConfig: { path: "keywords", dataBindValue: "keywords", class: "col-xs-6", placeholder: "Comma separated keywords" }
                         }]
                     }, {
                         columns: [{

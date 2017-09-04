@@ -11,7 +11,7 @@ define([
     var NodeConsoleLogsModel = QueryFormModel.extend({
 
         defaultSelectFields: [],
-        disableSelectFields: ['Type', 'SequenceNum', 'Context', 'Keyword'],
+        disableSelectFields: ['Type', 'SequenceNum'],
 
         constructor: function (modelData, queryReqConfig) {
             var defaultConfig = qeModelConfig.getQueryModelConfig({
@@ -26,7 +26,6 @@ define([
                 log_type: "",
                 log_level: "5",
                 limit: "50",
-                keywords: "",
                 where:"",
                 logCategorySource : []
             });
@@ -44,7 +43,6 @@ define([
             this.log_type('any');
             this.log_level('5');
             this.limit("50");
-            this.keywords('');
         },
     });
 

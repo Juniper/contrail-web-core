@@ -175,17 +175,6 @@ define([
                         {
                             columns: [
                                 {
-                                    elementId: 'keywords', view: "FormInputView",
-                                    viewConfig: { path: 'keywords', dataBindValue: 'keywords', class: "col-xs-6", placeholder: "Enter keyword(s)"}
-                                }
-                            ]
-                        },
-                        {
-                            viewConfig: {
-                                visible: 'show_advanced_options()'
-                            },
-                            columns: [
-                                {
                                     elementId: 'time_range', view: "FormDropdownView",
                                     viewConfig: {
                                         path: 'time_range',
@@ -225,9 +214,6 @@ define([
                             ]
                         },
                         {
-                            viewConfig: {
-                                visible: 'show_advanced_options()'
-                            },
                             columns: [
                                 {
                                     elementId: 'log_category', view: "FormDropdownView",
@@ -270,21 +256,6 @@ define([
                         {
                             columns: [
                                 {
-                                    elementId: 'advanced_options', view: "FormTextView",
-                                    viewConfig: {
-                                        text: 'getAdvancedOptionsText()',
-                                        class: "col-xs-6 margin-0-0-10",
-                                        elementConfig : {
-                                            class: "advanced-options-link"
-                                        },
-                                        click: 'toggleAdvancedFields'
-                                    }
-                                }
-                            ]
-                        },
-                        {
-                            columns: [
-                                {
                                     elementId: 'display_logs', view: "FormButtonView", label: "Display Logs",
                                     viewConfig: {
                                         class: 'display-inline-block margin-0-0-0-15',
@@ -314,7 +285,6 @@ define([
 
     function formatQueryParams(model) {
         var limit = model.limit();
-        var keywords = model.keywords();
         var filters = "limit:" + limit;
         var msgType = model.log_type();
         var hostname = model.hostname();
@@ -327,9 +297,6 @@ define([
         }
         if (logCateg === 'All') {
             logCateg = '';
-        }
-        if(keywords != '') {
-            filters += ",keywords:" + keywords;
         }
         if(nodeType == monitorInfraConstants.CONTROL_NODE) {
             whereClauseStr = '(ModuleId=' +coreConstants.UVEModuleIds['CONTROLNODE']+' AND Source='+ hostname+
@@ -350,7 +317,7 @@ define([
                 ' AND Source='+hostname+ ((msgType !== '') ? ' AND Messagetype='+msgType : '')+
                 ((logCateg !== '') ? ' AND Category='+logCateg : '' )+') OR '+
                 ' (ModuleId='+coreConstants.UVEModuleIds['APISERVER']+
-                'AND Source='+hostname+ ((msgType !== '') ? ' AND Messagetype='+msgType : '')+
+                ' AND Source='+hostname+ ((msgType !== '') ? ' AND Messagetype='+msgType : '')+
                 ((logCateg !== '') ? ' AND Category='+logCateg : '' )+') OR '+
                 '(ModuleId='+coreConstants.UVEModuleIds['SERVICE_MONITOR']+
                 ' AND Source='+hostname+ ((msgType !== '') ? ' AND Messagetype='+msgType : '')+

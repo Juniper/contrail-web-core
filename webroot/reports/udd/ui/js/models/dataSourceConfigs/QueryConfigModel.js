@@ -22,7 +22,6 @@ define([
             defaultOptions[coreConstants.QE_OBJECT_TABLE_TYPE] = coreConstants.QE_OL_DEFAULT_MODEL_CONFIG;
 
             var defaultConfig = qeModelConfig.getQueryModelConfig({
-                keywords: "",
                 log_level: "",
                 limit: ""
             });
