@@ -220,30 +220,6 @@ function parseWebServerInfo(webServerInfo) {
     return webServerInfo;
 }
 
-function getWebServerInfo(project, callback,fromCache) {
-    var fromCache = (fromCache == null) ? true : fromCache;
-    if(fromCache == false || globalObj['webServerInfo'] == null) {
-        //Compares client UTC time with the server UTC time and display alert if mismatch exceeds the threshold
-        $.ajax({
-            url: '/api/service/networking/web-server-info?project=' + project
-        }).done(function (webServerInfo) {
-            globalObj['webServerInfo'] = parseWebServerInfo(webServerInfo);
-            $.ajax({
-                url:'/' + globalObj['mFileName'] + '?built_at=' + built_at
-            }).done(function(xml) {
-                layoutDefObj.resolve(xml);
-            });
-            if(typeof(callback) == 'function') {
-                callback(webServerInfo);
-            }
-        });
-    } else {
-        if(typeof(callback) == 'function') {
-            callback(globalObj['webServerInfo']);
-        }
-    }
-};
-
 function startWidgetLoading(selectorId) {
     $("#" + selectorId + "-loading").show();
     $("#" + selectorId + "-box").find('a[data-action="collapse"]').hide();

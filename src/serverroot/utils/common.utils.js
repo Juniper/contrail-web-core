@@ -1373,11 +1373,15 @@ function getFeaturePkgs() {
     }
     return featurePkg;
 }
+/* Function: sendWebServerInfo
+	Req URL: /api/service/networking/web-server-info
+	Send basic information about Web Server
+*/
+function sendWebServerInfo (req, res) {
+    var serverObj = commonUtils.getWebServerInfo(req, res);
+    commonUtils.handleJSONResponse(null, res, serverObj);
+}
 
-/* Function: getWebServerInfo
-   Req URL: /api/service/networking/web-server-info
-   Send basic information about Web Server
- */
 function getWebServerInfo (req, res, appData)
 {
     var config = configUtils.getConfig();
@@ -1474,51 +1478,7 @@ function getWebServerInfo (req, res, appData)
     /* Return from here, we will get project token stored in
      * req.session.tokenObjs by get-project-role API
      */
-    commonUtils.handleJSONResponse(null, res, serverObj);
-    return;
-
-    var project = req.param('project');
-    var tokenObjs = req.session.tokenObjs;
-    if ((null != tokenObjs) && (null != tokenObjs[project])) {
-        /* We already fetched */
-        commonUtils.handleJSONResponse(null, res, serverObj);
-        return;
-    }
-    var authApi = require('../common/auth.api');
-    var adminProjList = authApi.getAdminProjectList(req);
-    var tokenId = null;
-    if ((null != adminProjList) && (adminProjList.length > 0)) {
-        var adminProjCnt = adminProjList.length;
-        for (var i = 0; i < adminProjCnt; i++) {
-            if ((null != tokenObjs) && (null != tokenObjs[adminProjList[i]])) {
-                tokenId = getValueByJsonPath(tokenObjs[adminProjList[i]],
-                                             'token;id', null);
-                if (null != tokenId) {
-                    break;
-                }
-            }
-        }
-    }
-
-    var userObj = {'tokenid': tokenId, 'tenant': project, 'req': req};
-    authApi.getUIUserRoleByTenant(userObj, function(err, roles) {
-        if (null == roles) {
-            /* We did not find the project role, so redirect to login */
-            logutils.logger.error('We did not get the project in keystone or role' +
-                                  ' not assigned, redirecting to login.');
-            redirectToLogout(req, res);
-            return;
-        }
-        /* Do not update the role, we will enable it when RBAC is supported in
-         * API Server
-         */
-        /*
-        if ((null == err) && (null != roles)) {
-            serverObj['role'] = roles;
-        }
-        */
-        commonUtils.handleJSONResponse(null, res, serverObj);
-    });
+    return serverObj;
 }
 
 function getUserRoleListPerTenant (req, res, callback)
@@ -2398,4 +2358,4 @@ exports.getFeaturePkgs = getFeaturePkgs;
 exports.doDeepSort = doDeepSort;
 exports.invalidateReqSession = invalidateReqSession;
 exports.handleAuthToAuthorizeError = handleAuthToAuthorizeError;
-
+exports.sendWebServerInfo = sendWebServerInfo;

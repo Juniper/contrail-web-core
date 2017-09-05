@@ -99,30 +99,3 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
 
     return LayoutHandler;
 });
-
-function getWebServerInfo(project, callback) {
-    //Compares client UTC time with the server UTC time and display alert if mismatch exceeds the threshold
-    $.ajax({
-        url: '/api/service/networking/web-server-info?project=' +
-            encodeURIComponent(project)
-    }).done(function (webServerInfo) {
-        if (webServerInfo['serverUTCTime'] != null) {
-            webServerInfo['timeDiffInMillisecs'] = webServerInfo['serverUTCTime'] - new Date().getTime();
-            if (Math.abs(webServerInfo['timeDiffInMillisecs']) > timeStampTolearence) {
-                if (webServerInfo['timeDiffInMillisecs'] > 0) {
-                    globalAlerts.push({
-                        msg: infraAlertMsgs['TIMESTAMP_MISMATCH_BEHIND'].format(diffDates(new XDate(), new XDate(webServerInfo['serverUTCTime']), 'rounded')),
-                        sevLevel: sevLevels['INFO']
-                    });
-                } else {
-                    globalAlerts.push({
-                        msg: infraAlertMsgs['TIMESTAMP_MISMATCH_AHEAD'].format(diffDates(new XDate(webServerInfo['serverUTCTime']), new XDate(), 'rounded')),
-                        sevLevel: sevLevels['INFO']
-                    });
-                }
-            }
-            globalObj['webServerInfo'] = webServerInfo;
-            callback(webServerInfo);
-        }
-    });
-};
