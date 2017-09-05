@@ -1391,6 +1391,11 @@ function getWebServerInfo (req, res, appData)
         logutils.logger.error("We did not get Orchestration Model");
         assert(0);
     }
+    // While accessing the introspect pages from UI through proxyURl, if the session expires
+    // UI is not maintaining the context (not redirecting to introspect page) even after login again.
+    if (req.header('referer') != null && req.header('referer').match(/https?:\/\/[^/]*\/proxy\?/) != null) {
+       serverObj['reload'] = true;
+    }
     serverObj['serverUTCTime'] = commonUtils.getCurrentUTCTime();
     serverObj['hostName'] = os.hostname();
     serverObj['role'] = req.session.userRole;
