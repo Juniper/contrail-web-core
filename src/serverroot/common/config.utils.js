@@ -111,6 +111,10 @@ function updateAndWatchMOTDFileChange (contents, filePath)
     }
     fs.watchFile(filePath, function(curr, prev) {
         fs.readFile(filePath, fileReadOptions, function(error, contents) {
+            if ((null != error) && (null != error.errno)) {
+                logutils.logger.error("Configured/Default MOTD file " +
+                        "read error code", error.errno);
+            }
             if ((null == error) && (null != contents)) {
                 updateMOTD(contents);
             } else if (defaultMotdFilePath == filePath) {

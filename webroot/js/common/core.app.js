@@ -1117,7 +1117,9 @@ if (typeof document !== 'undefined' && document) {
             postAuthenticate: function(response) {
                 require(['jquery'],function() {
                     //To fetch alarmtypes
-                    require(['core-alarm-utils'],function() {});
+                    require(['core-alarm-utils'],function(alarmUtil) {
+                       alarmUtil.fetchAndUpdateAlarmBell();
+                    });
                     $('#signin-container').empty();
                     //If #content-container already exists,just show it
                     if($('#content-container').length == 0) {
@@ -1127,7 +1129,7 @@ if (typeof document !== 'undefined' && document) {
                         $('#app-container').removeClass('hide');
                         //Reset content-container
                         $('#content-container').html('');
-                        if (null != response) {
+                        if (null != response && typeof response == 'object') {
                             loadUtils.appendMotdText(response['motdText']);
                         }
                     $.ajaxSetup({
@@ -1199,14 +1201,25 @@ if (typeof document !== 'undefined' && document) {
             },
             onAuthenticationReq: function(loadCfg) {
                 document.getElementById('signin-container').innerHTML = document.getElementById('signin-container-tmpl').innerHTML;
+                require(['jquery'], function () {
+                    /**
+                     *  To handle the cases like, even after logout
+                     *  some scheduled ajax calls are issued and there
+                     *  callback(onAuthenticationReq()) removes the motd
+                     *  so we are storing the motd in globalObj and checking
+                     *  in globalObj if the ajax response doesn't have the motd.
+                     */
+                    if (null != loadCfg || globalObj['motdText'] != null) {
+                        var motdText = (loadCfg != null && loadCfg['motdText'] != null) ?
+                            loadCfg['motdText']: globalObj['motdText'];
+                        loadUtils.appendMotdText(motdText);
+                    };
+                })
                 require(['jquery','jquery-dep-libs'], function() {
                     var isRegionsFromConfig = false;
                     if (null != loadCfg) {
                         isRegionsFromConfig = loadCfg.isRegionListFromConfig;
                         configRegionList = loadCfg.configRegionList;
-                    }
-                    if (null != loadCfg) {
-                        loadUtils.appendMotdText(loadCfg['motdText']);
                     }
                     var regionList = [];
                     if (true == isRegionsFromConfig) {
@@ -1255,6 +1268,7 @@ if (typeof document !== 'undefined' && document) {
             },
             isAuthenticated: function() {
                 Ajax.request(orchPrefix + '/isauthenticated',"GET",null,function(response) {
+                    loadUtils.updateMotdInGlobalObj(response);
                     if(response != null && response.isAuthenticated == true) {
                         loadUtils.postAuthenticate(response);
                     } else {
@@ -1310,8 +1324,20 @@ if (typeof document !== 'undefined' && document) {
                         type: "POST",
                         data: JSON.stringify(postData),
                         contentType: "application/json; charset=utf-8",
-                        dataType: "json"
+                        dataType: "json",
+                        dataFilter: function (data, type) {
+                            if (type == 'json') {
+                                var rawData = data;
+                                var dataSanitized = data.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+                                dataSanitized = JSON.parse(dataSanitized);
+                                dataSanitized['motdText'] = JSON.parse(rawData)['motdText'];
+                                return JSON.stringify(dataSanitized);
+                            } else {
+                                return data;
+                            }
+                        }
                     }).done(function (response) {
+                        loadUtils.updateMotdInGlobalObj(response);
                         if(response != null && response.isAuthenticated == true) {
                             loadUtils.postAuthenticate(response);
                         } else {
@@ -1330,10 +1356,29 @@ if (typeof document !== 'undefined' && document) {
                 $.ajax({
                     url: '/logout',
                     type: "GET",
-                    dataType: "json"
+                    dataType: "json",
+                    dataFilter: function (data, type) {
+                        if (type == 'json') {
+                            var rawData = data;
+                            var dataSanitized = data.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+                            dataSanitized = JSON.parse(dataSanitized);
+                            dataSanitized['motdText'] = JSON.parse(rawData)['motdText'];
+                            return JSON.stringify(dataSanitized);
+                        } else {
+                            return data;
+                        }
+                    }
                 }).done(function (response) {
+                    loadUtils.updateMotdInGlobalObj(response);
+                    //Stop the periodic alarm bell update calls on logout
+                    clearTimeout(globalObj['alarmTimerCnst']);
                     loadUtils.onAuthenticationReq(response);
                 });
+            },
+            updateMotdInGlobalObj: function (obj) {
+                if (obj != null && typeof obj == 'object') {
+                    globalObj['motdText'] = obj['motdText'];
+                }
             },
             parseWebServerInfo: function(webServerInfo) {
                 if (webServerInfo['serverUTCTime'] != null) {

@@ -69,11 +69,8 @@ define(
                 };
 
                 self.startUpdateBellTimer = function () {
-                    setTimeout(self.fetchAndUpdateAlarmBell,cowc.ALARM_REFRESH_DURATION);
+                    globalObj['alarmTimerCnst'] = setTimeout(self.fetchAndUpdateAlarmBell,cowc.ALARM_REFRESH_DURATION);
                 };
-                //Call the update alarm bell
-                self.fetchAndUpdateAlarmBell();
-
                 self.mapSeverityToColor = function (severity) {
                     if (severity != -1) {
                         if (severity >= 2) {
