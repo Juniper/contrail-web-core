@@ -177,19 +177,26 @@ define([
             return disabledFlag || lockFlag;
         },
 
-        getFormErrorText: function (prefixId) {
+        getFormErrorText: function (prefixId, inputErrText) {
             var modelErrors = this.model().attributes.errors.attributes,
                 errorText = cowm.get(cowm.SHOULD_BE_VALID, cowl.get(prefixId));
 
-            _.each(modelErrors, function (value, key) {
-                if (_.isFunction(modelErrors[key]) || (modelErrors[key] == 'false') || (modelErrors[key] == '')) {
-                    delete modelErrors[key];
-                } else {
-                    if (-1 == (key.indexOf('_form_error'))) {
-                        errorText = errorText + cowl.getFirstCharUpperCase(key.split('_error')[0]) + ", ";
+            if(inputErrText === undefined){
+                _.each(modelErrors, function (value, key) {
+                    if (_.isFunction(modelErrors[key]) || (modelErrors[key] == 'false') || (modelErrors[key] == '')) {
+                        delete modelErrors[key];
+                    } else {
+                        if (-1 == (key.indexOf('_form_error'))) {
+                            var filterKey = key.split('_error')[0];
+                            var key = filterKey.replace(/([a-z])([A-Z])/g, '$1 $2');
+                            errorText = errorText + cowl.getFirstCharUpperCase(key) + ", ";
+                        }
                     }
-                }
-            });
+                });
+            }else{
+                errorText = errorText + inputErrText + ", ";
+            }
+
             // Replace last comma by a dot
             errorText = errorText.slice(0, -2) + ".";
             return {responseText: errorText};
