@@ -2134,6 +2134,7 @@ define([
         this.EMPTY_SCHEMA = 'Please provide the schema for particular object';
         this.URL_CREATE_CONFIG_OBJECT = "/api/tenants/config/create-config-object";
         this.URL_UPDATE_CONFIG_OBJECT = "/api/tenants/config/update-config-object";
+        this.NETWORK_POLICY_INCLUDING_OBJ_LIST = ['security-logging-object'];
     };
     //Export to global scope
     cowc = new CoreConstants();
