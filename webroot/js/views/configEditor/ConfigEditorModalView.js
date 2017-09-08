@@ -57,14 +57,14 @@ define([
                     var refsOrder = 50, refList = [], callCount = 0;
                     self.ObjModel = JSON.parse(cowu.deSanitize(JSON.stringify(model[0])));
                             var obj = self.ObjModel[Object.keys(self.ObjModel)[0]];
-                            var schemaProperties = getValueByJsonPath(schema,'properties;'+Object.keys(schema.properties)[0]+';properties');
+                            var schemaProperties = getValueByJsonPath(schema,'properties;'+ Object.keys(schema.properties)[0] +';properties');
                             for(var k in obj){
                                 if(k.substring(k.length-5,k.length) === '_refs'){
                                     refs.push(k);
-                                        if(schemaProperties[k].items == null || k == 'network_policy_refs'){
-                                        refs.push(obj[k]);
+                                        if(schemaProperties[k].items == null || (k == 'network_policy_refs' && Object.keys(schema.properties)[0] !== 'security-logging-object')){
+                                          refs.push(obj[k]);
                                         }else{
-                                        refs.push(undefined);
+                                          refs.push(undefined);
                                         }
                                 }
                             }
@@ -97,9 +97,14 @@ define([
                                     var objKey = Object.keys(model[0])[0].split('-').join('_');
                                     var updatedKey = objKey.substring(0,objKey.length - 1) + '_refs';
                                     if(schema.properties[Object.keys(schema.properties)[0]].properties[updatedKey].items != undefined && updatedKey != 'network_policy_refs'){
-                                        schema.properties[Object.keys(schema.properties)[0]].properties[updatedKey].items.properties.to ={
+                                        schema.properties[Object.keys(schema.properties)[0]].properties[updatedKey].items.properties.to = {
                                                 "type": "string",
-                                                "enum": optionsList,
+                                                "enum": optionsList
+                                        }
+                                    }else if(Object.keys(schema.properties)[0] === 'security-logging-object' && updatedKey === 'network_policy_refs'){
+                                        schema.properties[Object.keys(schema.properties)[0]].properties[updatedKey].items.properties.to = {
+                                                "type": "string",
+                                                "enum": optionsList
                                         }
                                     }else{
                                         var sortedList = [];
@@ -246,9 +251,14 @@ define([
                     var objKey = Object.keys(model[0])[0].split('-').join('_');
                     var updatedKey = objKey.substring(0,objKey.length - 1) + '_refs';
                     if(schema.properties[Object.keys(schema.properties)[0]].properties[updatedKey].items != undefined && updatedKey != 'network_policy_refs'){
-                        schema.properties[Object.keys(schema.properties)[0]].properties[updatedKey].items.properties.to ={
+                        schema.properties[Object.keys(schema.properties)[0]].properties[updatedKey].items.properties.to = {
                                 "type": "string",
-                                "enum": optionsList,
+                                "enum": optionsList
+                        }
+                    }else if(Object.keys(schema.properties)[0] === 'security-logging-object' && updatedKey === 'network_policy_refs'){
+                        schema.properties[Object.keys(schema.properties)[0]].properties[updatedKey].items.properties.to = {
+                                "type": "string",
+                                "enum": optionsList
                         }
                     }else{
                         schema.properties[Object.keys(schema.properties)[0]].properties[updatedKey]= {
