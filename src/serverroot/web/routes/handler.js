@@ -83,7 +83,8 @@ exports.getMenuXML = function(req,res) {
 exports.isAuthenticated = function(req,res) {
     var retData = {}, config = configUtils.getConfig();
     if(req.session.isAuthenticated == true) {
-        commonUtils.getWebServerInfo(req,res)
+        var serverObj = commonUtils.getWebServerInfo(req, res);
+        commonUtils.handleJSONResponse(null, res, serverObj);
         return;
     } else {
         // commonUtils.getWebServerInfo(req,res)
@@ -328,7 +329,15 @@ exports.authenticate = function (req, res, appData) {
             res.redirect(redirectURL);
             return;
         }
-        commonUtils.getWebServerInfo(req, res);
+        var serverObj = commonUtils.getWebServerInfo(req, res);
+        // While accessing the introspect pages from UI through proxyURl,
+        // if the session expires UI is not maintaining the context
+        // (not redirecting to introspect page) even after login again.
+        if (req.header('referer') != null &&
+           req.header('referer').match(/https?:\/\/[^/]*\/proxy\?/) != null) {
+           serverObj['reload'] = true;
+        }
+        commonUtils.handleJSONResponse(null, res, serverObj);
     });
 }
 exports.vcenter_authenticate = function (req, res, appData) {
@@ -341,7 +350,15 @@ exports.vcenter_authenticate = function (req, res, appData) {
             commonUtils.handleJSONResponse(null, res, errorObj);
             return;
         }
-        commonUtils.getWebServerInfo(req, res);
+        var serverObj = commonUtils.getWebServerInfo(req, res);
+        // While accessing the introspect pages from UI through proxyURl,
+        // if the session expires UI is not maintaining the context
+        // (not redirecting to introspect page) even after login again.
+        if (req.header('referer') != null &&
+            req.header('referer').match(/https?:\/\/[^/]*\/proxy\?/) != null) {
+            serverObj['reload'] = true;
+        }
+        commonUtils.handleJSONResponse(null, res, serverObj);
     });
 }
 

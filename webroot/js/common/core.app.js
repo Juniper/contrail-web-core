@@ -1382,6 +1382,10 @@ if (typeof document !== 'undefined' && document) {
                         dataType: "json"
                     }).done(function (response) {
                         if(response != null && response.isAuthenticated == true) {
+                            if (response.reload) {
+                                window.location.reload();
+                                return;
+                            }
                             loadUtils.postAuthenticate(response);
                         } else {
                             //Display login-error message
