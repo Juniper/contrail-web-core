@@ -157,6 +157,7 @@ config.identityManager.authProtocol = 'http';
 config.identityManager.apiVersion = ['v2.0'];
 config.identityManager.strictSSL = false;
 config.identityManager.ca = '';
+config.identityManager.urlPrefix = '';
 
 config.storageManager = {};
 config.storageManager.ip = '127.0.0.1';
