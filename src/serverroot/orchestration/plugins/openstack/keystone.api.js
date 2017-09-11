@@ -206,7 +206,7 @@ function authPostV2Req (authObj, callback)
     var reqUrl = authObj['reqUrl'];
     var postData = authObj['data'];
     var headers = authObj['headers'];
-
+    reqUrl = addUrlPrefix(reqUrl);
     if (null == headers) {
         headers = {};
     }
@@ -249,7 +249,7 @@ function getV2AuthResponse (dataObj, callback, isSvcPortReq)
 {
     var reqUrl = dataObj['reqUrl'];
     var headers = dataObj['headers'];
-
+    reqUrl = addUrlPrefix(reqUrl);
     if (null == headers) {
         headers = {};
     }
@@ -667,7 +667,7 @@ function getV3TokenByAuthObj (authObj, callback)
     var authPort    = authServerPort;
     var authProto   = null;
     var reqUrl = '/v3/auth/tokens';
-
+    reqUrl = addUrlPrefix(reqUrl);
     var tmpAuthRestObj = getAuthRestApiInst(authObj.req, reqUrl);
 
     var postData = authObj['data'];
@@ -710,6 +710,17 @@ function removeSpecialChars (str)
     return str.replace(/(\n|\t|\r)/g, '');
 }
 
+function addUrlPrefix (reqUrl)
+{
+    var config = configUtils.getConfig(),
+        urlPrefix = commonUtils.getValueByJsonPath(config,
+            'identityManager;urlPrefix', '');
+    if(urlPrefix) {
+        reqUrl = '/' + urlPrefix + reqUrl;
+    }
+    return reqUrl;
+}
+
 function sendV3PostReq (authObj, callback)
 {
     var postData    = authObj['data'];
@@ -718,6 +729,7 @@ function sendV3PostReq (authObj, callback)
     var authPort    = authServerPort;
     var authProto   = null;
     var tmpAuthRestObj = getAuthRestApiInst(authObj.req, reqUrl);
+    reqUrl = addUrlPrefix(reqUrl);
     tmpAuthRestObj.authRestAPI.api.post(reqUrl, postData, function(err, data) {
         if (null != err) {
             callback(err, null);
@@ -735,7 +747,7 @@ function sendV3GetReq (dataObj, callback)
     var authPort    = authServerPort;
     var authProto   = null;
     var headers     = {'X-Auth-Token': token};
-
+    reqUrl = addUrlPrefix(reqUrl);
     var tmpAuthRestObj = getAuthRestApiInst(dataObj.req, reqUrl);
     tmpAuthRestObj.authRestAPI.api.get(reqUrl, function(err, data) {
         callback(err, data);
@@ -2883,6 +2895,7 @@ function authDelV2Req (authObj, callback)
     if (null == headers) {
         headers = {};
     }
+    tokDelURL = addUrlPrefix(tokDelURL);
     try {
         var authParams = require('../../../../../config/userAuth');
         headers['X-Auth-Token'] = authParams.admin_token;
@@ -2908,6 +2921,7 @@ function deleteV3KeystoneToken (authObj, callback)
 {
     var headers = {};
     var reqUrl = '/v3/auth/tokens/';
+    reqUrl = addUrlPrefix(reqUrl);
     if (null != authObj['headers']) {
         headers = authObj['headers'];
     }
