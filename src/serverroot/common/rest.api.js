@@ -279,7 +279,11 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
         (null != options['headers']['protocol']) &&
         (global.PROTOCOL_HTTPS == options['headers']['protocol'])) {
         delete options['headers']['protocol'];
-        reqUrl = global.HTTPS_URL + params.url + ':' + params.port + params.path;
+        if(params.port) {
+            reqUrl = global.HTTPS_URL + params.url + ':' + params.port + params.path;
+        } else {
+            reqUrl = global.HTTPS_URL + params.url + params.path;
+        }
         options['body'] = options['data'];
         if (('POST' != method) && ('PUT' != method)) {
             delete options['data'];
@@ -307,7 +311,11 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
         });
         return;
     }
-    reqUrl = global.HTTP_URL + params.url + ':' + params.port + params.path;
+    if(params.port) {
+        reqUrl = global.HTTP_URL + params.url + ':' + params.port + params.path;
+    } else {
+        reqUrl = global.HTTP_URL + params.url + params.path;
+    }
     if (null != options['headers']) {
         delete options['headers']['protocol'];
         delete options['headers']['noRedirectToLogout'];

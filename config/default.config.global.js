@@ -149,6 +149,7 @@ config.identityManager.authProtocol = 'http';
 config.identityManager.apiVersion = ['v2.0'];
 config.identityManager.strictSSL = false;
 config.identityManager.ca = '';
+config.identityManager.urlPrefix = '';
 /******************************************************************************
  * The hash algorithm to use for PKI tokens. This can be set to any algorithm
  * that keystone hashlib supports, this should match with value of
