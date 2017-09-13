@@ -37,6 +37,21 @@ define([
                 disabled: viewConfig['disabled']
             };
             this.$el.html(radioButtonTemplate(tmplParameters));
+            var self= this;
+            setTimeout(function() {
+                if(viewConfig.templateId == cowc.TMPL_OPTNS_WITH_ICONS_RADIO_BUTTON_VIEW) {
+                    var elementId = self.attributes.elementId;
+                    $('#'+elementId).find('.option').removeClass('selected');
+                    $('#'+elementId).find('input:checked').prev('.option')
+                                    .addClass('selected');
+                    $('#'+elementId).find('.option').click(function() {
+                        $(this).next().prop("checked", true).trigger("click");
+                        $('#'+elementId).find('.option').removeClass('selected');
+                        $(this).addClass('selected');
+                        return false;
+                    });
+                }
+            }, 10);
         }
     });
 

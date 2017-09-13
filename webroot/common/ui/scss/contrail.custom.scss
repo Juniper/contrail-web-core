@@ -1467,6 +1467,7 @@ color settings styles - begin
 #settings_modal {
     width: 280px!important;
     height:auto!important;
+    bottom: auto !important;
 }
 #settings_modal h6.modal-header i {
     font-size: 20px;
@@ -2328,10 +2329,16 @@ div#alarms-event-drops .grid-stack-item-content {
 $label_color: #3182bd;
 #traffic-groups-endpoint-statistics-tabs {
     .grid-header .grid-header-text, .contrail-tab-link {
-        font-family: "contrailGlyph", "FontAwesome", Open Sans !important;
+        font-family: "FontAwesome", "contrailGlyph", Open Sans !important;
     }
     .slick-row-detail .slick-cell {
         width: 100%;
+    }
+}
+#TGsessionsBreadcrumb {
+    display: flex;
+    li {
+        display: flex;
     }
 }
 .traffic-groups-view {
@@ -2353,14 +2360,14 @@ $label_color: #3182bd;
     h4.noStatsMsg {
         text-align: center;
         padding-top: 25%;
+        padding-bottom: 75px;
     }
     .showLinkInfo{
         margin-right: $traffic-link-info-width;
     }
     .arc-label.along-arc textPath, .cc-title, .iconFontStyle,
     .iconFontStyle span, .link-arrow-start textPath, .link-arrow-end textPath {
-        font-family: "FontAwesome", Open Sans !important;
-        font-family: "contrailGlyph", "FontAwesome", Open Sans !important;
+        font-family: "FontAwesome", "contrailGlyph", Open Sans !important;
     }
     .link-arrow-start textPath, .link-arrow-end textPath {
         fill: #939393;
@@ -2371,6 +2378,14 @@ $label_color: #3182bd;
     #filterByTagNameSec {
         width: 600px;
         text-align: right;
+        sup.filterCount {
+            background-color: #6FB3E0;
+            color: #fff;
+            padding: 1px 3px;
+            position: relative;
+            left: -2px;
+            top: -9px;
+        }
         .noFiltersApplied {
             opacity: .4;
             color: #898989;
@@ -2440,44 +2455,49 @@ $label_color: #3182bd;
         }
     }
     #traffic-groups-radial-chart{transition: all 700ms;}
-    .trafficGroupsTagIcons {
-        display: flex;
-        display: -webkit-flex;
-        display: -ms-flex;
-        padding-top: 20px;
-        font-size: 12px;
-        li {
-            list-style: none;
-            padding:0 8px;
-            i {
-                padding-right: 3px;
-                cursor: default;
-            }
-            .customIcon {
-                border: 1px solid #ccc;
-                height: 10px;
-                width: 15px;
-                display: inline-block;
-                margin: -1px 5px;
-            }
-            .customIcon.implictRule {
-                border: 1px solid $traffic-group-implit-rule;
-                background: $traffic-group-implit-rule;
-                opacity: 0.6;
-            }
-            .customIcon.external{
-              background-image: repeating-linear-gradient(135deg, #888, #888 0,
-                transparent 1px, transparent 2px, #888 3px);
-              background-size: 4px 4px;
+    #traffic-groups-legend-info {
+        padding: 0 $traffic-link-info-width 0 0;
+        ul {
+            display: flex;
+            display: -webkit-flex;
+            display: -ms-flex;
+            font-size: 12px;
+            li {
+                list-style: none;
+                padding:0 8px;
+                i {
+                    padding-right: 3px;
+                    cursor: default;
+                }
+                .customIcon {
+                    border: 1px solid #ccc;
+                    height: 10px;
+                    width: 15px;
+                    display: inline-block;
+                    margin: -1px 5px;
+                }
+                .customIcon.implictRule {
+                    border: 1px solid $traffic-group-implit-rule;
+                    background: $traffic-group-implit-rule;
+                    opacity: 0.6;
+                }
+                .customIcon.external{
+                  background-image: repeating-linear-gradient(135deg, #888, #888 0,
+                    transparent 1px, transparent 2px, #888 3px);
+                  background-size: 4px 4px;
+                }
             }
         }
-        .seperator {
-            border-left: 1px solid green;
-            margin-left: 15px;
-            padding-left: 20px;
+        .tgCirclesLegend {
+            border: 1px solid #898989;
+            padding: 10px 5px;
+            .circleName {
+                color: #3182bd;
+                padding-bottom: 5px;
+            }
         }
     }
-    .trafficGroups_content {
+    #traffic-groups-link-info {
         position: absolute;
         height: calc(100vh - 128px);
         top: 43px;
@@ -2510,6 +2530,7 @@ $label_color: #3182bd;
         display:inline-block;
         color:#787878;
         margin-left:-10px;
+        margin-right: 24px;
         font-size: 14px;
     }
     .trafficGroups_sidePanel h1{
@@ -2703,4 +2724,32 @@ $active-color: #3182bd;
 }
 .active-color {
     color: $active-color !important;
+}
+#radioButtonsWithIcon {
+    label {
+        width: auto;
+        margin: 4px 0;
+        display: inline-block;
+    }
+    .option {
+        border: 1px solid #898989 !important;
+        border-left: 0 !important;
+        margin: 0;
+        color: #898989 !important;
+        border-radius: 0 3px 3px 0;
+        padding: 4px 7px 1px 8px;
+    }
+    .option:first-of-type {
+        border-left: 1px solid #898989 !important;
+        border-radius: 3px 0 0 3px;
+    }
+    .option.selected {
+        background: #3182bd;
+        color: #fff !important;
+    }
+    input {
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+    }
 }

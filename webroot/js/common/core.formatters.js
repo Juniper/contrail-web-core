@@ -153,6 +153,9 @@ define([
             'protocol': function (value, options) {
                 return protocolUtils.getProtocolName(value)
             },
+            'protocolCode': function (name, options) {
+                return protocolUtils.getProtocolCode(name)
+            },
             'xml2json': function (value, options) {
                 var jsonValue = null;
                 if (contrail.checkIfExist(options['dataObject']) && contrail.checkIfExist(options['jsonValuePath'])) {
