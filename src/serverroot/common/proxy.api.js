@@ -54,6 +54,7 @@ var defConfigNodePorts      = [
 
 function getAllowedProxyPortListByNodeType (nodeType)
 {
+    var notIntrospectPortKeyInConfig = "enable_introspect_by_token";
     var config = configUtils.getConfig();
     switch (nodeType) {
     case global.label.VROUTER:
@@ -79,6 +80,9 @@ function getAllowedProxyPortListByNodeType (nodeType)
                                                   nodePortsLabel, {});
     var portList = [];
     for (var key in portObjs) {
+        if (notIntrospectPortKeyInConfig === key) {
+            continue;
+        }
         if ("object" == typeof portObjs[key]) {
             portList = portList.concat(_.values(portObjs[key]));
         } else {
@@ -201,7 +205,7 @@ function sendProxyRequest (request, response, appData, options, userData)
     rqst.end();
 }
 
-function forwardProxyRequest (request, response, appData)
+function proxyRequest (request, response, appData)
 {
     var index = 0;
     var options = url.parse(request.url, true);
@@ -279,6 +283,11 @@ function forwardProxyRequest (request, response, appData)
     });
 }
 
+function forwardProxyRequest (request, response, appData)
+{
+    return proxyRequest(request, response, appData);
+}
+
+exports.proxyRequest = proxyRequest;
 exports.forwardProxyRequest = forwardProxyRequest;
 exports.getAllowedProxyPortListByNodeType = getAllowedProxyPortListByNodeType;
-

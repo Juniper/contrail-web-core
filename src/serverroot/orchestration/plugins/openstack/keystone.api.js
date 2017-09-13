@@ -3056,7 +3056,37 @@ function getConfigEntityByServiceEndpoint (req, serviceName)
     return null;
 }
 
+function checkIfValidToken (req, tokenId, callback)
+{
+    var xAuthToken = req.headers["x-auth-token"];
+    if (null == xAuthToken) {
+        callback(false);
+        return;
+    }
+    getUserAuthDataByConfigAuthObj(null, function(error, data) {
+        if ((null != error) || (null == data) ||
+            (null == data.access) || (null == data.access.token) ||
+            (null == data.access.token.id)) {
+            callback(false);
+            return;
+        }
+        var reqUrl = '/tokens/' + xAuthToken;
+        var adminToken = data.access.token;
+        getAuthDataByReqUrl(req, adminToken, reqUrl, function(error, data) {
+            var tenant =
+                commonUtils.getValueByJsonPath(data, "access;token;tenant;id",
+                                               null);
+            if ((null != error) || (null == tenant)) {
+                callback(false);
+                return;
+            }
+            callback(true, data);
+        });
+    });
+}
+
 exports.authenticate = authenticate;
+exports.checkIfValidToken = checkIfValidToken;
 exports.getToken = getToken;
 exports.getTenantList = getTenantList;
 exports.updateDefTenantToken = updateDefTenantToken;
@@ -3084,3 +3114,4 @@ exports.getAuthRetryData = getAuthRetryData;
 exports.getPortToProcessMapByReqObj = getPortToProcessMapByReqObj;
 exports.getConfigEntityByServiceEndpoint = getConfigEntityByServiceEndpoint;
 exports.getTokenAndUpdateLastToken = getTokenAndUpdateLastToken;
+

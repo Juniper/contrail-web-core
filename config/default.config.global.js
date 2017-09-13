@@ -456,6 +456,11 @@ config.network.router_L3Enable = true;
  * config_node_ports - the allowed port list when the ip/host in proxy URL
  *      used has role as config node
  *
+ *
+ * enable_introspect_by_token - Boolean flag to enable/disable introspect access
+ *      using keystone token without user login. The token is passed in
+ *      X-Auth-Token header along with request.
+ *
  * Note: Introspect port must be added inside introspect section, if not a
  *       introspect port, then add that against some key, ex:
  *       config.proxy.vrouter_node_ports = {
@@ -473,7 +478,8 @@ config.proxy.vrouter_node_ports = {
         /* All introspect ports for processes in vrouter/agent */
         "agent"             :"8085",            /* HttpPortAgent */
         "node-manager"      :"8102"             /* HttpPortVRouterNodemgr */
-    }
+    },
+    "enable_introspect_by_token": true
 };
 config.proxy.control_node_ports = {
     "introspect": {
@@ -481,7 +487,8 @@ config.proxy.control_node_ports = {
         "control-node"      :"8083",            /* HttpPortControl */
         "dns"               :"8092",            /* HttpPortDns */
         "node-manager"      :"8101"             /* HttpPortControlNodemgr */
-    }
+    },
+    "enable_introspect_by_token": true
 };
 config.proxy.analytics_node_ports = {
     "analytics"             :"8081",  /* OpServerPort */
@@ -494,7 +501,8 @@ config.proxy.analytics_node_ports = {
         "alarm-generator"   :"5995",            /* HttpPortAlarmGenerator */
         "SNMP-collector"    :"5920",            /* HttpPortSnmpCollector */
         "topology"          :"5921"             /* HttpPortTopology */
-    }
+    },
+    "enable_introspect_by_token": true
 };
 config.proxy.config_node_ports = {
     "api-server"            :"8082",            /* ApiServerPort */
@@ -505,7 +513,8 @@ config.proxy.config_node_ports = {
         "service-monitor"   :"8088",            /* HttpPortSvcMonitor */
         "device-manager"    :"8096",            /* HttpPortDeviceManager */
         "node-manager"      :"8100"             /* HttpPortConfigNodemgr */
-    }
+    },
+    "enable_introspect_by_token": true
 };
 
 /*****************************************************************************

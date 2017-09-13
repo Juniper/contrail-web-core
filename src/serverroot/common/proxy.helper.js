@@ -17,6 +17,35 @@ var authApi     = require("./auth.api");
 var redisProxyClient = null;
 var opApiServerKeyList = [global.label.API_SERVER, global.label.OPSERVER,
     global.label.OPS_API_SERVER, global.label.VNCONFIG_API_SERVER];
+var notIntrospectPortKeyInConfig = "enable_introspect_by_token";
+
+function getAllowedProxyPortListToAccessByToken ()
+{
+    var config = configUtils.getConfig();
+    var proxyObj = commonUtils.getValueByJsonPath(config, "proxy", {});
+    var portList = [];
+
+    for (var nodeTypeKey in proxyObj) {
+        var enableIntroByToken =
+            commonUtils.getValueByJsonPath(proxyObj, nodeTypeKey +
+                                           ";enable_introspect_by_token", true)
+        if (true != enableIntroByToken) {
+            continue;
+        }
+        for (var key in proxyObj[nodeTypeKey]) {
+            if (notIntrospectPortKeyInConfig === key) {
+                continue;
+            }
+            if ("object" == typeof proxyObj[nodeTypeKey][key]) {
+                portList =
+                    portList.concat(_.values(proxyObj[nodeTypeKey][key]));
+            } else {
+                portList.push(proxyObj[nodeTypeKey][key]);
+            }
+        }
+    }
+    return portList;
+}
 
 function getNodesHostIPFromRedis (callback)
 {
@@ -42,12 +71,25 @@ function isKeyOpOrApiServer (key)
 
 function validateProxyIpPort (request, proxyHost, proxyPort, callback)
 {
-     var found = false;
-     var apiServerPort = null;
-     errStr = 'Hostname not found in restricted list, you can visit ' +
+    var found = false;
+    var apiServerPort = null;
+    var errStr = 'Hostname not found in restricted list, you can visit ' +
          'dashboard page and come back here';
 
     var addAuthInfo = false;
+    if (authApi.isValidUrlWithXAuthToken(request.url, request)) {
+        /* In this case, just check if we have enable_introspect_by_token
+         * enabled for this proxyPort, no need to validate the proxyHost
+         */
+        var portList = getAllowedProxyPortListToAccessByToken();
+        if (portList.indexOf(proxyPort) > -1) {
+            callback(null);
+            return;
+        }
+        errStr = "Port is not in allowed list to get access using token";
+        callback(errStr);
+        return;
+    }
     getNodesHostIPFromRedis(function(err, data) {
         if ((null != err) || (null == data)) {
             callback(errStr);
