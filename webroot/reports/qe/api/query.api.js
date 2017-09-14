@@ -1219,7 +1219,9 @@ function parseWhereANDClause(whereANDClause) {
                 whereANDClauseArray = whereANDClause.split(operator);
             } else if (whereANDClause.indexOf("=") !== -1) {
                 operator = "=";
-                whereANDClauseArray = whereANDClause.split(operator);
+                //Split on first occurence of operator
+                var splitRegEx = new RegExp(operator + "(.+)");
+                whereANDClauseArray = whereANDClause.split(splitRegEx);
             }
             whereANDClause = { name: "", value: "", op: "" };
             populateWhereANDClause(whereANDClause, whereANDClauseArray[0].trim(), whereANDClauseArray[1].trim(), operator);
@@ -1273,6 +1275,10 @@ function populateWhereANDClause(whereANDClause, fieldName, fieldValue, operator)
 }
 
 function splitString2Array(strValue, delimiter) {
+    if(delimiter === '=') {
+        //Split on first occurence of operator
+        delimiter = new RegExp(delimiter + "(.+)");
+    }
     var strArray = strValue.split(delimiter),
         count = strArray.length;
 
