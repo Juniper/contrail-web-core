@@ -2704,3 +2704,83 @@ $active-color: #3182bd;
 .active-color {
     color: $active-color !important;
 }
+/*Security policy wizard CSS starts here*/
+#applicationpolicyset_policy_wizard.wizard > .steps {
+    background: #f7fdff;
+    background: -webkit-linear-gradient(#f7fdff, white);
+    background: -o-linear-gradient(#f7fdff, white);
+    background: -moz-linear-gradient(#f7fdff, white);
+    background: linear-gradient(#f7fdff, white);
+    pointer-events: none;
+    a {
+      background: transparent;
+      &:hover {
+        background: transparent;
+      }
+    }
+  }
+
+  .wizard > .steps {
+    a:active {
+      background: transparent;
+    }
+    .disabled a {
+      background: transparent;
+      &:hover, &:active {
+        background: transparent;
+      }
+    }
+    .done a {
+      background: transparent;
+      &:hover, &:active {
+        background: transparent;
+      }
+    }
+  }
+
+  #applicationpolicyset_policy_wizard.wizard > .steps .current a {
+    background: transparent;
+    &:hover {
+      background: transparent;
+    }
+  }
+
+  .wizard > .steps .current a:active {
+    background: transparent;
+  }
+
+  #applicationpolicyset_policy_wizard {
+   &.wizard > .steps ul{
+      width: 50%;
+      margin-left: -40px;
+      padding: 10px;
+    }
+    &.wizard > .content{
+      min-height:380px !important;
+    }
+    &.wizard > .steps ul li {
+      .title {
+        font-size: 12px;
+      }
+      .number {
+        color: #888;
+      }
+      &.done .title {
+        color: #60a3cd;
+      }
+      &.current {
+        .title {
+          color: #60a3cd;
+        }
+        &:before {
+          color: #fff;
+          background: #5293C4;
+        }
+      }
+      &.done:before, &.current .number, &.done .number {
+        color: #fff;
+        background: #5293C4;
+      }
+    }
+  }
+/*security policy wizard ends here*/
