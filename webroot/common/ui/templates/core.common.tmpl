@@ -867,6 +867,51 @@
     </form>
 </script>
 
+<script type="text/x-handlebars-template" id="application-policy-set-edit-form-template">
+    <div class="alert alert-error" style="display:none;" data-bind="visible: errors().{{prefixId}}_form_error">
+        <strong>Error: </strong>
+        <span data-bind="text: errors().{{prefixId}}_form_error"></span>
+    </div>
+    <div id="modal-landing-container">
+     <div class="aps-icon-text-container" style="padding-top: 135px;">
+        <div class="aps-icon-container"><i id="aps-plus-icon" class="fa fa-plus" aria-hidden="true" style="font-size: 75px;color: white;margin: 20px 0px 0px 23px;"></i></div>
+        <div class="aps-text-container">
+          <span style="color: #599ac9;font-size: 16px;">Create your new Firewall Policy by adding or selecting an Application Policy Set<span>
+        </div>
+     </div>
+     <div id="aps-button-container"></div>
+    </div>
+    <div id="aps-landing-container">
+     <div id="aps-main-container">
+        <div id="aps-sub-container"></div>
+        <div style="float:right;">
+           <button class="btn btn-mini btn-primary" id="aps-main-back-button">Cancel</button>
+        </div>
+     </div>
+     <div id="aps-overlay-container">
+      <div style="float:right;"><i id="aps-create-fwpolicy-remove-icon" class="fa fa-remove" aria-hidden="true" style="font-size: 15px;color: #3182bd;margin: 10px 15px 0px 0px;"></i></div>
+      <div style="float:right;"><i id="aps-remove-icon" class="fa fa-remove" aria-hidden="true" style="font-size: 15px;color: #3182bd;margin: 10px 15px 0px 0px;"></i></div>
+       <div class="dropdown" style="float:right;">
+        <div class="dropdown-toggle fa fa-ellipsis-h" type="button" data-toggle="dropdown"></div>
+        <ul class="dropdown-menu ellipsis">
+          <li><a href="#" id="view-address-group">View Address Groups</a></li>
+          <li><a href="#" id="view-service-group">View Service Groups</a></li>
+          <li><a href="#" id="view-visble-tags">View Visible Tags</a></li>
+        </ul>
+     </div>
+      <div id="aps-gird-container"></div>
+       <div id="aps-footer-container">
+        <div style="float:left;">
+           <button class="btn btn-mini btn-primary" id="aps-back-button">Back</button>
+        </div>
+        <div style="float:right;">
+           <button class="btn btn-mini btn-primary" id="aps-save-button">Save</button>
+        </div>
+       </div>
+     </div>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-accordian-view-template">
     <div id="{{elementId}}" class="{{class}}" data-bind="{{#if viewConfig.[0].visible}} visible: {{viewConfig.[0].visible}} {{/if}}">
         {{#each viewConfig}}
