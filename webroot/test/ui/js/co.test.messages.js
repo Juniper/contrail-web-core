@@ -12,6 +12,7 @@ define([], function () {
         this.TEST_CHARTVIEW_LINE_BAR = 'Test LineBar Chart View';
         this.TEST_DETAILSVIEW = 'Test Details View';
         this.TEST_TABSVIEW = 'Test Tabs View';
+        this.TEST_INFOBOXVIEW = 'Test Infobox View';
 
         this.GRIDVIEW_LIST_MODEL_INITIAL_SETUP = 'Test GridView list model setup, rows initialization';
         this.GRIDVIEW_LIST_MODEL_REFRESH = 'Test GridView list model refresh, check data items';
