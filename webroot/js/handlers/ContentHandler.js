@@ -208,6 +208,9 @@ define(['underscore'], function (_) {
             }
         },
 
+        this.getPath = function (resourceDir, type, fileName) {
+        	return pkgBaseDir + resourceDir['rootDir'] + '/'+type+'/'+ fileName;
+        },
         this.loadResourcesFromMenuObj = function (currMenuObj, resourcesDefObj) {
             var parents = currMenuObj['parents'];
 
@@ -231,7 +234,7 @@ define(['underscore'], function (_) {
                             $.each(currResourceObj['view'], function () {
                                 var viewDeferredObj = $.Deferred();
                                 viewDeferredObjs.push(viewDeferredObj);
-                                var viewPath = pkgBaseDir + currResourceObj['rootDir'] + '/views/' + this;
+                                var viewPath = contentHandler.getPath(currResourceObj, 'views', this);
                                 loadExtTemplate(viewPath, viewDeferredObj, hash);
                             });
                         }
@@ -249,7 +252,7 @@ define(['underscore'], function (_) {
                             $.each(currResourceObj['template'], function () {
                                 var viewDeferredObj = $.Deferred();
                                 viewDeferredObjs.push(viewDeferredObj);
-                                var viewPath = pkgBaseDir + currResourceObj['rootDir'] + '/templates/' + this;
+                                var viewPath = contentHandler.getPath(currResourceObj, 'templates', this);
                                 loadExtTemplate(viewPath, viewDeferredObj, hash);
                             });
                         }
@@ -265,7 +268,7 @@ define(['underscore'], function (_) {
                         currResourceObj['css'] = [currResourceObj['css']];
                     }
                     $.each(currResourceObj['css'], function () {
-                        var cssPath = pkgBaseDir + currResourceObj['rootDir'] + '/css/' + this;
+                        var cssPath = contentHandler.getPath(currResourceObj, 'css', this);
                         if ($.inArray(cssPath, globalObj['loadedCSS']) == -1) {
                             globalObj['loadedCSS'].push(cssPath);
                             var cssLink = $("<link rel='stylesheet' type='text/css' href='" + cssPath + "'>");
@@ -290,7 +293,7 @@ define(['underscore'], function (_) {
                             //Load the JS file only if it's not loaded already
                             //if (window[currResourceObj['class']] == null)
                             if (($.inArray(pkgBaseDir + currResourceObj['rootDir'] + '/js/' + this, globalObj['loadedScripts']) == -1) || (isLoadFn == true) || (isReloadRequired == true))
-                                resourceDefObjList.push(getScript(pkgBaseDir + currResourceObj['rootDir'] + '/js/' + this));
+                            	resourceDefObjList.push(getScript(contentHandler.getPath(currResourceObj, 'js', this)));
                         });
                     }
                 });

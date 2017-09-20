@@ -4,9 +4,9 @@
 
 define([
     'underscore',
-    'backbone'
-], function (_, Backbone) {
-    var InfoboxesView = Backbone.View.extend({
+    'contrail-view'
+], function (_, ContrailView) {
+    var InfoboxesView = ContrailView.extend({
         initialize: function() {
             var self = this;
             self.loadedInfoboxes = [];
@@ -68,9 +68,11 @@ define([
             if(cfg['model'].loadedFromCache) {
                 updateCnt();
             };
-            cfg['model'].onDataUpdate.subscribe(function() {
-                updateCnt();
-            });
+            if (cfg['model'].onDataUpdate != null) {
+                cfg['model'].onDataUpdate.subscribe(function() {
+                    updateCnt();
+                });
+            }
 
             //Initialize view
             var chartView = new cfg['view']({
@@ -78,7 +80,7 @@ define([
                 el: detailElem
             });
 
-            var renderFn = ifNull(cfg['renderfn'],'render');
+            var renderFn = cowu.ifNull(cfg['renderfn'],'render');
             chartView[renderFn]();
 
             function updateCnt() {

@@ -14,7 +14,7 @@ module.exports = function (grunt) {
         {pattern: 'contrail-web-core/webroot/assets/**/!(tests)/*.js', included: false},
         {pattern: 'contrail-web-core/webroot/assets/**/*.css', included: false},
         {pattern: 'contrail-web-core/webroot/common/ui/css/**/*.css', included: false},
-        {pattern: 'contrail-web-core/webroot/test/ui/**/*.css', included: false},
+        {pattern: 'contrail-web-core/webroot/test/ui/css/**/*.css', included: false},
 
         {pattern: 'contrail-web-core/webroot/common/ui/fonts/**/*.woff', included: false},
         {pattern: 'contrail-web-core/webroot/assets/**/*.woff', included: false},
@@ -22,13 +22,18 @@ module.exports = function (grunt) {
 
         {pattern: 'contrail-web-core/webroot/img/**/*.png', included: false},
         {pattern: 'contrail-web-core/webroot/common/ui/css/**/*.png', included: false},
+        
+        //For ace.css.map
+        {pattern: 'contrail-web-core/webroot/common/ui/css/ace.css.map', included: false},
         {pattern: 'contrail-web-core/webroot/assets/select2/styles/**/*.png', included: false},
         {pattern: 'contrail-web-core/webroot/common/ui/css/**/*.gif', included: false},
 
         {pattern: 'contrail-web-core/webroot/test/ui/js/co.test.app.js'},
-        {pattern: 'contrail-web-core/webroot/test/ui/js/**/*.js', included: false},
+        {pattern: 'contrail-web-core/webroot/test/ui/js/!(co.test.app)co.*.js', included: false},
+        {pattern: 'contrail-web-core/webroot/test/ui/js/**/!(examples)/*.js', included: false},
 
         {pattern: 'contrail-web-core/webroot/js/**/*.js', included: false},
+         
         {pattern: 'contrail-web-core/webroot/common/ui/templates/*.tmpl', included: false}
     ];
 
@@ -44,6 +49,13 @@ module.exports = function (grunt) {
                 preprocessors: {
                     'contrail-web-core/webroot/assets/slickgrid/js/slick.*.js': ['coverage']
                 }
+            }
+        },
+        components: {
+            options: {
+                files: [
+                    {pattern:'contrail-web-core/webroot/test/ui/js/component.test.runner.js', included: false }
+                ]
             }
         }
     };
@@ -63,16 +75,13 @@ module.exports = function (grunt) {
             },
             files: ["Gruntfile.js"]
         },
-        api: {
-            grid: 'grid'
+        components: {
+            components: 'components'
         }
 
     });
-
-    grunt.registerMultiTask('api', 'Core libs API Test Cases', function () {
-        if (this.target == 'grid') {
-            grunt.task.run('karma:grid');
-
-        }
+    grunt.registerMultiTask('components', 'Core libs API Test Cases', function () {
+        grunt.task.run('karma:components');
     });
+
 };
