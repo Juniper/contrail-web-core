@@ -1192,6 +1192,9 @@
 <script type="text/x-handlebars-template" id="core-editable-grid-multiselect-with-icon-view-template">
    <div class="form-group multiSelectViewWithIcon" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
        {{> coreFormLabel}}
+        <a data-toggle="tooltip" title="{{viewConfig.iconInfo}}" data-placement="right" class="dropdown-toggle font-size-15 margin-0-5">
+            <i class="{{viewConfig.icon}} "></i>
+        </a>
         <input id="{{id}}" name="{{name}}" class="{{class}}"
             data-bind="
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -1200,7 +1203,6 @@
                 event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
                 contrailMultiselect: {}"
         />
-        <i class="{{viewConfig.icon}} margin-0-0-0-15 infoIcon" title="{{viewConfig.iconInfo}}"></i>
         <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
     </div>
 </script>
@@ -2520,7 +2522,7 @@
                 </span>
             </div>
             <div class="widget-toolbar pull-right" id="filterByTagNameSec">
-                <a data-toggle="dropdown" class="dropdown-toggle" title="Clear Filter" data-action="clear">
+                <a data-toggle="dropdown" class="dropdown-toggle noFiltersApplied" title="Clear Filter">
                     <i class="fa fa-filter"></i>
                 </a>
                 <div class="pull-right dropdown-menu dropdown-caret dropdown-closer">
@@ -2532,10 +2534,12 @@
     <div id="traffic-groups-radial-chart"></div>
     <div id="traffic-groups-legend-info" class="hidden">
         <ul class="trafficGroupsTagIcons">
-            <li><i class="fa fa-list-alt"></i>Application</li>
-            <li><i class="fa fa-database"></i>Deployment</li>
-            <li><i class="fa fa-life-bouy"></i>Site</li>
-            <li><i class="fa fa-clone"></i>Tier</li>
+            <li><i class="fa contrailGlyph-application-alt"></i>Application</li>
+            <li><i class="fa contrailGlyph-deployment-alt"></i>Deployment</li>
+            <li><i class="fa contrailGlyph-site-alt"></i>Site</li>
+            <li><i class="fa contrailGlyph-tier"></i>Tier</li>
+            <li class="seperator"><span class="customIcon external"></span>External</li>
+            <li><span class="customIcon implictRule"></span>Implicit Deny / Allow</li>
         </ul>
     </div>
     <div id="traffic-groups-link-info"></div>

@@ -281,12 +281,39 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-.contrailGlyph-menu:before {
+.contrailGlyph-addConfig:before {
   content: "\e900";
 }
-.contrailGlyph-chart:before {
+.contrailGlyph-application:before {
   content: "\e901";
 }
-.contrailGlyph-palette:before {
+.contrailGlyph-deployment:before {
   content: "\e902";
+}
+.contrailGlyph-site:before {
+  content: "\e903";
+}
+.contrailGlyph-tier:before {
+  content: "\e904";
+}
+.contrailGlyph-tier-alt:before {
+  content: "\e905";
+}
+.contrailGlyph-deployment-alt:before {
+  content: "\e906";
+}
+.contrailGlyph-application-alt:before {
+  content: "\e907";
+}
+.contrailGlyph-site-alt:before {
+  content: "\e908";
+}
+.contrailGlyph-menu:before {
+  content: "\e909";
+}
+.contrailGlyph-chart:before {
+  content: "\e90a";
+}
+.contrailGlyph-palette:before {
+  content: "\e90b";
 }
