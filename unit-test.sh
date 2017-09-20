@@ -32,6 +32,7 @@ if [ -d "$GRUNT_DIR" ]; then
     
     if [ "$1" = 'init' ] ; then
         echo -e "== Test infrastructure initialization\n"
+        ln -sfn $WEBCORE_DIR/node_modules $WEBCORE_TEST_DIR/node_modules
         for REPO in "${REPOS[@]}"; do
             if [ $REPO = 'webController' ] ; then
                 echo "Repo: $REPO"

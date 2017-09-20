@@ -8,13 +8,17 @@ function MonInfraDashboardLoader() {
     this.load = function (paramObject) {
         var self = this, 
             hashParams = paramObject['hashParams'],
-            renderFn = paramObject['function'];
+            renderFn = paramObject['function'],
+            loadingStartedDefObj = paramObject['loadingStartedDefObj'];
 
         require(['mon-infra-dashboard-view'], function (MonitorInfraDashboardView) {
-            var monitorInfraDashboardView = MonitorInfraDashboardView;
-            monitorInfraDashboardView.render({
+            self.monitorInfraDashboardView = MonitorInfraDashboardView;
+            self.monitorInfraDashboardView.render({
                 el:$(contentContainer)
             });
+            if (loadingStartedDefObj != null) {
+                loadingStartedDefObj.resolve();
+            }
         });
     };
 
