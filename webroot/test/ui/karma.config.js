@@ -5,7 +5,7 @@ module.exports = function (config) {
     config.set({
         basePath: __dirname + '/../../../..',
         autoWatch: false,
-        frameworks: ['qunit', 'sinon', 'requirejs'],
+        frameworks: ['requirejs', 'qunit', 'sinon'],
         plugins: [
             'karma-phantomjs-launcher',
             'karma-coverage',

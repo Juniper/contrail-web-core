@@ -387,9 +387,9 @@ var coreAppShim =  {
     'validation': {
         deps: ['backbone']
     },
-    'bezier': {
+    /*'bezier': {
         deps: ['jquery']
-    },
+    },*/
     'joint.layout.DirectedGraph': {
         deps: ['joint']
     },
