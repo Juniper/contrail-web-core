@@ -30,7 +30,7 @@ constants.coreModules  = [
         ]
     },{
         enabled: true,
-        name: "./js/common/contrail.core.views",
+        name: "contrail-core-views",
         exclude: [
             "lodash","jquery","backbone","knockback","knockout","contrail-remote-data-handler","contrail-view",
             "contrail-list-model","contrail-model","contrail-view-model","d3","nv.d3","slick.checkboxselectcolumn","jquery.event.drag",
@@ -44,7 +44,7 @@ constants.coreModules  = [
         ]
     },*/{
         enabled: true,
-        name: "./js/common/thirdparty.libs",
+        name: "thirdparty-libs",
         exclude: [
             "jquery","jquery-ui","knockout","backbone","knockback","validation","lodash"
         ],
@@ -62,7 +62,7 @@ constants.coreModules  = [
         }
     },*/{
         enabled: true,
-        name: "./js/common/nonamd.libs",
+        name: "nonamd-libs",
         exclude: [
             "jquery","jquery-ui","knockout","bootstrap","jquery.xml2json",
             "jquery.json","d3","backbone","validation",
