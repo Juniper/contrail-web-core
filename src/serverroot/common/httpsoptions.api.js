@@ -7,6 +7,7 @@ var configUtils = require('./config.utils');
 var request = require('request');
 var restler = require('restler');
 var commonUtils = require("../utils/common.utils");
+var logutils = require('../utils/log.utils');
 
 /* Function: getHttpsOptionsDefValue
     Get the default value for https options
