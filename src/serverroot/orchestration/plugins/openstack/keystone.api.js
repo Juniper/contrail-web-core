@@ -662,9 +662,10 @@ function getV3Token (authObj, callback)
 
 function getV3TokenByAuthObj (authObj, callback)
 {
-    var authIP      = authServerIP;
+    var authServerDetails = getKeystoneServiceDetailsFromConfig();
+    var authIP      = authServerDetails.authServerIP;
     var tokenObj    = {};
-    var authPort    = authServerPort;
+    var authPort    = authServerDetails.authServerPort;
     var authProto   = null;
     var reqUrl = '/v3/auth/tokens';
 
@@ -712,10 +713,11 @@ function removeSpecialChars (str)
 
 function sendV3PostReq (authObj, callback)
 {
+    var authServerDetails = getKeystoneServiceDetailsFromConfig();
     var postData    = authObj['data'];
     var reqUrl      = authObj['reqUrl'];
-    var authIP      = authServerIP;
-    var authPort    = authServerPort;
+    var authIP      = authServerDetails.authServerIP;
+    var authPort    = authServerDetails.authServerPort;
     var authProto   = null;
     var tmpAuthRestObj = getAuthRestApiInst(authObj.req, reqUrl);
     tmpAuthRestObj.authRestAPI.api.post(reqUrl, postData, function(err, data) {
@@ -729,10 +731,11 @@ function sendV3PostReq (authObj, callback)
 
 function sendV3GetReq (dataObj, callback)
 {
+    var authServerDetails = getKeystoneServiceDetailsFromConfig();
     var token       = dataObj['token'];
     var reqUrl      = dataObj['reqUrl'];
-    var authIP      = authServerIP;
-    var authPort    = authServerPort;
+    var authIP      = authServerDetails.authServerIP;
+    var authPort    = authServerDetails.authServerPort;
     var authProto   = null;
     var headers     = {'X-Auth-Token': token};
 
