@@ -47,6 +47,19 @@
             </div>
         </div>
 </script>
+<script type="text/x-handlebars-template" id="breadcrumb-template">
+     <ul id={{breadcrumbId}} class="breadcrumb margin-0-0-10">
+        {{#each items}}
+        <li>
+          <a href="#">
+            {{#each this}}
+            <div class="iconFontStyle">{{this}}</div>
+            {{/each}}
+          </a>
+        </li>
+        {{/each}}
+     </ul>
+</script>
 <script type="text/x-handlebars-template" id="iframe-template">
     <iframe class="iframe-view" src={{this.url}}></iframe>
 </script>
@@ -2514,53 +2527,76 @@
 </script>
 
 <script type="text/x-handlebars-template" id="traffic-groups-template">
-    <div class="widget-box transparent">
-        <div class="widget-header">
-            <h4 class="smaller">{{widgetTitle}}</h4>
-            <div class="widget-toolbar pull-right">
-                <a class="widget-toolbar-icon refresh-traffic-stats" title="Refresh" data-action="refresh">
-                    <i class="fa fa-repeat"></i>
-                </a>
-            </div>
-            <div class="widget-toolbar pull-right">
-                <a class="widget-toolbar-icon settings-traffic-stats" title="Settings" data-action="settings">
-                    <i class="fa fa-cog"></i>
-                </a>
-            </div>
-            <div class="widget-toolbar pull-right">
-                <span class="traffic-stats-duration">
-                   <span id="statsFromOnly">
-                        <i>Stats for <span class="statsFromTime"></span></i>
-                   </span>
-                   <span id="statsFromTo" class="hidden">
-                        <i>Stats from <span class="statsFromTime"></span>
-                        to <span class="statsToTime"></span></i>
+    <div class="traffic-groups-view">
+        <div class="widget-box transparent">
+            <div class="widget-header">
+                <h4 class="smaller">{{widgetTitle}}</h4>
+                <div class="widget-toolbar pull-right">
+                    <a class="widget-toolbar-icon refresh-traffic-stats" title="Refresh" data-action="refresh">
+                        <i class="fa fa-repeat"></i>
+                    </a>
+                </div>
+                <div class="widget-toolbar pull-right">
+                    <a class="widget-toolbar-icon settings-traffic-stats" title="Settings" data-action="settings">
+                        <i class="fa fa-cog"></i>
+                    </a>
+                </div>
+                <div class="widget-toolbar pull-right">
+                    <span class="traffic-stats-duration">
+                       <span id="statsFromOnly">
+                            <i>Stats for <span class="statsFromTime"></span></i>
+                       </span>
+                       <span id="statsFromTo" class="hidden">
+                            <i>Stats from <span class="statsFromTime"></span>
+                            to <span class="statsToTime"></span></i>
+                        </span>
                     </span>
-                </span>
-            </div>
-            <div class="widget-toolbar pull-right" id="filterByTagNameSec">
-                <a data-toggle="dropdown" class="dropdown-toggle noFiltersApplied" title="Clear Filter">
-                    <i class="fa fa-filter"></i>
-                </a>
-                <div class="pull-right dropdown-menu dropdown-caret dropdown-closer">
+                </div>
+                <div class="widget-toolbar pull-right" id="filterByTagNameSec">
+                    <a data-toggle="dropdown" class="dropdown-toggle noFiltersApplied" title="Clear Filter">
+                        <i class="fa fa-filter"></i>
+                        <sup class="filterCount hidden"></sup>
+                    </a>
+                    <div class="pull-right dropdown-menu dropdown-caret dropdown-closer">
+                    </div>
                 </div>
             </div>
         </div>
+        <div id="traffic-groups-options" class="hidden"></div>
+        <div id="traffic-groups-grid-view"></div>
+        <div id="traffic-groups-radial-chart"></div>
+        <div id="traffic-groups-legend-info" class="row col-xs-12 hidden">
+            <div class="col-xs-6">
+            <ul class="trafficGroupsTagIcons">
+                <li><i class="fa contrailGlyph-application-alt"></i>Application</li>
+                <li><i class="fa contrailGlyph-deployment-alt"></i>Deployment</li>
+                <li><i class="fa contrailGlyph-site-alt"></i>Site</li>
+                <li><i class="fa contrailGlyph-tier"></i>Tier</li>
+            </ul>
+            <ul class="tgChartLegend">
+                <li><span class="customIcon external"></span>Other Project / External</li>
+                <li><span class="customIcon implictRule"></span>Implicit Deny / Allow</li>
+            </ul>
+            </div>
+            <div class="col-xs-4 tgCirclesLegend"></div>
+        </div>
+        <div id="traffic-groups-link-info"></div>
     </div>
-    <div id="traffic-groups-options" class="hidden"></div>
-    <div id="traffic-groups-grid-view"></div>
-    <div id="traffic-groups-radial-chart"></div>
-    <div id="traffic-groups-legend-info" class="hidden">
-        <ul class="trafficGroupsTagIcons">
-            <li><i class="fa contrailGlyph-application-alt"></i>Application</li>
-            <li><i class="fa contrailGlyph-deployment-alt"></i>Deployment</li>
-            <li><i class="fa contrailGlyph-site-alt"></i>Site</li>
-            <li><i class="fa contrailGlyph-tier"></i>Tier</li>
-            <li class="seperator"><span class="customIcon external"></span>Other Project / External</li>
-            <li><span class="customIcon implictRule"></span>Implicit Deny / Allow</li>
-        </ul>
+</script>
+
+<script type="text/x-handlebars-template" id="traffic-chart-legend-template">
+   <div class="col-xs-6">
+        <div class="circleName">Outer Circle</div>
+        {{#each this.outerTags}}
+        <div>{{this}}</div>
+        {{/each}}
     </div>
-    <div id="traffic-groups-link-info"></div>
+    <div class="col-xs-6">
+        <div class="circleName">Inner Circle</div>
+        {{#each this.innerTags}}
+        <div>{{this}}</div>
+        {{/each}}
+    </div>
 </script>
 
 <script type="text/x-handlebars-template" id="traffic-filter-view-template">
@@ -2611,6 +2647,7 @@
                 <span class="allSessionInfo pull-right" title="Endpoint Stats"><i class="fa fa-table"></i></span>
                 </h1>
                 <ul class="policyRules">
+                   {{#IfCompare this.policyRules.length 0 operator='!='}}
                    {{#each this.policyRules}}
                     <li>
                         <h2>Policy: <span class="{{this.implicitRule}}">{{this.policy_name}}</span></h2>
@@ -2651,16 +2688,16 @@
                                 <h6 class="iconFontStyle">{{this.srcId}}</h6>
                                 <dl class="row">
                                     <dt class="col-xs-6">Sessions</dt>
-                                    <dd class="col-xs-3">Active</dd>
-                                    <dt class="col-xs-3">Added</dt>
+                                    <dd class="col-xs-3 padding-0-0-0-5">Active</dd>
+                                    <dt class="col-xs-3 padding-0-0-0-5">Added</dt>
                                 </dl>
                                 <dl class="row">
                                     <dt class="col-xs-6">Initiated:</dt>
-                                    <dd class="col-xs-3">{{this.src_session_initiated_active}}</dd>
-                                    <dd class="col-xs-3">{{this.src_session_initiated}}</dd>
+                                    <dd class="col-xs-3 padding-0-0-0-5">{{this.src_session_initiated_active}}</dd>
+                                    <dd class="col-xs-3 padding-0-0-0-5">{{this.src_session_initiated}}</dd>
                                     <dt class="col-xs-6">Responded:</dt>
-                                    <dd class="col-xs-3">{{this.src_session_responded_active}}</dd>
-                                    <dd class="col-xs-3">{{this.src_session_responded}}</dd>
+                                    <dd class="col-xs-3 padding-0-0-0-5">{{this.src_session_responded_active}}</dd>
+                                    <dd class="col-xs-3 padding-0-0-0-5">{{this.src_session_responded}}</dd>
                                 </dl>
                             </div>
                             {{#IfCompare this.srcId this.dstId operator='!='}}
@@ -2668,22 +2705,29 @@
                                     <h6 class="iconFontStyle">{{this.dstId}}</h6>
                                     <dl class="row">
                                         <dt class="col-xs-6">Sessions</dt>
-                                        <dd class="col-xs-3">Active</dd>
-                                        <dt class="col-xs-3">Added</dt>
+                                        <dd class="col-xs-3 padding-0-0-0-5">Active</dd>
+                                        <dt class="col-xs-3 padding-0-0-0-5">Added</dt>
                                     </dl>
                                     <dl class="row">
                                         <dt class="col-xs-6">Initiated:</dt>
-                                        <dd class="col-xs-3"> {{this.dst_session_initiated_active}}</dd>
-                                        <dd class="col-xs-3"> {{this.dst_session_initiated}}</dd>
+                                        <dd class="col-xs-3 padding-0-0-0-5"> {{this.dst_session_initiated_active}}</dd>
+                                        <dd class="col-xs-3 padding-0-0-0-5"> {{this.dst_session_initiated}}</dd>
                                         <dt class="col-xs-6">Responded:</dt>
-                                        <dd class="col-xs-3"> {{this.dst_session_responded_active}}</dd>
-                                        <dd class="col-xs-3"> {{this.dst_session_responded}}</dd>
+                                        <dd class="col-xs-3 padding-0-0-0-5"> {{this.dst_session_responded_active}}</dd>
+                                        <dd class="col-xs-3 padding-0-0-0-5"> {{this.dst_session_responded}}</dd>
                                     </dl>
                                 </div>
                             {{/IfCompare}}
                         </div>
                     </li>
                     {{/each}}
+                    {{else}}
+                    <div class="row col-xs-12 padding-bottom-5">
+                        <dl>
+                            <dt>Rule: {{this.rules}}</dt>
+                        </dl>
+                    </div>
+                    {{/IfCompare}}
                 </ul>
             </div>
         </section>
