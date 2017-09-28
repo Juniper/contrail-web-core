@@ -1396,7 +1396,11 @@ define([
                     $.each(headerConfig.advanceControls, function (key, control) {
                         if (control.type == 'link') {
                             addGridHeaderAction(key, control, gridContainer);
-                        } else if (control.type == 'dropdown') {
+                        }
+                        else if (control.type == 'custom-link') {
+                            addCustomGridHeaderAction(key, control, gridContainer);
+                        }
+                        else if (control.type == 'dropdown') {
                             addGridHeaderActionDroplist(key, control, gridContainer);
                         } else if (control.type == 'checked-multiselect') {
                             addGridHeaderActionCheckedMultiselect(key, control, gridContainer);
@@ -1481,6 +1485,20 @@ define([
                     ' class="widget-toolbar-icon' + (contrail.checkIfExist(actionConfig.disabledLink) ? ' disabled-link' : '') + '" ' +
                     'title="' + actionConfig.title + '">' +
                     '<i class="' + actionConfig.iconClass + '"></i></a>' +
+                    '</div>').appendTo('#' + gridContainer.prop('id') + '-header');
+
+                $(action).on('click', function (event) {
+                    if (!$(this).find('a').hasClass('disabled-link')) {
+                        actionConfig.onClick(event, gridContainer);
+                    }
+                });
+            };
+            function addCustomGridHeaderAction(key, actionConfig, gridContainer) {
+                var actionId = gridContainer.prop('id') + '-header-action-' + key;
+                var action = $('<div class="widget-toolbar pull-right"><a ' + (contrail.checkIfExist(actionConfig.linkElementId) ? 'id="' + actionConfig.linkElementId + '" ' : '') +
+                    ' class="widget-toolbar-icon' + (contrail.checkIfExist(actionConfig.disabledLink) ? ' disabled-link' : '') + '" ' +
+                    'title="' + actionConfig.title + '">' +
+                    '<i class="' + actionConfig.iconClass + '"></i>'+'<span>'+actionConfig.iconTitle+'</span></a>' +
                     '</div>').appendTo('#' + gridContainer.prop('id') + '-header');
 
                 $(action).on('click', function (event) {
