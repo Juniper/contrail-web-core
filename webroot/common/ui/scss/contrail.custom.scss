@@ -1467,6 +1467,7 @@ color settings styles - begin
 #settings_modal {
     width: 280px!important;
     height:auto!important;
+    bottom: auto !important;
 }
 #settings_modal h6.modal-header i {
     font-size: 20px;
@@ -2510,6 +2511,7 @@ $label_color: #3182bd;
         display:inline-block;
         color:#787878;
         margin-left:-10px;
+        margin-right: 24px;
         font-size: 14px;
     }
     .trafficGroups_sidePanel h1{
@@ -2703,4 +2705,32 @@ $active-color: #3182bd;
 }
 .active-color {
     color: $active-color !important;
+}
+#radioButtonsWithIcon {
+    label {
+        width: auto;
+        margin: 4px 0;
+        display: inline-block;
+    }
+    .option {
+        border: 1px solid #898989 !important;
+        border-left: 0 !important;
+        margin: 0;
+        color: #898989 !important;
+        border-radius: 0 3px 3px 0;
+        padding: 4px 7px 1px 8px;
+    }
+    .option:first-of-type {
+        border-left: 1px solid #898989 !important;
+        border-radius: 3px 0 0 3px;
+    }
+    .option.selected {
+        background: #3182bd;
+        color: #fff !important;
+    }
+    input {
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+    }
 }

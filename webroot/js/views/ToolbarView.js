@@ -15,10 +15,14 @@ define([
             var self = this,
                 eleSettings = "#toolbar_settings",
                 eleSettingItems = "#toolbar_options",
-                eleSettingsParentStyle = "toolbar_settings_parent"
+                eleSettingsParentStyle = "toolbar_settings_parent",
                 template = contrail.getTemplate4Id("toolbar-settings"),
-                toolBarContent = contrail.getTemplate4Id("toolbar-options-template");
-            self.$el.html(template());
+                toolBarContent = contrail.getTemplate4Id("toolbar-options-template"),
+                settingType = cowu.getValueByJsonPath(options,
+                              "attributes;viewConfig;settings_type", ''),
+                menuIconClass = settingType == 'container' ?
+                             cowc.CONTAINER_MENU_CLASS : cowc.CHART_MENU_CLASS;
+            self.$el.html(template({icon : menuIconClass}));
             $(".tool-container").remove();
             $(self.$el).append(toolBarContent());
             self.settings = cowu.getValueByJsonPath(options,
@@ -35,6 +39,12 @@ define([
                 event: 'click',
                 hideOnClick: true
             }).data('toolbar');
+            if(settingType == 'container') {
+              $(eleSettings).on('toolbarShown', function() {
+                  $(".tool-container").addClass('invisible');
+                  self.renderOnClick(self.settings[0].id, eleSettings, settingType);
+              });
+            }
             $(eleSettings).on('toolbarHidden', function(){
                 $(".tool-container").removeClass("show-tool-container");
                 $("#" + cowc.SETTINGS_MODAL_ID).modal("hide");
@@ -56,7 +66,7 @@ define([
             });
         },
 
-        renderOnClick: function(id) {
+        renderOnClick: function(id, targetId, settingType) {
            var self = this,
            curSetting =  _.find(self.settings, function(setting) {
                                  return setting.id === id;
@@ -77,14 +87,8 @@ define([
                        'body': modalLayout,
                        'className': 'modal-280',
                        'title': curSetting.title,
-                       'targetId': ".tool-container #" + curSetting.id,
-                       'onSave': function() {
-                           if(cfgObj.model) {
-                               isSaveClicked = true;
-                               cfgObj.model.onSave();
-                           }
-                           $("#" + modalId).modal('hide');
-                       },
+                       'targetId': targetId ? targetId :
+                                          ".tool-container #" + curSetting.id,
                        'onCancel': function() {
                            if(cfgObj.model) {
                                isSaveClicked = false;
@@ -93,12 +97,33 @@ define([
                            $("#" + modalId).modal('hide');
                        }
                    };
+          if(settingType != 'container') {
+            modalConfig.onSave = function() {
+                   if(cfgObj.model) {
+                       isSaveClicked = true;
+                       cfgObj.model.onSave();
+                   }
+                   $("#" + modalId).modal('hide');
+               };
+          }
 
            cowu.createPopoverModal(modalConfig);
 
            require([curSetting.model],
                    function(SettingsModel) {
-                       var csModel = new SettingsModel();
+                       var optionsList = {};
+                       if(typeof curSetting.options == 'function') {
+                        _.each(curSetting.options().rows, function(options) {
+                          _.each(options.columns, function(option) {
+                             var optionId =  option.elementId;
+                             optionsList[optionId] = option.default ?
+                                                     option.default : true;
+                          });
+                        });
+                       }
+
+                       var csModel = optionsList != {} ? new SettingsModel(optionsList)
+                                        : new SettingsModel();
                        if(cfgObj.model &&
                            !(cfgObj.model instanceof SettingsModel)){
                            cfgObj.model.onCancel();
@@ -112,7 +137,8 @@ define([
                            });
                            settingsView.model = cfgObj.model;
                            settingsView.render({
-                               modalId: modalId
+                               modalId: modalId,
+                               optionsConfig: curSetting.options
                            });
                        });
                    });
@@ -126,6 +152,9 @@ define([
                     break;
                 case cowc.CHART_SETTINGS :
                     classStyle = cowc.CHART_SETTINGS_CLASS;
+                    break;
+                case cowc.CONTAINER_SETTINGS :
+                    classStyle = cowc.CONTAINER_SETTINGS_CLASS;
                     break;
                 default:
                     calssStyle = cowc.COLOR_PALETTE_CLASS;

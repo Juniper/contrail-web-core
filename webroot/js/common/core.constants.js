@@ -158,6 +158,7 @@ define([
         this.TMPL_COMPOSITE_VIEW = "core-composite-view-template";
         this.TMPL_EDITABLE_GRID_RADIO_BUTTON_VIEW = "core-editable-grid-radio-button-view-template";
         this.TMPL_RADIO_BUTTON_VIEW = "core-radio-button-view-template";
+        this.TMPL_OPTNS_WITH_ICONS_RADIO_BUTTON_VIEW = "core-optns-with-icons-radio-button-view-template";
         this.TMPL_FOUR_OPTNS_RADIO_BUTTON_VIEW = "core-four-optns-radio-button-view-template";
         this.TMPL_EDITABLE_GRID_VIEW = "core-editable-grid-view-template";
         this.TMPL_TEXT_VIEW = "core-text-view-template";
@@ -295,10 +296,14 @@ define([
         //Toolbar Constants
         this.COLOR_PALETTE = 'color_palette';
         this.CHART_SETTINGS = 'chart_settings';
+        this.CONTAINER_SETTINGS = 'container_settings';
         this.COLOR_PALETTE_CLASS = 'contrailGlyph-palette';
         this.CHART_SETTINGS_CLASS = 'fa-bar-chart-o';
+        this.CONTAINER_SETTINGS_CLASS = 'fa-bar-chart-o';
         this.SETTINGS_MODAL_ID = 'settings_modal';
         this.SETTINGS_PREFIX_ID = 'toolbar_settings';
+        this.CHART_MENU_CLASS= 'contrailGlyph-menu';
+        this.CONTAINER_MENU_CLASS= 'fa-ellipsis-v';
 
         // QE Constants - Start
         this.QE_TIMEOUT = 12000;
