@@ -2806,6 +2806,7 @@ $active-color: #3182bd;
     }
     &.wizard > .content{
       min-height:380px !important;
+      overflow:hidden;
     }
     &.wizard > .steps ul li {
       .title {
