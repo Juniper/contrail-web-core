@@ -532,8 +532,8 @@ config.server_options.ciphers =
     'ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:' +
     'ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:' +
     'AES256-SHA';
-config.server_options.key_file = '/usr/src/contrail/contrail-web-core/keys/cs-key.pem';
-config.server_options.cert_file = '/usr/src/contrail/contrail-web-core/keys/cs-cert.pem';
+config.server_options.key_file = '/etc/contrail/webui_ssl/cs-key.pem';
+config.server_options.cert_file = '/etc/contrail/webui_ssl/cs-cert.pem';
 
 /*
  * This is Message of the day(MOTD) configuration
