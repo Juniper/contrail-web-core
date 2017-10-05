@@ -212,7 +212,7 @@ define([
 
     function getChartDataModel(queryId, queryFormAttributes, modelMap) {
         var lineWithFocusChartModel = modelMap[cowc.UMID_QUERY_RESULT_LINE_CHART_MODEL],
-            chartUrl = '/api/admin/reports/query/chart-data?queryId=' + queryId,
+            chartUrl = "/api/qe/query/chart-data?queryId=" + queryId,
             chartListModel = new ContrailListModel({
                 remote: {
                     ajaxConfig: {
