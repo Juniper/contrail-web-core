@@ -1231,7 +1231,7 @@ function parseWhereANDClause(whereANDClause) {
             } else if (whereANDClause.indexOf("=") !== -1) {
                 operator = "=";
                 //Split on first occurence of operator
-                var splitRegEx = new RegExp(operator + "(.+)");
+                var splitRegEx = new RegExp(operator + "(.*)");
                 whereANDClauseArray = whereANDClause.split(splitRegEx);
             }
             whereANDClause = { name: "", value: "", op: "" };
