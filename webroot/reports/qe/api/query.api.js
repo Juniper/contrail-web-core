@@ -1224,7 +1224,7 @@ function parseWhereANDClause(whereANDClause) {
                 whereANDClauseArray = whereANDClause.split(splitRegEx);
             }
             whereANDClause = { name: "", value: "", op: "" };
-            populateWhereANDClause(whereANDClause, whereANDClauseArray[0].trim(), whereANDClauseArray[1].trim(), operator);
+            populateWhereANDClause(whereANDClause, whereANDClauseArray[0].trim(), _.result(whereANDClauseArray, '1', "").trim(), operator);
             whereANDArray[i] = whereANDClause;
         } else {
             whereANDClauseWithSuffixArrray = whereANDClause.split("&");
