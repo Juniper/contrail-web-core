@@ -116,8 +116,8 @@ define([
                         _.each(curSetting.options().rows, function(options) {
                           _.each(options.columns, function(option) {
                              var optionId =  option.elementId;
-                             optionsList[optionId] = option.default ?
-                                                     option.default : true;
+                             optionsList[optionId] = (typeof option.default !=  'undefined')
+                                                       ? option.default : true;
                           });
                         });
                        }
