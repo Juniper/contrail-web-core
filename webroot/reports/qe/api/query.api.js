@@ -46,6 +46,18 @@ function runPOSTQuery(req, res, appData) {
     });
 }
 
+function runAnalyticsQuery(req, res, appData) {
+    var queryReqObj = req.body;
+    opApiServer.apiPost(global.RUN_QUERY_URL, queryReqObj, appData,
+        function (error, jsonData) {
+            if (error) {
+                logutils.logger.error("Error Run Query: " + error.stack);
+            } else {
+                commonUtils.handleJSONResponse(error, res, jsonData);
+            }
+        }, {});
+}
+
 // Handle request to get list of all tables.
 function getTables(req, res, appData) {
     var opsUrl = global.GET_TABLES_URL;
@@ -64,7 +76,6 @@ function getTableSchema(req, res, appData) {
     var opsUrl = global.GET_TABLE_INFO_URL + "/" + req.param("tableName") + "/schema";
     sendCachedJSON4Url(opsUrl, res, 3600, appData);
 }
-
 // Handle request to get columns values.
 function getTableColumnValues(req, res, appData) {
     var reqQueryObj = req.body,
@@ -1352,6 +1363,7 @@ function isEmptyObject(obj) {
 
 exports.runGETQuery = runGETQuery;
 exports.runPOSTQuery = runPOSTQuery;
+exports.runAnalyticsQuery = runAnalyticsQuery;
 exports.runQuery = runQuery;
 exports.getTables = getTables;
 exports.getColumnValues = getColumnValues;
