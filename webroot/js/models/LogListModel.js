@@ -7,8 +7,8 @@ define([
     "core-basedir/reports/qe/ui/js/common/qe.utils"
 ], function(ContrailListModel, qeUtils) {
     var LogListModel = function() {
-        var filter = "(Type = 1 AND Level <= 4) OR (Type = 10 AND " +
-            "Level <= 4)";
+        var filter = "(Type = 1 OR Type = 10) AND (Level = 0 OR " +
+                "Level = 1 OR Level = 2 OR Level = 3 OR Level = 4)";
         var qObj = {"table": "MessageTable", "level": 4, "filter": filter,
             "limit": 10, "minsSince": 10};
         var postData = qeUtils.formatQEUIQuery(qObj);
