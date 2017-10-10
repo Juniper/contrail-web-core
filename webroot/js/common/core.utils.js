@@ -1218,8 +1218,9 @@ define([
                 return val;
             });
         };
-        this.notifySettingsChange = function(colorModel) {
+        this.notifySettingsChange = function(colorModel, callbackName) {
             var p = layoutHandler.getURLHashObj().p,
+                callback = callbackName ? callbackName : 'settingsChanged',
             resources =
                 menuHandler.getMenuObjByHash(p).resources.resource;
             for(var i=0; i<resources.length; i++ ) {
@@ -1233,9 +1234,9 @@ define([
                     if(classIns[tag].hasOwnProperty("viewMap")) {
                         var viewMap = classIns[tag]["viewMap"]
                         for(var view in viewMap) {
-                            if(typeof viewMap[view].settingsChanged ==
+                            if(typeof viewMap[view][callback] ==
                                 "function") {
-                                viewMap[view].settingsChanged(colorModel);
+                                viewMap[view][callback](colorModel);
                             }
                         }
                     }
