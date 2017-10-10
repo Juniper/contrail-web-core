@@ -18,6 +18,7 @@ define([
         this.LOCKED_SUFFIX_ID = "_locked";
         this.FORM_SUFFIX_ID = "_form";
         this.JSON_SUFFIX_ID = "_json";
+        this.UNKNOWN_VALUE = '__UNKNOWN__';
 
         this.TRAFFIC_GROUP_COLOR_LEVEL1 = ['#74abd2', '#9fa8da', '#f8bbd0', '#c5e1a5'];
         this.TRAFFIC_GROUP_COLOR_LEVEL2 = ['#5282a7', '#91cd99', '#80d4f9', '#80deea'];
@@ -31,22 +32,22 @@ define([
         this.TRAFFIC_GROUP_TAG_TYPES = [{
             'text': 'Application',
             'value': 'app',
-            'showVNonEmpty' : true,
+            'showVNonEmpty' : false,
             'showIcononEmpty': true
         },{
             'text': 'Tier',
             'value': 'tier',
-            'showVNonEmpty' : true,
+            'showVNonEmpty' : false,
             'showIcononEmpty': true
         },{
             'text': 'Deployment',
             'value': 'deployment',
-            'showVNonEmpty' : true,
+            'showVNonEmpty' : false,
             'showIcononEmpty': true
         },{
             'text': 'Site',
             'value': 'site',
-            'showVNonEmpty' : true,
+            'showVNonEmpty' : false,
             'showIcononEmpty': true
         }];
 
