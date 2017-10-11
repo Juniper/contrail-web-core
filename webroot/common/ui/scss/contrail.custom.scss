@@ -2327,7 +2327,7 @@ div#alarms-event-drops .grid-stack-item-content {
     margin-top: -15px;
 }
 $label_color: #3182bd;
-#traffic-groups-endpoint-statistics-tabs {
+#traffic-groups-endpoint-statistics-tabs, .traffic-groups-view {
     .grid-header .grid-header-text, .contrail-tab-link {
         font-family: "FontAwesome", "contrailGlyph", Open Sans !important;
     }
@@ -2342,9 +2342,6 @@ $label_color: #3182bd;
     }
 }
 .traffic-groups-view {
-   /* .widget-toolbar {
-        display: none;
-    } */
     .select-dropdown,.where-dropdown {
         width: 400px;
         display: block;
@@ -2362,7 +2359,7 @@ $label_color: #3182bd;
         padding-top: 25%;
         padding-bottom: 75px;
     }
-    .showLinkInfo{
+    .showTgSidePanel{
         margin-right: $traffic-link-info-width;
     }
     .arc-label.along-arc textPath, .cc-title, .iconFontStyle,
@@ -2454,8 +2451,11 @@ $label_color: #3182bd;
             padding: 0;
         }
     }
-    #traffic-groups-radial-chart{transition: all 700ms;}
+    .addAnimation{
+        transition: all 700ms;
+    }
     #traffic-groups-legend-info {
+        position: absolute;
         padding: 0 $traffic-link-info-width 0 0;
         ul {
             display: flex;
@@ -2503,96 +2503,96 @@ $label_color: #3182bd;
         top: 43px;
         right: 0px;
         margin:0px;
-        height:100%;
         -webkit-box-shadow: -3px 0px 2px -2px rgba(0,0,0,0.1);
         -moz-box-shadow: -3px 0px 2px -2px rgba(0,0,0,0.1);
         box-shadow: -3px 0px 2px -2px rgba(0,0,0,0.1);
-    }
-    .trafficGroups_sidePanel{
-        height:100%;
-        width:$traffic-link-info-width;
-        padding:10px 20px;
-        background-color: #fdfdfd;
-        overflow:auto;
-        -webkit-animation-duration: 1s;
-        animation-duration: 1s;
-        -webkit-animation-fill-mode: both;
-        animation-fill-mode: both;
-    }
-    .trafficGroups_sidePanel.animateLinkInfo{
-        -webkit-animation-name: slideInRight;
-        animation-name: slideInRight;
-    }
-    .trafficGroups_sidePanel header{
-        margin:0px; padding:3px 10px;
-        background:#f9f3d3;
-        border-radius:2px;
-        display:inline-block;
-        color:#787878;
-        margin-left:-10px;
-        margin-right: 24px;
-        font-size: 14px;
-    }
-    .trafficGroups_sidePanel h1{
-        font-size:14px;
-        margin:0px;
-        padding:10px 0px;
-        color:#58a8db;
-    }
-    .trafficGroups_sidePanel h2{
-        font-size:14px;
-        font-weight:600;
-        padding:0px;
-        margin:0px;
-        line-height:1;
-    }
-    .trafficGroups_sidePanel h3{
-        font-size:13px;
-        font-weight:600;
-        margin:0px;
-        line-height:1;
-    }
-    .trafficGroups_sidePanel h6{
-        font-size:12px;
-        font-weight:600;
-        color: #58a8db;
-        padding: 5px 0px 5px 15px;
-        line-height:1;
-        margin: 0px;
-    }
-    .trafficGroups_sidePanel ul{
-        padding:15px 0px;
-        margin:0px;
-        border-top:#e5e5e5 solid 1px;
-    }
-    .trafficGroups_sidePanel li{
-        list-style:none;
-        border-bottom:#e5e5e5 solid 1px;
-        padding-bottom: 15px;
-        margin-bottom:15px;
-    }
-    .trafficGroups_sidePanel ul.policyRules
-     dt, dd {
-        font-weight: 600;
-    }
-    .trafficGroups_sidePanel ul.policyRules dd{
-        margin:0px;
-        -webkit-margin-start: 0px;
-    }
-    .trafficGroups_sidePanel ul.policyRules dl{
-        display:inline-block;
-        margin:0px;
-        font-size:11px;
-        color: #787878;
-    }
-    .simpleAction{
-        display: flex;
-        align-items: center;
-    }
-    .rulesBiArrow{
-        display:inline-block;
-        text-align: center;
-        padding:0;
+        .trafficGroups_sidePanel.animateLinkInfo{
+            -webkit-animation-name: slideInRight;
+            animation-name: slideInRight;
+        }
+        .trafficGroups_sidePanel {
+            height:100%;
+            width:$traffic-link-info-width;
+            padding:10px 20px;
+            background-color: #fdfdfd;
+            overflow:auto;
+            -webkit-animation-duration: 1s;
+            animation-duration: 1s;
+            -webkit-animation-fill-mode: both;
+            animation-fill-mode: both;
+            header{
+                margin:0px; padding:3px 10px;
+                background:#f9f3d3;
+                border-radius:2px;
+                display:inline-block;
+                color:#787878;
+                margin-left:-10px;
+                margin-right: 24px;
+                font-size: 14px;
+            }
+            h1{
+                font-size:14px;
+                margin:0px;
+                padding:10px 0px;
+                color:#58a8db;
+            }
+            h2{
+                font-size:14px;
+                font-weight:600;
+                padding:0px;
+                margin:0px;
+                line-height:1;
+            }
+            h3{
+                font-size:13px;
+                font-weight:600;
+                margin:0px;
+                line-height:1;
+            }
+            h6{
+                font-size:12px;
+                font-weight:600;
+                color: #58a8db;
+                padding: 5px 0px 5px 15px;
+                line-height:1;
+                margin: 0px;
+            }
+            ul{
+                padding:15px 0px;
+                margin:0px;
+                border-top:#e5e5e5 solid 1px;
+            }
+            li{
+                list-style:none;
+                border-bottom:#e5e5e5 solid 1px;
+                padding-bottom: 15px;
+                margin-bottom:15px;
+            }
+            ul.policyRules, .vmiDetails {
+                dt, dd {
+                    font-weight: 600;
+                }
+                dd {
+                    margin:0px;
+                    -webkit-margin-start: 0px;
+                }
+                dl {
+                    display:inline-block;
+                    margin:0px;
+                    font-size:11px;
+                    color: #787878;
+                }
+            }
+        }
+        .simpleAction{
+            display: flex;
+            align-items: center;
+        }
+        .rulesBiArrow{
+            display:inline-block;
+            text-align: center;
+            padding:0;
+        }
     }
     .borderLeft {
         border-left:#e5e5e5 solid 1px;
