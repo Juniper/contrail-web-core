@@ -15,7 +15,8 @@ var configUtils = require('./config.utils'),
     commonUtils = require('../utils/common.utils'),
     redisSub = require('../web/core/redisSub'),
     orch = require('../orchestration/orchestration.api'),
-    global = require('./global');
+    global = require('./global'),
+    _ = require("lodash");
 
 var keystoneAuthApi = require('../orchestration/plugins/openstack/keystone.api');
 var cloudstackAuthApi  =
@@ -65,6 +66,57 @@ function doAuthenticate (req, res, appData, callback) {
                                                                       appData, function(err, data) {
         callback(err, data);
     });
+}
+function redirectToConnectedApps (req, res) {
+	var appName = req.param('app'),
+		config = configUtils.getConfig(),
+		connectedAppsInfo = config.connectedAppsInfo,
+		appInfo = connectedAppsInfo[appName],
+		userObj = {
+			req: req
+		};
+	var	tokenObj = keystoneAuthApi.getUserAuthData(req, null, function (err, data) {
+		if (appInfo != null && appInfo.url != null && data != null) {
+			res.redirect(appInfo.url + data.access.token.id);
+		} else {
+				logutils.logger.error('AppInfo or token not found');
+		}
+	});
+}
+function singleSignOn (req, res) {
+	var config = configUtils.getConfig();
+	getAuthMethod[req.session.loggedInOrchestrationMode].checkIfValidToken (req, null, function (err, data) {
+		var tokenObj = data.access.token;
+		req.session.authApiVersion = _.result(config, 'identityManager.apiVersion.0', 'v2.0');
+		if (req.session.authApiVersion == 'v2.0') {
+			getAuthMethod[req.session.loggedInOrchestrationMode].getTenantListByToken(req, tokenObj, function (err, tenantData) {
+				getAuthMethod[req.session.loggedInOrchestrationMode].fetchTenantListByTokenCB(err, tenantData, req, null, null, tokenObj.id, function (err) {
+					if (err != null) {
+						logutils.logger.error('Unauthorized project access');
+					} else {
+						res.redirect('/');
+						res.end();
+					}
+				});
+			});
+		} else if (req.session.authApiVersion == 'v3'){
+			req.session.userid = _.result(data, 'access.user.id', null);
+			getAuthMethod[req.session.loggedInOrchestrationMode].getV3ProjectListByToken(req, tokenObj.id, function (err, tenantData) {
+				var userObj = {
+					tokenid: tokenObj.id,
+					//req: req
+				};
+				getAuthMethod[req.session.loggedInOrchestrationMode].fetchV3ProjectListByTokenCB(err, tenantData, req, userObj, function (err) {
+					if (err != null) {
+						logutils.logger.error('Unauthorized project access');
+					} else {
+						res.redirect('/');
+						res.end();
+					}
+				})
+			});
+		}
+	});
 }
 
 function getTokenObj (authObj, callback)
@@ -217,6 +269,54 @@ function getServiceAPIVersionByReqObj (request, appData, svcType, callback, reqB
                                                                 appData,
                                                                 svcType,
                                                                 callback, reqBy);
+}
+function isValidUrlWithXAuthToken (reqUrl, req)
+{
+    var validUrlsWithXAuthToken = global.URLS_TO_BYPASS_AUTH;
+    var xAuthToken = req.headers["x-auth-token"];
+    if (null == xAuthToken) {
+        return false;
+    }
+    var validUrlsCnt = validUrlsWithXAuthToken.length;
+    for (var i = 0; i < validUrlsCnt; i++) {
+        if (0 == reqUrl.indexOf(validUrlsWithXAuthToken[i])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function setAuthFlagByXAuthTokenHeader (req)
+{
+    var orchMode = req.headers["x-orchestrationmode"];
+    if (null == orchMode) {
+        orchMode = "openstack";
+    }
+    if (isValidUrlWithXAuthToken(req.url, req)) {
+        if (null == req.session) {
+            req.session = {};
+        }
+        /* If the request contains the X-Auth-Token and URL contains the
+         * forward-proxy, then assume that the request is authenticated and
+         * authorized
+         */
+        req.session.isAuthenticated = true;
+        var config = configUtils.getConfig();
+        var idApiVersions =
+            commonUtils.getValueByJsonPath(config,
+                                           "identityManager;apiVersion",
+                                           ["v2.0"]);
+        req.session.authApiVersion = idApiVersions[0];
+        if (null == req.session.loggedInOrchestrationMode) {
+            req.session.loggedInOrchestrationMode = orchMode;
+        }
+    }
+}
+
+function checkIfValidToken (req, tokenId, callback)
+{
+    var orchMode = req.session.loggedInOrchestrationMode;
+    return getAuthMethod[orchMode].checkIfValidToken(req, tokenId, callback);
 }
 
 function isValidUrlWithXAuthToken (reqUrl, req)
@@ -438,6 +538,8 @@ exports.getRoleList = getRoleList;
 exports.getAuthRetryData = getAuthRetryData;
 exports.getPortToProcessMapByReqObj = getPortToProcessMapByReqObj;
 exports.getConfigEntityByServiceEndpoint = getConfigEntityByServiceEndpoint;
-exports.checkIfValidToken = checkIfValidToken;
+exports.singleSignOn = singleSignOn;
+exports.redirectToConnectedApps = redirectToConnectedApps;
 exports.setAuthFlagByXAuthTokenHeader = setAuthFlagByXAuthTokenHeader;
+exports.checkIfValidToken = checkIfValidToken;
 exports.isValidUrlWithXAuthToken = isValidUrlWithXAuthToken;

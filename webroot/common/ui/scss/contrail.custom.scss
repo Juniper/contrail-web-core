@@ -2693,17 +2693,6 @@ font-style:normal;}
         height: 25px !important;
     }
 }
-.proprietary-info{
-    position: absolute;
-    pointer-events: none;
-    left:0px;
-    bottom: 0px;
-    font-size:13px;
-    padding: 15px 100px 6px 80px;
-    width:100vw;
-    color:#888;
-    text-align: center;
-}
 .padding-bottom-5 {
     padding-bottom: 5px;
 }
@@ -2725,6 +2714,7 @@ $active-color: #3182bd;
 .active-color {
     color: $active-color !important;
 }
+
 #radioButtonsWithIcon {
     label {
         width: auto;
@@ -2834,3 +2824,51 @@ $active-color: #3182bd;
     }
   }
 /*security policy wizard ends here*/
+footer {
+    //background: #fafafa;
+    //border-top: #ccc solid 1px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    font-size: 12px;
+    display: flex;
+    flex-flow: row nowrap;
+    ul.connectedapplink {
+        margin: 5px;
+        padding: 10px;
+        text-align: center;
+        flex: 0 200px;
+		li {
+            list-style: none;
+		}
+		a {
+		    background: #66aad2;
+            color: #ffffff !important;
+            border: #6482bd solid 2px !important;
+            padding: 5px 10px;
+		}
+    }
+    .proprietary-info {
+        pointer-events: none;
+        left: 0px;
+        bottom: 0px;
+        font-size: 12px;
+        padding: 0px 100px 0px 80px;
+        margin: 5px;
+        color: #888;
+        text-align: center;
+        flex: 1 auto;
+    }
+}
+footer#footer-container * {
+    font-family: "Open Sans";
+}
+#page-content {
+    margin-bottom: 30px;
+}
+.footer-links {
+    bottom: 35px;
+}
+#back-to-top {
+    bottom: 35px;
+}
