@@ -1187,13 +1187,10 @@ if (typeof document !== 'undefined' && document) {
             },
             appendMotdText: function (text) {
                 if (text != null && text != "") {
-                    $('.proprietary-info').html(text);
-                    $('.proprietary-info').removeClass('hide');
-                    $('.page-content').css('padding-bottom', $('.proprietary-info').height());
-                    // To avoid overlap with the menu we are adding left padding
-                    if ($('#sidebar').is(':visible')) {
-                        $('.proprietary-info').css('padding-left', '200px');
+                    if (!$('footer').find('.proprietary-info').length) {
+                        $('footer').append('<div class="proprietary-info"></div>');
                     }
+                    $('.proprietary-info').html(text);
                 }
             },
             postAuthenticate: function(response) {
@@ -1203,7 +1200,6 @@ if (typeof document !== 'undefined' && document) {
                       //Call the update alarm bell after user authentication
                         alarmUtil.fetchAndUpdateAlarmBell();
                     });
-
                     $('#signin-container').empty();
                     //If #content-container already exists,just show it
                     if($('#content-container').length == 0) {
@@ -1213,7 +1209,7 @@ if (typeof document !== 'undefined' && document) {
                         $('#app-container').removeClass('hide');
                         //Reset content-container
                         $('#content-container').html('');
-                        if (null != response) {
+                        if (null != response && typeof response == 'object') {
                             loadUtils.appendMotdText(response['motdText']);
                         }
                     $.ajaxSetup({
@@ -1225,6 +1221,21 @@ if (typeof document !== 'undefined' && document) {
                         }
                     });
                     globalObj['webServerInfo'] = loadUtils.parseWebServerInfo(response);
+                    //Append links to connectedApps(like appformix, storage ui etc;) to footer
+                    var connectedAppInfo = globalObj['webServerInfo']['connectedAppsInfo'];
+                    var orchModel =  globalObj['webServerInfo']['loggedInOrchestrationMode'];
+                    var footerLinkHtml = '';
+                    if (orchModel == 'openstack' && connectedAppInfo != null && connectedAppInfo['enable']) {
+                        footerLinkHtml = '<ul class="connectedapplink">';
+                        Object.keys(connectedAppInfo).forEach(function (key, index) {
+                            if (connectedAppInfo[key] != null && connectedAppInfo[key]['enable'] != false
+                                && connectedAppInfo[key]['url'] != null) {
+                                   footerLinkHtml +=  '<li><a href="/connectedApps?app='+key+'" target="_blank">'+key+'</a></li>';
+                            }
+                        });
+                        footerLinkHtml += '</ul>';
+                        $('footer').prepend(footerLinkHtml);
+                    }
                     //For Region drop-down
                         var regionList =
                             globalObj.webServerInfo.regionList;
@@ -1268,14 +1279,16 @@ if (typeof document !== 'undefined' && document) {
             },
             onAuthenticationReq: function(loadCfg) {
                 document.getElementById('signin-container').innerHTML = document.getElementById('signin-container-tmpl').innerHTML;
-                require(['jquery','thirdparty-libs'], function() {
+                require(['jquery'], function () {
+                    if (null != loadCfg) {
+                        loadUtils.appendMotdText(loadCfg['motdText']);
+                    };
+                });
+                require(['jquery','jquery-dep-libs'], function() {
                     var isRegionsFromConfig = false;
                     if (null != loadCfg) {
                         isRegionsFromConfig = loadCfg.isRegionListFromConfig;
                         configRegionList = loadCfg.configRegionList;
-                    }
-                    if (null != loadCfg) {
-                        loadUtils.appendMotdText(loadCfg['motdText']);
                     }
                     var regionList = [];
                     if (true == isRegionsFromConfig) {
@@ -1380,7 +1393,18 @@ if (typeof document !== 'undefined' && document) {
                         type: "POST",
                         data: JSON.stringify(postData),
                         contentType: "application/json; charset=utf-8",
-                        dataType: "json"
+                        dataType: "json",
+                        dataFilter: function (data, type) {
+                            if (type == 'json') {
+                                var rawData = data;
+                                var dataSanitized = data.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+                                dataSanitized = JSON.parse(dataSanitized);
+                                dataSanitized['motdText'] = JSON.parse(rawData)['motdText'];
+                                return JSON.stringify(dataSanitized);
+                            } else {
+                                return data;
+                            }
+                        }
                     }).done(function (response) {
                         if(response != null && response.isAuthenticated == true) {
                             if (response.reload) {
@@ -1406,8 +1430,22 @@ if (typeof document !== 'undefined' && document) {
                 $.ajax({
                     url: '/logout',
                     type: "GET",
-                    dataType: "json"
+                    dataType: "json",
+                    dataFilter: function (data, type) {
+                        if (type == 'json') {
+                            var rawData = data;
+                            var dataSanitized = data.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+                            dataSanitized = JSON.parse(dataSanitized);
+                            dataSanitized['motdText'] = JSON.parse(rawData)['motdText'];
+                            return JSON.stringify(dataSanitized);
+                        } else {
+                            return data;
+                        }
+                    }
                 }).done(function (response) {
+                    //Stop the periodic alarm bell update calls on logout
+                    clearTimeout(globalObj['alarmTimerCnst']);
+                    $('.connectedapplink').remove();
                     loadUtils.onAuthenticationReq(response);
                 });
             },
