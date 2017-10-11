@@ -2682,6 +2682,7 @@
 <script type="text/x-handlebars-template" id="traffic-rule-template">
     <div class="trafficGroups_content">
         <section class="trafficGroups_sidePanel">
+            {{#IfCompare option 'linkInfo' operator='=='}}
             <div class="traffic-rules">
                 <header class="iconFontStyle">
                     <span> {{this.srcId}} </span>
@@ -2775,6 +2776,28 @@
                     {{/IfCompare}}
                 </ul>
             </div>
+            {{else}}
+            <div class="vmiDetails">
+                <header class="iconFontStyle">
+                    <span> {{this.title}} </span>
+                </header>
+                <h1> VMI Traffic: </h1>
+                <div class="row">
+                    <dl class="col-xs-12 margin-10-0">
+                        <dt class="col-xs-8 no-padding">VMI</dt>
+                        <dd class="col-xs-2 no-padding padding-0-0-0-5">In Bytes</dd>
+                        <dt class="col-xs-2 no-padding padding-0-0-0-5">Out Bytes</dt>
+                    </dl>
+                    {{#each this.vmiInfo}}
+                    <dl class="col-xs-12 margin-5-0-0">
+                        <dt class="col-xs-8 no-padding">{{this.name}}</dt>
+                        <dd class="col-xs-2 no-padding padding-0-0-0-5">{{this.inBytes}}</dd>
+                        <dd class="col-xs-2 no-padding padding-0-0-0-5">{{this.outBytes}}</dd>
+                    </dl>
+                    {{/each}}
+                </div>
+            </div>
+            {{/IfCompare}}
         </section>
     </div>
 </script>
