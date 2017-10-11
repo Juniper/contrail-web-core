@@ -15,7 +15,8 @@ var configUtils = require('./config.utils'),
     commonUtils = require('../utils/common.utils'),
     redisSub = require('../web/core/redisSub'),
     orch = require('../orchestration/orchestration.api'),
-    global = require('./global');
+    global = require('./global'),
+    _ = require("lodash");
 
 var keystoneAuthApi = require('../orchestration/plugins/openstack/keystone.api');
 var cloudstackAuthApi  =
@@ -64,6 +65,64 @@ function doAuthenticate (req, res, appData, callback) {
     getAuthMethod[req.session.loggedInOrchestrationMode].authenticate(req, res,
                                                                       appData, function(err, data) {
         callback(err, data);
+    });
+}
+function redirectToConnectedApps (req, res) {
+    var appName = req.param('app'),
+        config = configUtils.getConfig(),
+        connectedAppsInfo = config.connectedAppsInfo,
+        appInfo = connectedAppsInfo[appName],
+        userObj = {
+            req: req
+        };
+    var tokenObj = keystoneAuthApi.getUserAuthData(req, null, function (err, data) {
+        if (appInfo != null && appInfo.url != null && data != null) {
+            res.redirect(appInfo.url + data.access.token.id);
+        } else {
+            logutils.logger.error('AppInfo or token not found');
+            var errorObj = {
+                status: 'failure',
+                msg: 'AppInfo or token not found'
+            };
+            commonUtils.handleJSONResponse(null, res, errorObj);
+        }
+    });
+}
+function singleSignOn (req, res) {
+    var config = configUtils.getConfig();
+    getAuthMethod[req.session.loggedInOrchestrationMode].checkIfValidToken (req, null, function (err, data) {
+        var tokenObj = data.access.token;
+        req.session.authApiVersion = _.result(config, 'identityManager.apiVersion.0', 'v2.0');
+        if (req.session.authApiVersion == 'v2.0') {
+            getAuthMethod[req.session.loggedInOrchestrationMode].getTenantListByToken(req, tokenObj, function (err, tenantData) {
+                getAuthMethod[req.session.loggedInOrchestrationMode].doV2AuthCB(err, tenantData, req, null, null, tokenObj.id, function (err) {
+                    if (err != null) {
+                        logutils.logger.error('Unauthorized project access');
+                        commonUtils.handleJSONResponse(null, res, err);
+                    } else {
+                        res.redirect('/');
+                        res.end();
+                    }
+                });
+            });
+        } else if (req.session.authApiVersion == 'v3'){
+            req.session.userid = _.result(data, 'access.user.id', null);
+            getAuthMethod[req.session.loggedInOrchestrationMode].getV3ProjectListByToken(req, tokenObj.id, function (err, tenantData) {
+                var userObj = {
+                    tokenid: tokenObj.id,
+                    //req: req
+                };
+                getAuthMethod[req.session.loggedInOrchestrationMode].doV3AuthCB(err, tenantData, req, userObj, function (err) {
+                    if (err != null) {
+                        logutils.logger.error('Unauthorized project access');
+                        commonUtils.handleJSONResponse(null, res, err);
+                    } else {
+                        res.redirect('/');
+                        res.end();
+                    }
+                })
+            });
+        }
     });
 }
 
@@ -218,7 +277,6 @@ function getServiceAPIVersionByReqObj (request, appData, svcType, callback, reqB
                                                                 svcType,
                                                                 callback, reqBy);
 }
-
 function isValidUrlWithXAuthToken (reqUrl, req)
 {
     var validUrlsWithXAuthToken = global.URLS_TO_BYPASS_AUTH;
@@ -262,6 +320,11 @@ function setAuthFlagByXAuthTokenHeader (req)
     }
 }
 
+function checkIfValidToken (req, tokenId, callback)
+{
+    var orchMode = req.session.loggedInOrchestrationMode;
+    return getAuthMethod[orchMode].checkIfValidToken(req, tokenId, callback);
+}
 function getAdminProjectList (req)
 {
     var adminProjectList = [],
@@ -438,6 +501,8 @@ exports.getRoleList = getRoleList;
 exports.getAuthRetryData = getAuthRetryData;
 exports.getPortToProcessMapByReqObj = getPortToProcessMapByReqObj;
 exports.getConfigEntityByServiceEndpoint = getConfigEntityByServiceEndpoint;
-exports.checkIfValidToken = checkIfValidToken;
+exports.singleSignOn = singleSignOn;
+exports.redirectToConnectedApps = redirectToConnectedApps;
 exports.setAuthFlagByXAuthTokenHeader = setAuthFlagByXAuthTokenHeader;
+exports.checkIfValidToken = checkIfValidToken;
 exports.isValidUrlWithXAuthToken = isValidUrlWithXAuthToken;
