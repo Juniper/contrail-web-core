@@ -36,7 +36,7 @@ define([
             self.$el.addClass('grid-stack grid-stack-24 custom-grid-stack');
             self.$el.attr('data-widget-id',self.elementId);
             self.gridStack = $(self.$el).gridstack({
-                float:true,
+                float: false,
                 handle:'.drag-handle',
                 resizable: {
                     handles:'sw,se',
@@ -246,21 +246,24 @@ define([
                 };
             }
             var viewType = cowu.getValueByJsonPath(cfg,'viewCfg;view','');
-            if(viewType.match(/eventDropsView/) || viewType.match(/VRouterCrossFiltersView/)) {
-                $(currElem).find('header').addClass('drag-handle');
-            } else if(viewType.match(/StackedBarChartWithFocusView/)){
-                //No handle
-                var isBrushEnabled = getValueByJsonPath(cfg, 'viewCfg;viewConfig;chartOptions;brush', false);
-                if(isBrushEnabled) {
-                    $(currElem).find('.stacked-bar-chart-container .axis-label').addClass('drag-handle');
+            cfg['viewCfg'] = $.extend(true,{},chUtils.getDefaultViewConfig(viewType),cfg['viewCfg']);
+            self.renderView4Config($(currElem).find('.item-content'), model, cfg['viewCfg'], null, null, null, function () {
+                if(viewType.match(/eventDropsView/) || viewType.match(/VRouterCrossFiltersView/)) {
+                    $(currElem).find('header').addClass('drag-handle');
+                } else if (viewType.match(/GridView/)) {
+                    $(currElem).find('.grid-widget-header').addClass('drag-handle');
+                } else if(viewType.match(/StackedBarChartWithFocusView/)){
+                    //No handle
+                    var isBrushEnabled = getValueByJsonPath(cfg, 'viewCfg;viewConfig;chartOptions;brush', false);
+                    if(isBrushEnabled) {
+                        $(currElem).find('.stacked-bar-chart-container .axis-label').addClass('drag-handle');
+                    } else {
+                        $(currElem).find('.item-content').addClass('drag-handle');
+                    }
                 } else {
                     $(currElem).find('.item-content').addClass('drag-handle');
                 }
-            } else {
-                $(currElem).find('.item-content').addClass('drag-handle');
-            }
-            cfg['viewCfg'] = $.extend(true,{},chUtils.getDefaultViewConfig(viewType),cfg['viewCfg']);
-            self.renderView4Config($(currElem).find('.item-content'), model, cfg['viewCfg']);
+            });
         }
     });
     return GridStackView;
