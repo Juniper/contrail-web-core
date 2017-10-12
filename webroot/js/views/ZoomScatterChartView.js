@@ -1342,7 +1342,7 @@ define([
             chartSelector = $(selector).find('.chart-container'),
             width = $(chartSelector).width() - 10,
             widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
-            height = ($(selector).closest('.custom-grid-stack-item').length > 0 )?
+            height = (cowu.isGridStackWidget(selector))?
                     $(selector).closest('.custom-grid-stack-item').height() - 32:
                         (chartOptions['height'])? chartOptions['height'] : 275;
         if (widgetConfig != null) {

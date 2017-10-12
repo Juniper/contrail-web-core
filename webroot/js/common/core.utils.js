@@ -2163,8 +2163,14 @@ define([
             chartData.push(lineChartData);
             return chartData;
         };
-        this.isGridStackWidget = function (selector) {
-            if ($(selector).parents('.grid-stack-item-content').length) {
+        /*
+         * Method is to check the given element
+         * is in gridstack container.
+         */
+        this.isGridStackWidget = function (el) {
+            if (el != null && $(el).hasClass('item-content')
+                && $(el).parent().hasClass('grid-stack-item-content')
+                && $(el).parent().parent().hasClass('custom-grid-stack-item')) {
                 return true;
             }
             return false;

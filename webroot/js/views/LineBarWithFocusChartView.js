@@ -87,7 +87,7 @@ define([
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data, viewConfig['chartOptions']);
             }
-            if ($(selector).parents('.custom-grid-stack-item').length != 0) {
+            if (cowu.isGridStackWidget(selector)) {
                 viewConfig['chartOptions']['height'] = $(selector).parents('.custom-grid-stack-item').height();
             }
             chartViewConfig = self.getChartViewConfig(data, viewConfig.chartOptions);
