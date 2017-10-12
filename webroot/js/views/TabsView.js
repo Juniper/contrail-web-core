@@ -72,7 +72,7 @@ define([
         activeTab = contrail.handleIfNull(viewConfig.active, 0);
 
       // Array of tab view configs
-      self.tabs = viewConfig.tabs;
+      self.tabs = cowu.getAllowedTabs(viewConfig.tabs);
       self.activateTimeout = null;
 
       self.$el.html(tabsTemplate({
