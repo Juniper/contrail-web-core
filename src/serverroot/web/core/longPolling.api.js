@@ -183,7 +183,7 @@ function checkOrchestrationAgnosticReq(req)
     If the req.url is in the Allowed List, then req/res context gets stored
     in pending queue and triggers pending queue processing
  */
-function routeAll (req, res, next)
+function routeAll (req, res, next, callback)
 {
   /* nodejs sets the timeout 2 minute, override this timeout here */
   req.socket.setTimeout(global.NODEJS_HTTP_REQUEST_TIMEOUT_TIME);
@@ -208,7 +208,7 @@ function routeAll (req, res, next)
   if ((null == req.route) || (null == handler.checkURLInAllowedList(req))) {
       /* Not a Valid URL */
     next();
-    return null;
+    callback(null);
   }
 
   var sessId    = req.sessionID,
@@ -231,20 +231,25 @@ function routeAll (req, res, next)
     /* Session not authenticated yet, so do not store this context in Q */
     if (!checkLoginReq(req)) {
       commonUtils.redirectToLogout(req, res);
-      return null;
+      callback(null);
+      return;
     }
+    pendingReqQObj[ctx.id] = ctx;
+    callback(ctx);
   } else {
     /* Session is authenticated, now check resource access permission */
-    var checkAccess = rbac.checkUserAccess(req, res);
-    if (false == checkAccess) {
-      /* We are yet to get authorized */
-      insertResToReadyQ(res, global.HTTP_STATUS_FORBIDDEN_STR,
-                        global.HTTP_STATUS_FORBIDDEN, 0);
-      return null;
-    }
+    rbac.checkUserAccess(req, res, function(hasAccess) {
+      if (false == hasAccess) {
+        /* We are yet to get authorized */
+        insertResToReadyQ(res, global.HTTP_STATUS_FORBIDDEN_STR,
+                          global.HTTP_STATUS_FORBIDDEN, 0);
+        callback(null);
+        return;
+      }
+      pendingReqQObj[ctx.id] = ctx;
+      callback(ctx);
+    });
   }
-  pendingReqQObj[ctx.id] = ctx;
-  return ctx;
 }
 
 /* Function: insertResToReadyQ
