@@ -344,6 +344,7 @@ global.KEYSTONE_V3_DEFAULT_DOMAIN = 'default';
 global.KEYSTONE_V2_DEFAULT_DOMAIN = 'default-domain';
 global.KEYSTONE_V3_TOKEN_URL = '/v3/auth/tokens';
 global.keystoneServiceListByProject = ['compute'];
+global.KEYSTONE_API_TYPE_AUTH = 'auth';
 
 /* vCenter Config */
 global.VCENTER_SDK_PATH = '/sdk';
