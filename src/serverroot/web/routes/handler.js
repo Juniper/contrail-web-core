@@ -264,6 +264,10 @@ exports.isSessionAuthenticated = function(req) {
             return false;
         }
     }
+    /* If the request contains the X-Auth-Token and URL contains the
+     * forward-proxy, then assume that the request is authenticated
+     */
+    authApi.setAuthFlagByXAuthTokenHeader(req);
     return ((req.session) ? req.session.isAuthenticated : false);
 }
 

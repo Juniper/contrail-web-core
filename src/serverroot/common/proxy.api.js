@@ -164,7 +164,7 @@ function sendProxyRequest (request, response, appData, options, userData)
     rqst.end();
 }
 
-function forwardProxyRequest (request, response, appData)
+function proxyRequest (request, response, appData)
 {
     var index = 0;
     var options = url.parse(request.url, true);
@@ -241,6 +241,11 @@ function forwardProxyRequest (request, response, appData)
     });
 }
 
+function forwardProxyRequest (request, response, appData)
+{
+    return proxyRequest(request, response, appData);
+}
+
+exports.proxyRequest = proxyRequest;
 exports.forwardProxyRequest = forwardProxyRequest;
 exports.getAllowedProxyPortListByNodeType = getAllowedProxyPortListByNodeType;
-

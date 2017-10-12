@@ -223,6 +223,49 @@ function getServiceAPIVersionByReqObj (request, svcType, callback, reqBy)
                                                                 callback, reqBy);
 }
 
+function isValidUrlWithXAuthToken (reqUrl, req)
+{
+    var validUrlsWithXAuthToken = global.URLS_TO_BYPASS_AUTH;
+    var xAuthToken = req.headers["x-auth-token"];
+    if (null == xAuthToken) {
+        return false;
+    }
+    var validUrlsCnt = validUrlsWithXAuthToken.length;
+    for (var i = 0; i < validUrlsCnt; i++) {
+        if (0 == reqUrl.indexOf(validUrlsWithXAuthToken[i])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function setAuthFlagByXAuthTokenHeader (req)
+{
+    var orchMode = req.headers["x-orchestrationmode"];
+    if (null == orchMode) {
+        orchMode = "openstack";
+    }
+    if (isValidUrlWithXAuthToken(req.url, req)) {
+        if (null == req.session) {
+            req.session = {};
+        }
+        /* If the request contains the X-Auth-Token and URL contains the
+         * forward-proxy, then assume that the request is authenticated and
+         * authorized
+         */
+        req.session.isAuthenticated = true;
+        var config = configUtils.getConfig();
+        var idApiVersions =
+            commonUtils.getValueByJsonPath(config,
+                                           "identityManager;apiVersion",
+                                           ["v2.0"]);
+        req.session.authApiVersion = idApiVersions[0];
+        if (null == req.session.loggedInOrchestrationMode) {
+            req.session.loggedInOrchestrationMode = orchMode;
+        }
+    }
+}
+
 function getAdminProjectList (req)
 {
     var adminProjectList = [];
@@ -342,6 +385,24 @@ function getAuthRetryData (token, req, reqUrl, callback)
                                                     callback);
 }
 
+function getPortToProcessMapByReqObj (req)
+{
+    var orchMode = req.session.loggedInOrchestrationMode;
+    return getAuthMethod[orchMode].getPortToProcessMapByReqObj(req);
+}
+
+function getConfigEntityByServiceEndpoint (req, serviceName)
+{
+    var orchMode = req.session.loggedInOrchestrationMode;
+    return getAuthMethod[orchMode].getConfigEntityByServiceEndpoint(req, serviceName);
+}
+
+function checkIfValidToken (req, tokenId, callback)
+{
+    var orchMode = req.session.loggedInOrchestrationMode;
+    return getAuthMethod[orchMode].checkIfValidToken(req, tokenId, callback);
+}
+
 exports.doAuthenticate = doAuthenticate;
 exports.getTenantList = getTenantList;
 exports.getTokenObj = getTokenObj;
@@ -374,4 +435,8 @@ exports.getCurrentRegion = getCurrentRegion;
 exports.shiftServiceEndpointList = shiftServiceEndpointList;
 exports.getRoleList = getRoleList;
 exports.getAuthRetryData = getAuthRetryData;
-
+exports.getPortToProcessMapByReqObj = getPortToProcessMapByReqObj;
+exports.getConfigEntityByServiceEndpoint = getConfigEntityByServiceEndpoint;
+exports.checkIfValidToken = checkIfValidToken;
+exports.setAuthFlagByXAuthTokenHeader = setAuthFlagByXAuthTokenHeader;
+exports.isValidUrlWithXAuthToken = isValidUrlWithXAuthToken;

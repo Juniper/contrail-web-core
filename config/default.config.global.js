@@ -418,6 +418,11 @@ config.network.router_L3Enable = true;
  * config_node_ports - the allowed port list when the ip/host in proxy URL
  *      used has role as config node
  *
+ * allowed_introspect_list_access_by_token - the list of introspect names
+ *      (Snh_XXX) allowed to access by keystone token. The token is passed in
+ *      X-Auth-Token header along with request.
+    Default: Empty list
+ *
  *****************************************************************************/
 config.proxy = {};
 config.proxy.enabled = true;
@@ -448,6 +453,7 @@ config.proxy.config_node_ports = [
     '8096', /* HttpPortDeviceManager */
     '8100', /* HttpPortConfigNodemgr */
 ];
+config.proxy.allowed_introspect_list_access_by_token = [];
 
 /*****************************************************************************
  *

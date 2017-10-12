@@ -5,6 +5,7 @@
 var commonUtils = require('../../utils/common.utils')
   , logutils = require('../../utils/log.utils')
   , util = require('util')
+  , _ = require("lodash")
   , messages = require('../../common/messages')
 
 if (!module.parent) {
@@ -167,17 +168,33 @@ function addFeatureAccess (feature, readAccess, writeAccess)
 /* Function: checkUserAccess
     This function is used to check the access privileges
  */
-function checkUserAccess (req, res)
+function checkUserAccess (req, res, callback)
 {
-  var userRoles = req.session.userRole;
-  var userRoleLen = userRoles.length;
+  var userRoleLen = 0;
+  var authApi = require("../../common/auth.api");
+  if (authApi.isValidUrlWithXAuthToken(req.url, req)) {
+    /* If the request contains the X-Auth-Token and URL contains the
+     * forward-proxy, then verify that token is valid, if valid, then assume that
+     * request is authorized
+     */
+    var xAuthToken = req.headers["x-auth-token"];
+    authApi.checkIfValidToken(req, xAuthToken, function(isValidToken) {
+      callback(isValidToken);
+      return;
+    });
+    return;
+  }
+  if ((req) && (req.session) && (req.session.userRole)) {
+      var userRoles = req.session.userRole;
+      userRoleLen = userRoles.length;
+  }
   for (var i = 0; i < userRoleLen; i++) {
       userAccess = getUserAccess(req, userRoles[i]);
       if (true == userAccess) {
-          return true;
+          callback(true);
+          return;
       }
   }
-  return false;
 }
 
 exports.setFeatureByURL = setFeatureByURL;
