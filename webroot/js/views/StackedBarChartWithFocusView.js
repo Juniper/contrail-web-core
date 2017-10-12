@@ -138,7 +138,7 @@ define([
             var yAxisLabel = getValueByJsonPath(chartOptions,'yAxisLabel',"Count");
             var limit = getValueByJsonPath(chartOptions,'limit');
             var yField = getValueByJsonPath(chartOptions,'yField');
-            var totalHeight = ($(selector).closest('.custom-grid-stack-item').length > 0 )?
+            var totalHeight = (cowu.isGridStackWidget(selector))?
                     $(selector).closest('.custom-grid-stack-item').height():
                         chartOptions['height'];
             var customMargin = getValueByJsonPath(chartOptions,'margin',{});
