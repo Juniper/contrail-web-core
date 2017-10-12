@@ -23,30 +23,33 @@ define([
             var contrailListModel;
             if(self.model == null) {
                 var remoteAjaxConfig = {
-                        remote: {
-                            ajaxConfig: {
-                                url: cowc.get(cowc.URL_ALARM_DETAILS),
-                                type: "GET",
-                            },
-                            dataParser: coreAlarmParsers.alarmDataParser
+                    remote: {
+                        ajaxConfig: {
+                            url: cowc.get(cowc.URL_ALARM_DETAILS),
+                            type: "GET",
                         },
-                        vlRemoteConfig : {
-                            vlRemoteList : [{
-                                getAjaxConfig : function() {
-                                    return {
-                                        url:ctwl.ANALYTICSNODE_SUMMARY_URL
-                                    };
-                                },
-                                successCallback : function(response, contrailListModel) {
-                                    coreAlarmUtils
-                                        .parseAndAddDerivedAnalyticsAlarms(
-                                            response, contrailListModel);
-                                }
-                            }
-                            ]
+                        dataParser: coreAlarmParsers.alarmDataParser
+                    },
+                    cacheConfig: {
+                    }
+                }
+                var vlRemoteConfig = {
+                    vlRemoteList: [{
+                        getAjaxConfig : function() {
+                            return {
+                                url:ctwl.ANALYTICSNODE_SUMMARY_URL
+                            };
                         },
-                        cacheConfig: {
+                        successCallback : function(response, contrailListModel) {
+                            coreAlarmUtils
+                                .parseAndAddDerivedAnalyticsAlarms(
+                                    response, contrailListModel);
                         }
+                    }]
+                };
+                // For member role analytics summary url is not accessible
+                if (cowu.isAdmin()) {
+                    remoteAjaxConfig['vlRemoteConfig'] = vlRemoteConfig;
                 }
                 contrailListModel = new ContrailListModel(remoteAjaxConfig);
             } else {

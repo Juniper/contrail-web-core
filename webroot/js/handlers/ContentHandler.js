@@ -83,6 +83,12 @@ define(['underscore'], function (_) {
                 webServerInfo = globalObj['webServerInfo'];
             try {
                 if (currPageHash == '' || menuHandler.isHashExists(currHash) == false) {
+                    // If menuHandler.isHashExists(currHash) returns false mean
+                    // some unauthorized/invalid url is being accessed by the user, So update
+                    // hash with empty object.
+                    if (!menuHandler.isHashExists(currHash)) {
+                        layoutHandler.setURLHashObj({});
+                    }
                     var currentRole =  getValueByJsonPath(webServerInfo,
                             'role;0', "", false);
                     var cgcEnabled = getValueByJsonPath(globalObj,
