@@ -48,6 +48,15 @@
         -->
         <method>get</method>
         <feature>proxy</feature>
+        <callback>proxyapi.proxyRequest</callback>
+    </item>
+    <item>
+        <url>/forward-proxy</url>
+        <!-- Proxy URL format:
+            /forward-proxy?proxyURL=<URL>&<argument-list>
+        -->
+        <method>get</method>
+        <feature>proxy</feature>
         <callback>proxyapi.forwardProxyRequest</callback>
     </item>
     <item>
