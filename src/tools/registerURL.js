@@ -132,31 +132,33 @@ function parseURLFile (result, fileToGen, cb)
     longPollArrStr += "  /* Check if this request needs to be added in \n";
     longPollArrStr += "     pendingQ \n";
     longPollArrStr += "   */\n";
-    longPollArrStr += "  var reqCtx = parseURLReq.longPoll.routeAll(req, res, next);\n";
-    longPollArrStr += "  if (null == reqCtx) {\n";
-    longPollArrStr += "    /* either not a valid URL, or unAuthed session */\n";
-    longPollArrStr += "  } else {\n";
-    longPollArrStr += "    /* Set the request timeout */\n";
+    longPollArrStr += "  parseURLReq.longPoll.routeAll(req, res, next,\n" +
+                      "                                function(reqCtx) {\n";
+    longPollArrStr += "    if (null == reqCtx) {\n";
+    longPollArrStr += "      /* either not a valid URL, or unAuthed session */\n";
+    longPollArrStr += "    } else {\n";
+    longPollArrStr += "      /* Set the request timeout */\n";
     timeout = itemList[i]['timeout'];
     if (null != timeout) {
       timeout = parseInt(timeout);
     }
-    longPollArrStr += "    parseURLReq.timeout(req, res, ";
+    longPollArrStr += "      parseURLReq.timeout(req, res, ";
     if (null != timeout) {
       longPollArrStr += parseInt(itemList[i]['timeout']) + ");\n";
     } else {
       longPollArrStr += "parseURLReq.global.DFLT_HTTP_REQUEST_TIMEOUT_TIME);\n";
     }
-    longPollArrStr += "    req.once('timeout', ";
+    longPollArrStr += "      req.once('timeout', ";
     if (null != itemList[i]['timeoutCallback']) {
       longPollArrStr += itemList[i]['timeoutCallback'] + ");\n";
     } else {
       longPollArrStr += 'defHandleReqTimeout);\n';
     }
-    longPollArrStr += "    /* Now process the resuest */\n";
-    longPollArrStr += "    parseURLReq.longPoll.processPendingReq(reqCtx, next, " +
+    longPollArrStr += "      /* Now process the resuest */\n";
+    longPollArrStr += "      parseURLReq.longPoll.processPendingReq(reqCtx, next, " +
       itemList[i]['callback'] + ");\n";
-    longPollArrStr += "  }\n";
+    longPollArrStr += "    }\n";
+    longPollArrStr += "  });\n";
     longPollArrStr += "}\n";
 
       

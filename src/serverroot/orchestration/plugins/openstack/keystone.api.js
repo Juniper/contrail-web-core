@@ -269,12 +269,13 @@ function getV2AuthResponse (dataObj, callback, isSvcPortReq)
 
 function makeAuthGetReq (dataObj, callback, isSvcPortReq)
 {
-    var req = dataObj['req'];
+    var req = dataObj.req;
     var authApiVer = req.session.authApiVersion;
     var authCB = authGetCB[authApiVer];
+    var version = dataObj.version;
 
     authCB(dataObj, function(err, data) {
-        callback(err, data);
+        callback(err, data, version);
     }, isSvcPortReq);
 }
 
@@ -285,26 +286,40 @@ function makeAuthGetReq (dataObj, callback, isSvcPortReq)
 function getTenantListByToken (req, token, callback)
 {
     var reqUrl = '/tenants';
-    getAuthDataByReqUrl(req, token, reqUrl, callback);
+    getAuthDataByReqUrlObj({req: req, token: token, reqUrl: reqUrl}, callback);
 }
 
-function getAuthDataByReqUrl (req, token, authUrl, callback, isSvcPortReq)
+function getAuthDataByReqUrlObj (reqObj, callback)
 {
-  var headers = {};
+  var req         = reqObj.req;
+  var token       = reqObj.token;
+  var reqUrl      = '';
+  var headers     = reqObj.headers;
+  var reqType     = reqObj.reqType;
+  var isSvcPortReq = reqObj.isSvcPortReq;
   var dataObjArr = [];
 
   if (null == token) {
       var err = 
-          new appErrors.RESTServerError('Token null to populate Tenant List');
+          new appErrors.RESTServerError('Token null to populate data');
       callback(err, null);
       return;
   }
-  headers['X-Auth-Token'] = token.id;
+  if (null == headers) {
+    headers = {"X-Auth-Token": token.id};
+  }
   var apiVerCnt = authAPIVers.length;
   for (var i = 0; i < apiVerCnt; i++) {
-      reqUrl = '/' + authAPIVers[i] + authUrl;
+      reqUrl = '/' + authAPIVers[i];
+      if ((null != reqType) &&
+          (null != reqUrlPrefixByTypes[reqType][authAPIVers[i]])) {
+          reqUrl += reqUrlPrefixByTypes[reqType][authAPIVers[i]] +
+              reqObj.reqUrl;
+      } else {
+          reqUrl += reqObj.reqUrl;
+      }
       dataObjArr.push({'req': req, 'reqUrl': reqUrl, 'headers': headers,
-                      'token': token.id});
+                      'token': token.id, 'version': authAPIVers[i]});
   }
   if (true == authApi.isRegionListFromConfig()) {
       dataObjArr = [];
@@ -312,18 +327,62 @@ function getAuthDataByReqUrl (req, token, authUrl, callback, isSvcPortReq)
           commonUtils.getValueByJsonPath(req,
                                          'session;region;version',
                                          null, false);
-      reqUrl = '/' + version + authUrl;
+      reqUrl = '/' + version + reqUrl;
       dataObjArr.push({'req': req, 'reqUrl': reqUrl, 'headers': headers,
                       'token': token.id});
   }
   var startIndex = 0;
-  getAuthData(null, dataObjArr, startIndex, makeAuthGetReq, function(err, data) {
+  getAuthData(null, dataObjArr, startIndex, makeAuthGetReq, function(err, data,
+                                                                     version) {
     if (null == err) {
-        callback(null, data);
+        callback(null, data, version);
     } else {
         callback(err, null);
     }
   }, isSvcPortReq);
+}
+
+var reqUrlPrefixByTypes = {
+    'auth': { /* global.KEYSTONE_API_TYPE_AUTH */
+        'v3': '/auth'
+    }
+};
+
+function getTokenDetails (reqObj, callback)
+{
+    var adminToken = reqObj.token;
+    var userToken = reqObj.userToken;
+    var version = reqObj.apiVersion;
+    reqObj.reqType = global.KEYSTONE_API_TYPE_AUTH;
+    reqObj.reqUrl = '/tokens';
+
+    if ('v2.0' == version) {
+        reqObj.reqUrl += '/' + userToken;
+    } else {
+        var headers = {"X-Auth-Token": adminToken.id,
+            "X-Subject-Token": userToken};
+        reqObj.headers = headers;
+    }
+    getAuthDataByReqUrlObj(reqObj, function(error, data, version) {
+         if (('v3' == version) && (null == error) && (null != data) &&
+            (null == data['error'])) {
+            formatV3AuthDataToV2AuthData(data, null,
+                                         function(err, data) {
+                data['access']['token']['id'] = userToken;
+                updateTokenIdWithMD5(data.access);
+                callback(data);
+            });
+        } else {
+            if (null == error) {
+                if ((null != data) && (null != data.access)) {
+                    updateTokenIdWithMD5(data.access);
+                }
+                callback(data);
+            } else {
+                callback(null);
+            }
+        }
+    });
 }
 
 /* Function: getEnabledProjects
@@ -406,7 +465,8 @@ function getRoleList (req, callback)
 
 function getAuthRetryData (token, req, reqUrl, callback, isSvcPortReq)
 {
-    getAuthDataByReqUrl(req, token, reqUrl, function(err, data) {
+    getAuthDataByReqUrlObj({req: req, token: token, reqUrl: reqUrl},
+                        function(err, data) {
         if ((err) &&
             (err.responseCode == global.HTTP_STATUS_AUTHORIZATION_FAILURE)) {
             var tokenId = ((null != token) && (null != token.id)) ?
@@ -423,7 +483,8 @@ function getAuthRetryData (token, req, reqUrl, callback, isSvcPortReq)
                     commonUtils.redirectToLogout(req, req.res);
                     return;
                 }
-                getAuthDataByReqUrl(req, token, reqUrl, function(err, newData) {
+                getAuthDataByReqUrlObj({req: req, token: token, reqUrl: reqUrl},
+                                    function(err, newData) {
                     callback(err, newData);
                 }, isSvcPortReq);
             });
@@ -635,6 +696,14 @@ function getLastIdTokenUsed (req)
 
 function getV3Token (authObj, callback)
 {
+    if (null == authObj) {
+        /* Suppress error here, this may be intentional
+        var err = new appErrors.RESTServerError('In getV3Token(), authObj ' +
+                                                'is null');
+        */
+        callback(null, null);
+        return;
+    }
     if ((null != authObj['req']) &&
         ((null == authObj['username']) || (null == authObj['password']))) {
         var token = getLastIdTokenUsed(authObj['req']);
@@ -752,6 +821,9 @@ function sendV3GetReq (dataObj, callback)
     var headers     = {'X-Auth-Token': token};
     reqUrl = addUrlPrefix(reqUrl);
     var tmpAuthRestObj = getAuthRestApiInst(dataObj.req, reqUrl);
+    if (null != dataObj.headers) {
+        headers = dataObj.headers;
+    }
     tmpAuthRestObj.authRestAPI.api.get(reqUrl, function(err, data) {
         callback(err, data);
     }, headers);
@@ -767,9 +839,20 @@ function formatV3AuthDataToV2AuthData (v3AuthData, authObj, callback)
             v3AuthData['token']['issued_at'];
         tokenObj['access']['token']['expires_at'] =
             v3AuthData['token']['expires_at'];
-        tokenObj['access']['token'] = v3TokenObj;
-        tokenObj['access']['token']['id'] =
-            removeSpecialChars(v3TokenObj['id']);
+        if (null != v3TokenObj) {
+            tokenObj['access']['token'] = v3TokenObj;
+            tokenObj['access']['token']['id'] =
+                removeSpecialChars(v3TokenObj['id']);
+        } else {
+            /* The caller must fill the token id */
+            var tokenProj =
+                commonUtils.getValueByJsonPath(v3AuthData,
+                                               'token;project',
+                                               null);
+            if (null != tokenProj) {
+                tokenObj['access']['token']['tenant'] = tokenProj;
+            }
+        }
         tokenObj['access']['serviceCatalog'] =  v3AuthData['token']['catalog'];
         tokenObj['access']['user'] = {};
         tokenObj['access']['user']['username'] =
@@ -940,16 +1023,16 @@ function doAuth (authObj, callback)
             formatV3AuthDataToV2AuthData(data, authObj,
                                          function(err, data) {
                 updateTokenIdWithMD5(data.access);
-                callback(data);
+                callback(data, version);
             });
         } else {
             if (null == err) {
                 if ((null != data) && (null != data.access)) {
                     updateTokenIdWithMD5(data.access);
                 }
-                callback(data);
+                callback(data, version);
             } else {
-                callback(null);
+                callback(null, version);
             }
         }
     });
@@ -1381,7 +1464,7 @@ function getUserAuthData (req, tenantName, callback)
 function getUserAuthDataByAuthObj (authObj, callback)
 {
     var tenantName = authObj['tenant'];
-    doAuth(authObj, function(data) {
+    doAuth(authObj, function(data, version) {
         if (data == null) {
             if ((null != tenantName) && (null != authObj['req']) && 
                 (null != authObj['req'].session.id)) {
@@ -1400,7 +1483,7 @@ function getUserAuthDataByAuthObj (authObj, callback)
             logutils.logger.debug("Got the token successfully for tenant:" +
                                   tenantName);
         }
-        callback(null, data);
+        callback(null, data, version);
     });
 }
 
@@ -3073,7 +3156,41 @@ function getConfigEntityByServiceEndpoint (req, serviceName)
     return null;
 }
 
+function checkIfValidToken (req, tokenId, callback)
+{
+    var xAuthToken = req.headers["x-auth-token"];
+    if (null == xAuthToken) {
+        xAuthToken = req.param('tokenid');
+        if (null == xAuthToken) {
+            callback(false);
+            return;
+        }
+    }
+    getUserAuthDataByConfigAuthObj(null, function(error, data, version) {
+        if ((null != error) || (null == data) ||
+            (null == data.access) || (null == data.access.token) ||
+            (null == data.access.token.id)) {
+            callback(false);
+            return;
+        }
+        var adminToken = data.access.token;
+        getTokenDetails({req: req, token: adminToken, userToken:
+                        xAuthToken, apiVersion: version},
+                        function(data) {
+            var tenant =
+                commonUtils.getValueByJsonPath(data, "access;token;tenant;id",
+                                               null);
+            if (null == tenant) {
+                callback(false);
+                return;
+            }
+            callback(true, data);
+        });
+    });
+}
+
 exports.authenticate = authenticate;
+exports.checkIfValidToken = checkIfValidToken;
 exports.getToken = getToken;
 exports.getTenantList = getTenantList;
 exports.updateDefTenantToken = updateDefTenantToken;
@@ -3101,3 +3218,4 @@ exports.getAuthRetryData = getAuthRetryData;
 exports.getPortToProcessMapByReqObj = getPortToProcessMapByReqObj;
 exports.getConfigEntityByServiceEndpoint = getConfigEntityByServiceEndpoint;
 exports.getTokenAndUpdateLastToken = getTokenAndUpdateLastToken;
+
