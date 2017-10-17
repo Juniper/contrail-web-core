@@ -219,6 +219,7 @@ define([], function () {
                             .attr('transform', 'translate('+parseInt(container.style('width'))/2+', '+(parseInt(container.style('height')))+')')
                             .attr('class', 'contrail-chart-title')
                             .append('text')
+                            .attr('dy', '-0.5em')
                             .attr('text-anchor', 'middle')
                             .text(title);
                     }

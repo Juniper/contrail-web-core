@@ -25,8 +25,10 @@ define([
 
         render: function () {
             var self = this,
-                viewConfig = self.attributes.viewConfig,
-                listModelConfig = $.extend(true, {}, viewConfig.elementConfig['body']['dataSource']),
+                viewConfig = self.attributes.viewConfig;
+            if(_.isFunction(viewConfig.elementConfig))
+                viewConfig.elementConfig = viewConfig.elementConfig();
+            var listModelConfig = $.extend(true, {}, viewConfig.elementConfig['body']['dataSource']),
                 modelMap = contrail.handleIfNull(self.modelMap, {}),
                 contrailListModel, gridConfig, gridContainer,
                 customGridConfig;

@@ -5,16 +5,21 @@
 define([
     'underscore',
     'contrail-view',
+    'chart-view',
     'core-basedir/js/models/DonutChartModel',
     'contrail-list-model',
     'chart-utils'
-], function (_, ContrailView, DonutChartModel, ContrailListModel, chUtils) {
-    var DonutChartView = ContrailView.extend({
+], function (_, ContrailView, ChartView, DonutChartModel, ContrailListModel, chUtils) {
+    var DonutChartView = ChartView.extend({
         settingsChanged: function(colorModel) {
             var self = this,
                 vc = self.attributes.viewConfig;
             vc.resetColor = true;
             self.renderChart($(self.$el), vc, self.model);
+        },
+        initialize: function() {
+            var self = this;
+            ChartView.prototype.bindListeners.call(self);
         },
         render: function () {
             var self = this,
@@ -30,7 +35,7 @@ define([
 
             self.renderChart(selector, viewConfig, self.model);
 
-            if (self.model !== null) {
+            /*if (self.model !== null) {
                 if(self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
                     self.renderChart(selector, viewConfig, self.model);
                 }
@@ -50,7 +55,7 @@ define([
 
                 $(window).on('resize',self.resizeFunction);
 
-            }
+            }*/
         },
 
         renderChart: function (selector, viewConfig, chartViewModel) {
@@ -60,10 +65,10 @@ define([
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null;
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                data = viewConfig['parseFn'](data);
+                data = viewConfig['parseFn'](data, viewConfig);
             }
-            if ($(selector).parents('.custom-grid-stack-item').length != 0) {
-                viewConfig['chartOptions']['height'] = $(selector).parents('.custom-grid-stack-item').height() - 20;
+            if (cowu.isGridStackWidget(selector)) {
+                viewConfig['chartOptions']['height'] = $(selector).parents('.custom-grid-stack-item').height();
             }
             chartViewConfig = getChartViewConfig(data, viewConfig);
             chartOptions = chartViewConfig['chartOptions'];

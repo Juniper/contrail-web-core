@@ -8,7 +8,8 @@ define([
     var CoreConstants = function () {
         var self = this;
 
-        this.INFRA_MODEL_CACHE_TIMEOUT = 5 * 60;
+        this.panelLayout = false;
+        this.INFRA_MODEL_CACHE_TIMEOUT = 0 * 60;
         this.ENABLE_CAROUSEL = false;
         this.THROTTLE_RESIZE_EVENT_TIME = 500;
 
@@ -220,6 +221,7 @@ define([
         this.COOKIE_CHART_SETTINGS = "chartData";
         this.NUM_OF_COLORS = "6";
         /* Color Settings - End */
+        this.TMPL_GRIDSTACK_ZOOMED_SCATTER_CHART = "gridstack-zoomed-scatter-chart-template";
         //stacked bar chart
         this.TMPL_CUSTOM_CHART_LEGEND = 'custom-chart-legend';
         this.TOOLTIP_TEMPLATE = "tooltip-template";
@@ -239,6 +241,7 @@ define([
         this.DASHBOARD_ALERTS_GRID_SECTION_ID = "infra-dashboard-alerts-section";
         this.DASHBOARD_ALERTS_GRID_ID = "infra-dashboard-alerts-grid";
         this.DASHBOARD_ALERTS_GRID_TITLE = "Alerts";
+        this.DASHBOARD_LIST_SECTION_ID = 'dashboard-list-section';
 
         this.NODE_DETAILS_CHARTS = 'mon-infra-node-details-chart';
 
@@ -271,6 +274,9 @@ define([
         this.VIEW_FORM_INPUT_VIEW = "FormInputView";
 
         this.TOOLTIP_DELAY = 1000;
+        this.SUMMARY_PAGE_HASHES = ['mon_infra_config',
+            'mon_infra_database', 'mon_infra_analytics',
+            'mon_infra_vrouter', 'mon_infra_control'];
 
         this.DEFAULT_CONFIG_ELEMENT_TOOLTIP = {
             dimension: {
@@ -306,9 +312,13 @@ define([
         this.COLOR_PALETTE = 'color_palette';
         this.CHART_SETTINGS = 'chart_settings';
         this.CONTAINER_SETTINGS = 'container_settings';
+        this.CONTAINER_SETTINGS_CLASS = 'fa-bar-chart-o';
+        this.FULL_SCREEN = 'full_screen';
+        this.ADD_WIDGET = 'add_widget';
         this.COLOR_PALETTE_CLASS = 'contrailGlyph-palette';
         this.CHART_SETTINGS_CLASS = 'fa-bar-chart-o';
-        this.CONTAINER_SETTINGS_CLASS = 'fa-bar-chart-o';
+        this.FULLSCREEN_CLASS = 'fa-arrows-alt';
+        this.ADD_WIDGET_CLASS = 'fa-plus';
         this.SETTINGS_MODAL_ID = 'settings_modal';
         this.SETTINGS_PREFIX_ID = 'toolbar_settings';
         this.CHART_MENU_CLASS= 'contrailGlyph-menu';
@@ -2121,10 +2131,14 @@ define([
         this.HTTP_STATUS_CODE_AUTHORIZATION_FAILURE = 401;
 
         //Node color schemes
+        this.RESOURCE_UTILIZATION_CHART_COLOR = ['#599AC9'];
         this.SINGLE_NODE_COLOR = ['#6f97ae'];
         this.THREE_NODE_COLOR = ['#a8c0d1', '#6f97ae', '#617683'];
         this.FIVE_NODE_COLOR = ['rgb(168,192,209)', 'rgb(111,151,174)', 'rgb(97,118,131)', 'rgb(185,213,232)', 'rgb(209,230,245)'];
         this.TRAFFIC_GROUP_COLOR = ['#5282a7', '#91cd99', '#80d4f9', '#d0abd6'];
+
+        /*this.THREE_NODE_COLOR = ['#01579b', '#03a9f4', '#81d4fa'];
+        this.FIVE_NODE_COLOR = ['#01579b', '#03a9f4', '#81d4fa', 'rgb(185,213,232)', 'rgb(209,230,245)'];*/
         this.FAILURE_COLOR = '#d95436';
         this.OTHERS_COLORS = 'rgb(177, 189, 197)';
         this.DEFAULT_CHART_DURATION = 2;
@@ -2139,7 +2153,7 @@ define([
         this.TMPL_QUERY_SELECT = "query-select-popup-template";
         //Grid stack
         this.GRID_STACK_COLUMN_CNT = 24;
-        this.GRID_STACK_DEFAULT_WIDTH = 12;
+        this.GRID_STACK_DEFAULT_WIDTH = 24;
         this.LAYOUT_PREFERENCE = 'layout-preference';
         //Global controller constants
         this.GLOBAL_CONTROLLER_ALL_REGIONS = "All Regions";

@@ -18,6 +18,17 @@
                     <span class="btn btn-{{this.id}}"></span>
                 {{/each}}
             </div>
+            <div class="sidebar-shortcuts-large-hover" id="sidebar-shortcuts-large-hover">
+                {{#each this}}
+                    {{#IfCompare this.cssClass 'disabledBtn' operator='!='}}
+                        <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');">
+                    {{else}}
+                        <button id="btn-{{this.id}}" class="btn btn-small {{this.cssClass}}" title="{{this.label}}" onclick="menuHandler.toggleMenuButton('{{this.id}}');" disabled>
+                    {{/IfCompare}}
+                            <i class="{{this.iconClass}} fa fa-lg"></i>
+                    </button>
+                {{/each}}
+            </div>
 </script>
 
 <!-- main-container-template renders the content below page header -->
@@ -97,10 +108,17 @@
    {{#if @last}}
       <li class="active">
           <a href={{href}}>{{link}}</a>
+          <i class="fa fa-caret-down"></i>
+          <div id="drop-down-l{{@index}}-menu-area" class="dropdown-menu dropdown-closer breadcrum-drop-down-menu dropdown-caret">
+          </div>
       </li>
    {{else}}
       <li>
           <a href={{href}}>{{link}}</a>
+          <i class="fa fa-caret-down"></i>
+          <div id="drop-down-l{{@index}}-menu-area" class="dropdown dropdown-menu dropdown-closer breadcrum-drop-down-menu dropdown-caret">
+            <div class="container"><div class="row"></div></div>
+          </div>
           <span class="divider"><i class="fa fa-angle-right"></i></span>
       </li>
    {{/if}}
@@ -951,7 +969,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-section-view-template">
-    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
+    <div data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}" class="{{#if viewConfig.cssClass}} {{viewConfig.cssClass}} {{/if}}">
         {{#if viewConfig.title}}
             <h5 class="margin-0-0-10">{{viewConfig.title}}</h5>
         {{/if}}
@@ -2227,6 +2245,46 @@
 </div>
 </script>
 
+<script type="text/x-handlebars-template" id="gridstack-zoomed-scatter-chart-template">
+    {{#if overViewText}}
+        <div class="flex-1 flex-dir-column {{#IfCompare cssClass null operator='!='}}{{cssClass}}{{/IfCompare}}">
+            <div class="overview-text {{#if overviewCss}} {{overviewCss}} {{else}} flex-1 {{/if}} flex-dir-row">
+                {{#if overviewTextOptions}}
+                    
+                    <!--{{#if overviewTextOptions.template}}
+                        <div>template</div>
+                    {{else}}
+                        <div class='title flex-2'>{{title}}</div>
+                        <div class="flex-2 flex-dir-column lbl-value-wrapper">
+                            <div class="value flex-4">{{overviewTextOptions.value}}
+                            </div>
+                            <div class="flex-1 lbl">{{overviewTextOptions.label}}</div>
+                        </div>
+                    {{/if}}-->
+                {{else}}
+                    <div class='title'>{{title}}</div>
+                {{/if}}
+            </div>
+            <!--<div class="main-chart flex-5">-->
+            <div class="zoom-scatter-chart-container main-chart flex-5">
+                <div class="chart-container flex-1"></div>
+                </div>
+            </div>
+        </div>
+    {{else}}
+        <div class="zoom-scatter-chart-container colmask rightmenu">
+            <div class="colleft">
+                <div class="col1wrap">
+                    <div class="col1 chart-container">
+                    </div>
+                </div>
+                <div class="col2 chart-control-panel-container">
+                </div>
+                <div class="chart-control-panel-expanded-container control-panel-expanded-container hidden"></div>
+            </div>
+        </div>
+    {{/if}}
+</script>
 <script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-template">
     <div class="zoom-scatter-chart-container colmask rightmenu">
         <div class="colleft">
@@ -2242,9 +2300,69 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-chart-template">
-    <div class="chart-container">
-        <svg style="height:{{height}}px;"></svg></div>
-    </div>
+    {{#if showLegend}}
+        {{#IfCompare legendPosition 'top' operator='=='}}
+            <div class="chart-container flex-1 flex-dir-column-rev {{#IfCompare cssClass null operator='!='}}{{cssClass}}{{/IfCompare}}">
+        {{/IfCompare}}
+        {{#IfCompare legendPosition 'bottom' operator='=='}}
+            <div class="chart-container flex-1 flex-dir-column {{#IfCompare cssClass null operator='!='}}{{cssClass}}{{/IfCompare}}">
+        {{/IfCompare}}
+        {{#IfCompare legendPosition 'left' operator='=='}}
+            <div class="chart-container flex-1 flex-dir-row-rev {{#IfCompare cssClass null operator='!='}}{{cssClass}}{{/IfCompare}}">
+        {{/IfCompare}}
+        {{#IfCompare legendPosition 'right' operator='=='}}
+            <div class="chart-container flex-1 flex-dir-row {{#IfCompare cssClass null operator='!='}}{{cssClass}}{{/IfCompare}}">
+        {{/IfCompare}}
+        {{#if overViewText}}
+            <div class="chart-overview-wrapper flex flex-dir-row flex-5">
+                <div class="overview-text ">
+                    {{#if overviewTextOptions}}
+                        <div class='title pull-left'>{{title}}</div>
+                        <div class="pull-right">
+                            <div class="value align-right">{{overviewTextOptions.value}}</div>
+                        <div class="pull-right lbl">{{overviewTextOptions.label}}</div>
+                     </div>
+                    {{else}}
+                        <div class='title'>{{title}}</div>
+                    {{/if}}
+                </div>
+                <div class="main-chart flex-5">
+                    <svg class="nvd3-svg"></svg>
+                </div>
+            </div>
+        {{else}}
+            <div class="main-chart flex-5">
+                <svg class="nvd3-svg"></svg>
+            </div>
+        {{/if}}
+            <div class="legend flex-1"></div>
+        </div>
+    {{else}}
+        {{#if overViewText}}
+            <div class="chart-container flex-1 flex-dir-column {{#IfCompare cssClass null operator='!='}}{{cssClass}}{{/IfCompare}}">
+                <div class="overview-text">
+                    {{#if overviewTextOptions}}
+                        <div class='title pull-left'>{{title}}</div>
+                        <div class="pull-right">
+                            <div class="value align-right">{{overviewTextOptions.value}}</div>
+                        <div class="pull-right lbl">{{overviewTextOptions.label}}</div>
+                     </div>
+                    {{else}}
+                        <div class='title'>{{title}}</div>
+                    {{/if}}
+                </div>
+                <div class="main-chart flex-5">
+                    <svg class="nvd3-svg"></svg>
+                </div>
+            </div>
+        {{else}}
+            <div class="chart-container flex-1 {{#IfCompare cssClass null operator='!='}}{{cssClass}}{{/IfCompare}}">
+                <div class="main-chart flex-1">
+                    <svg class="nvd3-svg" {{#IfCompare height null operator='!='}} style='height:{{height}}px'{{/IfCompare}}></svg>
+                </div>
+            </div>
+        {{/if}}        
+    {{/if}}
 </script>
 
 <script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-control-panel-legend-template">
@@ -2821,12 +2939,32 @@
 <script type="text/x-handlebars-template" id="gridstack-widget-template">
     <div class='custom-grid-stack-item'>
         <div class='grid-stack-item-content'>
-            <div class='widget-dropdown slick-dropdown'></div>
-            {{#if this.showTitle}}
-                <h4 class="title"> {{this.title}}</h4>
-            {{/if}}
+            {{#if panelLayout}}
+            <div class="flip-container">
+                <div class="flip">
+                    <div class="front face">
+                        <div class='item-container'>
+                            <div class='item-content'></div>
+                            <i class="fa fa-info-circle flip-button"></i>
+                        </div>
+                    </div>
+                    <div class="back face">
+                        <div> 
+                            <span class="widget-label">Select Widget</span>
+                            <div class='widget-dropdown'></div>
+                        </div>
+                        <div class="btn-bar">
+                            <button type="submit" id="widget-update-button" class="btn btn-mini btn-widget-update btn-primary">Update</button>
+                            <button type="submit" id="widget-cancel-button" class="btn btn-mini btn-widget-cancel btn-primary">Cancel</button>
+                        </div>
+                        <i class="fa fa-remove"></i>
+                    </div>
+                </div>
+            </div>
+            {{else}}
             <div class='item-content'>
             </div>
+            {{/if}}
         </div>
     </div>
 </script>
@@ -2841,9 +2979,9 @@
         </div>
 </script>
 <script type="text/x-handlebars-template" id="gridstack-template">
-    <a class="widget-toolbar-icon">
+    <!--<a class="widget-toolbar-icon">
         <i class="fa fa-plus"></i>
-    </a>
+    </a>-->
     <div class='custom-grid-stack'>
     </div>
 </script>
@@ -2931,7 +3069,7 @@
     </div>
 </script>
 <script type="text/x-handlebars-template" id="toolbar-settings">
-    <div class="btn-toolbar btn-toolbar-primary" id="toolbar_settings">
+    <div data-spy="affix" data-offset-top="45" class="btn-toolbar btn-toolbar-primary" id="toolbar_settings">
         <a href="#"><i class="fa {{this.icon}}"></i></a>
     </div>
 </script>
@@ -3347,5 +3485,156 @@
 
 <script type="text/x-handlebars-template" id="alarms-event-logs-template">
     <div class="alarms-event-log-container">
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="globalController-dashbaord-template">
+<div class="container" id="globalControllerwrapper">
+    <div class="panel panel-default globalcontrollertopbar">
+        <div class="regionname"><a onclick="javascript:changeRegion('{{{this.headInfo.regionName}}}', this)">{{{this.headInfo.regionName}}}</a><div class="regionLabel">Region</div>
+        </div>
+        <div class="alarmscntcontainer">
+          <span class="fa fa-bell icon-only"></span>
+          {{#IfCompare this.headInfo.data.alarmsCnt 0 operator='>'}}
+          <span><sup class="alarmscnt">{{{this.headInfo.data.alarmsCnt}}}</sup></span>
+          {{else}}
+          <span></span>
+           {{/IfCompare}}
+        </div>
+         <div class="objectcntsection">
+       </div>
+    <div>
+    <div class="clrbth"></div>
+    <div  class="chartsection"></div>
+    <div class="clrbth"></div>
+    <div class="nodescntcontainer"></div>
+</div>
+ </script>
+ <script type="text/x-handlebars-template" id="dashboard-nodecntview-template">
+   <ul>
+       {{#each nodeMap}}
+           <li>
+           <span>{{this.totalCnt}}&nbsp;&nbsp;</span>{{this.display_type}}&nbsp;
+           {{#IfCompare this.dwnCnt 0 operator='>'}}
+                {{this.dwnCnt}}<span><img src="/img/down_arrow.svg"></img></span>
+           {{else}}
+                <span></span>
+           {{/IfCompare}}
+           </li>
+       {{/each}}
+  </ul>
+ </script>
+<script type="text/x-handlebars-template" id="dashboard-custom-tooltip">
+    <div class="nvtooltip xy-tooltip nv-pointer-events-none" id="nvtooltip-58867">
+        <table>
+        <thead>
+        <tr><td colspan="3" class="global-controller-tooltip-title">{{{this.title}}}</td></tr></thead>
+        <tr><td colspan="3" class="global-controller-tooltip-subtitle">{{{this.subtitle}}}</td></tr></thead>
+        <tr><td colspan="3" class="global-controller-tooltip-timeLabel">{{{this.Time}}}</td></tr></thead>
+        <tbody><tr><td class="legend-color-guide"><div style="background-color: rgb(114, 169, 208);"></div></td>
+        <td class="key">{{{this.yAxisLabel}}}
+        {{#each this.series}}
+        </td><td class="value">{{{this.value}}}</td>
+        {{/each}}
+        </tr>
+        </tbody>
+        </table>
+    </div>
+</script>
+<script type="text/x-handlebars-template" id="l0menu-template">
+    <div>
+        <div id="nav-search" class="nav-search">
+            <span class="input-icon">
+                <input id="nav-search-input" type="text" placeholder="Search Menu" class="input-medium search-query nav-search-input" autocomplete="on">
+                <i class="fa fa-search" id="nav-search-icon"></i>
+            </span>
+        </div>
+    </div>
+    {{#each this.items.item}}
+            {{#IfCompare @index 1 operator='!='}}
+            <div class="item mainMenu col-md-15" {{#if this.hash}}id="{{this.hash}}"{{/if}} data-help="{{#if this.help}} {{this.help}} {{/if}}">
+                <span class="l1menu-header">{{this.label}}</span>
+                {{#IfCompare this.items null operator='!='}}
+                    <!--<ul class="submenu">-->
+                        {{#each this.items.item}}
+                            <div id="{{this.hash}}" data-help="{{#if this.help}} {{this.help}} {{/if}}">
+                                <!--<span class="l2menu-header">{{this.label}}<span>-->
+                                <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
+                                    <div  class="l2menu-header">{{this.label}}</div>
+                                </a>
+                                {{#IfCompare this.items null operator='!='}}
+                                    <!--<ul class="submenu">-->
+                                        {{#each this.items.item}}
+                                            <div id="{{this.hash}}" data-help="{{#if this.help}} {{this.help}} {{/if}}">
+                                                <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
+                                                    <div  class="l3menu-header">{{this.label}}</div>
+                                                </a>
+                                            </div>
+                                       {{/each}}
+                                   <!--</ul>-->
+                                {{/IfCompare}}
+                            </div>
+                       {{/each}}
+                   <!--</ul>-->
+                {{/IfCompare}}
+            </div>
+            {{/IfCompare}}
+    {{/each}}
+</script>
+<script type="text/x-handlebars-template" id="l1menu-template">
+    {{#each this.items.item}}
+            <div class="item mainMenu col-md-3" {{#if this.hash}}id="{{this.hash}}"{{/if}} data-help="{{#if this.help}} {{this.help}} {{/if}}">
+                <!--<span class="l2menu-header">{{this.label}}</span>-->
+                <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
+                    <div  class="l2menu-header">{{this.label}}</div>
+                </a>
+                {{#IfCompare this.items null operator='!='}}
+                    <!--<ul class="submenu">-->
+                        {{#each this.items.item}}
+                            <div id="{{this.hash}}" data-help="{{#if this.help}} {{this.help}} {{/if}}">
+                                <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
+                                    <div  class="l3menu-header">{{this.label}}</div>
+                                </a>
+                            </div>
+                       {{/each}}
+                   <!--</ul>-->
+                {{/IfCompare}}
+            </div>
+    {{/each}}
+</script>
+<script type="text/x-handlebars-template" id="l2menu-template">
+    {{#each this.items.item}}
+            <div class="item mainMenu" {{#if this.hash}}id="{{this.hash}}"{{/if}} data-help="{{#if this.help}} {{this.help}} {{/if}}">
+                <!--<span class="l3menu-header">{{this.label}}</span>-->
+                <a href='{{#getHashFromMenuItem this}}{{/getHashFromMenuItem}}'>
+                    <div  class="l3menu-header">{{this.label}}</div>
+                </a>
+            </div>
+    {{/each}}
+</script>
+<script type="text/x-handlebars-template" id="four-quadrant-template">
+    <div class="flex-1 flex-dir-column" style="margin: 15px;"> 
+    {{#if title}}
+        <div class="title" style="font-size: 15px;"> {{title}}</div>
+    {{/if}}
+        <div class="flex-1">
+          <div class="top-left widget-container flex-1"></div>
+          <div class="top-right widget-container flex-1"></div>
+        </div>
+        <div class="flex-1">
+          <div class="bottom-left widget-container flex-1"> </div>
+          <div class="bottom-right widget-container flex-1"></div>
+        </div>
+    </div>
+</script>
+<script type="text/x-handlebars-template" id="one-row-two-column-template">
+    <div class="flex-1 flex-dir-column"> 
+    {{#if title}}
+        <div class="title" style="font-size: 15px;"> {{title}}</div>
+    {{/if}}
+        <div class="flex-1">
+          <div class="top-left widget-container flex-1"></div>
+          <div class="top-right widget-container flex-1"></div>
+        </div>
     </div>
 </script>

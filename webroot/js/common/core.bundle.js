@@ -39,7 +39,7 @@ define([
     'core-basedir/js/views/BarChartInfoView',
     'core-basedir/js/views/BreadcrumbDropdownView',
     'core-basedir/js/views/BreadcrumbTextView',
-    'core-basedir/js/views/ChartView',
+    'chart-view',
     'core-basedir/js/views/ControlPanelView',
     'core-basedir/js/views/InfoboxesView',
     'core-basedir/js/views/SectionView',
@@ -52,7 +52,7 @@ define([
     'mon-infra-alert-grid-view',
     "core-basedir/js/views/LogListView",
     'mon-infra-sysinfo-view',
-    'mon-infra-dashboard-view'
+    //'mon-infra-dashboard-view'
 
 ], function (CoreHandlebarsUtils, CoreUtils, CoreHashUtils, CoreConstants, CoreFormatters, Cache, CoreLabels,
              CoreMessages, CoreViewsDefaultConfig, Contrail, CoreContrailFormElements, ChartUtils, CoreCommonTmpls) {
