@@ -91,6 +91,21 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
         };
 
         this.onHashChange = function(lastHash, currHash, loadingStartedDefObj) {
+            if (cowc.SUMMARY_PAGE_HASHES.indexOf(currHash['p']) > -1) {
+                $('#toolbar').show();
+            } else {
+                $('#toolbar').hide();
+            }
+            if (cowc.panelLayout) {
+                $('.page-content').addClass('bg-color-grey');
+            } else {
+                /*if (layoutHandler.getURLHashObj()['p'] == 'mon_infra_dashboard') {
+                    $('.page-content').addClass('bg-color-grey');
+                } else {*/
+                    $('.page-content').removeClass('bg-color-grey');
+                //}        
+            }
+            
             globalObj['featureAppDefObj'].done(function () {
                 contentHandler.loadContent(lastHash, currHash, loadingStartedDefObj);
             });

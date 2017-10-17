@@ -109,13 +109,16 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'legend-view'                 : coreWebDir + '/js/views/LegendView',
         'alarms-viewconfig'           : coreWebDir + '/js/views/alarms/alarms.viewconfig',
         'contrail-charts-view'        : coreWebDir + '/js/views/ContrailChartsView',
-        'contrail-charts'             : coreWebDir + '/assets/contrail-charts/js/contrail-charts'
+        'contrail-charts'             : coreWebDir + '/assets/contrail-charts/js/contrail-charts',
+        'node-color-mapping'          : coreWebDir + '/js/NodeColorMapping',
+        'toolbar-view'                : coreWebDir + '/js/views/ToolbarView'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
     if(env == "dev") {
         var devAliasMap = {
             //Start - Core-bundle aliases
+            'toolbar-view'                : coreWebDir + '/js/views/ToolbarView',
             'core-utils'                  : coreWebDir + '/js/common/core.utils',
             'core-hash-utils'             : coreWebDir + '/js/common/core.hash.utils',
             'core-constants'              : coreWebDir + '/js/common/core.constants',
@@ -128,6 +131,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'contrail-remote-data-handler': coreWebDir + '/js/handlers/ContrailRemoteDataHandler',
             'cf-datasource'               : coreWebDir + '/js/common/cf.datasource',
             'contrail-view'               : coreWebDir + '/js/views/ContrailView',
+            'chart-view'                  : coreWebDir + '/js/views/ChartView',
             'contrail-model'              : coreWebDir + '/js/models/ContrailModel',
             'contrail-view-model'         : coreWebDir + '/js/models/ContrailViewModel',
             'contrail-list-model'         : coreWebDir + '/js/models/ContrailListModel',
@@ -148,7 +152,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'mon-infra-alert-list-view'   : coreWebDir + '/js/views/AlertListView',
             'mon-infra-alert-grid-view'   : coreWebDir + '/js/views/AlertGridView',
             'mon-infra-sysinfo-view'      : coreWebDir + '/js/views/SystemInfoView',
-            'mon-infra-dashboard-view'    : coreWebDir + '/js/views/MonitorInfraDashboardView',
+            //'mon-infra-dashboard-view'    : coreWebDir + '/js/views/MonitorInfraDashboardView',
             //End - core-bundle aliases
             //Start - jquery.dep.libs aliases
             'jquery.xml2json'            : coreWebDir + '/assets/jquery/js/jquery.xml2json',
@@ -205,14 +209,25 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'storage-init'                : 'empty:',
             'legend-view'                 : coreWebDir + '/js/views/LegendView',
             'gs-view'                     : coreWebDir + '/js/views/GridStackView',
-            'controlnode-viewconfig'      : 'empty:',
-            'vrouter-viewconfig'          : 'empty:',
-            'databasenode-viewconfig'     : 'empty:',
-            'analyticsnode-viewconfig'    : 'empty:',
-            'confignode-viewconfig'       : 'empty:',
-            'monitor-infra-viewconfig'    : 'empty:',
             'global-controller-viewconfig': 'empty:',
             'security-dashboard-viewconfig': 'empty:',
+            'controlnode-widgetcfg'       : 'empty:',
+            'vrouter-widgetcfg'           : 'empty:',
+            'databasenode-widgetcfg'      : 'empty:',
+            'analyticsnode-widgetcfg'     : 'empty:',
+            'confignode-widgetcfg'        : 'empty:',
+            'monitor-infra-widgetcfg'     : 'empty:',
+            'confignode-modelcfg'         : 'empty:',
+            'controlnode-modelcfg'        : 'empty:',
+            'vrouter-modelcfg'            : 'empty:',
+            'databasenode-modelcfg'       : 'empty:',
+            'analyticsnode-modelcfg'      : 'empty:',
+            'monitor-infra-modelcfg'      : 'empty:',
+            'monitor-infra-viewcfg'       : 'empty:',
+            'confignode-viewcfg'          : 'empty:',
+            'databasenode-viewcfg'        : 'empty:',
+            'vrouter-viewcfg'             : 'empty:',
+            'alarms-viewconfig'           : 'empty:',
             'core-alarm-utils'            :  coreWebDir + '/js/common/core.alarms.utils',
             'alarms-viewconfig'           : coreWebDir + '/js/views/alarms/alarms.viewconfig'
         };
@@ -501,7 +516,7 @@ var coreBundles = {
             'core-basedir/js/views/BarChartInfoView',
             'core-basedir/js/views/BreadcrumbDropdownView',
             'core-basedir/js/views/BreadcrumbTextView',
-            'core-basedir/js/views/ChartView',
+            'chart-view',
             'core-basedir/js/views/ControlPanelView',
             'core-basedir/js/views/InfoboxesView',
             'core-basedir/js/views/SectionView',
@@ -514,8 +529,9 @@ var coreBundles = {
             'mon-infra-alert-grid-view',
             "core-basedir/js/views/LogListView",
             'mon-infra-sysinfo-view',
-            'mon-infra-dashboard-view',
+            //'mon-infra-dashboard-view',
             'core-alarm-utils'
+            //'mon-infra-dashboard-view'
         ],
         'contrail-core-views': [
             'core-basedir/js/views/GridView',
@@ -1273,6 +1289,13 @@ if (typeof document !== 'undefined' && document) {
                                 require(['contrail-charts'],function(contrailCharts) { coCharts = contrailCharts;});
                                 require(['lodashv4'],function(lodashv4) { lodashv4 = lodashv4;});
                                 layoutHandler.load(menuXML);
+                                //Initialize toolbar
+                                require(['toolbar-view'],function(ToolbarView) {
+                                    new ToolbarView({
+                                        el: $('#toolbar'),
+                                        viewCfg: ctwvc.getToolbarViewConfig()
+                                    });
+                                });
                         });
                     });
                 });

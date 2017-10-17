@@ -95,7 +95,9 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'legend-view'                 : coreWebDir + '/js/views/LegendView',
         'chart-config'              : coreWebDir + '/js/chartconfig',
         'contrail-charts-view'        : coreWebDir + '/js/views/ContrailChartsView',
-        'contrail-charts'             : coreWebDir + '/assets/contrail-charts/js/contrail-charts'
+        'contrail-charts'             : coreWebDir + '/assets/contrail-charts/js/contrail-charts',
+        'chart-view'                  : coreWebDir + '/js/views/ChartView',
+        'node-color-mapping'          : coreWebDir + '/js/NodeColorMapping'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -135,7 +137,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'mon-infra-alert-grid-view'   : coreWebDir + '/js/views/AlertGridView',
             'mon-infra-log-list-view'     : coreWebDir + '/js/views/LogListView',
             'mon-infra-sysinfo-view'      : coreWebDir + '/js/views/SystemInfoView',
-            'mon-infra-dashboard-view'    : coreWebDir + '/js/views/MonitorInfraDashboardView',
+            //'mon-infra-dashboard-view'    : coreWebDir + '/js/views/MonitorInfraDashboardView',
             //End - core-bundle aliases
             //Start - jquery.dep.libs aliases
             'jquery.xml2json'            : coreWebDir + '/assets/jquery/js/jquery.xml2json',
@@ -461,7 +463,7 @@ var coreBundles = {
             'core-basedir/js/views/BarChartInfoView',
             'core-basedir/js/views/BreadcrumbDropdownView',
             'core-basedir/js/views/BreadcrumbTextView',
-            'core-basedir/js/views/ChartView',
+            'chart-view',
             'core-basedir/js/views/ControlPanelView',
             'core-basedir/js/views/InfoboxesView',
             'core-basedir/js/views/SectionView',
@@ -474,7 +476,7 @@ var coreBundles = {
             'mon-infra-alert-grid-view',
             'mon-infra-log-list-view',
             'mon-infra-sysinfo-view',
-            'mon-infra-dashboard-view'
+            //'mon-infra-dashboard-view'
         ],
         'contrail-core-views': [
             'core-basedir/js/views/GridView',

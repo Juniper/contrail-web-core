@@ -1,7 +1,7 @@
 define([
     'lodashv4',
     'd3v4',
-    'core-basedir/js/views/ChartView',
+    'chart-view',
     'contrail-list-model',
     'legend-view',
     'core-constants',

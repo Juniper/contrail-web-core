@@ -102,6 +102,7 @@ define([
             , area = cowu.getValueByJsonPath(chartOptions, 'area', false)
             , xTickCnt = cowu.getValueByJsonPath(chartOptions, 'xTickCnt')
             , yTickCnt = cowu.getValueByJsonPath(chartOptions, 'yTickCnt')
+            , yTickFormat = getValueByJsonPath(chartOptions, 'yTickFormat', cowu.getValueByJsonPath(chartOptions, 'yFormatter', null))
             ;
 
         if (!showXAxis) {
@@ -118,7 +119,8 @@ define([
         y2Axis.orient('left');
 
         tooltip.valueFormatter(function (d, i) {
-            return yAxis.tickFormat()(d, i);
+            return d == null ? "N/A" : yAxis.tickFormat()(yTickFormat === null ? d : yTickFormat(d));
+            //return yAxis.tickFormat()(d, i);
         }).headerFormatter(function (d, i) {
             return xAxis.tickFormat()(d, i);
         });
@@ -153,7 +155,6 @@ define([
                     data = chartDataObj.data,
                     requestState = chartDataObj.requestState,
                     tickPadding = getValueByJsonPath(chartOptions, 'tickPadding', 0),
-                    yTickFormat = getValueByJsonPath(chartOptions, 'yTickFormat', null),
                     yDataKey = contrail.checkIfExist(chartOptions.chartAxesOptionKey) ? chartOptions.chartAxesOptionKey : 'y';
 
                 nv.utils.initSVG(container);
@@ -161,6 +162,7 @@ define([
                     availableHeight1 = nv.utils.availableHeight(height, container, margin) - height2,
                     availableHeight2 = height2 - margin2.top - margin2.bottom;
 
+                var yDomain = chUtils.calculateDomainBasedOnOffset(data, cowu.getValueByJsonPath(chartOptions, 'yAxisOffset', 0));
                 chartModel.update = function () {
                     container.transition().duration(transitionDuration).call(chartModel)
                 };
@@ -192,6 +194,7 @@ define([
                 yScale = lines.yScale();
                 x2 = lines2.xScale();
                 y2 = lines2.yScale();
+                yScale.domain(yDomain);
 
                 // Setup containers and skeleton of chart
                 var wrap = container.selectAll('g.nv-wrap.nv-lineWithFocusChart').data([data]);
@@ -750,6 +753,7 @@ define([
                   .useInteractiveGuideline(true);
 
         chartModel.interpolate(chUtils.interpolateSankey);
+        
 
         if (showXAxis) {
             chartModel.xAxis.axisLabel(chartOptions.xAxisLabel)

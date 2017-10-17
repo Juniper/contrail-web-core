@@ -5,26 +5,30 @@
 define([
     'underscore',
     'backbone',
+    'contrail-view',
     'core-basedir/js/views/InfoboxesView',
     'mon-infra-log-list-model',
     'mon-infra-node-list-model',
     'mon-infra-alert-list-view',
     "core-basedir/js/views/LogListView",
     'mon-infra-sysinfo-view'
-], function(_,Backbone,InfoboxesView,
+], function(_,Backbone,ContrailView, InfoboxesView,
         LogListModel,NodeListModel,
         AlertListView,LogListView,SystemInfoView) {
-
+    var featureClassMap =  {
+        webController: 'mon-infra-controller-dashboard',
+        webStorage: 'mon-infra-storage-dashboard'
+    };
     //Ensure MonInfraDashboardView is instantiated only once and re-used always
     //Such that tabs can be added dynamically like from other feature packages
     //Instead oaf assigning the extended Backbone View to a class,instantiate it immediately
-    return new (Backbone.View.extend({
+    return ContrailView.extend({
         el: $(contentContainer),
         render: function () {
             var self = this;
             self.isRendered = true;
             var dashboardTmpl = contrail.getTemplate4Id(cowc.TMPL_INFRA_DASHBOARD);
-            $(contentContainer).html(dashboardTmpl);
+            $(self.$el).html(dashboardTmpl);
             this.infoBoxView = new InfoboxesView({
                 el: $(contentContainer).
                     find('#dashboard-infoboxes')
@@ -55,6 +59,25 @@ define([
 
                 logListView.render();
             },100);
+            var featureList = cowu.getValueByJsonPath(globalObj, 'webServerInfo;featurePkgsInfo', {});
+            if (cowu.getValueByJsonPath(featureList, 'webController;enable', false)) {
+                require([featureClassMap['webController']], function (ControllerDashboardView) {
+                    var controllerDashboardView = new ControllerDashboardView({
+                        // el: $(contentContainer)
+                    });
+                    self.addInfoboxes(controllerDashboardView.getInfoboxesConfig());
+                });
+            }
+            if (cowu.getValueByJsonPath(featureList, 'webStorage;enable', false)) {
+                require([featureClassMap['webStorage']], function (StorageDashboardView) {
+                    var storageDashboardView = new StorageDashboardView({
+                        // el: $(contentContainer)
+                    });
+                    self.addInfoboxes(storageDashboardView.getInfoboxesConfig());
+                });
+            }
+
+
         },
         addInfoboxes: function(infoBoxesCfg, positionCfg) {
             var self = this;
@@ -64,6 +87,6 @@ define([
                 self.nodeListModel.addListModel(infoBoxesCfg[i]['model']);
             }
         }
-    }))();
+    });
 
 });
