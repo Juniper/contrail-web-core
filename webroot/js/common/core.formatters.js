@@ -293,15 +293,16 @@ define([
 
                     //run the user defined formatter function
                     default :
-                        try{
+                        try {
                             if (contrail.checkIfFunction(eval(formatterKey))) {
                                 return eval(formatterKey)(value, obj, iconClass, key);
                             } else {
                                 return value;
-                            }
-                        }catch(e){
+                            }    
+                        } catch (error) {
                             return value;
                         }
+                        
                 };
             }
         };

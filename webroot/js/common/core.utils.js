@@ -9,9 +9,10 @@ define([
     'lodash',
     "core-constants",
     'contrail-list-model',
-    'core-alarm-parsers'
-    
-], function (_, moment, Handlebars, lodash, cowc, ContrailListModel, CoreAlarmsParsers) {
+    'core-alarm-parsers',
+    'node-color-mapping'
+], function (_, moment, Handlebars, lodash, cowc, ContrailListModel, CoreAlarmsParsers,
+        NodeColorMapping) {
     var serializer = new XMLSerializer(),
     domParser = new DOMParser();
 
@@ -316,14 +317,26 @@ define([
         };
 
         this.getRequestState4Model = function(model, data, checkEmptyDataCB) {
-            if (model.isRequestInProgress()) {
-                return cowc.DATA_REQUEST_STATE_FETCHING;
-            } else if (model.error === true) {
-                return cowc.DATA_REQUEST_STATE_ERROR;
-            } else if (model.empty === true || (contrail.checkIfFunction(checkEmptyDataCB) && checkEmptyDataCB(data))) {
-                return cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY;
+            if(model instanceof Backbone.Model) {
+                if(model.fetched == false) {
+                    return cowc.DATA_REQUEST_STATE_FETCHING;
+                } else if(model.error == true) {
+                    return cowc.DATA_REQUEST_STATE_ERROR;
+                } else if(model.empty === true || (contrail.checkIfFunction(checkEmptyDataCB) && checkEmptyDataCB(data))) {
+                    return cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY;
+                } else {
+                    return cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY
+                }
             } else {
-                return cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY
+                if (model.isRequestInProgress()) {
+                    return cowc.DATA_REQUEST_STATE_FETCHING;
+                } else if (model.error === true) {
+                    return cowc.DATA_REQUEST_STATE_ERROR;
+                } else if (model.empty === true || (contrail.checkIfFunction(checkEmptyDataCB) && checkEmptyDataCB(data))) {
+                    return cowc.DATA_REQUEST_STATE_SUCCESS_EMPTY;
+                } else {
+                    return cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY
+                }
             }
         };
 
@@ -704,13 +717,13 @@ define([
                     'core-basedir/js/views/GridStackView' : 'gs-view'
                 }
                 viewPath = ifNull(pathMapping[viewPath],viewPath);
-
                 onAllViewsRenderCompleteCB = renderConfig['onAllViewsRenderCompleteCB'];
                 onAllRenderCompleteCB = renderConfig['onAllRenderCompleteCB'];
                 lazyRenderingComplete  = renderConfig['lazyRenderingComplete'];
 
                 require([viewPath], function(ElementView) {
                     elementView = new ElementView({el: parentElement, model: model, attributes: viewAttributes, rootView: rootView, onAllViewsRenderCompleteCB: onAllViewsRenderCompleteCB, onAllRenderCompleteCB: onAllRenderCompleteCB});
+                    $(parentElement).data('ContrailView',elementView);
                     elementView.viewName = viewName;
                     elementView.modelMap = modelMap;
                     elementView.beginMyViewRendering();
@@ -1785,17 +1798,19 @@ define([
         this.chartDataFormatter = function (response, options, isRequestInProgress) {
             var cf = crossfilter(response);
             var timeStampField = 'T',
-                parsedData = [], failureCheckFn = getValueByJsonPath(options, 'failureCheckFn'),
-                substractFailures = getValueByJsonPath(options, 'substractFailures'),
-                colors = getValueByJsonPath(options, 'colors',cowc.FIVE_NODE_COLOR),
-                groupBy = getValueByJsonPath(options, 'groupBy'),
-                yField = getValueByJsonPath(options, 'yField'),
-                yFieldOperation = getValueByJsonPath(options, 'yFieldOperation'),
-                failureLabel = getValueByJsonPath(options, 'failureLabel', cowc.FAILURE_LABEL),
-                yAxisLabel = getValueByJsonPath(options, 'yAxisLabel'),
-                defaultZeroLineDisplay = getValueByJsonPath(options,'defaultZeroLineDisplay', false),
+                parsedData = [], failureCheckFn = cowu.getValueByJsonPath(options, 'failureCheckFn'),
+                substractFailures = cowu.getValueByJsonPath(options, 'substractFailures'),
+                colors = cowu.getValueByJsonPath(options, 'colors',cowc.FIVE_NODE_COLOR),
+                groupBy = cowu.getValueByJsonPath(options, 'groupBy'),
+                yField = cowu.getValueByJsonPath(options, 'yField'),
+                yFieldOperation = cowu.getValueByJsonPath(options, 'yFieldOperation'),
+                failureLabel = cowu.getValueByJsonPath(options, 'failureLabel', cowc.FAILURE_LABEL),
+                yAxisLabel = cowu.getValueByJsonPath(options, 'yAxisLabel'),
+                defaultZeroLineDisplay = cowu.getValueByJsonPath(options,'defaultZeroLineDisplay', false),
                 // limit is for requirements like top 5 records etc;
-                limit = getValueByJsonPath(options, 'limit'),
+                limit = cowu.getValueByJsonPath(options, 'limit'),
+                area = cowu.getValueByJsonPath(options, 'area', false),
+                showTextAtCenter = cowu.getValueByJsonPath(options, 'showTextAtCenter', false),
                 groupDim;
             if (response != null && getValueByJsonPath(response, '0;T') == null) {
                 timeStampField = 'T=';
@@ -1816,14 +1831,18 @@ define([
                 parsedData.push({
                    key: failureLabel,
                    color: cowu.getValueByJsonPath(options, 'failureColor', cowc.FAILURE_COLOR),
-                   values: []
+                   values: [],
+                   area: area,
+                   showTextAtCenter: showTextAtCenter
                 });
             }
-            if(response.length === 0 || isRequestInProgress && defaultZeroLineDisplay && groupBy!=null){
+            if(isRequestInProgress || defaultZeroLineDisplay && groupBy!=null){
                 parsedData.push({
                     key: 'DEFAULT',
                     color: cowc.DEFAULT_COLOR,
-                    values: []
+                    values: [],
+                    area: area,
+                    showTextAtCenter: showTextAtCenter
                 });
             }
             if (limit != null) {
@@ -1838,13 +1857,17 @@ define([
                 parsedData.push({
                     key: cowc.OTHERS,
                     color: cowc.OTHERS_COLORS,
-                    values: []
+                    values: [],
+                    area: area,
+                    showTextAtCenter: showTextAtCenter
                 });
                 for (var i = 0; i < limit; i++) {
                     parsedData.push({
                         key: i,
                         color: colors[i],
-                        values: []
+                        values: [],
+                        area: area,
+                        showTextAtCenter: showTextAtCenter
                     });
                 }
             } else if (groupBy != null) {
@@ -1852,15 +1875,21 @@ define([
                     groupByMap = _.sortBy(groupByMap, 'key'),
                     groupByMapLen = groupByMap.length,
                     groupByKeys = _.pluck(groupByMap, 'key');
-                if (colors != null && typeof colors == 'function') {
-                    colors = colors(groupByKeys, options.resetColor);
+                if ((options.type != null) || (colors != null && typeof colors == 'function')) {
+                    if(options.type != null) {
+                        colors = NodeColorMapping.getNodeColorMap(groupByKeys,options.resetColor,options.type);
+                    } else {
+                        colors = colors(groupByKeys, options.resetColor);
+                    }
                 }
                 for (var i = 0; i < groupByMapLen; i++) {
                     parsedData.push({
                         key: groupByMap[i]['key'],
                         color: (colors[groupByMap[i]['key']] == null)? colors[i % colors.length]
                                 : colors[groupByMap[i]['key']],
-                        values: []
+                        values: [],
+                        area: area,
+                        showTextAtCenter: showTextAtCenter
                     });
                 }
             } else {
@@ -1868,7 +1897,9 @@ define([
                     key: yAxisLabel,
                     color: (colors != null)?  ($.isArray(colors) ? colors[0] : colors) :
                                     ($.isArray(cowc.DEFAULT_COLOR) ? cowc.DEFAULT_COLOR[0] : cowc.DEFAULT_COLOR),
-                    values: []
+                    values: [],
+                    area: area,
+                    showTextAtCenter: showTextAtCenter
                 });
             }
 
@@ -1979,7 +2010,7 @@ define([
                               name: failureLabel,
                               total: total,
                           });
-                      } else if(response.length === 0 || isRequestInProgress && defaultZeroLineDisplay && groupBy!=null){
+                      } else if(isRequestInProgress || defaultZeroLineDisplay && groupBy!=null){
                           parsedData['DEFAULT'].values.push({
                               date: new Date(i/1000),
                               x: ifNull(i, 0)/1000,
@@ -2070,10 +2101,12 @@ define([
             var yFields = getValueByJsonPath(options,'yFields',[]);
             var parsedData = [];
             var colors = getValueByJsonPath(options,'colors',cowc.FIVE_NODE_COLOR);
-            var yLabels = getValueByJsonPath(options,'yLabels', []);
+            var yLabels = getValueByJsonPath(options,'yLabels', []),
+                area = cowu.getValueByJsonPath(options, 'area', false),
+                text = cowu.getValueByJsonPath(options, 'showTextAtCenter', false);
             $.each(yFields,function(i,yField){
                 var key = yLabels[i] != null ? yLabels[i]: getLabelForPercentileYField(yField);
-                parsedData[yField] = {"key":key,"color":colors[i],values:[]};
+                parsedData[yField] = {"key":key,"color":colors[i],values:[], area: area, showTextAtCenter: text};
                 var values = parsedData[yField]['values'];
                 $.each(data,function(j,d){
                     values.push({x:parseInt(getValueByJsonPath(d,"T=",0))/1000,y:getValueByJsonPath(d,yField,0)});
@@ -2120,33 +2153,53 @@ define([
         this.parseLineBarChartWithFocus = function (data, options) {
             var cf = crossfilter(data);
             var buckets = cowu.bucketizeStats(data, {
-                bucketSize: 4});
-            var groupBy = getValueByJsonPath(options, 'groupBy', 'Source');
+                bucketSize: getValueByJsonPath(options, 'bucketSize', 2.5)});
+            var groupBy = getValueByJsonPath(options, 'groupBy');
             var y1Field = getValueByJsonPath(options, 'y1Field');
             var y2Field = getValueByJsonPath(options, 'y2Field');
             var y2FieldOperation = getValueByJsonPath(options, 'y2FieldOperation');
             var y1FieldOperation = getValueByJsonPath(options, 'y1FieldOperation');
+            var y1AxisLabel = getValueByJsonPath(options, 'y1AxisLabel');
             var y2AxisLabel = getValueByJsonPath(options, 'y2AxisLabel');
             var y2AxisColor = getValueByJsonPath(options, 'y2AxisColor');
+            var y1AxisColor = getValueByJsonPath(options, 'y1AxisColor');
             var colors = getValueByJsonPath(options, 'colors');
             var resetColor = getValueByJsonPath(options,'resetColor',false);
-            var tsDim = cf.dimension(function (d) {return d.T});
-            var groupDim = cf.dimension(function (d) {return d[groupBy]});
-            var groupDimData = groupDim.group().all();
-            var groupDimKeys = _.pluck(groupDimData, 'key');
-            if (typeof colors == 'function') {
-               colors = colors(_.sortBy(groupDimKeys), resetColor);
+            var time = 'T=';
+            if (cowu.getValueByJsonPath(data, '0;T') != null) {
+                time = 'T';
             }
-            var nodeMap = {}, chartData = [];
-            $.each(groupDimData, function (idx, obj) {
-                nodeMap[obj['key']] = {
-                    key: obj['key'],
-                    values: [],
+            var tsDim = cf.dimension(function (d) {return d[time]});
+            var groupDim, groupDimData, chartData = []
+            if (groupBy != null ) {
+                groupDim = cf.dimension(function (d) {return d[groupBy]});
+                groupDimData = groupDim.group().all();
+                var groupDimKeys = _.pluck(groupDimData, 'key');
+                if (typeof colors == 'function') {
+                   colors = colors(_.sortBy(groupDimKeys), resetColor);
+                } else if(options.type != null) {
+                    colors = NodeColorMapping.getNodeColorMap(groupDimKeys, resetColor,options.type);
+                }    
+                var nodeMap = {};
+                $.each(groupDimData, function (idx, obj) {
+                    nodeMap[obj['key']] = {
+                        key: obj['key'],
+                        values: [],
+                        bar: true,
+                        color: colors[obj['key']] != null ? colors[obj['key']] : cowc.D3_COLOR_CATEGORY5[1]
+                    };
+                    chartData.push(nodeMap[obj['key']]);
+                });
+            } else {
+                var barData = {
+                    key: y1AxisLabel,
+                    color: (colors != null)?  ($.isArray(colors) ? colors[0] : colors) :
+                                    ($.isArray(cowc.DEFAULT_COLOR) ? cowc.DEFAULT_COLOR[0] : cowc.DEFAULT_COLOR),
                     bar: true,
-                    color: colors[obj['key']] != null ? colors[obj['key']] : cowc.D3_COLOR_CATEGORY5[1]
+                    values: []
                 };
-                chartData.push(nodeMap[obj['key']]);
-            });
+                chartData.push(barData);
+            }
             var lineChartData = {
                 key: y2AxisLabel,
                 values: [],
@@ -2162,44 +2215,59 @@ define([
                 if (sampleCnt == 0) {
                     sampleCnt = 1;
                 }
-                groupDimData = groupDim.group().all();
-                groupDimData = _.sortBy(groupDimData, 'key');
-                $.each(groupDimData, function(idx, obj) {
-                    groupCnt[obj['key']] = obj['value'];
-                });
-                var y1FieldData = groupDim.group().reduceSum(function (d) {
-                    return d[y1Field];
-                });
-                var y2FieldData = groupDim.group().reduceSum(function (d) {
-                    return d[y2Field];
-                });
-                var y1DataArr = y1FieldData.top(Infinity);
-                var y2DataArr = y2FieldData.top(Infinity);
-                var y1DataArrLen = y1DataArr.length;
-                var y2DataArrLen = y2DataArr.length;
+                if (groupBy != null) {
+                    groupDimData = groupDim.group().all();
+                    groupDimData = _.sortBy(groupDimData, 'key');
+                    $.each(groupDimData, function(idx, obj) {
+                        groupCnt[obj['key']] = obj['value'];
+                    });
+                    var y1FieldData = groupDim.group().reduceSum(function (d) {
+                        return d[y1Field];
+                    });
+                    var y2FieldData = groupDim.group().reduceSum(function (d) {
+                        return d[y2Field];
+                    });
+                    var y1DataArr = y1FieldData.top(Infinity);
+                    var y2DataArr = y2FieldData.top(Infinity);
+                    var y1DataArrLen = y1DataArr.length;
+                    var y2DataArrLen = y2DataArr.length;
 
-                for (var j = 0; j < y1DataArrLen; j++) {
-                    var y1DataObj = y1DataArr[j];
-                    if (nodeMap[y1DataObj['key']] != null ) {
-                        y1Value = y1DataObj['value'];
-                        if (y1FieldOperation == 'average') {
-                            y1Value = y1DataObj['value']/groupCnt[y1DataObj['key']];
+                    for (var j = 0; j < y1DataArrLen; j++) {
+                        var y1DataObj = y1DataArr[j];
+                        if (nodeMap[y1DataObj['key']] != null ) {
+                            y1Value = y1DataObj['value'];
+                            if (y1FieldOperation == 'average') {
+                                y1Value = y1DataObj['value']/groupCnt[y1DataObj['key']];
+                            }
+                            //avgResTime = avgResTime/1000; // converting to milli secs
+                            nodeMap[y1DataObj['key']]['values'].push({
+                                x: Math.round(i/1000),
+                                y: y1Value
+                            });
                         }
-                        //avgResTime = avgResTime/1000; // converting to milli secs
-                        nodeMap[y1DataObj['key']]['values'].push({
-                            x: Math.round(i/1000),
-                            y: y1Value
-                        });
                     }
-                }
-
-                for (var j = 0; j < y2DataArrLen; j++) {
-                    y2Value += y2DataArr[j]['value'];
-                }
-                if (y2FieldOperation == 'average') {
-                    y2Value = y2Value/sampleCnt;
+                    for (var j = 0; j < y2DataArrLen; j++) {
+                        y2Value += y2DataArr[j]['value'];
+                    }
+                    if (y2FieldOperation == 'average') {
+                        y2Value = y2Value/sampleCnt;
+                    }
+                } else {
+                    var recordsArr = tsDim.top(Infinity);
+                    var y1Value = cowu.getValueByJsonPath(recordsArr, '0;1'+y1Field, 5);
+                    var y2Value = cowu.getValueByJsonPath(recordsArr, '0;'+y2Field, 0.5);
+                    barData.values.push({
+                        date: new Date(ifNull(i, 0)/1000),
+                        timestampExtent: timestampExtent,
+                        name: y1AxisLabel,
+                        x: ifNull(i, 0)/1000,
+                        y: y1Value,
+                        color: y1AxisColor
+                        //total: maxValue
+                    });
                 }
                 lineChartData['values'].push({
+
                     x: Math.round(i/1000),
                     y: y2Value
                 });
@@ -2211,9 +2279,13 @@ define([
          * Method is to check the given element
          * is in gridstack container.
          */
+        // TODO need to change this once we enable flip
+        // options for widgets because the element
+        // hierarchy changes
         this.isGridStackWidget = function (el) {
             if (el != null && $(el).hasClass('item-content')
-                && $(el).parent('.grid-stack-item-content').parent('.custom-grid-stack-item').length > 0) {
+                && $(el).parent('.grid-stack-item-content').parent('.custom-grid-stack-item').length > 0 ||
+                $(el).parents('.flip-container').length > 0) {
                 return true;
             }
             return false;
@@ -2240,13 +2312,13 @@ define([
         }
 
         self.parseAndMergeStats = function (response,primaryDS) {
-            var primaryData = primaryDS.getItems();
-            if(primaryData.length == 0) {
+            var primaryData = $.isArray(primaryDS)? primaryDS :primaryDS.getItems();
+            if(primaryData.length == 0 && primaryDS.setData) {
                 primaryDS.setData(response);
-                return;
+                return primaryDS;
             }
             if(response.length == 0) {
-                return;
+                return primaryDS;
             }
             //If both arrays are not having first element at same time
             //remove one item accordingly
@@ -2271,7 +2343,12 @@ define([
                     }
                 }
             }
-            primaryDS.updateData(primaryData);
+            if (primaryDS.updateData) {
+                primaryDS.updateData(primaryData);
+                return;
+            } else {
+                return primaryData;
+            }
         };
 
 //        self.mergingFlag = false;
@@ -2338,7 +2415,6 @@ define([
                 self.updateLayoutPreference(elementId, preferences);
                 localStorage.removeItem(elementId);
             }
-
             if (localStorage.getItem(cowc.LAYOUT_PREFERENCE) != null) {
                 return _.result(JSON.parse(localStorage.getItem(cowc.LAYOUT_PREFERENCE)), elementId);
             }
@@ -2357,12 +2433,35 @@ define([
             }
             localStorage.setItem(cowc.LAYOUT_PREFERENCE, JSON.stringify(layoutPref));
         }
+        // toggle full screen
+        this.toggleFullScreen = function() {
+            if (!document.fullscreenElement &&    // alternative standard method
+                    !document.mozFullScreenElement && !document.webkitFullscreenElement) {  // current working methods
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.mozRequestFullScreen) {
+                    document.documentElement.mozRequestFullScreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+                }
+            } else {
+                if (document.cancelFullScreen) {
+                    document.cancelFullScreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitCancelFullScreen) {
+                    document.webkitCancelFullScreen();
+                }
+            }
+        }
         /**
          * Takes input as an array of configs.
          * The first one is considered as primary req and the rest are added as
          * vl config
          */
-        self.getStatsModelConfig = function (config,timeRange) {
+        self.fetchStatsListModel = function (config, timeRange) {
+            var listModel = new ContrailListModel({data:[]});
+            var defObj = $.Deferred();
             if (!_.isArray(config)) {
                 config = [config];
             }
@@ -2370,8 +2469,9 @@ define([
                     [Date.now() - (2 * 60 * 60 * 1000), Date.now()];
             var primaryRemoteConfig ;
             var vlRemoteList = [];
+            var ajaxArr = [], mergeFn, parseFn;
             for (var i = 0; i < config.length; i++) {
-                var statsConfig = config[i];
+				var statsConfig = config[i],whereDefObj = $.Deferred();
                 var noSanitize = cowu.getValueByJsonPath(statsConfig,'no_sanitize',false);
                 var queryType = cowu.getValueByJsonPath(statsConfig,'type','Aggregate');
                 var postData = {
@@ -2412,20 +2512,69 @@ define([
                     if (statsConfig['select'] != null) {
                         postData['formModelAttrs']['select'] = statsConfig['select'];
                     }
-                    if (statsConfig['where'] != null) {
-                        postData['formModelAttrs']['where'] = statsConfig['where'];
-                    }
                     if (statsConfig['time_granularity'] != null) {
                         postData['formModelAttrs']['time_granularity'] = statsConfig['time_granularity'];
                     }
                     if (statsConfig['time_granularity_unit'] != null) {
                         postData['formModelAttrs']['time_granularity_unit'] = statsConfig['time_granularity_unit'];
                     }
+                    if (statsConfig['where'] != null) {
+                        if(matchArr = statsConfig['where'].match(/node-type = (.*)/)) {
+                            monitorInfraUtils.fetchHostNamesForNodeType({nodeType:matchArr[1]}).
+                            done(function(whereClause) {
+                                postData['formModelAttrs']['where'] = monitorInfraUtils.getWhereClauseForSystemStats(whereClause);
+                                whereDefObj.resolve(whereClause);
+                            });
+                        } else {
+                            postData['formModelAttrs']['where'] = statsConfig['where'];
+                            whereDefObj.resolve();
+                        }
+                    } else {
+                        //whereDefObj.resolve();
+                        ajaxArr.push($.ajax({
+                            url : "/api/qe/query/" + _.result(postData,'formModelAttrs.table_name'),
+                            type: 'POST',
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            data: JSON.stringify(postData)
+                        }));
+                        if (statsConfig['mergeFn'] != null) {
+                            mergeFn = statsConfig['mergeFn'];
+                        }
+                        if (statsConfig['parser'] != null) {
+                            parseFn = statsConfig['parser'];
+                        }
+                    }
                 }
                 if(i == 0) {
                     if (statsConfig['type'] != null && statsConfig['type'] == "non-stats-query"){
                         primaryRemoteConfig = remoteConfig;
                     } else {
+                        whereDefObj.done(function() {
+                            $.ajax({
+                                url : "/api/qe/query/" + _.result(postData,'formModelAttrs.table_name'),
+                                type: 'POST',
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                data: JSON.stringify(postData)
+                            }).done(function(response) {
+                                if(typeof(statsConfig['parser']) == 'function') {
+                                    var data = statsConfig['parser'](response);
+                                    listModel.setData(data);
+                                    defObj.resolve(data);
+                                } else {
+                                    var data = getValueByJsonPath(response,'data',[]);
+                                    //Copying queryJSON property from request to response
+                                    if (response['queryJSON'] != null) {
+                                        data = _.map(data, function(obj) { 
+                                            return _.extend({}, obj, {queryJSON: response['queryJSON']});
+                                        });
+                                    }
+                                    listModel.setData(data);
+                                    defObj.resolve(data);
+                                }
+                            });
+                        });
                         var remoteObj = {
                             ajaxConfig : {
                                 url : "/api/qe/query",
@@ -2435,6 +2584,7 @@ define([
                             dataParser : (statsConfig['parser'])? statsConfig['parser'] :
                                 function (response) {
                                     var data = getValueByJsonPath(response,'data',[]);
+                                    //Copying queryJSON property from request to response
                                     if (response['queryJSON'] != null) {
                                         data = _.map(data, function(obj) {
                                             return _.extend({}, obj, {queryJSON: response['queryJSON']});
@@ -2507,6 +2657,26 @@ define([
                     vlRemoteList.push (vlRemoteObj);
                 }
             }
+            //as of now when callback
+            if (ajaxArr.length > 0) {
+                $.when.apply(this, ajaxArr).then(function (response1, response2/*, ... */) {
+                    var data = ajaxArr.length == 1 ? cowu.getValueByJsonPath(response1, 'data', []) : cowu.getValueByJsonPath(response1, '0;data', []);
+                    if (mergeFn != null) {
+                        data = cowu.parseAndMergeStats(cowu.getValueByJsonPath(response2, '0;data', []), cowu.getValueByJsonPath(response1, '0;data', []));
+                    }
+                    if (response1 && response1['queryJSON'] != null) {
+                        data = _.map(data, function(obj) {
+                                return _.extend({}, obj, {queryJSON: response1['queryJSON'] != null ? response1['queryJSON'] : response1[0]['queryJSON']});
+                        });
+                    }
+                    if (parseFn != null) {
+                        data = parseFn(data);
+                    }
+                    defObj.resolve(data);
+                    listModel.setData(data);
+                });
+            }
+            //Alarms page need the listmodel config
             var listModelConfig =  {
                 remote : primaryRemoteConfig,
                 cacheConfig:{
@@ -2520,9 +2690,9 @@ define([
             if (statsConfig['modelId'] != null) {
                 listModelConfig['cacheConfig']['ucid'] = statsConfig['modelId'];
             }
-            return listModelConfig;
+            defObj['listModelConfig'] = listModelConfig;
+            return defObj;
         };
-
         self.modifyTimeRangeInRemoteConfig = function (remoteConfig,timeExtent) {
             var postData = JSON.parse(getValueByJsonPath(remoteConfig,'ajaxConfig;data'));
             var formModelAttrs = getValueByJsonPath(postData,'formModelAttrs');
@@ -2648,7 +2818,7 @@ define([
         self.isAdmin = function () {
             var roles = _.result(globalObj, 'webServerInfo.role', []);
             return roles.indexOf(cowc.CLOUDADMIN_ROLE) > -1 ? true : false;
-        }
+        };
     };
 
     function filterXML(xmlString, is4SystemLogs) {
@@ -2802,7 +2972,8 @@ define([
                           }
                         }
                     }
-                }else if(typeof checkArrayContainsObject(updatedObj[i]) == 'object' && checkArrayContainsObject(updatedObj[i]) !== null && checkArrayContainsObject(updatedObj[i]).constructor !== Array){
+                }else if(typeof checkArrayContainsObject(updatedObj[i]) == 'object' && checkArrayContainsObject(updatedObj[i]) !== null 
+                    && checkArrayContainsObject(updatedObj[i]).constructor !== Array){
                     for(var j = 0; j < updatedObj[i].length; j++){
                             if(oldJson !== undefined && oldJson !== null){
                                 if(oldJson[i] !== undefined){

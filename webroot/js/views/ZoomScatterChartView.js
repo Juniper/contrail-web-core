@@ -4,13 +4,14 @@
  
 define([
     'underscore',
+    'chart-view',
     'contrail-view',
     'core-basedir/js/models/ZoomScatterChartModel',
     'contrail-list-model',
     'core-basedir/js/views/ControlPanelView',
     'chart-utils'
-], function (_, ContrailView, ZoomScatterChartModel, ContrailListModel, ControlPanelView, chUtils) {
-    var ZoomScatterChartView = ContrailView.extend({
+], function (_, ChartView, ContrailView, ZoomScatterChartModel, ContrailListModel, ControlPanelView, chUtils) {
+    var ZoomScatterChartView = ChartView.extend({
         render: function () {
             var self = this,
                 viewConfig = self.attributes.viewConfig,
@@ -20,12 +21,13 @@ define([
                 deferredObj = $.Deferred(),
                 cfDataSource = self.attributes.viewConfig.cfDataSource,
                 selector = $(self.$el);
-
-            if (self.model == null && viewConfig['modelConfig'] != null) {
+            self.viewConfig = viewConfig;
+            ChartView.prototype.bindListeners.call(self);
+            /*if (self.model == null && viewConfig['modelConfig'] != null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
             }
 
-            if (self.model != null) {
+            if (self.model != null && self.model._type == 'contrailListModel') {
                 if(cfDataSource == null) {
                     self.renderChart(selector, viewConfig, self.model);
                 } else if(self.model.loadedFromCache == true) {
@@ -46,13 +48,14 @@ define([
                         self.renderChart(selector, viewConfig, self.model);
                     });
                 }
-
-                if (viewConfig.loadChartInChunks !== false) {
+                // if (viewConfig.loadChartInChunks !== false) {
                     self.model.onDataUpdate.subscribe(function () {
                         self.renderChart(selector, viewConfig, self.model);
                     });
-                }
+                // }
+            }
 
+                /*
                 $(selector).bind("refresh", function () {
                     self.renderChart(selector, viewConfig, self.model);
                 });
@@ -69,12 +72,11 @@ define([
                 },cowc.THROTTLE_RESIZE_EVENT_TIME);
 
                 window.addEventListener('resize',self.resizeFunction);
-                $(self.$el).parents('.custom-grid-stack-item').on('resize',self.resizeFunction);
-            }
-
-            if (widgetConfig !== null) {
-                self.renderView4Config($(self.$el).find('.zoom-scatter-chart-container'), self.model, widgetConfig, null, null, null);
-            }
+                $(self.$el).parents('.custom-grid-stack-item').on('resize',self.resizeFunction);*/
+                self.renderChart($(self.$el), viewConfig, self.model);
+                if (widgetConfig !== null) {
+                    self.renderView4Config($(self.$el).find('.zoom-scatter-chart-container'), self.model, widgetConfig, null, null, null);
+                }
         },
 
         renderChart: function (selector, viewConfig, dataListModel) {
@@ -89,7 +91,11 @@ define([
             self.isMyRenderInProgress = true;
 
             if (!contrail.checkIfExist(self.chartModel)) {
-                $(selector).html(contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART));
+                if($(selector).parents('.custom-grid-stack-item')) {
+                    $(selector).html(contrail.getTemplate4Id(cowc.TMPL_GRIDSTACK_ZOOMED_SCATTER_CHART)(chartOptions));
+                } else {
+                    $(selector).html(contrail.getTemplate4Id(cowc.TMPL_ZOOMED_SCATTER_CHART));
+                }
 
                 chartConfig = getChartConfig(selector, chartOptions, viewConfig);
                 self.chartModel = new ZoomScatterChartModel(dataListModel, chartConfig);
@@ -141,6 +147,10 @@ define([
                 selector = contrail.handleIfNull(selector, $(self.$el));
 
             $(selector).find('.nv-noData').remove();
+        },
+        destroy : function() {
+            var self = this;
+            $(self.$el).parents('.custom-grid-stack-item').off('resize');
         }
     });
 
@@ -167,9 +177,9 @@ define([
 
         plotZoomScatterChart(chartView, chartConfig, chartOptions, selector);
 
-        if (chartModel.isPrimaryRequestInProgress() && !chartModel.loadedFromCache) {
+        /*if (chartModel.isPrimaryRequestInProgress() && !chartModel.loadedFromCache) {
             dataLoadingHandler(chartView, chartConfig, chartOptions, chartDataRequestState)
-        } else if (chartModel.isError() === true) {
+        } else*/ if (chartModel.isError() === true) {
             dataErrorHandler(chartView, chartConfig, chartDataRequestState);
         } else if(chartModel.isEmpty() === true) {
             dataEmptyHandler(chartView, chartConfig, chartDataRequestState)
@@ -302,6 +312,7 @@ define([
             .attr("text-anchor", "middle")
             .attr("x", width / 2)
             .attr("y", height + margin.bottom - 10)
+            //.attr('dy', chartConfig.showXMinMax ? '-1em' : '0em')
             .text(chartConfig.xLabel);
 
         chartSVG.append("text")
@@ -309,7 +320,7 @@ define([
             .attr("text-anchor", "middle")
             .attr("x", -1 * (height / 2))
             .attr("y", -margin.left)
-            .attr("dy", ".75em")
+            .attr("dy", "1.5em")
             .attr("transform", "rotate(-90)")
             .text(chartConfig.yLabel);
 
@@ -1344,8 +1355,8 @@ define([
             chartSelector = $(selector).find('.chart-container'),
             width = $(chartSelector).width() - 10,
             widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
-            height = (cowu.isGridStackWidget(selector))?
-                    $(selector).closest('.custom-grid-stack-item').height() - 32:
+            height = ($(selector).closest('.custom-grid-stack-item').length > 0 )? 
+                    $(selector).find('.zoom-scatter-chart-container').height() :
                         (chartOptions['height'])? chartOptions['height'] : 275;
         if (widgetConfig != null) {
           //Reduce the height of the chart to accomodate the widget header.
@@ -1380,6 +1391,10 @@ define([
             doBucketize : chartOptions['doBucketize'],
             bubbleSizeFn: chartOptions['bubbleSizeFn'],
             defaultDataStatusMessage: true,
+            showXMinMax: chartOptions['showXMinMax'],
+            showYMinMax: chartOptions['showYMinMax'],
+            overViewText: chartOptions['overViewText'],
+            overviewTextOptions: chartOptions['overviewTextOptions'],
             showColorFilter: getValueByJsonPath(chartOptions,"showColorFilter",true),
             statusMessageHandler: cowm.getRequestMessage,
             bubbleDefMaxValue: getValueByJsonPath(chartOptions,'bubbleCfg;defaultMaxValue', 0) 

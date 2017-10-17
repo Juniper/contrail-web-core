@@ -4,12 +4,13 @@
 
 define([
     'underscore',
-    'core-basedir/js/views/ChartView',
+    'chart-view',
     'contrail-list-model',
     'legend-view',
     'core-constants',
-    'chart-utils'
-], function (_, ChartView,  ContrailListModel, LegendView, cowc,chUtils) {
+    'chart-utils',
+    'node-color-mapping'
+], function (_,  ChartView, ContrailListModel, LegendView, cowc,chUtils, NodeColorMapping) {
     var cfDataSource;
     var stackedAreaChartView = ChartView.extend({
         settingsChanged: function(newSettings) {
@@ -30,6 +31,7 @@ define([
             var viewConfig = this.attributes.viewConfig,tooltipElementObj,
                 ajaxConfig = viewConfig['ajaxConfig'],
                 self = this, deferredObj = $.Deferred(),
+                selector = $(self.$el),
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ?
                         viewConfig.widgetConfig : null,
                 resizeId;
@@ -37,9 +39,20 @@ define([
             var listenToHistory = getValueByJsonPath(chartOptions,'listenToHistory',false);
             //settings
             cowu.updateSettingsWithCookie(viewConfig);
-            cfDataSource = viewConfig.cfDataSource;
+            self.viewConfig = viewConfig;
+            self.renderChart(selector, viewConfig, self.model);
+            self.updateOverviewText();
+            ChartView.prototype.bindListeners.call(self);
+            //self.renderChart($(self.$el), viewConfig, self.model);
+            /*
+            if(self.model instanceof Backbone.Model) {
+                self.model.on("change",function() {
+                    self.renderChart($(self.$el), viewConfig, self.model);
+                });
+            } else {
             if(listenToHistory) {
                 var postData, remoteConfig;
+                cfDataSource = viewConfig.cfDataSource;
                 if (self.model === null && viewConfig['modelConfig'] != null) {
                     remoteConfig = viewConfig['modelConfig'];
                     postData = JSON.parse(getValueByJsonPath(pRemoteConfig,'remote;ajaxConfig;data'));
@@ -61,55 +74,24 @@ define([
                 });
             }
 
-            if (self.model !== null) {
-                if(cfDataSource == null) {
-                    self.renderChart($(self.$el), viewConfig, self.model);
-                } else if(self.model.loadedFromCache == true) {
-                    self.renderChart($(self.$el), viewConfig, self.model);
-                }
+            self.viewConfig = viewConfig;
 
-                if(cfDataSource != null) {
-                    cfDataSource.addCallBack('updateChart',function(data) {
-                        self.renderChart($(self.$el), viewConfig, self.model);
-                    });
-                } else {
-                    self.model.onAllRequestsComplete.subscribe(function () {
-                        self.renderChart($(self.$el), viewConfig, self.model);
-                    });
-                }
-
-                if (viewConfig.loadChartInChunks) {
-                    self.model.onDataUpdate.subscribe(function () {
-                        self.renderChart($(self.$el), viewConfig, self.model);
-                    });
-                }
-
-                $($(self.$el)).bind("refresh", function () {
-                    self.renderChart($(self.$el), viewConfig, self.model);
-                });
-                var prevDimensions = chUtils.getDimensionsObj(self.$el);
-                /* window resize may not be require since the nvd3 also provides a smoother refresh*/
-                self.resizeFunction = _.debounce(function (e) {
-                    if(!chUtils.isReRenderRequired({
-                        prevDimensions:prevDimensions,
-                        elem:self.$el})) {
-                        return;
-                    }
-                    prevDimensions = chUtils.getDimensionsObj(self.$el);
-                    self.renderChart($(self.$el), viewConfig, self.model);
-                },cowc.THROTTLE_RESIZE_EVENT_TIME);
-                window.addEventListener('resize',self.resizeFunction);
-                $(self.$el).parents('.custom-grid-stack-item').on('resize',self.resizeFunction);
-            }
+            ChartView.prototype.bindListeners.call(self);
+            self.renderChart($(self.$el), viewConfig, self.model);*/
         },
         renderChart: function (selector, viewConfig, chartViewModel) {
             if (!($(selector).is(':visible'))) {
                 return;
             }
             var self = this;
-            var data = chartViewModel.getFilteredItems();
+            var data;
+            if(chartViewModel instanceof Backbone.Model) {
+                data = chartViewModel.get('data');
+            } else {
+                data = chartViewModel.getFilteredItems();
+            }
+            viewConfig = self.viewConfig;
             var chartOptionsForSize = ChartView.prototype.getChartOptionsFromDimension(selector);
-            var chartTemplate = contrail.getTemplate4Id('core-stacked-area-chart-template');
             var widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ?
                     viewConfig.widgetConfig : null;
             var chartOptions = getValueByJsonPath(viewConfig, 'chartOptions', {});
@@ -117,11 +99,16 @@ define([
             var totalHeight = (cowu.isGridStackWidget(selector))?
                     $(selector).closest('.custom-grid-stack-item').height():
                         cowu.getValueByJsonPath(chartOptions, 'height', 300);
+            chartOptions['cssClass'] = chartOptions['cssClass'] != null ? contrail.format('{0} {1}', chartOptions['cssClass'], 'stacked-area-chart-container') :
+                'stacked-area-chart-container' ;
+            ChartView.prototype.appendTemplate(selector, chartOptions);
 
-            var totalWidth = $(selector).find('.stacked-area-chart-container').width();
+            var totalWidth = $(selector).find('.main-chart').width();
+            var totalHeight = $(selector).find('.main-chart').height();
             var margin =  cowu.getValueByJsonPath(chartOptions, 'margin', { top: 20, right: 20, bottom: 20, left: 20 });
             var showLegend = getValueByJsonPath(chartOptions,'showLegend', true);
-            var showControls = getValueByJsonPath(chartOptions,'showControls',true);
+            var legendPosition = cowu.getValueByJsonPath(chartOptions, 'legendPosition', 'top');
+            var overViewText = cowu.getValueByJsonPath(chartOptions, 'overViewText', false);            
             var title = getValueByJsonPath(chartOptions,'title',null);
             var xAxisLabel = getValueByJsonPath(chartOptions,'xAxisLabel',"Time");
             var yAxisLabel = getValueByJsonPath(chartOptions,'yAxisLabel',"Count");
@@ -137,23 +124,19 @@ define([
             var showYLabel = cowu.getValueByJsonPath(chartOptions, 'showYLabel', true);
             var showXMinMax = cowu.getValueByJsonPath(chartOptions, 'showXMinMax', false);
             var showYMinMax = cowu.getValueByJsonPath(chartOptions, 'showYMinMax', false);
+            var bar = cowu.getValueByJsonPath(chartOptions, 'bar', false)
             if (!showXAxis) {
                 // Bottom we are subtracting only 20 because there may be overview chart in bottom for which we may need
                 // the bottom margin
-                margin['bottom'] = margin['bottom'] - 20;
+                margin['bottom'] -= 20;
             }
             if (!showYAxis) {
                 margin['right'] = 0;
-            }
-            if (showLegend) {
-                totalHeight -= 30; //we can make dynamic by getting the legend div height
             }
             var yAxisFormatter = getValueByJsonPath(chartOptions,'yAxisFormatter',function (value) {
                 return cowu.numberFormatter(value);
             });
             var listenToHistory = getValueByJsonPath(chartOptions,'listenToHistory',false);
-            var data = [];
-            data = chartViewModel.getFilteredItems();
 
             var customTimeFormat = d3.time.format.multi([
                     //[".%L", function(d) { return d.getMilliseconds(); }],
@@ -171,10 +154,16 @@ define([
               heightOverview = totalHeight - marginOverview.top - marginOverview.bottom;
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                data = viewConfig['parseFn'](data, chartOptions);
+                data = viewConfig['parseFn'](data, chartOptions, chartViewModel.isRequestInProgress());
               //Need to check and remove the data.length condition because invalid for object
             } else {
+                if(chartViewModel instanceof Backbone.Model) {
+                    chartOptions.type = chartViewModel.get('type');
+                }
                 data = cowu.chartDataFormatter(data, chartOptions, chartViewModel.isRequestInProgress());
+            }
+            if(self.model instanceof Backbone.Model && self.model.get('type') != null) {
+                self.colors = NodeColorMapping.getNodeColorMap(_.without(_.pluck(data, 'key'), failureLabel),resetColor, self.model.get('type'));
             }
             if (colors != null) {
                 if (typeof colors == 'function') {
@@ -186,26 +175,46 @@ define([
 
             //empty and add the svg
             d3.select($(selector).find('.stacked-area-chart-container')[0]).empty();
-            $(selector).html(chartTemplate);
             if (widgetConfig !== null) {
                 this.renderView4Config($(selector).
                         find('.stacked-area-chart-container'), null, widgetConfig,
                         null, null, null);
             }
-            //set the svg width and height
-            var svg = d3.select($(selector).find('.stacked-area-chart-container')[0])
-                        .append("svg")
-                        .attr("width", width + margin.left + margin.right)
-                        .attr("height", height + margin.top + margin.bottom);
+            
+            var svg = d3.select($(selector).find('svg')[0])
 
             nv.addGraph(function() {
-              var chart = nv.models.stackedAreaChart()
+              var chart;
+              if (bar) {
+                  chart = nv.models.multiBarChart()
+                            .x(function(d) { return d['x'] })
+                            .y(function(d) { return d['y'] })
+                            .showControls(false)
+                            .showLegend(false)
+                            .clipEdge(true)
+                            .stacked(true);    
+                  if (chartOptions.tooltipFn != null) {
+                      chart.tooltip.contentGenerator(function (obj) {
+                          return chartOptions.tooltipFn(obj, chartOptions, yAxisFormatter);
+                      })
+                  }
+              } else {
+                  chart = nv.models.stackedAreaChart()
                             .x(function(d) { return d['x'] })   //We can modify the data accessor functions...
                             .y(function(d) { return d['y'] })   //...in case your data is formatted differently.
                             .useInteractiveGuideline(true)    //Tooltips which show all data points. Very nice!
                             .showControls(false)       //Allow user to choose 'Stacked', 'Stream', 'Expanded' mode.
                             .showLegend(false)
                             .clipEdge(true);
+                  chart.stacked.dispatch.on("areaClick.toggle", null);
+                  //Use the tooltip formatter if present
+                   if(chartOptions.tooltipFn) {
+                       chart.interactiveLayer.tooltip.contentGenerator(function (obj) {
+                            return chartOptions.tooltipFn(obj,chartOptions, yAxisFormatter);
+                        })
+                   }
+                  chart.interpolate("monotone");
+              }
 
               //Format x-axis labels with custom function.
               chart.xAxis.tickFormat(function(d) { return d3.time.format('%H:%M')(new Date(d)) });
@@ -230,7 +239,7 @@ define([
                       chart.yDomain(domain);
               }
               //initialize the chart in the svg element
-              chart.interpolate("monotone");
+              
               svg.datum(data)
                 .call(chart)
 
@@ -256,64 +265,9 @@ define([
                                   .attr("transform", "rotate(-90)")
                                   .text(yAxisLabel);
               }
-              chart.stacked.dispatch.on("areaClick.toggle", null);
-              //Use the tooltip formatter if present
-               if(chartOptions.tooltipFn) {
-                   chart.interactiveLayer.tooltip.contentGenerator(function (obj) {
-                                return chartOptions.tooltipFn(obj,chartOptions, yAxisFormatter);
-                            })
-                        }
-              //Add the modified legends
-              showControls=false;
               //if (showControls == true || showLegend == true) {
-                  var colorsMap = self.colors,
-                      nodeLegend = [],
-                      legendData = [];
-                  $.each(colorsMap, function (key, value) {
-                      nodeLegend.push({
-                          name: key,
-                          color: value
-                      });
-                  });
-                  legendData.push({
-                      label: title,
-                      legend: nodeLegend
-                  });
-                  if (failureCheckFn != null && typeof failureCheckFn == 'function') {
-                      legendData.push({
-                          label: failureLabel,
-                          legend: [{
-                              name: failureLabel,
-                              color: cowu.getValueByJsonPath(chartOptions, 'failureColor', cowc.FAILURE_COLOR),
-                          }]
-                      });
-                  }
-                  var legendView = new LegendView({
-                      el: $(selector),
-                      viewConfig: {
-                          showControls: showControls,
-                          controlsData: [{label: 'Stacked', cssClass: 'stacked filled'},
-                              {label: 'Grouped', cssClass: 'grouped'}],
-                          showLegend: showLegend,
-                          legendData: legendData
-                      }
-                  });
-                  legendView.render();
-                  //Bind the click handlers to legend
-                  $(selector).find('.custom-chart-legend')
-                      .find('div.square, div.circle')
-                      .on('click', function (e) {
-                          if ($(e.target).hasClass('square') && !$(e.target).hasClass('filled')) {
-                              $(selector).find('div.square').toggleClass('filled');
-                          } else if ($(e.target).hasClass('circle') && !$(e.target).hasClass('filled')) {
-                              $(selector).find('div.circle').toggleClass('filled');
-                          }
-                          if ($(e.target).hasClass('grouped')) {
-                              transitionGrouped(self);
-                          } else if ($(e.target).hasClass('stacked')) {
-                              transitionStacked(self);
-                          }
-                      });
+              ChartView.prototype.renderLegend(selector, chartOptions, self.getLegendViewConfig(chartOptions));
+
               //}
 //              nv.utils.windowResize(chart.update); Not using since we need to do other stuff on resize
               $(selector).data('chart', chart);
@@ -366,6 +320,43 @@ define([
                 tooltipElementObj.find('.popover-content').append(tooltipElementContentObj);
                 return $(tooltipElementObj).wrapAll('<div>').parent().html();
             }
+        },
+        getLegendViewConfig: function (chartOptions) {
+            var self = this,
+                failureCheckFn = cowu.getValueByJsonPath(chartOptions,'failureCheckFn',null),
+                failureLabel = getValueByJsonPath(chartOptions,'failureLabel', cowc.FAILURE_LABEL),
+                showLegend = getValueByJsonPath(chartOptions,'showLegend', true),
+                title = getValueByJsonPath(chartOptions,'title',null);
+            var colorsMap = self.colors,
+                nodeLegend = [],
+                legendData = [];
+            $.each(colorsMap, function (key, value) {
+                nodeLegend.push({
+                    name: key,
+                    color: value
+                });
+            });
+            legendData.push({
+                label: title,
+                legend: nodeLegend
+            });
+            if (failureCheckFn != null && typeof failureCheckFn == 'function') {
+                legendData.push({
+                    label: failureLabel,
+                    legend: [{
+                        name: failureLabel,
+                        color: cowu.getValueByJsonPath(chartOptions, 'failureColor', cowc.FAILURE_COLOR),
+                    }]
+                });
+            }
+            return {
+                showLegend: showLegend,
+                legendData: legendData
+            };
+        },
+        destroy : function() {
+            var self = this;
+            $(self.$el).parents('.custom-grid-stack-item').off('resize');
         }
     });
 

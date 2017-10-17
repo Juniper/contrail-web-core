@@ -18,11 +18,21 @@ define([
         self.loadedFromCache = dataListModel.loadedFromCache;
 
         self.isRequestInProgress = function() {
-            return dataListModel.isRequestInProgress()
+            if(dataListModel instanceof Backbone.Model) {
+                //rawData = dataListModel.get('data');
+            } else {
+                return dataListModel.isRequestInProgress()
+            }
         };
 
         self.isPrimaryRequestInProgress = function() {
-            return dataListModel.isPrimaryRequestInProgress()
+
+            if(dataListModel instanceof Backbone.Model) {
+                //rawData = dataListModel.get('data');
+            } else {
+                return dataListModel.isPrimaryRequestInProgress()
+            }
+            
         };
 
         self.isError = function() {
@@ -43,7 +53,11 @@ define([
         };
 
         self.refresh = function(chartConfig) {
-            var rawData = dataListModel.getFilteredItems();
+            var rawData;
+            if(dataListModel._type == "contrailListModel") 
+                rawData = dataListModel.getFilteredItems();
+            else
+                rawData = dataListModel.get('data');
             self.data = contrail.checkIfFunction(chartConfig['dataParser']) ? chartConfig['dataParser'](rawData,chartConfig) : rawData;
 
             if(chartConfig['doBucketize'] == true) {
@@ -176,7 +190,12 @@ define([
             } else if(chartConfig.yLabelFormat != null) {
                 self.yAxis.tickFormat(chartConfig.yLabelFormat)
             }
-
+            if (chartConfig['showXMinMax']) {
+                self.xAxis.tickValues([self.xMin, self.xMax])
+            }
+            if (chartConfig['showYMinMax']) {
+                self.yAxis.tickValues([self.yMin, self.yMax])
+            }
             self.xMed = median(_.map(chartData, function (d) {
                 return d[chartConfig.xField];
             }));

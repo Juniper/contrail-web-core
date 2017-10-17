@@ -4,13 +4,13 @@
 
 define([
     'underscore',
-    'contrail-view',
+    'chart-view',
     'core-basedir/js/models/MultiBarChartModel',
     'contrail-list-model',
     'nv.d3',
     'chart-utils'
-], function (_, ContrailView, MultiBarChartModel, ContrailListModel, nv, chUtils) {
-    var MultiBarChartView = ContrailView.extend({
+], function (_, ChartView, MultiBarChartModel, ContrailListModel, nv, chUtils) {
+    var MultiBarChartView = ChartView.extend({
         render: function () {
             var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
                 viewConfig = this.attributes.viewConfig,
@@ -23,52 +23,19 @@ define([
             if (self.model === null && viewConfig['modelConfig'] !== null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
             }
-            if (self.model !== null) {
-                var callback = function () {
-                    var chartData = self.model.getItems();
-                    if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                        chartData = viewConfig['parseFn'](chartData);
-                    }
-                    self.renderChart(selector, viewConfig, chartData);
-                }
-                if (self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
-                	callback();
-                }
-
-                self.model.onAllRequestsComplete.subscribe(function () {
-                	callback();
-                });
-
-                if (viewConfig.loadChartInChunks) {
-                    self.model.onDataUpdate.subscribe(function () {
-                        callback();
-                    });
-                }
-                var prevDimensions = chUtils.getDimensionsObj(self.$el);
-                self.resizeFunction = _.debounce(function (e) {
-                    if(!chUtils.isReRenderRequired({
-                        prevDimensions:prevDimensions,
-                        elem:self.$el})) {
-                        return;
-                    }
-                    callback();
-                 },cowc.THROTTLE_RESIZE_EVENT_TIME);
-
-                $(self.$el).parents('.custom-grid-stack-item').on('resize',self.resizeFunction);
-
-            }
+            ChartView.prototype.bindListeners.call(self);
         },
 
-        renderChart: function (selector, viewConfig, data) {
+        renderChart: function (selector, viewConfig, chartDataModel) {
             var chartViewConfig, chartModel, chartData, chartOptions;
 
             chartOptions = ifNull(viewConfig['chartOptions'], {});
 
-            chartViewConfig = getChartViewConfig(data, chartOptions);
-            chartData = chartViewConfig['chartData'];
+            chartViewConfig = getChartViewConfig(chartData, chartOptions);
+            chartData  = (chartDataModel instanceof Backbone.Model) ? chartDataModel.get('data') : chartDataModel.getItems(),
             chartOptions = chartViewConfig['chartOptions'];
-            if ($(selector).parents('.custom-grid-stack-item').length != 0) {
-                chartOptions['height'] = $(selector).parents('.custom-grid-stack-item').height();
+            if (cowu.isGridStackWidget(selector)) {
+                chartOptions['height'] = $(selector).closest('.custom-grid-stack-item').height();
             }
             chartModel = new MultiBarChartModel(chartOptions);
             this.chartModel = chartModel;
@@ -76,9 +43,7 @@ define([
             if ($(selector).find("svg") != null) {
                 $(selector).empty();
             }
-
-            $(selector).append("<svg style='height:" + chartOptions.height + "px;'></svg>");
-
+            ChartView.prototype.appendTemplate(selector, chartOptions);
             //Store the chart object as a data attribute so that the chart can be updated dynamically
             $(selector).data('chart', chartModel);
 

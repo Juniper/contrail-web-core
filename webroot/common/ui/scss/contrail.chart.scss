@@ -138,7 +138,12 @@ $color_external_arc: url(#pattern-stripe);
 }
 .widget-main-rightmenu.rightmenu .col1,
 .zoom-scatter-chart-container.rightmenu .col1 {
-    margin:0 0 0 60px;
+    margin:0 0 0 60px !important;
+    overflow:hidden;
+    position: relative;
+}
+.zoom-scatter-chart-container.gridstack-zoom-scatter-chart-container.rightmenu .col1 {
+    margin:0 0 0 20px;
     overflow:hidden;
     position: relative;
 }
