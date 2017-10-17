@@ -95,7 +95,9 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'legend-view'                 : coreWebDir + '/js/views/LegendView',
         'chart-config'              : coreWebDir + '/js/chartconfig',
         'contrail-charts-view'        : coreWebDir + '/js/views/ContrailChartsView',
-        'contrail-charts'             : coreWebDir + '/assets/contrail-charts/js/contrail-charts'
+        'contrail-charts'             : coreWebDir + '/assets/contrail-charts/js/contrail-charts',
+        'chart-view'                  : coreWebDir + '/js/views/ChartView',
+        'node-color-mapping'          : coreWebDir + '/js/NodeColorMapping'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
@@ -461,7 +463,7 @@ var coreBundles = {
             'core-basedir/js/views/BarChartInfoView',
             'core-basedir/js/views/BreadcrumbDropdownView',
             'core-basedir/js/views/BreadcrumbTextView',
-            'core-basedir/js/views/ChartView',
+            'chart-view',
             'core-basedir/js/views/ControlPanelView',
             'core-basedir/js/views/InfoboxesView',
             'core-basedir/js/views/SectionView',

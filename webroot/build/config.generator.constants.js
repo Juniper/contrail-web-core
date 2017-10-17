@@ -157,8 +157,6 @@ constants.controllerModules = [
               "controller-basedir/monitor/infrastructure/databasenode/ui/js/views/DatabaseNodeView",
               "controller-basedir/monitor/infrastructure/databasenode/ui/js/views/DatabaseNodeListView",
               "controller-basedir/monitor/infrastructure/databasenode/ui/js/views/PercentileBarView",
-
-
               "monitor-infra-analyticsnode-model",
               "monitor-infra-databasenode-model",
               "monitor-infra-confignode-model",
@@ -168,14 +166,6 @@ constants.controllerModules = [
               "monitor-infra-parsers",
               "monitor-infra-utils",
               "monitor-infra-constants",
-
-              "controlnode-viewconfig",
-              "vrouter-viewconfig",
-              "databasenode-viewconfig",
-              "analyticsnode-viewconfig",
-              "confignode-viewconfig",
-              "monitor-infra-viewconfig",
-              "node-color-mapping"
           ],
           exclude: [
               "underscore",
@@ -183,7 +173,7 @@ constants.controllerModules = [
               "contrail-view",
               "controller-init",
               "contrail-model",
-              "mon-infra-dashboard-view",
+              //"mon-infra-dashboard-view",
               "core-basedir/js/views/LoginWindowView",
               "core-basedir/js/views/CarouselView",
               "gs-view",

@@ -3,7 +3,7 @@
  */
 
 define([
-    'underscore',
+    'lodash',
     'legend-view'
 ], function (_,LegendView) {
     var historyCallBacks = $.Callbacks('unique');
@@ -17,7 +17,7 @@ define([
                     var msg = $(selector).find('.nv-noData').text();
                     chart.update();
                     $(selector).find('.nv-noData').text(msg);
-                } else if($(selector).data('chart') != null)
+                } else if($(selector).data('chart') != null && $(selector).data('chart').update != null)
                     $(selector).data('chart').update();
             }
         },
@@ -222,6 +222,8 @@ define([
                             showLegend: false,
                             showControls: false,
                             tickPadding: 8,
+                            overViewText: false,
+                            legendPosition: 'top',
                             margin: {
                                 left: 45,
                                 top: 15,
@@ -232,14 +234,15 @@ define([
                             showXMinMax: true,
                             showYMinMax: true,
                             forceY: [0, 0.01],
+                            legendView: LegendView,
                             defaultZeroLineDisplay: true,
                             tooltipFn: this.defaultLineAreaTooltipFn
                         }
                     }
-                };
+            };
             var defaultViewConfigMap = {
-                 'StackedBarChartWithFocusView' : stackChartConfig,
                  'StackedAreaChartView'         : stackChartConfig,
+                 'StackedBarChartWithFocusView' : stackChartConfig,
                  "LineWithFocusChartView": {
                     viewConfig: {
                         class: 'mon-infra-chart chartMargin',
@@ -251,6 +254,8 @@ define([
                             xAxisLabel: '',
                             yAxisLabel: '',
                             groupBy: 'Source',
+                            //overViewText: true,
+                            yAxisOffset: 0,
                             showXMinMax: true,
                             showYMinMax: true,
                             yField: '',
@@ -281,6 +286,7 @@ define([
                                 return d3.format('.2f')(value);
                             },
                             showLegend: false,
+                            legendPosition: 'top',
                             defaultZeroLineDisplay: true,
                             legendView: LegendView,
                             tooltipFn: this.defaultLineAreaTooltipFn
@@ -328,10 +334,7 @@ define([
                 chartObj.xAxis.ticks(xTickCnt);
             }
             if (yTickCnt) {
-                if (chartObj.y1Axis != null) {
-                    chartObj.y1Axis.ticks(yTickCnt)
-                }
-                chartObj.yAxis.ticks(yTickCnt);
+                chartObj.y1Axis != null ? chartObj.y1Axis.ticks(0): chartObj.yAxis.ticks(0);
             }
             if (!showTicks) {
                 chartObj.xAxis.ticks(0);
@@ -374,15 +377,55 @@ define([
             }
             return chartObj;
         },
-
         listenToHistory: function (callBack) {
             historyCallBacks.add(callBack);
             return historyCallBacks;
         },
-
         getTimeExtentForDuration: function (secs) {
             var currTime = _.now();
             return [new Date(currTime - secs * 1000), new Date(currTime)];
+        },
+        calculateDomainBasedOnOffset: function (data, offset) {
+            var domain = [];
+            var stackedData = _.pluck(data, 'values');
+            var allObjs = _.reduce(stackedData, function (result, value) {
+                return result.concat(value);
+            }, []);
+            var maxValue = d3.max(allObjs, function(d) { return d.total; });
+            var minValue = d3.min(allObjs, function(d) { return d.total; });
+            domain[0] = minValue;
+            domain[1] = maxValue + (offset/100) * maxValue;
+            if (domain[1] == 0)
+                domain = [0, 1];
+            return domain;
+        },
+        getLastYValue: function (data, viewConfig) {
+            var yFormatter = cowu.getValueByJsonPath(viewConfig, 'chartOptions;overviewTextOptions;formatter',
+                 cowu.getValueByJsonPath(viewConfig, 'chartOptions;yFormatter'));
+            var valuesArrLen = ifNull(data, []).length;
+            var yField = cowu.getValueByJsonPath(viewConfig, 'chartOptions;overviewTextOptions;key',
+                 cowu.getValueByJsonPath(viewConfig, 'chartOptions;yField', 'y'));
+            var operator = cowu.getValueByJsonPath(viewConfig, 'chartOptions;overviewTextOptions;operator');
+            //Default operator is latest value
+            var y = cowu.getValueByJsonPath(data, (valuesArrLen - 1 )+';'+yField, '-');
+            var yValueArr = _.pluck(data, yField);
+            if (operator == 'max') {
+                y = _.max(yValueArr);
+            } else if (operator == 'average') {
+                y = _.sum(yValueArr)/yValueArr.length
+            } else if (operator == 'sum') {
+                y = _.sum(yValueArr);
+            }
+            if (y != '-' && yFormatter != null) {
+                y = yFormatter(y);
+            }
+            if ($.isNumeric(y)) {
+                y = Math.round(y);
+            }
+            if (yField != null && yField.indexOf('cpu_share') > -1) {
+                y += ' %';
+            }
+            return y;
         }
     };
 

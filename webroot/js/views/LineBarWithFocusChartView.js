@@ -4,7 +4,7 @@
 
 define([
     'underscore',
-    'core-basedir/js/views/ChartView',
+    'chart-view',
     'core-basedir/js/models/LineBarWithFocusChartModel',
     'contrail-list-model',
     'nv.d3',
@@ -46,7 +46,12 @@ define([
             }
 
             self.renderChart(selector, viewConfig, self.model);
+            self.updateOverviewText();
 
+            self.viewConfig = viewConfig;
+            ChartView.prototype.bindListeners.call(self);
+
+            /*
             if (self.model !== null) {
                 if (self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
                     self.updateChart(selector, viewConfig, self.model);
@@ -74,17 +79,20 @@ define([
 
                 $(self.$el).parents('.custom-grid-stack-item').on('resize',self.resizeFunction);
 
-            }
+            }*/
         },
 
         renderChart: function (selector, viewConfig, chartDataModel) {
             var self = this,
-                data = chartDataModel.getItems(),
-                chartTemplate = contrail.getTemplate4Id(cowc.TMPL_CHART),
+                data = (chartDataModel instanceof Backbone.Model) ? chartDataModel.get('data') : chartDataModel.getItems(),
+                //data = modelData.slice(0), //work with shallow copy
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
                 chartViewConfig, chartOptions, chartViewModel;
 
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
+                if(viewConfig['parseFn'] === cowu.parseLineBarChartWithFocus && chartDataModel instanceof Backbone.Model) {
+                    viewConfig['chartOptions'].type = chartDataModel.get('type');
+                }
                 data = viewConfig['parseFn'](data, viewConfig['chartOptions']);
             }
             if (cowu.isGridStackWidget(selector)) {
@@ -99,16 +107,13 @@ define([
             if (showLegend) {
                 chartOptions['height'] -= 30;
             }
+            ChartView.prototype.appendTemplate(selector, chartOptions);
+            //selector = $(selector).find('.main-chart');
+            //self.$el = selector;
             chartViewModel = new LineBarWithFocusChartModel(chartOptions);
             chartViewModel.chartOptions = chartOptions;
 
             self.chartViewModel = chartViewModel;
-
-            if ($(selector).find("svg") != null) {
-                $(selector).empty();
-            }
-
-            $(selector).append(chartTemplate(chartOptions));
 
             //Store the chart object as a data attribute so that the chart can be updated dynamically
             $(selector).data('chart', chartViewModel);
@@ -122,15 +127,6 @@ define([
             }
 
             nv.addGraph(function () {
-                self.resizeFn = _.debounce(function () {
-                    chUtils.updateChartOnResize($(self.$el), self.chartViewModel);
-                }, 500);
-                nv.utils.windowResize(self.resizeFn);
-
-                chartViewModel.dispatch.on('stateChange', function (e) {
-                    nv.log('New State:', JSON.stringify(e));
-                });
-
                 //Bind the refresh to updateChart() so it can be updated later. Eg: tabs onActivate
                 $(selector).find('svg').bind("refresh", function () {
                     self.updateChart(selector, viewConfig, chartDataModel);
@@ -178,10 +174,10 @@ define([
         },
 
 
-        resize: function () {
+        /*resize: function () {
             var self = this;
             _.isFunction(self.resizeFn) && self.resizeFn();
-        },
+        },*/
 
         getChartViewConfig: function(chartData, chartOptions) {
             var chartViewConfig = {};
@@ -223,6 +219,10 @@ define([
 
             setData2Chart(self, chartViewConfig, chartDataModel, self.chartViewModel);
             updateDataStatusMessage(self, chartViewConfig, chartDataModel);
+        },
+        destroy : function() {
+            var self = this;
+            $(self.$el).parents('.custom-grid-stack-item').off('resize');
         }
     });
 
