@@ -176,7 +176,7 @@ define([
                                    tagsDetails[j].tag.name,
                       "value":actValue
                  };
-              if (tagsDetails[j].tag.tag_type === tagName) {
+              if (tagsDetails[j].tag.tag_type_name === tagName) {
                   tagsArray.push(data);
               }
           }
