@@ -70,13 +70,10 @@ define([
             });
             //Listen for change events once gridStack is rendered else it's getting triggered even while adding widgets for the first time
             self.$el.on('change',function(event,items) {
-                //Added to avoid saving to localStorage on resetLayout..as change event gets triggered even if we remove all widgets from gridstack
-                if(cowu.getLayoutPreference(self.elementId) != null) {
-                    if(self.doSaveLayout == true)
-                        self.saveGrid();
-                    if(self.doSaveLayout == true)
-                        self.doSaveLayout = false;
-                }
+                if(self.doSaveLayout == true)
+                    self.saveGrid();
+                if(self.doSaveLayout == true)
+                    self.doSaveLayout = false;
             });
         },
         //Mark the layout as invalid if there are more than 5 widgets in a row i.e
@@ -85,7 +82,7 @@ define([
             var itemWidths = _.sum(data,'itemAttr.width');
             var avgItemWidth = itemWidths/data.length;
             if(avgItemWidth < 2.3) {
-                return false;
+            	return false;
             }
             return true;
         },
@@ -141,7 +138,6 @@ define([
             if(self.movedWidgetCfg) {
                 // self.doSaveLayout = false;
                 self.add(self.movedWidgetCfg, true);
-                self.movedWidgetCfg = null;
             }
             var widgetCfgList = self.widgetCfgList;
             //Check if there exists a saved preference for current gridStack id
@@ -169,9 +165,9 @@ define([
                     itemAttr: $.extend({},currWidgetCfg['itemAttr'],widgetCfgList[i]['itemAttr'])
                 });
             }
-            //Save the grid layout once gridstack view is rendered there are dropped widgets
-            self.saveGrid();
             if(self.movedWidgetCfg) {
+                //Save the grid layout once gridstack view is rendered there are dropped widgets
+                self.saveGrid();
                 self.movedWidgetCfg = null;
             }
             self.$el.data('grid-stack-instance',self);

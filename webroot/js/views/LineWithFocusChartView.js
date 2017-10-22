@@ -89,9 +89,8 @@ define([
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 data = viewConfig['parseFn'](data, viewConfig['chartOptions'], chartDataModel.isRequestInProgress());
             }
-            if (cowu.getValueByJsonPath(viewConfig, 'chartOptions;height') == null &&
-                    $(selector).parents('.custom-grid-stack-item').length != 0) {
-                    viewConfig['chartOptions']['height'] = $(selector).parents('.custom-grid-stack-item').height();
+            if (cowu.isGridStackWidget(selector)) {
+                viewConfig['chartOptions']['height'] = $(selector).closest('.custom-grid-stack-item').height();
             }
             chartViewConfig = self.getChartViewConfig(data, viewConfig, chartDataModel.isRequestInProgress());
             chartOptions = chartViewConfig['chartOptions'];

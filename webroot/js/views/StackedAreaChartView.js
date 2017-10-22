@@ -114,7 +114,7 @@ define([
                     viewConfig.widgetConfig : null;
             var chartOptions = getValueByJsonPath(viewConfig, 'chartOptions', {});
             chartOptions = $.extend(true, {}, chartOptions, chartOptionsForSize);
-            var totalHeight = ($(selector).closest('.custom-grid-stack-item').length > 0 )?
+            var totalHeight = (cowu.isGridStackWidget(selector))?
                     $(selector).closest('.custom-grid-stack-item').height():
                         cowu.getValueByJsonPath(chartOptions, 'height', 300);
 
