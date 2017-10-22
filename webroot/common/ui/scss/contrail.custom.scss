@@ -2504,6 +2504,9 @@ $label_color: #3182bd;
         right: 0px;
         margin:0px;
         height:100%;
+        -webkit-box-shadow: -3px 0px 2px -2px rgba(0,0,0,0.1);
+        -moz-box-shadow: -3px 0px 2px -2px rgba(0,0,0,0.1);
+        box-shadow: -3px 0px 2px -2px rgba(0,0,0,0.1);
     }
     .trafficGroups_sidePanel{
         height:100%;
@@ -2511,9 +2514,6 @@ $label_color: #3182bd;
         padding:10px 20px;
         background-color: #fdfdfd;
         overflow:auto;
-        -webkit-box-shadow: -3px 0px 2px -2px rgba(0,0,0,0.1);
-        -moz-box-shadow: -3px 0px 2px -2px rgba(0,0,0,0.1);
-        box-shadow: -3px 0px 2px -2px rgba(0,0,0,0.1);
         -webkit-animation-duration: 1s;
         animation-duration: 1s;
         -webkit-animation-fill-mode: both;
