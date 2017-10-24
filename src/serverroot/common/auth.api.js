@@ -354,6 +354,12 @@ function getConfigEntityByServiceEndpoint (req, serviceName)
     return getAuthMethod[orchMode].getConfigEntityByServiceEndpoint(req, serviceName);
 }
 
+function checkIfValidToken (req, tokenId, callback)
+{
+    var orchMode = req.session.loggedInOrchestrationMode;
+    return getAuthMethod[orchMode].checkIfValidToken(req, tokenId, callback);
+}
+
 exports.doAuthenticate = doAuthenticate;
 exports.getTenantList = getTenantList;
 exports.getTokenObj = getTokenObj;
@@ -389,4 +395,4 @@ exports.getRoleList = getRoleList;
 exports.getAuthRetryData = getAuthRetryData;
 exports.getPortToProcessMapByReqObj = getPortToProcessMapByReqObj;
 exports.getConfigEntityByServiceEndpoint = getConfigEntityByServiceEndpoint;
-
+exports.checkIfValidToken = checkIfValidToken;
