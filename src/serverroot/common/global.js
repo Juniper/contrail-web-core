@@ -353,4 +353,8 @@ global.VCENTER_WSDL = 'webroot/js/vim.wsdl';
 /* Async map limit Count */
 global.ASYNC_MAP_LIMIT_COUNT = 100;
 
+/* Bypass Authentication */
+/* The below requests are authorized using keystone token */
+global.URLS_TO_BYPASS_AUTH = ["/forward-proxy"];
+
 module.exports = global;
