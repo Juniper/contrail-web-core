@@ -232,6 +232,7 @@ function routeAll (req, res, next, callback)
     if (!checkLoginReq(req)) {
       commonUtils.redirectToLogout(req, res);
       callback(null);
+      return;
     }
     pendingReqQObj[ctx.id] = ctx;
     callback(ctx);
