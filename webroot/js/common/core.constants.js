@@ -220,6 +220,7 @@ define([
         //stacked bar chart
         this.TMPL_CUSTOM_CHART_LEGEND = 'custom-chart-legend';
         this.TOOLTIP_TEMPLATE = "tooltip-template";
+        this.TOOLTIP_CUSTOM_TEMPLATE = "tooltip-custom-template";
         this.TOOLTIP_LINEAREACHART_TEMPLATE = "tooltip-lineareachart-template";
 
         this.TMPL_NODE_DETAIL_SPARKLINE_BOX = 'node-details-sparkline-template';

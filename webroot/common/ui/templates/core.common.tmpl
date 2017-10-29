@@ -2625,21 +2625,21 @@
         <div id="traffic-groups-grid-view"></div>
         <div id="traffic-groups-radial-chart"></div>
         <div id="traffic-groups-legend-info" class="row col-xs-12 hidden">
-            <div class="col-xs-6">
-            <ul class="trafficGroupsTagIcons">
-                <li><i class="fa contrailGlyph-application-alt"></i>Application</li>
-                <li><i class="fa contrailGlyph-deployment-alt"></i>Deployment</li>
-                <li><i class="fa contrailGlyph-site-alt"></i>Site</li>
-                <li><i class="fa contrailGlyph-tier"></i>Tier</li>
-            </ul>
-            <ul class="tgChartLegend">
-                <li><span class="customIcon external"></span>Other Project / External</li>
-                <li><span class="customIcon implictRule"></span>Implicit Deny / Allow</li>
-            </ul>
+            <div class="col-xs-6 tgTagsLegend margin-left-21 padding-5">
+                <ul class="trafficGroupsTagIcons">
+                    <li><i class="fa contrailGlyph-application-alt"></i>Application</li>
+                    <li><i class="fa contrailGlyph-deployment-alt"></i>Deployment</li>
+                    <li><i class="fa contrailGlyph-tier"></i>Tier</li>
+                    <li><i class="fa contrailGlyph-site-alt"></i>Site</li>
+                </ul>
+                <ul class="tgChartLegend">
+                    <li><span class="customIcon external"></span>Other Project / External</li>
+                    <li><span class="customIcon implictRule"></span>Implicit Deny / Allow</li>
+                </ul>
             </div>
-            <div class="col-xs-4 tgCirclesLegend"></div>
+            <div class="col-xs-4 tgCirclesLegend margin-left-21"></div>
         </div>
-        <div id="traffic-groups-link-info"></div>
+        <div id="traffic-groups-link-info" class="hidden"></div>
     </div>
 </script>
 
@@ -2710,12 +2710,11 @@
                    {{#IfCompare this.policyRules.length 0 operator='!='}}
                    {{#each this.policyRules}}
                     <li>
-                        <h2>Policy: <span class="{{this.implicitRule}}">{{this.policy_name}}</span></h2>
-                        <div class="row col-xs-12 padding-bottom-5">
-                            <dl>
-                                <dt>Rule: {{this.rule_name}}</dt>
-                            </dl>
-                        </div>
+                        <h2 class="margin-0-0-10">
+                            <a data-toggle="tooltip" class="showMoreInfo customTooltip" data-placement="top" data-delay='{"show":"10", "hide":"10"}' title='<b>Rule UUID:</b> {{this.rule_name}}'>
+                            Policy: <span class="{{this.implicitRule}}">{{this.policy_name}}</span>
+                            </a>
+                        </h2>
                         {{#IfCompare this.src null operator = '!='}}
                             <h3>{{this.simple_action}}</h3>
                             <div class="row simpleAction padding-bottom-5">
@@ -2745,36 +2744,26 @@
                         {{/IfCompare}}
                         <div class="row padding-bottom-5">
                             <div class="col-xs-6 no-padding">
-                                <h6 class="iconFontStyle">{{this.srcId}}</h6>
+                                <h6 class="iconFontStyle">
+                                    <a class="showMoreInfo customTooltip" data-placement="top" data-delay='{"show":"400", "hide":"200"}' title='{{{this.srcTooltipContent}}}'>{{this.srcId}}</a>
+                                </h6>
                                 <dl class="row">
-                                    <dt class="col-xs-6">Sessions</dt>
-                                    <dd class="col-xs-3 padding-0-0-0-5">Active</dd>
-                                    <dt class="col-xs-3 padding-0-0-0-5">Added</dt>
-                                </dl>
-                                <dl class="row">
-                                    <dt class="col-xs-6">Initiated:</dt>
-                                    <dd class="col-xs-3 padding-0-0-0-5">{{this.src_session_initiated_active}}</dd>
-                                    <dd class="col-xs-3 padding-0-0-0-5">{{this.src_session_initiated}}</dd>
-                                    <dt class="col-xs-6">Responded:</dt>
-                                    <dd class="col-xs-3 padding-0-0-0-5">{{this.src_session_responded_active}}</dd>
-                                    <dd class="col-xs-3 padding-0-0-0-5">{{this.src_session_responded}}</dd>
+                                    <dt class="col-xs-9">Sessions Initiated: </dt>
+                                    <dd class="col-xs-2">{{this.src_session_initiated}}</dd>
+                                    <dt class="col-xs-9">Sessions Responded: </dt>
+                                    <dd class="col-xs-2">{{this.src_session_responded}}</dd>
                                 </dl>
                             </div>
                             {{#IfCompare this.srcId this.dstId operator='!='}}
                                 <div class="col-xs-6 no-padding borderLeft">
-                                    <h6 class="iconFontStyle">{{this.dstId}}</h6>
+                                    <h6 class="iconFontStyle">
+                                        <a class="showMoreInfo customTooltip" data-placement="top" data-delay='{"show":"400", "hide":"200"}' title='{{{this.dstTooltipContent}}}'>{{this.dstId}}</a>
+                                    </h6>
                                     <dl class="row">
-                                        <dt class="col-xs-6">Sessions</dt>
-                                        <dd class="col-xs-3 padding-0-0-0-5">Active</dd>
-                                        <dt class="col-xs-3 padding-0-0-0-5">Added</dt>
-                                    </dl>
-                                    <dl class="row">
-                                        <dt class="col-xs-6">Initiated:</dt>
-                                        <dd class="col-xs-3 padding-0-0-0-5"> {{this.dst_session_initiated_active}}</dd>
-                                        <dd class="col-xs-3 padding-0-0-0-5"> {{this.dst_session_initiated}}</dd>
-                                        <dt class="col-xs-6">Responded:</dt>
-                                        <dd class="col-xs-3 padding-0-0-0-5"> {{this.dst_session_responded_active}}</dd>
-                                        <dd class="col-xs-3 padding-0-0-0-5"> {{this.dst_session_responded}}</dd>
+                                        <dt class="col-xs-9">Sessions Initiated: </dt>
+                                        <dd class="col-xs-2">{{this.dst_session_initiated}}</dd>
+                                        <dt class="col-xs-9">Sessions Responded: </dt>
+                                        <dd class="col-xs-2">{{this.dst_session_responded}}</dd>
                                     </dl>
                                 </div>
                             {{/IfCompare}}
@@ -2795,20 +2784,33 @@
                 <header class="iconFontStyle">
                     <span> {{this.title}} </span>
                 </header>
-                <h1> VMI Traffic: </h1>
+                <h1>{{this.vmiLabel}} {{#IfCompare this.vmiCount '' operator='!='}}
+                    ({{this.vmiCount}}){{/IfCompare}}</h1>
                 <div class="row">
-                    <dl class="col-xs-12 margin-10-0">
-                        <dt class="col-xs-8 no-padding">VMI</dt>
-                        <dd class="col-xs-2 no-padding padding-0-0-0-5">In Bytes</dd>
-                        <dt class="col-xs-2 no-padding padding-0-0-0-5">Out Bytes</dt>
-                    </dl>
-                    {{#each this.vmiInfo}}
-                    <dl class="col-xs-12 margin-5-0-0">
-                        <dt class="col-xs-8 no-padding">{{this.name}}</dt>
-                        <dd class="col-xs-2 no-padding padding-0-0-0-5">{{this.inBytes}}</dd>
-                        <dd class="col-xs-2 no-padding padding-0-0-0-5">{{this.outBytes}}</dd>
+                    {{#IfCompare this.data 'nodata' operator='=='}}
+                    <div class="text-center margin-top-25">
+                       No results found
+                    </div>
+                    {{else IfCompare this.data '' operator='!='}}
+                    {{#each this.data}}
+                    <dl class="col-xs-12 margin-5-0">
+                        <dt class="col-xs-12 no-padding font-bold">{{this.name}}</dt>
+                        <dd class="col-xs-6 margin-5-0-0">VN : </dd>
+                        <dd class="col-xs-6 margin-5-0-0">{{this.vn}}</dd>
+                        <dd class="col-xs-6 margin-5-0-0">vRouter : </dd>
+                        <dd class="col-xs-6 margin-5-0-0">{{this.vrouter}}</dd>
+                        <!--<dd class="col-xs-6 margin-5-0-0">Logged Bytes (In/Out) : </dd>
+                        <dd class="col-xs-6 margin-5-0-0">{{this.loggedIn}} / {{this.loggedOut}}</dd>-->
+                        <dd class="col-xs-6 margin-5-0-0">Sampled Bytes (In/Out) : </dd>
+                        <dd class="col-xs-6 margin-5-0-0">{{this.sampledIn}} / {{this.sampledOut}}</dd>
                     </dl>
                     {{/each}}
+                    {{else}}
+                    <div class="text-center margin-top-25">
+                        <span class="loading"><i class="fa fa-spinner fa-spin"></i></span>
+                        Loading...
+                    </div>
+                    {{/IfCompare}}
                 </div>
             </div>
             {{/IfCompare}}
@@ -3024,6 +3026,20 @@
         </div>
     </div>
 </div>
+</script>
+<script type="text/x-handlebars-template" id="tooltip-custom-template">
+ <div class="custom-tooltip">
+    <table>
+       <tbody>
+           <tr>{{#each this.columns}}<th>{{this}}</th>{{/each}}</tr>
+           {{#each this.rows}}
+           <tr>
+               {{#each this.values}}<td>{{this}}</td>{{/each}}
+           </tr>
+           {{/each}}
+       </tbody>
+    </table>
+ </div>
 </script>
 <script type="text/x-handlebars-template" id="alarms-eventdrop-tooltip-template">
  <div class="nvtooltip xy-tooltip nv-pointer-events-none popover popover-tooltip popover-tooltip-no-icon ">
