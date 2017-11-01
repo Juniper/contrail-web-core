@@ -537,6 +537,7 @@ function formatV3AuthTokenData (authObj, isUnscoped)
     var password = authObj['password'];
     var tenant = authObj['tenant'];
     var tokenId = authObj['tokenid'];
+    var projectId = authObj['projectid'];
     if ((null == authObj['domain']) &&
         (null != authObj['req'])) {
         authObj['domain'] =
@@ -583,6 +584,14 @@ function formatV3AuthTokenData (authObj, isUnscoped)
         return v3data;
     }
     v3data['auth']['scope'] = {};
+    if (null != projectId) {
+        v3data['auth']['scope'] = {
+            "project": {
+                "id": projectId
+            }
+        };
+        return v3data;
+    }
     if (null != tenant) {
         /* Scoped to project */
         v3data['auth']['scope'] = {
@@ -1815,7 +1824,9 @@ function getProjectDetails (projects, userObj, callback)
     var userObjList = [];
     var projCnt = projects.length;
     for (var i = 0; i < projCnt; i++) {
+        var projId = projects[i]['id'];
         userObj['tenant'] = projects[i]['name'];
+        userObj['projectid'] = projId;
         var uObj = commonUtils.cloneObj(userObj);
         uObj['req'] = req;
         uObj['data'] = formatV3AuthTokenData(userObj, false);
