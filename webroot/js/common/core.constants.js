@@ -318,6 +318,7 @@ define([
         this.QE_MODAL_CLASS_700 = 'modal-700';
         this.QE_DEFAULT_MODAL_CLASSNAME = 'modal-840';
         this.QE_FLOW_TABLE_TYPE = "FLOW";
+        this.QE_SESSION_TABLE_TYPE = "SESSION";
         this.QE_OBJECT_TABLE_TYPE = "OBJECT";
         this.QE_STAT_TABLE_TYPE = "STAT";
         this.QE_LOG_TABLE_TYPE = "LOG";
@@ -351,6 +352,8 @@ define([
         this.DEFAULT_FS_SELECT_FIELDS = "T=, vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, sum(packets), sum(bytes)";
         this.DEFAULT_FR_SELECT_FIELDS = "vrouter, sourcevn, sourceip, destvn, destip, protocol, sport, dport, setup_time, agg-packets, agg-bytes, action";
         this.DEFAULT_SL_SELECT_FIELDS = "MessageTS, Source, ModuleId, Category, Level, NodeType, Messagetype, Xmlmessage";
+        this.DEFAULT_SS_SELECT_FIELDS = "T, local_ip, protocol, server_port, remote_ip, client_port,  forward_logged_bytes, reverse_logged_bytes, tier, application, remote_tier, remote_application";
+        this.DEFAULT_SR_SELECT_FIELDS = "local_ip, protocol, server_port, remote_ip, client_port, forward_action, forward_drop_reason, reverse_drop_reason, forward_teardown_bytes, reverse_teardown_bytes";
 
         this.QE_DEFAULT_FILTER = "limit: 150000 & sort_fields:  & sort: asc";
 
@@ -359,12 +362,15 @@ define([
         this.QE_TITLE_SORT_BY = "Sort By";
 
         this.QE_FLOW_QUERY_QUEUE = "fqq";
+        this.QE_SESSION_QUERY_QUEUE = "seqq";
         this.QE_LOG_QUERY_QUEUE = "lqq";
         this.QE_STAT_QUERY_QUEUE = "sqq";
 
         this.FS_QUERY_PREFIX = "fs";
         this.FC_QUERY_PREFIX = "fc";
         this.FR_QUERY_PREFIX = "fr";
+        this.SS_QUERY_PREFIX = "ss";
+        this.SR_QUERY_PREFIX = "sr";
         this.SA_QUERY_PREFIX = "sa";
         this.STAT_QUERY_PREFIX = "stat";
         this.OBJECT_LOGS_PREFIX = "ol";
@@ -373,6 +379,7 @@ define([
         this.TABLE_TYPES = [
             this.QE_STAT_TABLE_TYPE,
             this.QE_FLOW_TABLE_TYPE,
+            this.QE_SESSION_TABLE_TYPE,
             this.QE_OBJECT_TABLE_TYPE,
             this.QE_LOG_TABLE_TYPE
         ];
@@ -396,6 +403,9 @@ define([
         this.FLOW_CLASS = "FlowClass";
         this.MESSAGE_TABLE = "MessageTable";
         this.SESSION_ANALYZER_TABLE = "SessionAnalyzerTable";
+
+        this.SESSION_SERIES_TABLE = "SessionSeriesTable";
+        this.SESSION_RECORD_TABLE = "SessionRecordTable";
 
         this.KEY_RUN_QUERY_VALIDATION = 'runQueryValidation';
 
@@ -428,6 +438,11 @@ define([
         this.DIRECTION_DROPDOWN_VALUES = [
             {'id': '1', 'text': 'INGRESS'},
             {'id': '0', 'text': 'EGRESS'}
+        ];
+
+        this.SESSION_TYPE_DROPDOWN_VALUES = [
+            {'id': 'server', 'text': 'Server'},
+            {'id': 'client', 'text': 'Client'}
         ];
 
         this.INFERRED_UNIT_TYPES = [
@@ -482,6 +497,20 @@ define([
             select: self.DEFAULT_FR_SELECT_FIELDS,
         };
 
+        this.QE_SS_DEFAULT_MODEL_CONFIG = {
+            table_name: self.SESSION_SERIES_TABLE,
+            table_type: self.QE_SESSION_TABLE_TYPE,
+            query_prefix: self.SS_QUERY_PREFIX,
+            select: self.DEFAULT_SS_SELECT_FIELDS,
+        };
+
+        this.QE_SR_DEFAULT_MODEL_CONFIG = {
+            table_name: self.SESSION_RECORD_TABLE,
+            table_type: self.QE_SESSION_TABLE_TYPE,
+            query_prefix: self.SR_QUERY_PREFIX,
+            select: self.DEFAULT_SR_SELECT_FIELDS,
+        };
+
         this.QE_SL_DEFAULT_MODEL_CONFIG = {
             table_name: self.MESSAGE_TABLE,
             table_type: self.QE_LOG_TABLE_TYPE,
@@ -511,6 +540,7 @@ define([
         this.TENANT_API_URL = "/api/tenant/get-data";
 
         this.URL_QUERY_FLOW_QUEUE = '#p=query_flow_queue';
+        this.URL_QUERY_SESSION_QUEUE = '#p=query_session_queue';
         this.URL_QUERY_LOG_QUEUE = '#p=query_log_queue';
         this.URL_QUERY_STAT_QUEUE = '#p=query_stat_queue';
 
