@@ -274,6 +274,8 @@ function getQueryOptions(queryReqObj) {
         queryOptions.queryQueue = "fqq";
     } else if (tableType === "STAT") {
         queryOptions.queryQueue = "sqq";
+    } else if (tableType === "SESSION") {
+        queryOptions.queryQueue = "seqq";
     }
 
     return queryOptions;
@@ -933,7 +935,8 @@ function getQueryJSON4Table(queryReqObj) {
         where = formModelAttrs.where,
         filters = formModelAttrs.filters,
         autoSort = queryReqObj.autoSort,
-        direction = formModelAttrs.direction;
+        direction = formModelAttrs.direction,
+        sessionType = formModelAttrs.session_type;
 
     autoSort = (!_.isNil(autoSort) && (autoSort === "true" || autoSort)) ? true : false;
 
@@ -962,15 +965,27 @@ function getQueryJSON4Table(queryReqObj) {
         queryJSON = _.extend({}, queryJSON, { "select_fields": ["flow_class_id", "direction_ing"] });
 
         if (autoSort) {
-            if (select.indexOf("T=") !== -1) {
-                queryJSON.select_fields.push("T");
+            if(select.indexOf("T=") === -1) {
+                queryJSON.sort_fields = ["T"];
+                queryJSON.sort = 2;
             }
-            queryJSON.sort_fields = ["T"];
-            queryJSON.sort = 2;
         }
 
     } else if (tableName === "FlowRecordTable") {
         queryJSON = _.extend({}, queryJSON, { "select_fields": ["direction_ing"] });
+
+    } else if (tableName === "SessionSeriesTable") {
+        autoSort = (select.indexOf("T=") === -1 && select.indexOf("T") === -1) ? false : autoSort;
+        queryJSON = _.extend({}, queryJSON, { "session_type" : sessionType});
+        if (autoSort) {
+            if(select.indexOf("T=") === -1) {
+                queryJSON.sort_fields = ["T"];
+                queryJSON.sort = 2;
+            }
+        }
+
+    } else if (tableName === "SessionRecordTable") {
+        queryJSON = _.extend({}, queryJSON, { "session_type" : sessionType});
 
     } else if (tableType === "OBJECT") {
         autoSort = (select.indexOf("MessageTS") === -1) ? false : autoSort;
