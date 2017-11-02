@@ -548,6 +548,14 @@
                  };
                  break;
 
+             case cowc.SS_QUERY_PREFIX:
+                 gridOptions = {
+                     titleText: cowl.TITLE_SESSION_SERIES,
+                     queryQueueUrl: cowc.URL_QUERY_SESSION_QUEUE,
+                     queryQueueTitle: cowl.TITLE_SESSION
+                 };
+                 break;
+
              case cowc.SYSTEM_LOGS_PREFIX:
                  gridOptions = {
                      titleText: cowl.TITLE_SYSTEM_LOGS,

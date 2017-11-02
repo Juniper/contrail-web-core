@@ -57,7 +57,8 @@ define([
 
             if (table_type === cowc.QE_STAT_TABLE_TYPE
                 || table_type === cowc.QE_OBJECT_TABLE_TYPE
-                || table_type === cowc.QE_FLOW_TABLE_TYPE) {
+                || table_type === cowc.QE_FLOW_TABLE_TYPE
+                || table_type === cowc.QE_SESSION_TABLE_TYPE ) {
                 var setTableValuesCallbackFn = function (self, resultArr){
                     var currentSelectedTable = self.model().attributes.table_name;
                     if (currentSelectedTable != null)
@@ -135,6 +136,18 @@ define([
                 if(setTableValuesCallbackFn !== null){
                     setTableValuesCallbackFn(self, resultArr);
                 }
+            } else if (tabletype === cowc.QE_SESSION_TABLE_TYPE) {
+                var resultArr = [
+                    cowc.SESSION_SERIES_TABLE,
+                    cowc.SESSION_RECORD_TABLE
+                ];
+                self.table_name_data_object({
+                    status: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY,
+                    data: resultArr
+                });
+                if(setTableValuesCallbackFn !== null){
+                    setTableValuesCallbackFn(self, resultArr);
+                }
             } else if (timeRange == -1) {
                 var fromTimeUTC = new Date(contrailViewModel.attributes.from_time).getTime(),
                     toTimeUTC = new Date(contrailViewModel.attributes.to_time).getTime();
@@ -181,7 +194,7 @@ define([
                     }).done(function (resultJSON) {
                         var valueOptionList = {};
 
-                        if (_.includes(["FlowSeriesTable", "FlowRecordTable"], tableName)) {
+                        if (_.includes(["FlowSeriesTable", "FlowRecordTable", "SessionSeriesTable", "SessionRecordTable"], tableName)) {
                             valueOptionList["protocol"] = [
                                 "TCP", "UDP", "ICMP"
                             ];
@@ -211,7 +224,8 @@ define([
 
             if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE
                 || self.table_type() == cowc.QE_STAT_TABLE_TYPE
-                || self.table_type() === cowc.QE_FLOW_TABLE_TYPE) {
+                || self.table_type() === cowc.QE_FLOW_TABLE_TYPE
+                || self.table_type() === cowc.QE_SESSION_TABLE_TYPE) {
                 self.reset(this, null, false, false);
             }
 
@@ -249,7 +263,8 @@ define([
 
                     if (self.table_type() == cowc.QE_OBJECT_TABLE_TYPE
                         || self.table_type() == cowc.QE_STAT_TABLE_TYPE
-                        || self.table_type() === cowc.QE_FLOW_TABLE_TYPE) {
+                        || self.table_type() === cowc.QE_FLOW_TABLE_TYPE
+                        || self.table_type() === cowc.QE_SESSION_TABLE_TYPE) {
                         self.setTableFieldValues();
                     }
                 }).error(function(xhr) {

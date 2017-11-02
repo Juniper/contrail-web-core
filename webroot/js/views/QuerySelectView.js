@@ -27,7 +27,7 @@ define([
                 aggregateTypes.push(selectFieldValue['aggregate_type']);
             });
 
-            if(queryPrefix == cowc.FS_QUERY_PREFIX || queryPrefix == cowc.STAT_QUERY_PREFIX){
+            if(queryPrefix == cowc.FS_QUERY_PREFIX || queryPrefix == cowc.STAT_QUERY_PREFIX || queryPrefix == cowc.SS_QUERY_PREFIX){
                 specialQueryPrefix = true;
             }
 
