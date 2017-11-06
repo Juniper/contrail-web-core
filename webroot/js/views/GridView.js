@@ -1116,7 +1116,6 @@ define([
                         }
                         grid.setSelectedRows(rows);
                     },
-
                     getSelectedRow: function () {
                         return grid.getDataItem(gridContainer.data('contrailGrid').selectedRow);
                     },
@@ -1244,6 +1243,7 @@ define([
                         } else {
                             this.refreshView();
                         }
+                        grid.setSelectedRows([]);
                     },
                     // Refreshes the Dataview if the grid data is fetched via ajax call
                     refreshData: function () {

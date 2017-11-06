@@ -68,8 +68,7 @@ define([
 
         renderView4Config: function (parentElement, model, viewObj, validation,
                 lockEditingByDefault, modelMap, onAllViewsRenderComplete,
-                onAllRenderComplete, isTabView) {
-
+                onAllRenderComplete, isTabView, isTagsView) {
             var viewName = viewObj['view'],
                 viewPathPrefix = viewObj['viewPathPrefix'],
                 elementId = viewObj[cowc.KEY_ELEMENT_ID],
@@ -77,8 +76,10 @@ define([
                 viewConfig = viewObj[cowc.KEY_VIEW_CONFIG],
                 viewAttributes = {viewConfig: viewConfig, elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault},
                 app = viewObj['app'], self = this;
+                var getConfigTabs;
+                var isTagsView = (isTagsView === undefined || isTagsView === null) ? true : isTagsView;
             if(isTabView) {
-                  var getConfigTabs = {
+                  getConfigTabs = {
                           theme: 'default',
                           active: 0,
                           type: cowc.TAB_FORM_TYPE,
@@ -88,16 +89,6 @@ define([
                              view: viewName,
                              viewPathPrefix: viewPathPrefix,
                              viewConfig: viewConfig,
-                             tabConfig: {
-                                 activate: function(event, ui) {
-                                 }
-                             }
-                         },
-                         {
-                             elementId: "tags_tab",
-                             title: "Tags",
-                             view: "tagsView",
-                             viewConfig: {},
                              tabConfig: {
                                  activate: function(event, ui) {
                                  }
@@ -128,6 +119,21 @@ define([
                         elementId: cowc.RBAC_PERMISSIONS_ID,
                         validation: validation,
                         lockEditingByDefault: lockEditingByDefault};
+            }
+            if(isTagsView){
+                getTagsTabs = {
+                        elementId: "tags_tab",
+                        title: "Tags",
+                        view: "tagsView",
+                        viewConfig: {},
+                        tabConfig: {
+                            activate: function(event, ui) {
+                            }
+                        }
+                }
+                if(getConfigTabs){
+                    getConfigTabs['tabs'].splice(1,0,getTagsTabs);
+                }
             }
             self.childViewMap[elementId] = null;
             var rootView = contrail.checkIfExist(this.rootView) ? this.rootView : this,
