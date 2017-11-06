@@ -68,7 +68,7 @@ define([
 
         renderView4Config: function (parentElement, model, viewObj, validation,
                 lockEditingByDefault, modelMap, onAllViewsRenderComplete,
-                onAllRenderComplete, isTabView) {
+                onAllRenderComplete, isTabView, isTagsView) {
 
             var viewName = viewObj['view'],
                 viewPathPrefix = viewObj['viewPathPrefix'],
@@ -77,8 +77,10 @@ define([
                 viewConfig = viewObj[cowc.KEY_VIEW_CONFIG],
                 viewAttributes = {viewConfig: viewConfig, elementId: elementId, validation: validation, lockEditingByDefault: lockEditingByDefault},
                 app = viewObj['app'], self = this;
+                var getConfigTabs;
             if(isTabView) {
-                  var getConfigTabs = {
+                if(isTagsView === false){
+                  getConfigTabs = {
                           theme: 'default',
                           active: 0,
                           type: cowc.TAB_FORM_TYPE,
@@ -88,16 +90,6 @@ define([
                              view: viewName,
                              viewPathPrefix: viewPathPrefix,
                              viewConfig: viewConfig,
-                             tabConfig: {
-                                 activate: function(event, ui) {
-                                 }
-                             }
-                         },
-                         {
-                             elementId: "tags_tab",
-                             title: "Tags",
-                             view: "tagsView",
-                             viewConfig: {},
                              tabConfig: {
                                  activate: function(event, ui) {
                                  }
@@ -114,6 +106,45 @@ define([
                              }
                          }]
                   };
+                }
+               else{
+                   getConfigTabs = {
+                           theme: 'default',
+                           active: 0,
+                           type: cowc.TAB_FORM_TYPE,
+                           tabs: [{
+                              elementId: elementId,
+                              title: viewObj.title,
+                              view: viewName,
+                              viewPathPrefix: viewPathPrefix,
+                              viewConfig: viewConfig,
+                              tabConfig: {
+                                  activate: function(event, ui) {
+                                  }
+                              }
+                          },
+                          {
+                              elementId: "tags_tab",
+                              title: "Tags",
+                              view: "tagsView",
+                              viewConfig: {},
+                              tabConfig: {
+                                  activate: function(event, ui) {
+                                  }
+                              }
+                          },
+                          {
+                              elementId: cowc.PERMISSIONS_TAB_ID,
+                              title: cowc.PERMISSIONS_TITLE,
+                              view: "RBACPermissionsView",
+                              viewConfig: {},
+                              tabConfig: {
+                                  activate: function(event, ui) {
+                                  }
+                              }
+                          }]
+                   };
+                }
                 var tabViewConfig  = {
                     rows: [{
                         columns: [{

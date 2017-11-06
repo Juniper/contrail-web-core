@@ -1116,7 +1116,9 @@ define([
                         }
                         grid.setSelectedRows(rows);
                     },
-
+                    resetAllCheckedRows: function () {
+                        grid.setSelectedRows([]);
+                    },
                     getSelectedRow: function () {
                         return grid.getDataItem(gridContainer.data('contrailGrid').selectedRow);
                     },
