@@ -213,6 +213,24 @@ define([
         this.QE_FLOW_RECORD_TAB_ID = "qe-flow-record-tab";
         this.QE_FLOW_RECORD_GRID_ID = "qe-flow-record-grid";
 
+        this.QE_SESSION_SERIES_ID = "qe-session-series";
+        this.QE_SESSION_SERIES_SECTION_ID = "qe-session-series-section";
+        this.QE_SESSION_SERIES_TAB_ID = "qe-session-series-tab";
+        this.QE_SESSION_SERIES_GRID_ID = "qe-session-series-grid";
+        this.QE_SESSION_SERIES_CHART_ID = "qe-session-series-chart";
+        this.QE_SESSION_SERIES_CHART_PAGE_ID = 'qe-session-series-chart-page';
+        this.QE_SESSION_SERIES_LINE_CHART_ID = "qe-session-series-line-chart"
+        this.QE_SESSION_SERIES_CHART_GRID_ID = "qe-session-series-chart-grid";
+
+        this.QE_SESSION_DETAILS_TAB_VIEW__ID = "qe-session-details-tab-view";
+        this.QE_SESSION_DETAILS_TAB_ID = "qe-session-details-tab";
+        this.QE_SESSION_DETAILS_GRID_ID = "qe-session-details-grid";
+
+        this.QE_SESSION_RECORD_ID = "qe-session-record";
+        this.QE_SESSION_RECORD_SECTION_ID = "qe-session-record-section";
+        this.QE_SESSION_RECORD_TAB_ID = "qe-session-record-tab";
+        this.QE_SESSION_RECORD_GRID_ID = "qe-session-record-grid";
+
         this.QE_SESSION_ANALYZER_VIEW_ID = "qe-sa-view";
         this.QE_SESSION_ANALYZER_RESULT_TAB_ID = "qe-sa-result-tab";
         this.QE_SESSION_ANALYZER_RESULT_CHART_ID = "qe-sa-result-chart";
@@ -277,10 +295,13 @@ define([
         this.TITLE_RESULTS = "Results";
         this.TITLE_CHART = "Chart";
         this.TITLE_FLOW = "Flow";
+        this.TITLE_SESSION = "Session";
         this.TITLE_LOG = "Log";
         this.TITLE_STATS = "Statistics";
         this.TITLE_FLOW_SERIES = "Flow Series";
         this.TITLE_FLOW_RECORD = "Flow Record";
+        this.TITLE_SESSION_SERIES = "Session Series";
+        this.TITLE_SESSION_RECORD = "Session Record";
         this.TITLE_SESSION_ANALYZER = "Session Analysis";
         this.TITLE_ACTION_SESSION_ANALYZER = "Analyze Session";
         this.TITLE_SESSION_ANALYZER_SUMMARY = "Session Summary";

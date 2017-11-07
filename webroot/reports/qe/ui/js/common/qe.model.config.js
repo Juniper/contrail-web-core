@@ -265,7 +265,8 @@ define([
                 "where_data_object": {},
                 "filter_data_object": {},
                 "is_request_in_progress": false,
-                "show_advanced_options": false
+                "show_advanced_options": false,
+                "session_type": "server"
             };
 
             var modelConfig = $.extend(true, {}, defaultModelConfig, customModelConfig);
