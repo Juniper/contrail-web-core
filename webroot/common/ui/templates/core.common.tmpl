@@ -2711,8 +2711,8 @@
                    {{#each this.policyRules}}
                     <li>
                         <h2 class="margin-0-0-10">
-                            <a data-toggle="tooltip" class="showMoreInfo customTooltip" data-placement="top" data-delay='{"show":"10", "hide":"10"}' title='<b>Rule UUID:</b> {{this.rule_name}}'>
-                            Policy: <span class="{{this.implicitRule}}">{{this.policy_name}}</span>
+                            <a data-toggle="tooltip" class="showMoreInfo customTooltip policyName" data-placement="top" data-delay='{"show":"10", "hide":"10"}' data-policyFQN="{{this.rule_fqn}}" data-ruleId="{{this.rule_name}}" title='<b>Rule UUID:</b> {{this.rule_name}}'>
+                            Policy: <span class="ruleName {{this.implicitRule}}">{{this.policy_name}}</span>
                             </a>
                         </h2>
                         {{#IfCompare this.src null operator = '!='}}
