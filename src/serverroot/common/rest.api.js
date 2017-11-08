@@ -338,10 +338,11 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
     }).on('streamData', function(data, response) {
         if ((null != response) && (null != response.socket)) {
             response.socket.setTimeout(Infinity);
+            response.socket.setMaxListeners(Infinity);
+            response.socket.on("close", function(error, socket) {
+                sseApi.resetSSEEventListeners(this._httpMessage);
+            });
         }
-        response.socket.on("close", function(error, socket) {
-            sseApi.resetSSEEventListeners(this._httpMessage);
-        });
         var sseApi = require('./sse.api');
         sseApi.serverSentEventHandler(data, response);
     });

@@ -1,19 +1,19 @@
 /*
  * Copyright (c) 2016 Juniper Networks, Inc. All rights reserved.
  */
-var crypto = require('crypto');
-var opApiServer = require('./opServer.api');
-var eventEmitter = require('events').EventEmitter;
-var redisUtils = require('../utils/redis.utils');
-var global = require('./global');
-var config = process.mainModule.exports.config;
-var logutils = require('../utils/log.utils');
-var commonUtils = require('../utils/common.utils');
+var crypto          = require('crypto');
+var global          = require('./global');
+var config          = process.mainModule.exports.config;
+var logutils        = require('../utils/log.utils');
+var redisUtils      = require('../utils/redis.utils');
+var commonUtils     = require('../utils/common.utils');
+var opApiServer     = require('./opServer.api');
+var eventEmitter    = require('events').EventEmitter;
+var uveStreamApi    = require("./uvestream.api");
 
 var uveStreamEvent = new eventEmitter();
 var uveStreamRequests = [];
 var redisClient = null;
-var STR_UVE_STREAM = 'uveStream';
 var uveStreamRunTimers = {};
 var uveStreamTimerTimeout = 1 * 60 * 1000; /* 1 Minutes */
 var md5HeaderStr = "uve-stream-req-md5";
@@ -36,7 +36,16 @@ function subscribeToUVEStream (subsObj, callback)
 {
     var reqUrl      = subsObj.reqUrl;
     var appData     = subsObj.appData;
+    var isRawData   = (null == subsObj.isRawData) ? true : subsObj.isRawData;
     var redisAppKey = subsObj.redisAppKey;
+
+    if (null == redisAppKey) {
+        /* Build Redis Key from reqUrl */
+        redisAppKey = uveStreamApi.getRedisAppKeyBySSEReqUrl(reqUrl);
+    }
+    if (null == appData) {
+        appData = uveStreamApi.getAppDataForUVEStreams();
+    }
 
     if (null == redisClient) {
         redisClient = redisUtils.createRedisClient();
@@ -45,42 +54,42 @@ function subscribeToUVEStream (subsObj, callback)
     if (null == uveStreamRequests[md5Val]) {
         uveStreamRequests[md5Val] = [];
     }
-    uveStreamRequests[md5Val].push(callback);
+    uveStreamRequests[md5Val].push({callback: callback, isRawData: isRawData});
+    uveStreamEvent.setMaxListeners(Infinity);
     uveStreamEvent.on(md5Val, function(data, response) {
         if ((null != uveStreamRequests[md5Val]) &&
             (uveStreamRequests[md5Val].length > 0)) {
             var cbCnt = uveStreamRequests[md5Val].length;
             for (var i = 0; i < cbCnt; i++) {
-                uveStreamRequests[md5Val][i](data);
+                var dataObj = uveStreamRequests[md5Val][i];
+                if (isRawData) {
+                    dataObj.callback(data);
+                } else {
+                    /* App should have requested */
+                    dataObj.callback(uveStreamApi.convertUVEStreamToUIData(data));
+                }
             }
         }
-        redisClient.set(STR_UVE_STREAM + ':' + md5Val, JSON.stringify(data),
-                        function(error) {
-            if (null != error) {
-                logutils.logger.error('Redis Get failed for ' +
-                                      STR_UVE_STREAM + ' key:' + error);
-           }
-        });
         return;
     });
-    if (uveStreamRequests[md5Val].length > 1) {
-        logutils.logger.debug('Already issued same uve-stream with md5:' +
-                              md5Val);
-        redisClient.get(STR_UVE_STREAM + ':' + md5Val, function(error, data) {
-            callback(JSON.parse(data));
+    redisClient.keys(global.STR_UVE_STREAM + ":*", function(error, data) {
+        uveStreamApi.getRedisKeyValueBySSEReqUrl(data, reqUrl, redisClient,
+                                                 function(found, data) {
+            if (true == found) {
+                callback(data);
+            } else {
+                var headers = {'uve-stream-req-md5': md5Val,
+                    'uve-stream-req-redis-app-key': redisAppKey};
+                opApiServer.apiGet(reqUrl, appData, function(error, data) {
+                    if ((null != error) || (null == data)) {
+                        resetSSEEventListenersByAppKey({reqUrl: reqUrl, redisAppKey:
+                                                        redisAppKey});
+                    }
+                    return;
+                }, headers);
+            }
         });
-        return;
-    }
-    var headers = {'uve-stream-req-md5': md5Val,
-        'uve-stream-req-redis-app-key': redisAppKey};
-    opApiServer.apiGet(reqUrl, appData, function(error, data) {
-        if ((null != error) || (null == data)) {
-            console.log("Getting error as:", error);
-            resetSSEEventListenersByAppKey({reqUrl: reqUrl, redisAppKey:
-                                           redisAppKey});
-        }
-        return;
-    }, headers);
+    });
 }
 
 function resetSSEEventListeners (httpMsg)
@@ -100,7 +109,6 @@ function resetSSEEventListenersByAppKey (dataObj)
         clearTimeout(uveStreamRunTimers[md5Val]);
     }
     uveStreamRunTimers[md5Val] = setTimeout(function() {
-        var uveStreamApi = require("./uvestream.api");
         uveStreamApi.updateUVECacheByUVEStream(dataObj);
         clearTimeout(uveStreamRunTimers[md5Val]);
     }, uveStreamTimerTimeout);

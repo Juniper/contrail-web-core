@@ -357,4 +357,7 @@ global.ASYNC_MAP_LIMIT_COUNT = 100;
 /* The below requests are authorized using keystone token */
 global.URLS_TO_BYPASS_AUTH = ["/forward-proxy"];
 
+/* UVE Stream */
+global.STR_UVE_STREAM = "uveStream";
+
 module.exports = global;
