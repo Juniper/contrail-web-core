@@ -209,19 +209,17 @@ function setAllCookies (req, res, appData, cookieObj, callback)
         }
     }
     var defDomainId;
-    var cookieExp =
-        ((null != config.session) && (null != config.session.timeout)) ?
-        config.session.timeout : global.MAX_AGE_SESSION_ID;
-
-    var cookieExpStr = new Date(new Date().getTime() + cookieExp).toUTCString();
     var secureCookieStr = (false == config.insecure_access) ? "; secure" : "";
     res.setHeader('Set-Cookie', 'username=' + cookieObj.username +
                   secureCookieStr);
-    var region = authApi.getCurrentRegion(req);
-    if (null != region) {
-        res.setHeader('Set-Cookie', 'region=' + region +
-                      '; path=/' + secureCookieStr);
-        req.cookies.region = region;
+    if ((true == authApi.isCGCEnabled(req)) ||
+        (true == authApi.isServiceEndptsFromOrchestrationModule())) {
+        var region = authApi.getCurrentRegion(req);
+        if (null != region) {
+            res.setHeader('Set-Cookie', 'region=' + region +
+                          '; path=/' + secureCookieStr);
+            req.cookies.region = region;
+        }
     }
     authApi.getCookieObjs(req, appData, function(cookieObjs) {
         if (null != cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME]) {

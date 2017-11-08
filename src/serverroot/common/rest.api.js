@@ -111,7 +111,8 @@ APIServer.prototype.updateContrailServiceParams = function (params)
     var contrailServ = null;
     var config = configUtils.getConfig();
 
-    if (false == config.serviceEndPointFromConfig) {
+    if ((false == config.serviceEndPointFromConfig) ||
+        (false == config.contrailEndPointFromConfig)) {
         /* Do not update through Discovery */
         switch(apiServerType) {
         case global.label.VNCONFIG_API_SERVER:

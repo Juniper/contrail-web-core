@@ -9,19 +9,38 @@ config.orchestration.Manager = 'openstack';
 
 /****************************************************************************
  * This boolean flag indicates to communicate with Orchestration
- * modules(networkManager, imageManager, computeManager, identityManager,
+ * modules(networkManager, imageManager, computeManager,
  * storageManager), should the webServer communicate using the
  * ip/port/authProtocol/apiVersion as specified in this file, or as returned
  * from auth catalog list.
- * Note: config.identityManager.apiVersion is not controlled by this boolean
+ * Note: config.identityManager is not controlled by this boolean
  * flag.
  *
  * true  - These values should be taken from this config
  *         file.
  * false - These values should be taken from auth catalog list 
  *
-*****************************************************************************/
-config.serviceEndPointFromConfig = true;
+ * Default: false
+ ****************************************************************************/
+config.orchestrationModuleEndPointFromConfig = false;
+
+/****************************************************************************
+ * This boolean flag indicates to communicate with contrail services Api Server
+ * and Analytics Server, should the webServer communicate using the
+ * ip/port/authProtocol as specified in this file, or as returned  from auth
+ * catalog list.
+ *
+ * true  - These values should be taken from this config
+ *         file.
+ * false - These values should be taken from auth catalog list
+ *
+ * Note: If this flag is set as false, we must have two services ApiServer and
+ * OpServer, variables as defined in config.endpoints to be provisioned in
+ * keystone
+ *
+ * Default: true
+ ****************************************************************************/
+config.contrailEndPointFromConfig = true;
 
 /****************************************************************************
  * This boolean flag specifies wheather region list should be taken from config
@@ -63,7 +82,8 @@ config.regions = {};
 config.regions.RegionOne = 'http://127.0.0.1:5000/v2.0';
 
 /****************************************************************************
- * This boolean flag indicates if serviceEndPointFromConfig is set as false,
+ * This boolean flag indicates if orchestrationModuleEndPointFromConfig or
+ * contrailEndPointFromConfig is set as false,
  * then to take IP/Port/Protocol/Version information from auth catalog, 
  * should publicURL OR internalURL will be used.
  *
@@ -72,8 +92,10 @@ config.regions.RegionOne = 'http://127.0.0.1:5000/v2.0';
  * false - internalURL in endpoint will be used to retrieve
  *         IP/Port/Protocol/Version information
  *
- * NOTE: if config.serviceEndPointFromConfig is set as true, then this flag
- *       does not have any effect.
+ * NOTE: if config.orchestrationModuleEndPointFromConfig is set as true, then
+ *       this flag does not have any effect on orchestration modules.
+ *       if config.contrailEndPointFromConfig is set as true, then this flag
+ *       does not have effect on contrail modules as defined in config.endpoints
  *
 *****************************************************************************/
 config.serviceEndPointTakePublicURL = true;
@@ -141,8 +163,8 @@ config.identityManager.port = '5000';
 config.identityManager.authProtocol = 'http';
 /******************************************************************************
  * Note: config.identityManager.apiVersion is not controlled by boolean flag 
- * config.serviceEndPointFromConfig. If specified apiVersion here, then these
- * API versions will be used while using REST API to identityManager.
+ * config.orchestrationModuleEndPointFromConfig. If specified apiVersion here,
+ * then these API versions will be used while using REST API to identityManager.
  * If want to use with default apiVersion(v2.0), then can specify it as 
  * empty array.
 ******************************************************************************/
