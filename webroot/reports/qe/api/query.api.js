@@ -727,6 +727,8 @@ function processQueryResults(req, queryResults, queryOptions, isGetQ,
         } else if (tableType === "STAT") {
             workerData.groupFieldName = "CLASS(T=)";
             workerData.timeFieldName = "T=";
+        } else if (table === "SessionSeriesTable") {
+            workerData.timeFieldName = "T=";
         }
         var threadArgs = {queryId: queryId, workerData: workerData};
         threadApi.runInThread(saveData4Chart2Redis, threadArgs,
