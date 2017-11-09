@@ -96,7 +96,9 @@ define([
                 self.zm = self.chartModel.zoomBehavior.on("zoom", getChartZoomFn(self, chartConfig));
                 if(typeof(self.zoomBySelection) == "undefined")
                     self.zoomBySelection = false;
-                renderControlPanel(self, chartConfig, chartOptions, selector);
+                if (chartOptions['controlPanel'] != false) {
+                    renderControlPanel(self, chartConfig, chartOptions, selector);
+                }
             } else {
                 $(selector).find('.chart-container').empty();
                 chartConfig = getChartConfig(selector, chartOptions, viewConfig);

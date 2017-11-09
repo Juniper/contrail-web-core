@@ -2004,7 +2004,46 @@ define([
             }
             return _.values(parsedData);
         };
-
+        this.parseDataForDiscreteBarChart = function (data, options) {
+            var parsedData = {}, chartData = [],
+                groupBy, axisField;
+            	topCnt = _.result(options, 'topCnt');
+            if (typeof options['groupBy'] == 'string') {
+            	groupBy = options['groupBy'];
+            }
+            if (typeof options['axisField'] == 'string') {
+            	axisField = options['axisField'];
+            }
+            _.each(data, function (obj, i) {
+                var service = typeof options['groupBy'] == 'function' ? options['groupBy'](obj) : obj[groupBy];
+                var value = typeof options['axisField'] == 'function' ? options['axisField'](obj): _.result(obj, axisField, 0);
+                if (parsedData[service] != null) {
+                     parsedData[service] += value;
+                 } else {
+                     parsedData[service] = value;
+                 }
+            });
+            _.map(parsedData, function (value, key) {
+                 chartData.push({label: key, value: value})
+            });
+            chartData = _.sortBy(chartData, function (obj){
+                return topCnt != null ? -obj.value: obj.value;//minus to get descending order
+            })
+            if (topCnt != null) {
+                if (options['zerofill'] && chartData.length < topCnt) {
+                    var originalDataLen = chartData.length;
+                    var zeroFillCnt = Math.abs(originalDataLen - topCnt);
+                    for (var i = 0; i < zeroFillCnt; i++) {
+                        chartData.push({label: originalDataLen + i + 1, value: 0});
+                    }
+                }
+                chartData = chartData.slice(0, topCnt)
+            }
+            return [{
+                key: options['label'],
+                values: chartData
+            }];
+        };
         this.parseDataForScatterChart = function(data,options) {
             //Loop through and set the x, y and size field based on the chartOptions selected
             var xField = getValueByJsonPath(options,'xField','x');

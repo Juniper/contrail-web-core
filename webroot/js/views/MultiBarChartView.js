@@ -24,20 +24,24 @@ define([
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
             }
             if (self.model !== null) {
-                if (self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
+                var callback = function () {
                     var chartData = self.model.getItems();
+                    if (contrail.checkIfFunction(viewConfig['parseFn'])) {
+                        chartData = viewConfig['parseFn'](chartData);
+                    }
                     self.renderChart(selector, viewConfig, chartData);
+                }
+                if (self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
+                	callback();
                 }
 
                 self.model.onAllRequestsComplete.subscribe(function () {
-                    var chartData = self.model.getItems();
-                    self.renderChart(selector, viewConfig, chartData);
+                	callback();
                 });
 
                 if (viewConfig.loadChartInChunks) {
                     self.model.onDataUpdate.subscribe(function () {
-                        var chartData = self.model.getItems();
-                        self.renderChart(selector, viewConfig, chartData);
+                        callback();
                     });
                 }
                 var prevDimensions = chUtils.getDimensionsObj(self.$el);
@@ -47,7 +51,7 @@ define([
                         elem:self.$el})) {
                         return;
                     }
-                     self.renderChart($(self.$el), viewConfig, self.model);
+                    callback();
                  },cowc.THROTTLE_RESIZE_EVENT_TIME);
 
                 $(self.$el).parents('.custom-grid-stack-item').on('resize',self.resizeFunction);
@@ -57,10 +61,6 @@ define([
 
         renderChart: function (selector, viewConfig, data) {
             var chartViewConfig, chartModel, chartData, chartOptions;
-
-            if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                data = viewConfig['parseFn'](data);
-            }
 
             chartOptions = ifNull(viewConfig['chartOptions'], {});
 
@@ -106,6 +106,7 @@ define([
         var chartDefaultOptions = {
             margin: {top: 10, right: 30, bottom: 20, left: 60},
             height: 250,
+            barOrientation: 'vertical',
             xAxisLabel: 'Items',
             xAxisTickPadding: 10,
             yAxisLabel: 'Values',
@@ -119,12 +120,18 @@ define([
             showTooltips: true,
             reduceXTicks: true,
             rotateLabels: 0,
-            groupSpacing: 0.1,
+            groupSpacing: 0.5,
             transitionDuration: 350,
             legendRightAlign: true,
             legendPadding: 32,
             barColor: d3.scale.category10()
         };
+        //Incase of horizontal we need more left margin to 
+        //accomodate the labels.
+        if (chartOptions['barOrientation'] == 'horizontal') {
+        	chartDefaultOptions.margin['left'] = 180;
+        	chartDefaultOptions.margin['bottom'] = 80;
+        }
         var chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
 
         chartViewConfig['chartData'] = chartData;

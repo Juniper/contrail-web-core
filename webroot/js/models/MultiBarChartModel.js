@@ -3,7 +3,7 @@
  */
 
 define([
-    'underscore'
+    'lodash'
 ], function (_) {
     /**
      * This chart model accepts data in following format:
@@ -12,7 +12,11 @@ define([
      * @returns multiBarChartModel
      */
     var MultiBarChartModel = function (chartOptions) {
-        var chartModel = nv.models.multiBarChart()
+        var chartClassMap = {
+            'horizontal': nv.models.multiBarHorizontalChart,
+            'vertical': nv.models.multiBarChart
+        };
+        var chartModel = chartClassMap[_.result(chartOptions, 'barOrientation')]()
             .duration(chartOptions.transitionDuration)
             .height(chartOptions.height)
             .margin(chartOptions.margin)
@@ -22,9 +26,6 @@ define([
             .y(function (d) {
                 return d.value;
             })
-            .tooltips(chartOptions.showTooltips)
-            .reduceXTicks(chartOptions.reduceXTicks)
-            .rotateLabels(chartOptions.rotateLabels)
             .color(function (d) {
                 return chartOptions.barColor(d.key);
             })
@@ -32,6 +33,11 @@ define([
             .stacked(chartOptions.stacked)
             .showControls(chartOptions.showControls)
             .groupSpacing(chartOptions.groupSpacing);
+        if (_.result(chartOptions, 'barOrientation') == 'vertical') {
+            chartModel.tooltips(chartOptions.showTooltips)
+                .reduceXTicks(chartOptions.reduceXTicks)
+                .rotateLabels(chartOptions.rotateLabels)
+        }
 
         chartModel.legend.rightAlign(chartOptions.legendRightAlign)
             .padding(chartOptions.legendPadding);
@@ -40,6 +46,9 @@ define([
         chartModel.xAxis.tickPadding(chartOptions.xAxisTickPadding);
         chartModel.yAxis.axisLabel(chartOptions.yAxisLabel).tickFormat(chartOptions.yFormatter);
         chartModel.yAxis.tickPadding(chartOptions.yAxisTickPadding);
+        if (chartOptions['xLblFormatter'] != null) {
+            chartModel.xAxis.tickFormat(chartOptions['xLblFormatter'])
+        }
 
         return chartModel;
     }
