@@ -174,8 +174,9 @@ define([
         },
         add: function(cfg, isMoved) {
             var self = this;
-            var currElem = $($('#gridstack-widget-template').text()).attr('data-gs-height',2);
             var itemAttr = ifNull(cfg['itemAttr'],{});
+            var widgetTemplate = contrail.getTemplate4Id('gridstack-widget-template');
+            var currElem = $(widgetTemplate(itemAttr)).attr('data-gs-height',2);
             var defaultWidth = ifNull(self.gridAttr['defaultWidth'],1);
             var defaultHeight = ifNull(self.gridAttr['defaultHeight'],1)*self.CELL_HEIGHT_MULTIPLER;
             var widgetCfg = cfg['widgetCfg'];
