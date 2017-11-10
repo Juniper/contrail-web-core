@@ -45,9 +45,12 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         //Files not in bundles
         'widget-configmanager'        : coreWebDir + '/js/widget.configmanager',
         'gridstack'                   : coreWebDir + '/assets/gridstack/js/gridstack',
+        'toolbar'                     : coreWebDir + '/assets/toolbar/js/jquery.toolbar',
         'underscore'            : coreWebDir + '/assets/underscore/underscore-min',
         'slickgrid-utils'       : coreWebDir + "/js/slickgrid-utils",
         'jquery'                : coreWebDir + '/assets/jquery/js/jquery.min',
+        'lodashv4'                    : coreWebDir + '/assets/lodash-v4.17.2/js/lodash',
+        'd3v4'                        : coreWebDir + '/assets/d3-v4.4.3/js/d3.min',
         'contrail-load'         : coreWebDir + '/js/contrail-load',
         'vis'                   : coreWebDir + '/assets/vis-v4.9.0/js/vis.min',
         'vis-node-model'              : coreWebDir + '/js/models/VisNodeModel',
@@ -90,7 +93,9 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'jquery-ui'                 : coreWebDir + '/assets/jquery-ui/js/jquery-ui',
         'qe-module'                   : coreWebDir + '/reports/qe/ui/js/qe.module',
         'legend-view'                 : coreWebDir + '/js/views/LegendView',
-        'chart-config'              : coreWebDir + '/js/chartconfig'
+        'chart-config'              : coreWebDir + '/js/chartconfig',
+        'contrail-charts-view'        : coreWebDir + '/js/views/ContrailChartsView',
+        'contrail-charts'             : coreWebDir + '/assets/contrail-charts/js/contrail-charts'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments
