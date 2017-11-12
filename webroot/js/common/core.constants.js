@@ -50,11 +50,11 @@ define([
             'showVNonEmpty' : false,
             'showIcononEmpty': true
         }];
-
+        this.IMPLICIT_DENY_UUID = '00000000-0000-0000-0000-000000000002';
         this.DEFAULT_FIREWALL_RULES = {
             '00000000-0000-0000-0000-000000000002': {
                 name: 'Implicit Deny',
-                uuid: '00000000-0000-0000-0000-000000000002'
+                uuid: self.IMPLICIT_DENY_UUID
             },
              '00000000-0000-0000-0000-000000000001': {
                 name: 'Implicit Allow',

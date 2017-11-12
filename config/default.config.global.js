@@ -371,7 +371,7 @@ config.optFeatureList = {};
 config.optFeatureList.mon_infra_underlay = false;
 config.optFeatureList.mon_infra_mx = false;
 config.optFeatureList.query_udd_webController = false;
-config.optFeatureList.mon_security_dashboard = false;
+config.optFeatureList.mon_security_dashboard = true;
 /*****************************************************************************
 * Below are the configurations used only for ui
 *****************************************************************************/
