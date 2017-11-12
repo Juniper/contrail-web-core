@@ -2470,11 +2470,11 @@ define([
                                 return ajaxConfig;
                             }
                         },
-                        ajaxConfig : {
+                        /*ajaxConfig : {
                             url : "/api/qe/query",
                             type: 'POST',
                             data: JSON.stringify(postData)
-                        },
+                        },*/
                         dataParser : (statsConfig['parser'])? statsConfig['parser'] :
                             function (response) {
                                 var data = getValueByJsonPath(response,'data',[]);
