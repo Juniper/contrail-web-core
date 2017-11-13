@@ -311,7 +311,7 @@ define([
           } else if (_.isNumber(activateTab)) {
             activateTabIndex = activateTab;
           }
-          if (!_.isUndefined(activateTabIndex)) {
+          if (!_.isUndefined(activateTabIndex) && self.$el.data("contrailTabs")) {
             self.$el.data("contrailTabs").activateTab(activateTabIndex);
           }
         }
