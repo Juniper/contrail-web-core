@@ -23,7 +23,7 @@ define([
         this.TRAFFIC_GROUP_COLOR_LEVEL1 = ['#74abd2', '#9fa8da', '#f8bbd0', '#c5e1a5'];
         this.TRAFFIC_GROUP_COLOR_LEVEL2 = ['#5282a7', '#91cd99', '#80d4f9', '#80deea'];
 
-        this.APPLICATION_ICON = '\ue907';
+        this.APPLICATION_ICON = '\ue90c';
         this.DEPLOYMENT_ICON = '\ue906';
         this.TIER_ICON = '\ue904';
         this.SITE_ICON = '\ue908';
