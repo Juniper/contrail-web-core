@@ -200,17 +200,6 @@
                          if (queryQueueResultTabView !== null) {
                              $.each(queryIds, function (queryIdKey, queryIdValue) {
                                  removeBadgeColorFromQueryQueue(queueColorMap, queryIdValue);
-
-                                 gridTabIndex = queryQueueResultTabView.tabsIdMap[cowl.QE_QUERY_QUEUE_RESULT_GRID_TAB_ID + "-" + queryIdValue + "-tab"];
-                                 if (contrail.checkIfExist(gridTabIndex)) {
-                                     queryQueueResultTabView.removeTab(gridTabIndex);
-                                 }
-
-                                 chartTabIndex = queryQueueResultTabView.tabsIdMap[cowl.QE_QUERY_QUEUE_RESULT_CHART_TAB_ID + "-" + queryIdValue + "-tab"];
-                                 if (contrail.checkIfExist(chartTabIndex)) {
-                                     queryQueueResultTabView.removeTab(chartTabIndex);
-                                 }
-
                              });
                          }
                      });
@@ -395,16 +384,6 @@
                     $("#" + queryQueueResultChartTabLinkId).data("badge_color_key", badgeColorKey);
                     queueColorMap[badgeColorKey] = queryId;
                 });
-            } else {
-                gridTabIndex = queryQueueResultTabView.tabsIdMap[cowl.QE_QUERY_QUEUE_RESULT_GRID_TAB_ID + "-" + queryId + "-tab"];
-                if (contrail.checkIfExist(gridTabIndex)) {
-                    queryQueueResultTabView.removeTab(gridTabIndex);
-                }
-
-                chartTabIndex = queryQueueResultTabView.tabsIdMap[cowl.QE_QUERY_QUEUE_RESULT_CHART_TAB_ID + "-" + queryId + "-tab"];
-                if (contrail.checkIfExist(chartTabIndex)) {
-                    queryQueueResultTabView.removeTab(chartTabIndex);
-                }
             }
         } else {
             //TODO - create info modal
@@ -423,6 +402,13 @@
 
              case cowc.FR_QUERY_PREFIX:
                  hashP = cowc.FR_HASH_P;
+                 break;
+             case cowc.SS_QUERY_PREFIX:
+                 hashP = cowc.SS_HASH_P;
+                 break;
+
+             case cowc.SR_QUERY_PREFIX:
+                 hashP = cowc.SR_HASH_P;
                  break;
 
              case cowc.SYSTEM_LOGS_PREFIX:
@@ -481,13 +467,6 @@
                  removable: true,
                  onRemoveTab: function() {
                      removeBadgeColorFromQueryQueue(queueColorMap, queryId);
-
-                    var queryQueueResultTabView = childViewMap[cowl.QE_QUERY_QUEUE_TABS_ID],
-                        chartTabIndex = queryQueueResultTabView.tabsIdMap[cowl.QE_QUERY_QUEUE_RESULT_CHART_TAB_ID + queryIdSuffix + "-tab"];
-
-                     if (contrail.checkIfExist(chartTabIndex)) {
-                         queryQueueResultTabView.removeTab(chartTabIndex);
-                     }
                  }
              },
              viewConfig: {
