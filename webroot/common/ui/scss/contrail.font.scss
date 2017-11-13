@@ -320,3 +320,31 @@
 .contrailGlyph-sessions:before {
   content: "\e914";
 }
+.contrailGlyph-application-2:before {
+  content: "\e90c";
+}
+.contrailGlyph-site-2:before {
+  content: "\e90d";
+}
+.contrailGlyph-deploy-2:before {
+  content: "\e90e";
+}
+.contrailGlyph-tier-2:before {
+  content: "\e90f";
+}
+.contrailGlyph-application-wrap:before {
+  content: "\e910";
+  color:#f5a623;
+}
+.contrailGlyph-deploy-wrap:before {
+  content: "\e911";
+  color:#A6CF77;
+}
+.contrailGlyph-site-wrap:before {
+  content: "\e912";
+  color:#7BB7D6;
+}
+.contrailGlyph-tier-wrap:before {
+  content: "\e913";
+  color:#5E57AC;
+}

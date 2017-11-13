@@ -2340,6 +2340,10 @@ $label_color: #3182bd;
     li {
         display: flex;
     }
+    .selected {
+        font-weight: 600;
+        color: #616060;
+    }
 }
 .traffic-groups-view {
     #traffic-groups-radial-chart #chartBox.noLegend {
