@@ -304,7 +304,15 @@ define([
                 //additional fake server response setup
                 var responses = viewTestConfig.fakeServer.getResponsesConfig();
                 _.each(responses, function (response) {
-                    fakeServer.respondWith(response.method, response.url, [response.statusCode, response.headers, response.body]);
+                    if (response.postBody != null) {
+                        fakeServer.respondWith(response.method, response.url, function (xhr, id) {
+                            if (response.postBody == xhr.requestBody) {
+                                xhr.respond(response.statusCode, response.headers, response.body);
+                            }
+                        });
+                    } else {
+                        fakeServer.respondWith(response.method, response.url, [response.statusCode, response.headers, response.body]);
+                    }
                 });
 
                 var pageLoadTimeOut = viewTestConfig.page.loadTimeout,
