@@ -95,14 +95,18 @@ $(document).ready(function () {
             $("#pageHeader").show();
             $('#page-content').removeClass('scrolled');
             $('#sidebar').removeClass('scrolled');
+            $('#sidebar-shortcuts').removeClass('scrolled');
             $('#breadcrumbs').removeClass('scrolled');
+            $('#content-container').removeClass('scrolled');
             $('#back-to-top').fadeOut();
         }
         else {
             $("#pageHeader").hide();
             $('#page-content').addClass('scrolled');
             $('#sidebar').addClass('scrolled');
+            $('#sidebar-shortcuts').addClass('scrolled');
             $('#breadcrumbs').addClass('scrolled');
+            $('#content-container').addClass('scrolled');
             $('#back-to-top').fadeIn();
         }
         if (currentScroll < scrollHeight) {
