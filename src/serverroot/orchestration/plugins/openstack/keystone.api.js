@@ -264,7 +264,6 @@ function getV2AuthResponse (dataObj, callback, isSvcPortReq)
     if (null != tmpAuthRestObj.mapped) {
         headers['protocol'] = tmpAuthRestObj.mapped.protocol;
     }
-
     tmpAuthRestObj.authRestAPI.api.get(reqUrl, function(error, data) {
         if (null != error) {
             logutils.logger.error('getAuthResponse() error:' + error);
@@ -280,7 +279,6 @@ function makeAuthGetReq (dataObj, callback, isSvcPortReq)
     var authApiVer = req.session.authApiVersion;
     var authCB = authGetCB[authApiVer];
     var version = dataObj.version;
-
     authCB(dataObj, function(err, data) {
         callback(err, data, version);
     }, isSvcPortReq);
@@ -296,32 +294,32 @@ function getTenantListByToken (req, token, callback)
     getAuthDataByReqUrlObj({req: req, token: token, reqUrl: reqUrl}, callback);
 }
 
-function getAuthDataByReqUrlObj (reqObj, callback)
+function getAuthDataByReqUrlObj (reqObj, callback )
 {
-  var req         = reqObj.req;
-  var token       = reqObj.token;
-  var reqUrl      = '';
-  var headers     = reqObj.headers;
-  var reqType     = reqObj.reqType;
-  var isSvcPortReq = reqObj.isSvcPortReq;
-  var dataObjArr = [];
+    var req         = reqObj.req;
+    var token       = reqObj.token;
+    var reqUrl      = '';
+    var headers     = reqObj.headers;
+    var reqType     = reqObj.reqType;
+    var isSvcPortReq = reqObj.isSvcPortReq;
+    var dataObjArr = [];
 
-  if (null == token) {
-      var err = 
+    if (null == token) {
+        var err =
           new appErrors.RESTServerError('Token null to populate data');
-      callback(err, null);
-      return;
-  }
+        callback(err, null);
+        return;
+    }
   if (null == headers) {
-    headers = {"X-Auth-Token": token.id};
+      headers = {"X-Auth-Token": token.id};
   }
   var apiVerCnt = authAPIVers.length;
   for (var i = 0; i < apiVerCnt; i++) {
       reqUrl = '/' + authAPIVers[i];
-      if ((null != reqType) &&
-          (null != reqUrlPrefixByTypes[reqType][authAPIVers[i]])) {
+      if ((null != reqType)
+           && (null != reqUrlPrefixByTypes[reqType][authAPIVers[i]])) {
           reqUrl += reqUrlPrefixByTypes[reqType][authAPIVers[i]] +
-              reqObj.reqUrl;
+          reqObj.reqUrl;
       } else {
           reqUrl += reqObj.reqUrl;
       }
@@ -339,8 +337,7 @@ function getAuthDataByReqUrlObj (reqObj, callback)
                       'token': token.id});
   }
   var startIndex = 0;
-  getAuthData(null, dataObjArr, startIndex, makeAuthGetReq, function(err, data,
-                                                                     version) {
+  getAuthData(null, dataObjArr, startIndex, makeAuthGetReq, function(err, data, version) {
     if (null == err) {
         callback(null, data, version);
     } else {
@@ -348,7 +345,6 @@ function getAuthDataByReqUrlObj (reqObj, callback)
     }
   }, isSvcPortReq);
 }
-
 var reqUrlPrefixByTypes = {
     'auth': { /* global.KEYSTONE_API_TYPE_AUTH */
         'v3': '/auth'
@@ -871,6 +867,7 @@ function formatV3AuthDataToV2AuthData (v3AuthData, authObj, callback)
         }
         tokenObj['access']['serviceCatalog'] =  v3AuthData['token']['catalog'];
         tokenObj['access']['user'] = {};
+        tokenObj['access']['user']['id'] = v3AuthData['token']['user']['id'];
         tokenObj['access']['user']['username'] =
             v3AuthData['token']['user']['name'];
         tokenObj['access']['user']['roles'] = v3AuthData['token']['roles'];
@@ -939,7 +936,6 @@ function updateTokenIdWithMD5 (accessData)
                               '> to MD5 hash: ' + accessData['token']['id']);
     }
 }
-
 function fillAndGetReqArrToGetAuthData (authObj)
 {
     var reqArr = [];
@@ -1029,7 +1025,6 @@ function doAuth (authObj, callback)
     var domainName = authObj['domain'];
     var regionname = authObj['regionname'];
     var req = authObj['req'];
-
     var reqArr = fillAndGetReqArrToGetAuthData(authObj);
     var startIndex = 0;
     getAuthData(null, reqArr, startIndex, makeAuthPostReq, function(err, data,
@@ -1781,9 +1776,6 @@ function authenticate (req, res, appData, callback)
     if (post.urlPath != null) {
         urlPath = post.urlPath;
     }
-    var identityApiVerList = config.identityManager.apiVersion;
-    var verCnt = identityApiVerList.length;
-
     var startIndex = 0;
     if ((null != regionname) && (regionname.length)) {
         req.session.regionname = regionname;
@@ -2074,81 +2066,87 @@ function doV3Auth (req, callback)
             }
             req.session.userid = data['token']['user']['id'];
             getV3ProjectListByToken(req, tokenObj.id, function(err, projects) {
-                if ((null != err) || (null == projects) ||
-                    (null == projects['projects'])) {
-                    req.session.isAuthenticated = false;
-                    callback(messages.error.unauthorized_to_project);
-                    return;
-                }
-                try {
-                    var projCnt = projects['projects'].length;
-                    var defProject = projects['projects'][projCnt - 1]['name'];
-                } catch(e) {
-                    req.session.isAuthenticated = false;
-                    callback(messages.error.unauthorized_to_project);
-                    return;
-                }
-                projects['projects'] = getEnabledProjects(projects['projects']);
                 logutils.logger.debug("After V3 Successful auth def_token:" +
-                                      JSON.stringify(data));
-                /*
-                req.session.serviceCatalog =
-                    commonUtils.cloneObj(data.acccess.serviceCatalog);
-                    */
-                var projectCookie =
-                    commonUtils.getValueByJsonPath(req,
-                                                   'cookies;' +
-                                                   global.COOKIE_PROJECT_DISPLAY_NAME,
-                                                   null);
-                var lastTenantObj = projects['projects'][projects['projects'].length - 1];
-                var cookieProjObj = null;
-                if (null != projectCookie) {
-                    var tenantsCnt = projects['projects'].length;
-                    for (var i = 0; i < tenantsCnt; i++) {
-                        if ((projectCookie == projects['projects'][i]['name']) &&
-                            (projectCookie != lastTenantObj['name'])) {
-                            cookieProjObj = projects['projects'][i];
-                        }
-                    }
+                        JSON.stringify(data));
+                if ((null != err) || (null == projects) ||
+                        (null == projects['projects'])) {
+                    req.session.isAuthenticated = false;
+                    callback(messages.error.unauthorized_to_project);
+                    return;
                 }
-                projects['projects'] = [lastTenantObj];
-                if (null != cookieProjObj) {
-                    projects['projects'].push(cookieProjObj);
-                }
-                getUserRoleByProjectList(projects['projects'], userObj,
-                                         function(roleStr, tokenObjs) {
-                    var defToken =
-                        commonUtils.getValueByJsonPath(tokenObjs,
-                                                       defProject + ';token',
-                                                       null);
-                    if (null == defToken) {
-                        for (var key in tokenObjs) {
-                            defToken =
-                                commonUtils.getValueByJsonPath(tokenObjs[key],
-                                                               'token', null);
-                            if (null == defToken) {
-                                continue;
-                            }
-                            defProject = key;
-                            break;
-                        }
-                    }
-                    req.session.def_token_used = defToken;
-                    req.session.authApiVersion = 'v3';
-                    req.session.tokenObjs = tokenObjs;
-                    req.session.userRoles =
-                        userRoleListByTokenObjs(tokenObjs);
-                    updateTokenIdForProject(req, defProject,
-                                            tokenObjs[defProject]);
-                    req.session.userRole = roleStr;
-                    req.session.last_token_used = req.session.def_token_used;
-                    callback(null);
-                });
+                doV3AuthCB(err, projects, req, userObj, callback);
             });
         });
     });
 }
 
+function doV3AuthCB(err, projects, req, userObj, callback) {
+    try {
+        var projCnt = projects['projects'].length;
+        var defProject = projects['projects'][projCnt - 1]['name'];
+    } catch(e) {
+        req.session.isAuthenticated = false;
+        callback(messages.error.unauthorized_to_project);
+        return;
+    }
+    req.session.isAuthenticated = true;
+    projects['projects'] = getEnabledProjects(projects['projects']);
+    
+    /*
+    req.session.serviceCatalog =
+        commonUtils.cloneObj(data.acccess.serviceCatalog);
+        */
+    var projectCookie =
+        commonUtils.getValueByJsonPath(req,
+                                       'cookies;' +
+                                       global.COOKIE_PROJECT_DISPLAY_NAME,
+                                       null);
+    var lastTenantObj = projects['projects'][projects['projects'].length - 1];
+    var cookieProjObj = null;
+    if (null != projectCookie) {
+        var tenantsCnt = projects['projects'].length;
+        for (var i = 0; i < tenantsCnt; i++) {
+            if ((projectCookie == projects['projects'][i]['name']) &&
+                (projectCookie != lastTenantObj['name'])) {
+                cookieProjObj = projects['projects'][i];
+            }
+        }
+    }
+    projects['projects'] = [lastTenantObj];
+    if (null != cookieProjObj) {
+        projects['projects'].push(cookieProjObj);
+    }
+    getUserRoleByProjectList(projects['projects'], userObj,
+                             function(roleStr, tokenObjs) {
+        var defToken =
+            commonUtils.getValueByJsonPath(tokenObjs,
+                                           defProject + ';token',
+                                           null);
+        if (null == defToken) {
+            for (var key in tokenObjs) {
+                defToken =
+                    commonUtils.getValueByJsonPath(tokenObjs[key],
+                                                   'token', null);
+                if (null == defToken) {
+                    continue;
+                }
+                defProject = key;
+                break;
+            }
+        }
+        req.session.def_token_used = defToken;
+        req.session.authApiVersion = 'v3';
+        req.session.tokenObjs = tokenObjs;
+        req.session.userRoles =
+            userRoleListByTokenObjs(tokenObjs);
+        updateTokenIdForProject(req, defProject,
+                                tokenObjs[defProject]);
+        req.session.userRole = roleStr;
+        req.session.last_token_used = req.session.def_token_used;
+        callback(null);
+    });
+
+}
 function userRoleListByTokenObjs (tokenObjs)
 {
     var userRoleObj = {};
@@ -2199,116 +2197,121 @@ function doV2Auth (req, callback)
         req.session.userid = data.access.user["id"];
         /* Now check the tenants attached to this user */
         req.session.last_token_used = data.access.token;
-        getTenantListByToken(req, data.access.token, function(err, data) {
-            if ((null == data) || (null == data.tenants) ||
-                (!data.tenants.length)) {
+        getTenantListByToken(req, data.access.token, function(err, tenantData) {
+            if ((null == tenantData) || (null == tenantData.tenants) ||
+                    (!tenantData.tenants.length)) {
                 req.session.isAuthenticated = false;
                 callback(messages.error.unauthorized_to_project);
                 return;
             }
-            data.tenants = getEnabledProjects(data.tenants);
-            var projectCookie =
-                commonUtils.getValueByJsonPath(req,
-                                               'cookies;' +
-                                               global.COOKIE_PROJECT_DISPLAY_NAME,
-                                               null);
-            var lastTenantObj = data.tenants[data.tenants.length - 1];
-            var cookieProjObj = null;
-            if (null != projectCookie) {
-                var tenantsCnt = data.tenants.length;
-                for (var i = 0; i < tenantsCnt; i++) {
-                    if ((projectCookie == data.tenants[i]['name']) &&
-                        (projectCookie != lastTenantObj['name'])) {
-                        cookieProjObj = data.tenants[i];
-                    }
-                }
-            }
-            data.tenants = [lastTenantObj];
-            if (null != cookieProjObj) {
-                data.tenants.push(cookieProjObj);
-            }
-            var projCount = data.tenants.length;
-            if (!projCount) {
-                req.session.isAuthenticated = false;
-                callback(messages.error.unauthorized_to_project);
-                return;
-            }
-
-            /* As of now, keystone does not provide the default project name,
-               so we are using the last entry in the tenant list as default 
-               project
-             */
-            var tenantList = data.tenants;
-            var defProject = tenantList[projCount - 1]['name'];
-            var userObj = {'username': username, 'password': password,
-                           'tenant': defProject, 'req': req};
-            doAuth(userObj, function(data) {
-                if (data == null) {
-                    req.session.isAuthenticated = false;
-                    callback(messages.error.unauthorized_to_project);
-                    return;
-                } else {
-                    logutils.logger.debug("After V2 Successful auth def_token:" +
-                                          JSON.stringify(data.access));
-                    req.session.def_token_used = data.access.token;
-                    var uiRoles = null;
-                    /* We got already the last one from tenantList, so remove
-                       * this from tenantList now
-                       */
-                    var userRolesToDefProject =
-                        commonUtils.getValueByJsonPath(data,
-                                                       'access;user;roles', []);
-                    var uiRolesToDefProject =
-                        getUIRolesByExtRoles(userRolesToDefProject);
-                    tenantList.splice(projCount - 1, 1);
-                    getUserRoleByAllTenants(username, password,
-                                            tenantList, req,
-                                            function(uiRoles, tokenObjs) {
-                        if ((tenantList.length > 0) && ((null == uiRoles) ||
-                            (!uiRoles.length))) {
-                            req.session.isAuthenticated = false;
-                            callback(messages.error.unauthenticate_to_project);
-                            return;
-                        }
-                        var uiRolesCnt = 0;
-                        if ((null == uiRoles) || (!uiRoles.length)) {
-                            uiRoles = [];
-                            /* Take from default project one */
-                            tokenObjs[defProject] =
-                                commonUtils.getValueByJsonPath(data, 'access',
-                                                               {});
-                            delete tokenObjs[defProject]['serviceCatalog'];
-                            var userRoles = uiRolesToDefProject;
-                            var userRolesCnt = userRoles.length;
-                            var tmpUIRoleObjs = {};
-                            for (var i = 0; i < userRolesCnt; i++) {
-                                if (null == tmpUIRoleObjs[userRoles[i]]) {
-                                    uiRoles.push(userRoles[i]);
-                                    tmpUIRoleObjs[userRoles[i]] = userRoles[i];
-                                }
-                            }
-                        }
-
-                        /* Save the user-id/password in Redis in encrypted format.
-                         */
-                        req.session.userRole = uiRoles;
-                        req.session.authApiVersion = 'v2.0';
-                        req.session.tokenObjs = tokenObjs;
-                        req.session.userRoles =
-                            userRoleListByTokenObjs(tokenObjs);
-                        //setSessionTimeoutByReq(req);
-                        updateTokenIdForProject(userObj.req, defProject,
-                                                data.access);
-                        updateLastTokenUsed(req, data.access);
-                        logutils.logger.info("Login Successful with tenants.");
-                        callback(null);
-                    });
-                }
-            });
+            var tokenid = data.access.token.id;
+            doV2AuthCB(err, tenantData, req, username, password, tokenid, callback);
         });
     });
 }
 
+function doV2AuthCB (err, data, req, username, password, tokenid, callback) {
+    data.tenants = getEnabledProjects(data.tenants);
+    var projectCookie =
+        commonUtils.getValueByJsonPath(req,
+                                       'cookies;' +
+                                       global.COOKIE_PROJECT_DISPLAY_NAME,
+                                       null);
+    var lastTenantObj = data.tenants[data.tenants.length - 1];
+    var cookieProjObj = null;
+    if (null != projectCookie) {
+        var tenantsCnt = data.tenants.length;
+        for (var i = 0; i < tenantsCnt; i++) {
+            if ((projectCookie == data.tenants[i]['name']) &&
+                (projectCookie != lastTenantObj['name'])) {
+                cookieProjObj = data.tenants[i];
+            }
+        }
+    }
+    data.tenants = [lastTenantObj];
+    if (null != cookieProjObj) {
+        data.tenants.push(cookieProjObj);
+    }
+    var projCount = data.tenants.length;
+    if (!projCount) {
+        req.session.isAuthenticated = false;
+        callback(messages.error.unauthorized_to_project);
+        return;
+    }
+
+    /* As of now, keystone does not provide the default project name,
+       so we are using the last entry in the tenant list as default 
+       project
+     */
+    var tenantList = data.tenants;
+    var defProject = tenantList[projCount - 1]['name'];
+    var userObj = {'username': username, 'password': password,
+                   'tenant': defProject, 'req': req, 'tokenid': tokenid};
+    doAuth(userObj, function(data) {
+        if (data == null) {
+            req.session.isAuthenticated = false;
+            callback(messages.error.unauthorized_to_project);
+            return;
+        } else {
+            logutils.logger.debug("After V2 Successful auth def_token:" +
+                                  JSON.stringify(data.access));
+            req.session.def_token_used = data.access.token;
+            req.session.isAuthenticated = true;
+            var uiRoles = null;
+            /* We got already the last one from tenantList, so remove
+               * this from tenantList now
+               */
+            var userRolesToDefProject =
+                commonUtils.getValueByJsonPath(data,
+                                               'access;user;roles', []);
+            var uiRolesToDefProject =
+                getUIRolesByExtRoles(userRolesToDefProject);
+            tenantList.splice(projCount - 1, 1);
+            getUserRoleByAllTenants(username, password,
+                                    tenantList, req,
+                                    function(uiRoles, tokenObjs) {
+                if ((tenantList.length > 0) && ((null == uiRoles) ||
+                    (!uiRoles.length))) {
+                    req.session.isAuthenticated = false;
+                    callback(messages.error.unauthenticate_to_project);
+                    return;
+                }
+                var uiRolesCnt = 0;
+                if ((null == uiRoles) || (!uiRoles.length)) {
+                    uiRoles = [];
+                    /* Take from default project one */
+                    tokenObjs[defProject] =
+                        commonUtils.getValueByJsonPath(data, 'access',
+                                                       {});
+                    delete tokenObjs[defProject]['serviceCatalog'];
+                    var userRoles = uiRolesToDefProject;
+                    var userRolesCnt = userRoles.length;
+                    var tmpUIRoleObjs = {};
+                    for (var i = 0; i < userRolesCnt; i++) {
+                        if (null == tmpUIRoleObjs[userRoles[i]]) {
+                            uiRoles.push(userRoles[i]);
+                            tmpUIRoleObjs[userRoles[i]] = userRoles[i];
+                        }
+                    }
+                }
+
+                /* Save the user-id/password in Redis in encrypted format.
+                 */
+                req.session.userRole = uiRoles;
+                req.session.authApiVersion = 'v2.0';
+                req.session.tokenObjs = tokenObjs;
+                req.session.userRoles =
+                    userRoleListByTokenObjs(tokenObjs);
+                //setSessionTimeoutByReq(req);
+                updateTokenIdForProject(userObj.req, defProject,
+                                        data.access);
+                updateLastTokenUsed(req, data.access);
+                logutils.logger.info("Login Successful with tenants.");
+                callback(null);
+            });
+        }
+    });
+}
 function getV3DomainIfNotAvailable (domain)
 {
     if (null == domain) {
@@ -3197,9 +3200,10 @@ function checkIfValidToken (req, tokenId, callback)
         }
         var adminToken = data.access.token;
         getTokenDetails({req: req, token: adminToken, userToken:
-                        xAuthToken, apiVersion: version},
-                        function(data) {
-            var tenant =
+            xAuthToken, apiVersion: version},
+            function(data) {
+                logutils.logger.debug("\n\nGetting getTokenDetails:", JSON.stringify(data));
+                var tenant =
                 commonUtils.getValueByJsonPath(data, "access;token;tenant;id",
                                                null);
             if (null == tenant) {
@@ -3210,7 +3214,6 @@ function checkIfValidToken (req, tokenId, callback)
         });
     });
 }
-
 exports.authenticate = authenticate;
 exports.checkIfValidToken = checkIfValidToken;
 exports.getToken = getToken;
@@ -3240,4 +3243,10 @@ exports.getAuthRetryData = getAuthRetryData;
 exports.getPortToProcessMapByReqObj = getPortToProcessMapByReqObj;
 exports.getConfigEntityByServiceEndpoint = getConfigEntityByServiceEndpoint;
 exports.getTokenAndUpdateLastToken = getTokenAndUpdateLastToken;
-
+exports.doV2AuthCB = doV2AuthCB;
+exports.getTenantListByToken = getTenantListByToken;
+exports.getUserAuthData = getUserAuthData;
+exports.doV3AuthCB = doV3AuthCB;
+exports.getAuthDataByReqUrlObj = getAuthDataByReqUrlObj;
+exports.getV3ProjectListByToken = getV3ProjectListByToken;
+exports.checkIfValidToken = checkIfValidToken;

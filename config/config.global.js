@@ -365,7 +365,15 @@ config.network.L2_enable = false;
 config.getDomainsFromApiServer = false;
 
 config.jsonSchemaPath = "/usr/src/contrail/contrail-web-core/src/serverroot/configJsonSchemas";
+config.connectedAppsInfo = {};
+//This is global flag which enables links (display links in footer)
+// to all the connectedApps mentioned, however we can
+// override this by using enable flag (like config.connectedAppsInfo.AppFormix.enable)
+// in the app object
+config.connectedAppsInfo.enable = false;
+config.connectedAppsInfo.AppFormix = {};
+config.connectedAppsInfo.AppFormix.url = '';
+config.connectedAppsInfo.AppFormix.enable = false;
 
 // Export this as a module.
 module.exports = config;
-

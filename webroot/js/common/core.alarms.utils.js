@@ -73,11 +73,10 @@ define(
                 self.startUpdateBellTimer = function () {
                     var region = contrail.getCookie('region');
                     if(region != cowc.GLOBAL_CONTROLLER_ALL_REGIONS)
-                        setTimeout(self.fetchAndUpdateAlarmBell,cowc.ALARM_REFRESH_DURATION);
+                        globalObj['alarmTimerCnst'] = setTimeout(self.fetchAndUpdateAlarmBell,cowc.ALARM_REFRESH_DURATION);
                 };
                 //Call the update alarm bell
                 //self.fetchAndUpdateAlarmBell();
-
                 self.mapSeverityToColor = function (severity) {
                     if (severity != -1) {
                         if (severity >= 2) {

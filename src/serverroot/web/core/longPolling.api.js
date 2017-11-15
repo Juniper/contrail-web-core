@@ -164,8 +164,8 @@ function registerRestrictedURL ()
  */
 function checkLoginReq (req)
 {
-  //Now,as authenticate request is issued via Ajax call and we get the _ argument to avoid cache and need to match url only with the beginning
-  return req.url.match(/^((\/isauthenticated)|(\/vcenter\/menu)|(\/menu)|(\/authenticate)|(\/vcenter\/authenticate)|(\/vcenter\/isauthenticated)|(\/logout)|(\/vcenter\/login)|(\/vcenter\/logout)|(\/login)|(\/vcenter))/);
+    //Now,as authenticate request is issued via Ajax call and we get the _ argument to avoid cache and need to match url only with the beginning
+    return req.url.match(/^((\/isauthenticated)|(\/single-sign-on)|(\/vcenter\/menu)|(\/menu)|(\/authenticate)|(\/vcenter\/authenticate)|(\/vcenter\/isauthenticated)|(\/logout)|(\/vcenter\/login)|(\/vcenter\/logout)|(\/login)|(\/vcenter))/);
 }
 
 /*
