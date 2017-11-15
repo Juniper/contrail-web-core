@@ -884,9 +884,9 @@ define([
                             filteredRowCnt = grid.getData().getPagingInfo()['totalRows']
                         }
                         if (totalRowCnt == filteredRowCnt) {
-                            gridContainer.find('.grid-header-text').text(gridConfig.header.title.text + " (" + totalRowCnt + ")");
+                            gridContainer.find('.grid-header-text').html(gridConfig.header.title.text + " (" + totalRowCnt + ")");
                         } else {
-                            gridContainer.find('.grid-header-text').text(gridConfig.header.title.text + " (" + filteredRowCnt + " of " + totalRowCnt + ")");
+                            gridContainer.find('.grid-header-text').html(gridConfig.header.title.text + " (" + filteredRowCnt + " of " + totalRowCnt + ")");
                         }
                     }
                     //Refresh the grid only if it's not destroyed
@@ -1297,7 +1297,7 @@ define([
                 var template = ' \
                 <h4 class="grid-header-text smaller {{this.cssClass}}" data-action="collapse"> \
             		<i class="grid-header-icon-loading fa fa-spinner fa-spin"></i> \
-                    <i class="grid-header-icon {{this.icon}} {{this.iconCssClass}} hide"></i> {{this.text}} \
+                    <i class="grid-header-icon {{this.icon}} {{this.iconCssClass}} hide"></i> {{{this.text}}} \
                 </h4>',
                     headerTemplate;
 

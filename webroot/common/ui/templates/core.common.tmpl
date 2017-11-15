@@ -53,7 +53,7 @@
         <li>
           <a href="#">
             {{#each this}}
-            <div class="iconFontStyle">{{this}}</div>
+            <div class="iconFontStyle">{{{this}}}</div>
             {{/each}}
           </a>
         </li>
@@ -1126,7 +1126,7 @@
                         data-bind="
                             {{#if ../disabled}}disable: {{../disabled}}, {{/if}} {{#if ../lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                             checked: {{../dataBindValue}},event: { focusout: function() { validateAttr('{{../path}}', '{{../validation}}') } }" />
-                    <span class="margin-0-0-0-5">{{label}}</span>
+                    <span class="margin-0-0-0-5">{{{label}}}</span>
                 </div>
             {{/each}}
         </div>
@@ -2678,10 +2678,10 @@
 </script>
 
 <script type="text/x-handlebars-template" id="traffic-link-tooltip-template">
-    <div class="cc-title linkTitle iconFontStyle">{{this.src}} <img src="/img/double_arrow_white.svg"/> {{this.dst}}</div>
+    <div class="cc-title linkTitle iconFontStyle">{{{this.src}}} <img src="/img/double_arrow_white.svg"/> {{{this.dst}}}</div>
     <hr/>
     {{#each this.items}}
-    <div class="item-head iconFontStyle">{{this.name}}</div>
+    <div class="item-head iconFontStyle">{{{this.name}}}</div>
     <div class="tooltip-item linkItem">
         <span class="tooltip-item-label">Traffic In</span>
         <span class="tooltip-item-value">{{this.trafficIn}}</span>
@@ -2699,9 +2699,9 @@
             {{#IfCompare option 'linkInfo' operator='=='}}
             <div class="traffic-rules">
                 <header class="iconFontStyle">
-                    <span> {{this.srcId}} </span>
+                    <span> {{{this.srcId}}} </span>
                     <img src="/img/double_arrow.svg"/>
-                <span> {{this.dstId}} </span>
+                <span> {{{this.dstId}}} </span>
                 </header>
                 <h1> Matched Rules:
                 <span class="allSessionInfo pull-right" title="Endpoint Stats"><i class="fa fa-table"></i></span>
@@ -2745,7 +2745,7 @@
                         <div class="row padding-bottom-5">
                             <div class="col-xs-6 no-padding">
                                 <h6 class="iconFontStyle">
-                                    <a class="showMoreInfo customTooltip" data-placement="top" data-delay='{"show":"400", "hide":"200"}' title='{{{this.srcTooltipContent}}}'>{{this.srcId}}</a>
+                                    <a class="showMoreInfo customTooltip" data-placement="top" data-delay='{"show":"400", "hide":"200"}' title='{{{this.srcTooltipContent}}}'>{{{this.srcId}}}</a>
                                 </h6>
                                 <dl class="row">
                                     <dt class="col-xs-9">Sessions Initiated: </dt>
@@ -2757,7 +2757,7 @@
                             {{#IfCompare this.srcId this.dstId operator='!='}}
                                 <div class="col-xs-6 no-padding borderLeft">
                                     <h6 class="iconFontStyle">
-                                        <a class="showMoreInfo customTooltip" data-placement="top" data-delay='{"show":"400", "hide":"200"}' title='{{{this.dstTooltipContent}}}'>{{this.dstId}}</a>
+                                        <a class="showMoreInfo customTooltip" data-placement="top" data-delay='{"show":"400", "hide":"200"}' title='{{{this.dstTooltipContent}}}'>{{{this.dstId}}}</a>
                                     </h6>
                                     <dl class="row">
                                         <dt class="col-xs-9">Sessions Initiated: </dt>
@@ -2782,7 +2782,7 @@
             {{else}}
             <div class="vmiDetails">
                 <header class="iconFontStyle">
-                    <span> {{this.title}} </span>
+                    <span> {{{this.title}}} </span>
                 </header>
                 <h1>{{this.vmiLabel}} {{#IfCompare this.vmiCount '' operator='!='}}
                     ({{this.vmiCount}}){{/IfCompare}}</h1>
