@@ -1244,8 +1244,10 @@ function getServiceCatalogByRegion (req, region, accessData, doFormat)
      * req.session.regionList
      */
     var tmpEndpointList = commonUtils.cloneObj(mandatoryEndpointList);
-    tmpEndpointList.push(authApi.getEndpointServiceType(global.DEFAULT_CONTRAIL_API_IDENTIFIER));
-    tmpEndpointList.push(authApi.getEndpointServiceType(global.DEFAULT_CONTRAIL_ANALYTICS_IDENTIFIER));
+    if (false == authApi.isContrailEndptFromConfig()) {
+        tmpEndpointList.push(authApi.getEndpointServiceType(global.DEFAULT_CONTRAIL_API_IDENTIFIER));
+        tmpEndpointList.push(authApi.getEndpointServiceType(global.DEFAULT_CONTRAIL_ANALYTICS_IDENTIFIER));
+    }
     var tmpEndpointListLen = tmpEndpointList.length;
 
     var servicesNotFound = {};
@@ -2089,7 +2091,6 @@ function doV3AuthCB(err, projects, req, userObj, callback) {
         callback(messages.error.unauthorized_to_project);
         return;
     }
-    req.session.isAuthenticated = true;
     projects['projects'] = getEnabledProjects(projects['projects']);
     
     /*
@@ -2256,7 +2257,6 @@ function doV2AuthCB (err, data, req, username, password, tokenid, callback) {
             logutils.logger.debug("After V2 Successful auth def_token:" +
                                   JSON.stringify(data.access));
             req.session.def_token_used = data.access.token;
-            req.session.isAuthenticated = true;
             var uiRoles = null;
             /* We got already the last one from tenantList, so remove
                * this from tenantList now
@@ -3140,7 +3140,7 @@ function getPortToProcessMapByReqObj (req)
     var serviceCatalog = commonUtils.getValueByJsonPath(req,
                                                         "session;serviceCatalog",
                                                         null, false);
-    if (null == serviceCatalog[regionCookie]) {
+    if ((null == serviceCatalog) || (null == serviceCatalog[regionCookie])) {
         return null;
     }
     for (var key in serviceCatalog[regionCookie]) {
