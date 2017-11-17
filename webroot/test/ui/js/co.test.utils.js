@@ -289,6 +289,24 @@ define([
         }
     };
 
+    this.checkDOMElementExist =  function(options, callback) {
+        var maxRetry = 1;
+        options.maxRetryCnt = options.maxRetryCnt ? options.maxRetryCnt : 10;
+        options.timeout = options.timeout ? options.timeout: 1000;
+        var checkExist =  setInterval(function() {
+            if ($(options.selector).length){
+                clearInterval(checkExist);
+                callback(true);
+                return;
+            } else if(maxRetry > options.maxRetryCnt)  {
+                clearInterval(checkExist);
+                callback(false);
+                return;
+            }
+            maxRetry++;
+        }, options.timeout);
+    };
+
     this.createMockData = function (rootViewObj, testConfigObj, deferredObj) {
         var deferredList = [];
         _.each(testConfigObj, function (testConfig) {
@@ -373,7 +391,8 @@ define([
         getGridDataSourceWithOnlyRemotes: getGridDataSourceWithOnlyRemotes,
         createMockData: createMockData,
         initFeatureModule: initFeatureModule,
-        initFeatureApp: initFeatureApp
+        initFeatureApp: initFeatureApp,
+        checkDOMElementExist: checkDOMElementExist
     };
 
 });
