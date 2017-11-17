@@ -692,7 +692,7 @@ function initCustomKOBindings(Knockout) {
                     optionList = optionList(viewModel);
                     }
 
-                var formattedOptionList = formatData(optionList, elementConfig),
+                var formattedOptionList = cowu.formatFormData(optionList, elementConfig),
                     currentOptionList = multiselect.getAllData();
 
                 if (JSON.stringify(formattedOptionList) !== JSON.stringify(currentOptionList)) {
