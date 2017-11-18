@@ -390,6 +390,8 @@ define([
 
         this.FS_HASH_P = 'query_flow_series';
         this.FR_HASH_P = 'query_flow_record';
+        this.SS_HASH_P = 'query_session_series';
+        this.SR_HASH_P = 'query_session_record';
         this.SL_HASH_P = 'query_log_system';
         this.OL_HASH_P = 'query_log_object';
         this.STAT_HASH_P = 'query_stat_query';
