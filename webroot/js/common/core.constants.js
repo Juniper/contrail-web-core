@@ -23,32 +23,31 @@ define([
         this.TRAFFIC_GROUP_COLOR_LEVEL1 = ['#74abd2', '#9fa8da', '#f8bbd0', '#c5e1a5'];
         this.TRAFFIC_GROUP_COLOR_LEVEL2 = ['#5282a7', '#91cd99', '#80d4f9', '#80deea'];
 
-        this.APPLICATION_ICON = '\ue90c';
-        this.DEPLOYMENT_ICON = '\ue906';
-        this.TIER_ICON = '\ue904';
-        this.SITE_ICON = '\ue908';
-
         this.ARROW_RIGHT_ICON = '\uf178';
         this.TRAFFIC_GROUP_TAG_TYPES = [{
             'text': 'Application',
             'value': 'app',
             'showVNonEmpty' : false,
-            'showIcononEmpty': true
+            'showIcononEmpty': true,
+            'icon': '\ue90c'
         },{
             'text': 'Tier',
             'value': 'tier',
             'showVNonEmpty' : false,
-            'showIcononEmpty': true
+            'showIcononEmpty': true,
+            'icon': '\ue904'
         },{
             'text': 'Deployment',
             'value': 'deployment',
             'showVNonEmpty' : false,
-            'showIcononEmpty': true
+            'showIcononEmpty': true,
+            'icon': '\ue906'
         },{
             'text': 'Site',
             'value': 'site',
             'showVNonEmpty' : false,
-            'showIcononEmpty': true
+            'showIcononEmpty': true,
+            'icon': '\ue908'
         }];
         this.IMPLICIT_DENY_UUID = '00000000-0000-0000-0000-000000000002';
         this.DEFAULT_FIREWALL_RULES = {

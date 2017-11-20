@@ -2369,8 +2369,9 @@ $label_color: #3182bd;
     .showTgSidePanel{
         margin-right: $traffic-link-info-width;
     }
-    .arc-label.along-arc textPath, .cc-title, .iconFontStyle,
-    .iconFontStyle span, .link-arrow-start textPath, .link-arrow-end textPath {
+    .arc-label.along-arc textPath, .cc-title span, .iconFontStyle,
+    .iconFontStyle span, .link-arrow-start textPath, .link-arrow-end textPath,
+    .arc-label.along-arc .icon-style {
         font-family: "FontAwesome", "contrailGlyph", Open Sans !important;
     }
     .link-arrow-start textPath, .link-arrow-end textPath {
