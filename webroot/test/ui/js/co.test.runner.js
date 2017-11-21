@@ -265,8 +265,8 @@ define([
                 });
             },
             teardown: function () {
-                fakeServer.restore();
-                delete fakeServer;
+                /*fakeServer.restore();
+                delete fakeServer;*/
             }
         });
 
