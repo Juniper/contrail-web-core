@@ -100,6 +100,9 @@ prod-env:
 	# For test files, we will setting the env file with current environment.
 	./unit-test.sh set-env "prod"
 
+gen-keys:
+	bash generate-keys.sh
+
 clear-cache-dev:
 	rm -f built_version
 	./prod-dev.sh webroot/html/dashboard.html dev_env prod_env false
