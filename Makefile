@@ -99,6 +99,7 @@ dev-env:
 	ln -sf ../../webroot/html/login.tmpl webroot/html/login.html
 	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
 	if [ ! -d ../$(CONTROLLER) ]; then make fetch-schema; fi
+	bash generate-keys.sh
 	./generate-files.sh "dev-env" $(REPO)
 	./dev-install.sh
 	rm -f built_version
