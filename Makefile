@@ -129,6 +129,9 @@ prod-env:
 	# For test files, we will setting the env file with current environment.
 	./unit-test.sh set-env "prod"
 
+gen-keys:
+	bash generate-keys.sh
+
 chrome-extension:
 ifndef REPO
 	./generate-files.sh 'prod-env' $(WEBCONTROLLERREPO)
