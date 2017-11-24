@@ -277,7 +277,6 @@ function getQueryOptions(queryReqObj) {
     } else if (tableType === "SESSION") {
         queryOptions.queryQueue = "seqq";
     }
-
     return queryOptions;
 }
 
@@ -683,6 +682,13 @@ function getQueryData (req, res, appData) {
     });
 }
 
+function formatResponseTimes (queryJSON, time) {
+    var curTime = queryJSON[time];
+    if(queryJSON.use_absolute_time && isNaN(curTime) === false)
+        curTime = curTime / 1000;
+    return curTime;
+}
+
 function processQueryResults(req, queryResults, queryOptions, isGetQ,
                              callback) {
     var startDate = new Date(),
@@ -694,7 +700,8 @@ function processQueryResults(req, queryResults, queryOptions, isGetQ,
         table = queryJSON.table,
         tableType = queryOptions.tableType,
         endTime, total, responseJSON, resultJSON;
-
+    queryJSON.start_time = formatResponseTimes(queryJSON, 'start_time');
+    queryJSON.end_time = formatResponseTimes(queryJSON, 'end_time');
     endTime = endDate.getTime();
     resultJSON = (queryResults && !isEmptyObject(queryResults)) ?
         queryResults.value : [];
@@ -916,16 +923,27 @@ function saveData4Chart2Redis(threadArgs, saveData4ChartDoneCB) {
 }
 
 function setMicroTimeRange(query, fromTime, toTime) {
-    if (isNaN(fromTime) === true) {
-        query.start_time = fromTime;
-    } else {
-        query.start_time = fromTime * 1000;
+    var now = new Date().getTime();
+    query.start_time  = parseRelativeTime(query, fromTime, now);
+    query.end_time  = parseRelativeTime(query, toTime, now);
+}
+
+function parseRelativeTime(query, time, now) {
+    if (query.use_absolute_time && typeof time  === 'string'
+            && time.indexOf('now') > -1) {
+        time = time.replace(/[^0-9mh]/g, "");
+        var timeMultiplier = 0;
+        if(time.indexOf('m') > -1) {
+            timeMultiplier = time.split('m')[0];
+        } else if(time.indexOf('h') > -1) {
+            timeMultiplier = time.split('h')[0] * 60;
+        }
+        time = new Date(now - (timeMultiplier * 60 * 1000)).getTime();
     }
-    if (isNaN(toTime) === true) {
-        query.end_time = toTime;
-    } else {
-        query.end_time = toTime * 1000;
+    if (isNaN(time) === false) {
+        time = time * 1000;
     }
+    return time;
 }
 
 function getQueryJSON4Table(queryReqObj) {
@@ -937,6 +955,7 @@ function getQueryJSON4Table(queryReqObj) {
             "start_time": "",
             "end_time": "",
             "select_fields": [],
+            "use_absolute_time": formModelAttrs.use_absolute_time,
             // "filter" is a array of arrays ie. AND clauses inside just one OR clause
             "filter": [[]]
         };
