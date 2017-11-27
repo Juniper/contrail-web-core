@@ -1,11 +1,13 @@
 define([
     'lodashv4',
+    'd3v4',
     'core-basedir/js/views/ChartView',
     'contrail-list-model',
     'legend-view',
     'core-constants',
-    'chart-utils'
-], function (_, ChartView,  ContrailListModel, LegendView, cowc, chUtils) {
+    'chart-utils',
+    'contrail-charts'
+], function (_, d3v4, ChartView,  ContrailListModel, LegendView, cowc, chUtils, coCharts) {
 
     var ContrailChartsView = ChartView.extend({
         initialize: function() {
