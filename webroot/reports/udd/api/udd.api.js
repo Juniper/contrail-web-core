@@ -10,7 +10,7 @@ var uddKeyspace = "config_webui";
 var tableName = "user_widgets";
 var config = configUtils.getConfig();
 var client = new cassandra.Client({ contactPoints: config.cassandra.server_ips, keyspace: "system" });
-client.execute("SELECT keyspace_name FROM system.schema_keyspaces;", function(err, result) {
+client.execute("SELECT keyspace_name FROM system_schema.keyspaces;", function(err, result) {
     if (err) {
         console.error(err);
         return;
@@ -20,7 +20,7 @@ client.execute("SELECT keyspace_name FROM system.schema_keyspaces;", function(er
         // TODO why all keyspaces are nested inside one of them in client.metadata.keyspaces?
         var q1 = "CREATE KEYSPACE " + uddKeyspace + " WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 1};";
         var q2 = "CREATE TYPE config (  title text,  x int,  y int,  width int,  height int,);";
-        var q3 = 'CREATE TYPE widget_view (  view text,  "viewPathPrefix" text,  model text,  "modelConfig" text,  "modelPathPrefix" text,);';
+        var q3 = 'CREATE TYPE widget_view (  "view" text,  "viewPathPrefix" text,  "model" text,  "modelConfig" text,  "modelPathPrefix" text,);';
         var q4 = ["CREATE TABLE", tableName, '(  id uuid,  "userId" text,  "dashboardId" text,  "tabId" text, "tabCreationTime" text, "tabName" text, "customizedTabListOrder" text, config frozen <config>,  "contentConfig" map<text, frozen <widget_view>>,  PRIMARY KEY(id));'].join(" ");
         var q5 = ["CREATE INDEX ON", tableName, '("userId");'].join(" ");
         var q6 = ["CREATE INDEX ON", tableName, '("tabId");'].join(" ");
@@ -31,7 +31,9 @@ client.execute("SELECT keyspace_name FROM system.schema_keyspaces;", function(er
                 client.execute(q3, function() {
                     client.execute(q4, function() {
                         client.execute(q5, function() {
-                            client.execute(q6, function() {});
+                            client.execute(q6, function() {
+                                addRequiredColumns();
+                            });
                         });
                     });
                 });
@@ -39,7 +41,11 @@ client.execute("SELECT keyspace_name FROM system.schema_keyspaces;", function(er
         });
     } else {
         client = connectDB();
+        addRequiredColumns();
     }
+
+    function addRequiredColumns()
+    {
 
     /**
      * This code is used to add new "tabCreationTime" and "customizedTabListOrder"
@@ -91,6 +97,7 @@ client.execute("SELECT keyspace_name FROM system.schema_keyspaces;", function(er
             }
         });
     });
+    }
 });
 
 function connectDB() {
