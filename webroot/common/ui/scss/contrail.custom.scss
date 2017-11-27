@@ -239,11 +239,31 @@ div.t-grid td {
 /* End vcon-web.css*/
 
 /* Sidebar*/
-#sidebar li.head > a > i{
-    display:none;
-}
-#sidebar.menu-min li.head i{
+#sidebar {
+  li.head > a > i {
+    display: none;
+  }
+  &.menu-min li.head i {
     display: inline-block;
+  }
+  &:not(.menu-min) {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+}
+
+#sidebar-shortcuts.scrolled {
+  position: fixed;
+  top: 0 !important;
+  padding-right: 5px;
+}
+
+#content-container.scrolled {
+  height: calc(100vh - 45px);
+}
+
+.menu-min #sidebar-shortcuts.scrolled ~ ul {
+  padding-top: 35px !important;
 }
 .menu-min .nav-list > li > a > span#sidebar-collapse {
     display:block;
