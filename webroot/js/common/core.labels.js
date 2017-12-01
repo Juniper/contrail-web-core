@@ -104,7 +104,7 @@ define([
             'nw_ace_uuid': 'Network UUID',
             'agg-bytes': 'Aggregate Bytes',
             'agg-packets': 'Aggregate Packets',
-            'vmi_uuid': 'VMI UUID',
+            'vmi': 'VMI Name',
 
             //Object log
             'ObjectLog': 'Object Log',

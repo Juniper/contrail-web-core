@@ -301,7 +301,7 @@ global.STATS_PROP = {
                            },
                  };
 global.FORMAT_TABLE_COLUMNS = {
-    'FlowSeriesTable': {"sum(bytes)": "sum_bytes", "sum(packets)": "sum_packets", "avg(bytes)": "avg_bytes", "avg(packets)": "avg_packets"}
+    'FlowSeriesTable': {"SUM(bytes)": "sum_bytes", "SUM(packets)": "sum_packets", "AVG(bytes)": "avg_bytes", "AVG(packets)": "avg_packets"}
 };
 
 global.VALID_LIKE_OPR_FIELDS = ['sourcevn', 'destvn'];

@@ -892,7 +892,7 @@ function saveData4Chart2Redis(threadArgs, saveData4ChartDoneCB) {
         var fieldNameLower = fieldName.toLowerCase(),
             isAggregate = false;
 
-        var AGGREGATE_PREFIX_ARRAY = ["min(", "max(", "count(", "sum("];
+        var AGGREGATE_PREFIX_ARRAY = ["MIN(", "MAX(", "COUNT(", "SUM("];
 
         for (var i = 0; i < AGGREGATE_PREFIX_ARRAY.length; i++) {
             if (fieldNameLower.indexOf(AGGREGATE_PREFIX_ARRAY[i]) !== -1) {

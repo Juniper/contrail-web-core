@@ -53,7 +53,7 @@ define([
     var columnDisplayMap  = {
         "FlowSeriesTable": [
             {select:"T", display:{width:210, filterable:false}},
-            {select:"T=", display:{id: "T", field: "T", width:210, filterable:false}}, // Data received has key : 'T'
+            {select:"T=", display:{id: "T=", field: "T=", width:210, filterable:false}}, // Data received has key : 'T'
             {select:"vrouter", display:{width:100}},
             {select:"sourcevn", display:{width:240}},
             {select:"destvn", display:{width:240}},
@@ -64,11 +64,11 @@ define([
             {select:"direction_ing", display:{width:100}},
             {select:"protocol", display:{width:100}},
             {select:"bytes", display:{width:120}},
-            {select:"sum(bytes)", display:{width:100}},
-            {select:"avg(bytes)", display:{width:100}},
+            {select:"SUM(bytes)", display:{width:100}},
+            {select:"AVG(bytes)", display:{width:100}},
             {select:"packets", display:{width:100}},
-            {select:"sum(packets)", display:{width:120}},
-            {select:"avg(packets)", display:{width:120}},
+            {select:"SUM(packets)", display:{width:120}},
+            {select:"AVG(packets)", display:{width:120}},
             {select:"flow_count", display:{width:120}}
         ],
         "FlowRecordTable": [
@@ -91,7 +91,7 @@ define([
             {select:"nw_ace_uuid", display:{width:280}},
             {select:"agg-bytes", display:{width:120}},
             {select:"agg-packets", display:{ width:140}},
-            {select:"vmi_uuid", display:{width:140}},
+            {select:"vmi", display:{width:140}},
             {select:"drop_reason", display:{ width:140}}
         ],
         "StatTable.PRouterEntry.ifStats" : [

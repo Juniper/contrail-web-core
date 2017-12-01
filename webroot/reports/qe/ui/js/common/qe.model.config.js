@@ -39,6 +39,7 @@ define([
                             nonAggKey = key.substring(key.indexOf("(") + 1, key.indexOf(")"));
                             if(contrail.checkIfFunction(isEnableMap[nonAggKey]) && tableType === cowc.QE_FLOW_TABLE_TYPE) {
                                 isEnableMap[nonAggKey](true);
+                                isCheckedMap[nonAggKey](true);
                             }
                         }
                     }
@@ -56,6 +57,7 @@ define([
                         if (qeUtils.isAggregateField(key)) {
                             if (tableType === cowc.QE_FLOW_TABLE_TYPE) {
                                 isEnableMap[key](true);
+                                isCheckedMap[key](true);
                             }
 
                             nonAggKey = key.substring(key.indexOf("(") + 1, key.indexOf(")"));
@@ -74,6 +76,7 @@ define([
                             nonAggKey = key.substring(key.indexOf("(") + 1, key.indexOf(")"));
                             if(contrail.checkIfFunction(isEnableMap[nonAggKey]) && tableType === cowc.QE_FLOW_TABLE_TYPE) {
                                 isEnableMap[nonAggKey](true);
+                                isCheckedMap[nonAggKey](true);
                             }
                         }
                     }
