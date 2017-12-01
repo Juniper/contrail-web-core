@@ -388,10 +388,10 @@ define([
     }
 
     function _isAggregateField(fieldName) {
-        var fieldNameLower = fieldName.toLowerCase(),
+        var fieldNameLower = fieldName,
             isAggregate = false;
 
-        var AGGREGATE_PREFIX_ARRAY = ["min(", "max(", "count(", "sum("];
+        var AGGREGATE_PREFIX_ARRAY = ["MIN(", "MAX(", "COUNT(", "SUM("];
 
         for (var i = 0; i < AGGREGATE_PREFIX_ARRAY.length; i++) {
             if(fieldNameLower.indexOf(AGGREGATE_PREFIX_ARRAY[i]) !== -1) {
