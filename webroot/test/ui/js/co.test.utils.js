@@ -292,7 +292,7 @@ define([
     this.checkDOMElementExist =  function(options, callback) {
         var maxRetry = 1;
         options.maxRetryCnt = options.maxRetryCnt ? options.maxRetryCnt : 10;
-        options.timeout = options.timeout ? options.timeout: 1000;
+        options.timeout = options.timeout ? options.timeout: 2000;
         var checkExist =  setInterval(function() {
             if ($(options.selector).length){
                 clearInterval(checkExist);
