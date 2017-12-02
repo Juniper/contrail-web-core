@@ -50,6 +50,7 @@ define([
             var editApplicationRefs = "" , editagSiteRefs = "", 
                 editagDeploymentRefs = "", editagTierRefs = "", editagLabelsRef = '';
             var editTagsRefsArray = [];
+            var ediCustomTagRefs = "";
             var tagrefs = getValueByJsonPath(modelData,
                     "tag_refs", []);
             if(tagrefs.length > 0) {
@@ -61,35 +62,37 @@ define([
                         } else {
                             editApplicationRefs += ',' + fqName.join(":");
                         }
-                    }
-                    if((fqName[fqName.length -1].indexOf('site') > -1)) {
+                    } else if((fqName[fqName.length -1].indexOf('site') > -1)) {
                         if(editagSiteRefs === '') {
                             editagSiteRefs = fqName.join(":");
                         } else {
                             editagSiteRefs += ',' + fqName.join(":");
                         }
-                    }
-                    if((fqName[fqName.length -1].indexOf('deployment') > -1)) {
+                    } else if((fqName[fqName.length -1].indexOf('deployment') > -1)) {
                         if(editagDeploymentRefs === '') {
                             editagDeploymentRefs = fqName.join(":");
                         } else {
                             editagDeploymentRefs += ',' + fqName.join(":");
                         }
-                    }
-                    if((fqName[fqName.length -1].indexOf('tier') > -1)) {
+                    } else if((fqName[fqName.length -1].indexOf('tier') > -1)) {
                         if(editagTierRefs === '') {
                             editagTierRefs = fqName.join(":");
                         } else {
                             editagTierRefs += ',' + fqName.join(":");
                         }
-                    } 
-                    if((fqName[fqName.length -1].indexOf('label') > -1)) {
+                    } else  if((fqName[fqName.length -1].indexOf('label') > -1)) {
                         if(editagLabelsRef === '') {
                             editagLabelsRef = fqName.join(":");
                         } else {
                             editagLabelsRef += ',' + fqName.join(":");
                         }
-                    }     
+                    } else {
+                        if(ediCustomTagRefs === '') {
+                            ediCustomTagRefs = fqName.join(":");
+                        } else {
+                            ediCustomTagRefs += ',' + fqName.join(":");
+                        }
+                    }
                 });
             }
             
@@ -99,6 +102,7 @@ define([
             modelData["Deployment"] = editagDeploymentRefs;
             modelData["Tier"] = editagTierRefs;
             modelData["Labels"] = editagLabelsRef;
+            modelData["Custom"] = ediCustomTagRefs;
             //editagApplicationRefs , editagSiteRefs, editagDeploymentRefs, editagTierRefs;
             return modelData;
         },
@@ -166,7 +170,7 @@ define([
             }
             //tags
             tagList = [];
-            var appRefs, siteRefs, deploymentRefs, tierRefs, labelRefs;
+            var appRefs, siteRefs, deploymentRefs, tierRefs, labelRefs, customTagRefs;
              if(cfgObj.Application && cfgObj.Application != "None"){
                  appRefs = cfgObj.Application.split(',');
                  _.each(appRefs, function(refs){
@@ -201,13 +205,21 @@ define([
                          var actRef = refs.split(':');
                           tagList.push({to: actRef});
                  });
-            } 
+            }
+            if(cfgObj.Custom){
+                customTagRefs = cfgObj.Custom.split(',');
+                 _.each(customTagRefs, function(refs){
+                         var actRef = refs.split(':');
+                          tagList.push({to: actRef});
+                 });
+            }
             cfgObj.tag_refs = tagList;
             delete cfgObj.Application;
             delete cfgObj.Deployment;
             delete cfgObj.Labels;
             delete cfgObj.Site;
             delete cfgObj.Tier;
+            delete cfgObj.Custom;
         },
 
         getConsolidatedNumber: function(access) {

@@ -126,6 +126,27 @@ define([
                                     }
                                 }
                             ]
+                        },
+                        {
+                            columns: [
+                                {
+                                    elementId: 'Custom',
+                                    view: 'FormMultiselectView',
+                                    viewConfig: {
+                                        label: "Custom",
+                                        path: 'Custom',
+                                        dataBindValue: 'Custom',
+                                        class: 'col-xs-6',
+                                        elementConfig: {
+                                            dataTextField: "text",
+                                            dataValueField: "value",
+                                            placeholder:
+                                                "Select Custom Tags",
+                                                dataSource : getDataSourceForDropdown('custom')
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     ]
                 }
@@ -134,7 +155,7 @@ define([
     });
     function tagsParser(result, tagName) {
         var textValue, actValue, tagsArray = [];
-        if(tagName != "label"){
+        if($.inArray(tagName, ctwc.FW_PREDEFINED_TAGS) !== -1){
             tagsArray.push({'text':"None","value":"None"});
         }
         var pHashParam = getValueByJsonPath(layoutHandler.getURLHashObj(),"p");
@@ -177,6 +198,9 @@ define([
                       "value":actValue
                  };
               if (tagsDetails[j].tag.tag_type_name === tagName) {
+                  tagsArray.push(data);
+              } else if (tagName === 'custom' &&
+                      $.inArray(tagsDetails[j].tag.tag_type_name, ctwc.FW_PREDEFINED_TAGS) === -1){
                   tagsArray.push(data);
               }
           }
