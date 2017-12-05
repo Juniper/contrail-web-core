@@ -14,7 +14,7 @@ define([
                 elId = self.attributes.elementId,
                 validation = self.attributes.validation,
                 lockEditingByDefault = self.attributes.lockEditingByDefault,
-                steps;
+                steps, previousHidden = viewConfig.privousHidden;
 
             self.$el.html(wizardTempl({viewConfig: viewConfig, elementId: elId}));
             steps = viewConfig['steps'];
@@ -54,6 +54,10 @@ define([
             });
 
             self.$el.parents('.modal-body').css({'padding': '0'});
+            /* if you want to hide previous button of wizard then pass the privousHidden flag true or false */
+            if(previousHidden !== undefined){
+                self.$el.find('.actions > ul > li > a')[0].setAttribute('style','visibility: hidden');
+            }
         }
     });
 

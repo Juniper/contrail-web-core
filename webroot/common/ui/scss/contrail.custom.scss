@@ -2935,3 +2935,251 @@ footer#footer-container * {
 #back-to-top {
     bottom: 35px;
 }
+
+
+/*Load Balancer starts here*/
+#loadbalancer_load_balancers {
+  #lb_subnet::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 59px;
+    content: "\f069";
+    font-size: 7px;
+  }
+  #name::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 53px;
+    content: "\f069";
+    font-size: 7px;
+  }
+  #lb_provider::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 153px;
+    content: "\f069";
+    font-size: 7px;
+  }
+}
+
+#loadbalancer_listener {
+  #listener_name::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 53px;
+    content: "\f069";
+    font-size: 7px;
+  }
+  #listener_protocol::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 67px;
+    content: "\f069";
+    font-size: 7px;
+  }
+  #listener_port::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 42px;
+    content: "\f069";
+    font-size: 7px;
+  }
+}
+
+#loadbalancer_pool {
+  #pool_name::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 53px;
+    content: "\f069";
+    font-size: 7px;
+  }
+  #pool_method::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 64px;
+    content: "\f069";
+    font-size: 7px;
+  }
+}
+
+#loadbalancer_monitor{
+ #monitor_type::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 98px;
+    content: "\f069";
+    font-size: 7px;
+  }
+  #health_check_interval::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 174px;
+    content: "\f069";
+    font-size: 7px;
+  }
+  #retry_count::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 197px;
+    content: "\f069";
+    font-size: 7px;
+  }
+  #timeout::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 97px;
+    content: "\f069";
+    font-size: 7px;
+  }
+}
+#configure-config_lb_listener {
+   #protocol::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 67px;
+    content: "\f069";
+    font-size: 7px;
+  }
+  #protocol_port::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 96px;
+    content: "\f069";
+    font-size: 7px;
+  }
+}
+#configure-config_listener_info {
+  #protocol::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 67px;
+    content: "\f069";
+    font-size: 7px;
+  }
+  #protocol_port::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 96px;
+    content: "\f069";
+    font-size: 7px;
+  }
+}
+#configure-config_lb_pool{
+  #loadbalancer_method::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 153px;
+    content: "\f069";
+    font-size: 7px;
+  }
+}
+#configure-config_pool_info{
+  #loadbalancer_method::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 153px;
+    content: "\f069";
+    font-size: 7px;
+  }
+}
+
+#configure-config_lb_monitor {
+  #monitor_type::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 98px;
+    content: "\f069";
+    font-size: 7px;
+  }
+  #delay::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 173px;
+    content: "\f069";
+    font-size: 7px;
+  }
+  #max_retries::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 197px;
+    content: "\f069";
+    font-size: 7px;
+  }
+  #timeout::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 97px;
+    content: "\f069";
+    font-size: 7px;
+  }
+}
+#configure-config_lb_pool_member{
+  #weight::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 58px;
+    content: "\f069";
+    font-size: 7px;
+  }
+  #port::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 42px;
+    content: "\f069";
+    font-size: 7px;
+  }
+  #ip_address::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 80px;
+    content: "\f069";
+    font-size: 7px;
+  }
+}
+#configure-config_lb_info {
+  #loadbalancer_provider::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 153px;
+    content: "\f069";
+    font-size: 7px;
+  }
+}
+#loadbalancer_poolmember {
+  #pool_member table thead{
+     background: #f9f9f9;
+  }
+}
+#configure-config_lb_pool_member{
+  #pool_member table thead{
+     background: #f9f9f9;
+  }
+}
+/*Load Balancer ends here*/
