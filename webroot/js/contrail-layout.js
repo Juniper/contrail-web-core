@@ -377,7 +377,7 @@ function syntaxHighlight(json) {
 }
 
 // Loads the feature screen based on given hashParams
-function loadFeature(hashParams) {
+function loadFeature(hashParams, isSecurityTest) {
     var loadingStartedDefObj = $.Deferred();
     globalObj['menuClicked'] = true;
     //Set hashUpdated flag only if current URL hashParams differs from the passed on
@@ -385,7 +385,7 @@ function loadFeature(hashParams) {
         globalObj['hashUpdated'] = 1;
     }
     //Manipulate hash params for custom requirements
-    hashParams = cowu.overrideHashParams(hashParams, lastHash);
+    hashParams = cowu.overrideHashParams(hashParams, lastHash, isSecurityTest);
     layoutHandler.setURLHashObj(hashParams);
     //Hiding the last updated time and refresh icon on click of an item left menu
     //hideHardRefresh();
