@@ -776,15 +776,20 @@ define([
            }
         }
         /* It is used to manipulate the hashparams for custom requirements*/
-        this.overrideHashParams = function(hashParams, lastHash){
+        this.overrideHashParams = function(hashParams, lastHash, isSecurityTest){
             var prevTab = getValueByJsonPath(lastHash,
                     'q;tab;security-policy-tab', '', false);
             /* retain selected tab when navigating between
             global policies and project scoped policies pages */
-            if(prevTab) {
+            /*isSecurityTest only for security-policy-tab*/
+            if(isSecurityTest){
+                return hashParams;
+            } else if(prevTab) {
                 hashParams.q = {tab: {'security-policy-tab' : prevTab}};
+                return hashParams;
+            }else{
+                return hashParams;
             }
-            return hashParams;
         }
 
         /* Detail Template Generator*/
