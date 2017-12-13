@@ -249,7 +249,7 @@ define([
      * testConfig.getTestConfig()
      * @param PageTestConfig
      */
-    this.startTestRunner = function (pageTestConfig) {
+    this.startTestRunner = function (pageTestConfig, isSecurityTest) {
         var self = this,
             fakeServer = null,
             fakeServerConfig = ifNull(pageTestConfig.fakeServer, self.getDefaultFakeServerConfig());
@@ -278,7 +278,7 @@ define([
 
                 switch (pageTestConfig.testType) {
                     case cotc.VIEW_TEST:
-                        self.startViewTestRunner(pageTestConfig, fakeServer, assert, done);
+                        self.startViewTestRunner(pageTestConfig, fakeServer, assert, done, isSecurityTest);
                         break;
                     case cotc.MODEL_TEST:
                         self.startModelTestRunner(pageTestConfig, fakeServer, done);
@@ -297,9 +297,9 @@ define([
         menuHandlerDoneCB();
     };
 
-    this.startViewTestRunner = function(viewTestConfig, fakeServer, assert, done) {
+    this.startViewTestRunner = function(viewTestConfig, fakeServer, assert, done, isSecurityTest) {
         if (contrail.checkIfExist(viewTestConfig.page.hashParams)) {
-            var loadingStartedDefObj = loadFeature(viewTestConfig.page.hashParams);
+            var loadingStartedDefObj = loadFeature(viewTestConfig.page.hashParams, isSecurityTest);
             loadingStartedDefObj.done(function () {
                 //additional fake server response setup
                 var responses = viewTestConfig.fakeServer.getResponsesConfig();
