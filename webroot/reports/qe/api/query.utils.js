@@ -1,16 +1,18 @@
 /*
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
-var assert = require("assert");
-var logutils = require(process.mainModule.exports.corePath +
-                       "/src/serverroot/utils/log.utils");
+var assert      = require("assert");
+var logutils    = require(process.mainModule.exports.corePath +
+                          "/src/serverroot/utils/log.utils");
 var commonUtils = require(process.mainModule.exports.corePath +
                           "/src/serverroot/utils/common.utils");
-var global = require(process.mainModule.exports.corePath +
-                     "/src/serverroot/common/global");
+var global      = require(process.mainModule.exports.corePath +
+                          "/src/serverroot/common/global");
 var opApiServer = require(process.mainModule.exports.corePath +
                           "/src/serverroot/common/opServer.api");
-var _ = require("lodash");
+var crypto      = require("crypto");
+var _           = require("lodash");
+var async       = require("async");
 
 function createTimeQueryJsonObj (minsSince, endTime) {
     var startTime = 0, timeObj = {};
@@ -394,6 +396,285 @@ function fillQEFilterByKey (key, value, filterStr) {
     return filterStr;
 }
 
+function getQueryDataByCache (queryJSON, appData, callback)
+{
+    var reqUrl = global.RUN_QUERY_URL;
+    var tmpQuery = commonUtils.cloneObj(queryJSON);
+    /* Delete the start_time and end_time and get the hash of the stringified
+     * json, and check if we have any data for that hash key
+     */
+    var startTime = queryJSON.start_time;
+    var endTime = queryJSON.end_time;
+    var hashKey = startTime + ":" + endTime;
+    delete tmpQuery.start_time;
+    delete tmpQuery.end_time;
+    tmpQuery = JSON.stringify(commonUtils.doDeepSort(tmpQuery));
+    var hash = "qData:" + crypto.createHash('md5').update(tmpQuery).digest('hex');
+    var redisClient = process.mainModule.exports.redisClient;
+    redisClient.hgetall(hash, function(error, keyObj) {
+        if ((null != error) || (null == keyObj)) {
+            opApiServer.apiPost(reqUrl, queryJSON, appData,
+                                function(error, data) {
+                callback(error, data);
+                if ((null == error) && (null != data)) {
+                    redisClient.hset(hash, hashKey, JSON.stringify(data));
+                }
+            });
+        } else {
+            /* Got the redis data */
+            mergeQueryDataAndSend(hash, keyObj, queryJSON, appData, callback);
+        }
+    });
+}
+
+function formQueryByTimes (dataObjArr, queryJson, startTime, endTime, appData)
+{
+    var qeURL = global.RUN_QUERY_URL;
+    var tmpQ = commonUtils.cloneObj(queryJson);
+    if (null == dataObjArr) {
+        dataObjArr = [];
+    }
+    tmpQ.start_time = startTime;
+    tmpQ.end_time = endTime;
+    commonUtils.createReqObj(dataObjArr, qeURL, global.HTTP_REQUEST_POST,
+                             tmpQ, null, null, appData);
+}
+
+function getCachedGapQueries (queryJSON, keyObjs, appData)
+{
+    var tmpQJson = commonUtils.cloneObj(queryJSON);
+    var considerObjs = [];
+    var startTime   = tmpQJson.start_time;
+    var endTime     = tmpQJson.end_time;
+    var foundKey    = false;
+
+    for (var key in keyObjs) {
+        /* Key is combination of startTime and endTime */
+        var timeArr = key.split(":");
+        var keyStartTime = Number(timeArr[0]);
+        var keyEndTime = Number(timeArr[1]);
+        if ((startTime >= keyStartTime) && (endTime <= keyEndTime)) {
+            /*
+                Ex: Stored Keys: 10:20 || 15:25
+                Req Start:End  : 15:18
+                We already have the data
+             */
+            return {foundKey: key}
+        }
+        if (((startTime < keyStartTime) && (endTime > keyStartTime)) ||
+            /*
+                Ex: Stored Keys: 10:20
+                Req Start:End  : 5:15
+             */
+            ((startTime >= keyStartTime) && (startTime < keyEndTime)) ||
+            /*
+                Ex: Stored Keys: 10:20
+                Req Start: End : 15:25
+             */
+            ((startTime < keyStartTime) && (endTime > keyEndTime)) ||
+            /*
+                Ex: Stored Keys: 47:55
+                Req Start:End  : 15:60
+             */
+            ((startTime == keyStartTime) || (startTime == keyEndTime) ||
+             (endTime == keyStartTime) || (endTime == keyEndTime))) {
+            /* Border Cases */
+            considerObjs.push(key);
+            considerObjs.sort(function(a, b) {
+                var aArr = a.split(":");
+                var bArr = b.split(":");
+                return (((Number(aArr[0]) > Number(bArr[0])) -
+                         (Number(aArr[0]) < Number(bArr[0]))) +
+                        ((Number(aArr[1]) > Number(bArr[1])) -
+                         (Number(aArr[1]) < Number(bArr[1]))));
+            });
+        }
+    }
+
+    /* Now find the query times */
+    var len = considerObjs.length;
+    var dataObjArr = [];
+    if (!len) {
+        formQueryByTimes(dataObjArr, tmpQJson, startTime, endTime, appData);
+        //dataObjArr.push({start_time: startTime, end_time: endTime});
+    }
+    if (1 == len) {
+        var keyArr = considerObjs[0].split(":");
+        if (startTime < Number(keyArr[0])) {
+            formQueryByTimes(dataObjArr, tmpQJson, startTime, Number(keyArr[0]), appData);
+            //dataObjArr.push({start_time: startTime, end_time: keyArr[0]});
+        }
+        if (endTime > Number(keyArr[1])) {
+            formQueryByTimes(dataObjArr, tmpQJson, Number(keyArr[1]), endTime, appData);
+            //dataObjArr.push({start_time: keyArr[1], end_key: endTime});
+        }
+    } else {
+        for (var i = 0; i < len; i++) {
+            var keyArr = considerObjs[i].split(":");
+            if (0 == i) {
+                /* First Entry */
+                if (startTime < Number(keyArr[0])) {
+                    formQueryByTimes(dataObjArr, tmpQJson, startTime,
+                                     Number(keyArr[0]), appData);
+                    //dataObjArr.push({start_time: startTime, end_time: keyArr[0]});
+                }
+            }
+            if (i < len - 1) {
+                /* Entries other than first and last entry */
+                formQueryByTimes(dataObjArr, tmpQJson, Number(keyArr[1]),
+                                 Number(considerObjs[i + 1].split(":")[0]), appData);
+                //dataObjArr.push({start_time: keyArr[1],
+                                //end_time: considerObjs[i + 1].split(":")[0]});
+            }
+            if (i == len - 1) {
+                /* Last Entry */
+                if (endTime > Number(keyArr[1])) {
+                    formQueryByTimes(dataObjArr, tmpQJson, Number(keyArr[1]), endTime,
+                                     appData);
+                    //dataObjArr.push({start_time: keyArr[1], end_time: endTime});
+                }
+            }
+        }
+    }
+    return {dataObjArr: dataObjArr, keys: considerObjs};
+}
+
+function mergeQueryDataAndSend (hash, keyObjs, queryJSON, appData, callback)
+{
+    var startTime       = queryJSON.start_time;
+    var endTime         = queryJSON.end_time;
+    var newStartTime    = startTime;
+    var newEndTime      = endTime;
+    var considerObjs    = [];
+
+    /* First check we have all the data in cache */
+    var queries = getCachedGapQueries(queryJSON, keyObjs, appData);
+    var keys = queries.keys;
+    /* Check if we have to adjust any keys */
+    if (null != queries.foundKey) {
+        var finalResp = [];
+        var data = keyObjs[queries.foundKey];
+        data = JSON.parse(data);
+        var len = data.value.length;
+        for (var i = 0; i < len; i++) {
+            var T = data.value[i]["T="];///1000;
+            if ((T >= startTime) && (T <= endTime)) {
+                finalResp.push(data.value[i]);
+            }
+        }
+        callback(null, {value: finalResp});
+        return;
+    }
+    async.map(queries.dataObjArr,
+              commonUtils.getAPIServerResponse(opApiServer.apiPost, true),
+              function(error, data) {
+        mergeServerRespWithCachedData(hash, data, queries, keyObjs,
+                                      startTime, endTime,
+                                      function(error, data) {
+            callback(error, data);
+        });
+    });
+}
+
+function mergeServerRespWithCachedData (hash, serverResps, queriesObj, cachedKeyData,
+                                        startTime, endTime, callback)
+{
+    var newStartTime    = startTime;
+    var newEndTime      = endTime;
+    var keys = queriesObj.keys;
+    var keysLen = keys.length;
+    if (keysLen > 0) {
+        var startKey = keys[0];
+        var startKeyArr = startKey.split(":");
+        var startKeyStartTime   = Number(startKeyArr[0]);
+        var startKeyEndTime     = Number(startKeyArr[1]);
+
+        var endKey = keys[keys.length - 1];
+        var endKeyArr = endKey.split(":");
+        var endKeyStartTime     = Number(endKeyArr[0]);
+        var endKeyEndTime       = Number(endKeyArr[1]);
+
+        /* Now check what position we have the keys */
+        if (startTime < startKeyStartTime) {
+            newStartTime = startTime;
+        } else {
+            newStartTime = startKeyStartTime;
+        }
+        if (endTime > endKeyEndTime) {
+            newEndTime = endTime;
+        } else {
+            newEndTime = endKeyEndTime;
+        }
+    }
+    /* Now set the new hash key and delete the intermediate hash keys */
+    //var key = newStartTime.toString() + ":" + newEndTime.toString();
+    var redisClient = process.mainModule.exports.redisClient;
+    var keys = queriesObj.keys;
+    var keysLen = keys.length;
+    var dataObjArr = queriesObj.dataObjArr;
+    var dataObjArrLen = dataObjArr.length;
+    /* dataObjArr contains the queries to be sent to OpServer */
+    /* serverResps contains the responses of those quries in dataObjArr */
+    /* keys is our main interest, we need to merge those and create a single one
+     */
+    /* cachedKeyData contains the hashKey/value pair as found in redis */
+    var resultJSON = {value: []};
+    for (var i = 0; i < dataObjArrLen; i++) {
+        var qStartTime =
+            commonUtils.getValueByJsonPath(dataObjArr[i], "data;start_time",
+                                           null);
+        var qEndTime =
+            commonUtils.getValueByJsonPath(dataObjArr[i], "data;end_time",
+                                           null);
+        for (var j = 0; j < keysLen; j++) {
+            var key = keys[j];
+            var keysArr = key.split(":");
+            var keyStartTime = Number(keysArr[0]);
+            var keyEndTime  = Number(keysArr[1]);
+            if ((qStartTime < keyStartTime) && (qEndTime == keyEndTime)) {
+                /* Add this dataObjArr[i] == serverResps[i] to the final output
+                 * */
+                /* First entry */
+                var cachedData = JSON.parse(cachedKeyData[key]);
+                resultJSON = {value:
+                    serverResps[i]['value'].concat(cachedData.value)};
+            } else if (qStartTime == keyEndTime) {
+                var cachedData = JSON.parse(cachedKeyData[key]);
+                resultJSON = {value:
+                    resultJSON.value.concat(cachedData.value.concat(serverResps[i]['value']))};
+            } else if (qEndTime == keyStartTime) {
+                var cachedData = JSON.parse(cachedKeyData[key]);
+                resultJSON = {value:
+                    resultJSON.value.concat(serverResps[i]['value'].concat(cachedData.value))};
+            } else {
+                console.log("Query: Condition does not satisfy:", qStartTime,
+                            keyStartTime, qEndTime, keyEndTime);
+            }
+        }
+    }
+    var respToSend = [];
+    /* Now send the responses which we are interested */
+    var cnt = resultJSON.value.length;
+    for (var i = 0; i < cnt; i++) {
+        var T = resultJSON.value[i]["T="];
+        if ((T >= startTime) && (T <= endTime)) {
+            respToSend.push(resultJSON.value[i]);
+        }
+    }
+    respToSend.sort(function(a, b) {
+        return ((a["T="] > b["T="]) - (a["T="] < b["T="]));
+    });
+    callback(null, {value: respToSend});
+    /* Merging data is done */
+    /* Now delete the intermediate keys which we just merged */
+    for (var i = 0; i < keysLen; i++) {
+        redisClient.hdel(hash, keys[i]);
+    }
+    /* Now set the new key */
+    var newKey = newStartTime + ":" + newEndTime;
+    redisClient.hset(hash, newKey, JSON.stringify(resultJSON));
+}
+
 var qeTableJSON = {
     "MessageTable": {
         "select": "MessageTS, Type, Source, ModuleId, Messagetype, " +
@@ -417,3 +698,5 @@ exports.formatQEUIQuery = formatQEUIQuery;
 exports.createTimeObjByAppData = createTimeObjByAppData;
 exports.formQEQueryData = formQEQueryData;
 exports.getTimeGranByTimeSlice = getTimeGranByTimeSlice;
+exports.getQueryDataByCache = getQueryDataByCache;
+
