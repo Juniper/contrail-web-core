@@ -373,9 +373,9 @@ var coreAppShim =  {
     'validation': {
         deps: ['backbone']
     },
-    'bezier': {
+    /*'bezier': {
         deps: ['jquery']
-    },
+    },*/
     'joint.layout.DirectedGraph': {
         deps: ['joint']
     },
@@ -1005,7 +1005,8 @@ function getCoreTestAppPaths(coreBaseDir) {
         'co-chart-view-line-test-suite'              : coreTestAppBaseDir + '/chart/LineWithFocusChartView.test.suite',
         'co-tabs-view-test-suite'                    : coreTestAppBaseDir + '/generic/TabsView.test.suite',
         'co-details-view-test-suite'                 : coreTestAppBaseDir + '/generic/DetailsView.test.suite',
-
+        'co-infoboxes-view-test-suite'               : coreTestAppBaseDir + '/generic/InfoboxesView.test.suite',
+        'co-infoboxes-view-mockdata'                 : coreTestAppBaseDir + '/mockdata/InfoboxesView.mockdata',
         'co-form-model-validations-test-suite'       : coreTestAppBaseDir + '/form/ModelValidations.test.suite',
     };
 }

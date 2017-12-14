@@ -2,11 +2,10 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-var coreBaseDir = "/base/contrail-web-core/webroot/",
+var coreBaseDir = "/base/contrail-web-core/webroot",
     featurePkg = "testLibApi";
 
 require([
-    coreBaseDir + '/js/common/core.app.utils.js',
     coreBaseDir + '/test/ui/js/co.test.app.utils.js'
 ], function () {
     globalObj['tes-env'] = globalObj["env"] + "-test";
@@ -27,7 +26,9 @@ require([
 
     function getCoreAppAndCoreTestAppPaths(coreBaseDir) {
         var coreTestAppPathObj = {};
-        var coreAppPaths = getCoreAppPaths(coreBaseDir, '.');
+        // TODO hardcoded the env as dev as of now because globalObj['env']
+        // is null which should not be the case  while calling getCoreAppPath
+        var coreAppPaths = getCoreAppPaths(coreBaseDir, '', 'dev');
         console.log(coreAppPaths);
         var coreTestAppPaths = getCoreTestAppPaths(coreBaseDir);
 
