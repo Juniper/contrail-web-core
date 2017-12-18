@@ -11,12 +11,11 @@ define([
 
         addEditConfigData: function (data, reqUrl, isEdit, callbackObj) {
             var ajaxConfig = {}, returnFlag = false;
-            var postData = { data : [{ data : data, reqUrl: reqUrl}]};
 
             var self  = this;
             ajaxConfig.async = false;
             ajaxConfig.type  = 'POST';
-            ajaxConfig.data  = JSON.stringify(postData);
+            ajaxConfig.data  = JSON.stringify(data);
             ajaxConfig.url   =  (isEdit)? cowc.URL_UPDATE_CONFIG_OBJECT :
                                     cowc.URL_CREATE_CONFIG_OBJECT;
 
