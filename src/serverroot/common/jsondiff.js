@@ -68,7 +68,7 @@ function buildConfigDeltaJson (delta, oldJson, newJson, type, optFields,
             if (optFields[i] in newJson) {
                 resultJSON[type][optFields[i]] = newJson[optFields[i]];
             } else {
-                if ((optFields[i] in oldJson) &&
+                if ((optFields[i] in oldJson) && (optFields[i] in newJson) &&
                     (oldJson[optFields[i]] instanceof Array)) {
                     /* Delete entry */
                     resultJSON[type][optFields[i]] = [];
