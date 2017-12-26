@@ -1387,6 +1387,30 @@ define([
             return strArray;
         };
 
+        this.createTooltip = function(options) {
+            options.selector.tooltip({
+                html: options.html ? options.html : true,
+                trigger: 'manual',
+                container: options.container,
+                placement: options.placement ? options.placement : 'top'
+            }).on("mouseenter", function () {
+                var _this = this;
+                setTimeout(function () {
+                    $(_this).tooltip("show");
+                    options.container.find(".tooltip").on("mouseleave", function () {
+                        $(_this).tooltip('hide');
+                    });
+                }, (options.delay ? options.delay : 200));
+            }).on("mouseleave", function () {
+                var _this = this;
+                setTimeout(function () {
+                    if (!$(".tooltip:hover").length) {
+                        $(_this).tooltip("hide")
+                    }
+                }, (options.delay ? options.delay : 200));
+            });
+        };
+
         this.bindPopoverInTopology = function (tooltipConfig, graphView) {
             var timer = null;
             $.each(tooltipConfig, function (keyConfig, valueConfig) {

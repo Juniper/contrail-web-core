@@ -2429,8 +2429,13 @@ div#alarms-event-drops .grid-stack-item-content {
     margin-top: -15px;
 }
 $label_color: #3182bd;
-.application-icon, .deployment-icon, .tier-icon, .site-icon {
+.application-icon, .deployment-icon, .tier-icon, .site-icon, .tgSeperator {
     font-family: "FontAwesome", "contrailGlyph", Open Sans !important;
+}
+.tgSeperator {
+    font-weight: 800;
+    color: #000;
+    padding: 0 8px;
 }
 #traffic-groups-endpoint-statistics-tabs, .traffic-groups-view {
     .slick-row-detail .slick-cell {
@@ -2439,12 +2444,12 @@ $label_color: #3182bd;
 }
 #TGsessionsBreadcrumb {
     display: flex;
-    li {
+    li, li a div {
         display: flex;
     }
-    .selected {
-        font-weight: 600;
-        color: #616060;
+    li.active a {
+        color: #333;
+        cursor: default;
     }
 }
 .firewall-rule-container-h2 {
@@ -2534,6 +2539,12 @@ $label_color: #3182bd;
     }
     #tg_settings_sec_view.widget-header{
         cursor: default;
+    }
+    .tgEllipsis {
+        white-space: nowrap;
+        width: 38px;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     #filterByTagNameSec {
         width: 600px;
@@ -2672,7 +2683,8 @@ $label_color: #3182bd;
     }
     #traffic-groups-link-info {
         position: absolute;
-        height: calc(100vh - 128px);
+        height: calc(100vh - 128px - 43px);
+        overflow-y: auto;
         top: 86px;
         right: 0px;
         margin:0px;
@@ -2774,6 +2786,7 @@ $label_color: #3182bd;
     }
     #traffic-groups-link-info.noSettings {
         top: 43px;
+        height: calc(100vh - 128px - 86px);
     }
     .borderLeft {
         border-left:#e5e5e5 solid 1px;
@@ -3013,7 +3026,7 @@ $active-color: #3182bd;
     }
   }
 /*security policy wizard ends here*/
-.customTooltip + .tooltip {
+.traffic-groups-view, .customTooltip + .tooltip {
     .tooltip-inner {
         max-width: inherit;
         background-color: #fff;
@@ -3388,13 +3401,13 @@ footer#footer-container * {
     }
 }
 
-#toolbar_settings, #traffic_groups_toolbar_settings {
+#toolbar_settings, #traffic-groups-options {
     position: fixed;
     top: 89px;
     right: 20px;
     z-index: 2000;
 }
-#traffic_groups_toolbar_settings {
+#traffic-groups-options {
    top: 132px;
 }
 
@@ -4062,6 +4075,9 @@ Alarms popup css
     .select2-choice > .select2-chosen {
         margin-right: 20px;
     }
+    .select2-chosen {
+        margin-top: -2px;
+    }
 }
 .crisp-tooltip {
     p {
@@ -4102,4 +4118,19 @@ Alarms popup css
 }
 .crisp-tooltip dl{
   width:140px
+}
+.breadcrumbBackbtn {
+    padding-right: 7px;
+    border-right: #e5e5e5 solid 1px;
+    margin-right: 3px;
+    :before {
+        font-family: FontAwesome;
+        font-size: 14px;
+        content: "\f104";
+        color: #B2B6BF;
+        padding: 0;
+        margin: 0 8px 0 0;
+        position: relative;
+        top: 1px;
+    }
 }

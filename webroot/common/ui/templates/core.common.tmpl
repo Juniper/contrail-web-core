@@ -59,6 +59,11 @@
         </div>
 </script>
 <script type="text/x-handlebars-template" id="breadcrumb-template">
+    {{#IfCompare this.showBackBtn true operator='=='}}
+    <div id="{{this.backBtnId}}" class="breadcrumbBackbtn pull-left">
+        <a href="#">Back</a>
+    </div>
+    {{/IfCompare}}
      <ul id={{breadcrumbId}} class="breadcrumb margin-0-0-10">
         {{#each items}}
         <li>
@@ -2771,7 +2776,7 @@
         </div>
         <div class="widget-box transparent hidden" id="tg_settings_container">
             <div class="widget-header" id="tg_settings_sec_view">
-                <div>
+                <div id="tg_settings_view">
                     <div class="pull-left margin-0-10">Category (
                         <span id="tgCategory" class="categoryType">{{this.category}}</span> )
                     </div>
@@ -2780,6 +2785,11 @@
                     </div>
                     <a id="editTgSettings" class="widget-toolbar-icon" title="Edit Settings">
                     <i class="fa fa-pencil-square-o"></i></a>
+                </div>
+                <div id="tg_selected_tags" class="hidden">
+                    <div class="pull-left margin-5">Tags:
+                        <span id="tg_tags_view" class="categoryType"></span>
+                    </div>
                 </div>
             </div>
             <div class="widget-header hidden" id="tg_settings_sec_edit">
