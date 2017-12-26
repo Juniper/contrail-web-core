@@ -1141,7 +1141,11 @@
         {{> coreFormLabel}}
         <div class="row">
             {{#each elementConfig.dataObj}}
-                <div class="col-xs-4">
+                {{#if cssClass}}
+                <div class="{{cssClass}}">
+                {{else}}
+                 <div class="col-xs-4">
+                 {{/if}}
                     <input type="radio" name="{{../id}}" value="{{value}}" class="{{../class}}"
                         data-bind="
                             {{#if ../disabled}}disable: {{../disabled}}, {{/if}} {{#if ../lockAttr}}disable: locks().{{name}}_locked, {{/if}}
@@ -2857,125 +2861,146 @@
     {{/each}}
 </script>
 
-<script type="text/x-handlebars-template" id="traffic-rule-template">
+<script type="text/x-handlebars-template" id="tg-policy-rule-template">
+   {{#IfCompare this.policyRules.length 0 operator='!='}}
+   {{#each this.policyRules}}
+    <li>
+        <h2 class="margin-0-0-10">
+            <a data-toggle="tooltip" class="showMoreInfo customTooltip policyName" data-placement="top" data-delay='{"show":"10", "hide":"10"}' data-policyFQN="{{this.rule_fqn}}" data-ruleId="{{this.rule_name}}" title='<b>Rule UUID:</b> {{this.rule_name}}'>
+            Policy: <span class="ruleName {{this.implicitRule}}">{{this.policy_name}}</span>
+            </a>
+        </h2>
+        {{#IfCompare this.src null operator = '!='}}
+            <h3>{{this.simple_action}}</h3>
+            <div class="row simpleAction padding-bottom-5">
+                <dl class="col-xs-5">
+                    <dt>{{this.srcType}}</dt><dd>{{this.src}}</dd>
+                </dl>
+                <div class="rulesBiArrow col-xs-2">
+                  {{#IfCompare this.direction 'uni' operator='=='}}
+                    <img src="/img/single_arrow.svg"/>
+                  {{/IfCompare}}
+                  {{#IfCompare this.direction 'bi' operator='=='}}
+                    <img src="/img/double_arrow.svg"/>
+                  {{/IfCompare}}
+                </div>
+                <dl class="col-xs-5">
+                    <dt>{{this.dstType}}</dt><dd>{{this.dst}}</dd>
+                </dl>
+            </div>
+        {{/IfCompare}}
+        {{#IfCompare this.service null operator='!='}}
+            <div class="row padding-bottom-5">
+                <h3 class="col-xs-2"> Service </h3>
+                <dl class="col-xs-10">
+                    <dt>{{this.service}}</dt>
+                </dl>
+            </div>
+        {{/IfCompare}}
+        {{#IfCompare this.showSessionData true operator='=='}}
+        <div class="row padding-bottom-5">
+            <div class="col-xs-6 no-padding">
+                <h6 class="iconFontStyle">
+                    <a class="showMoreInfo customTooltip" data-placement="top" data-delay='{"show":"400", "hide":"200"}' title='{{{this.srcTooltipContent}}}'>{{{this.srcId}}}</a>
+                </h6>
+                <dl class="row">
+                    <dt class="col-xs-9">Sessions Initiated: </dt>
+                    <dd class="col-xs-2">{{this.src_session_initiated}}</dd>
+                    <dt class="col-xs-9">Sessions Responded: </dt>
+                    <dd class="col-xs-2">{{this.src_session_responded}}</dd>
+                </dl>
+            </div>
+            {{#IfCompare this.srcId this.dstId operator='!='}}
+                <div class="col-xs-6 no-padding borderLeft">
+                    <h6 class="iconFontStyle">
+                        <a class="showMoreInfo customTooltip" data-placement="top" data-delay='{"show":"400", "hide":"200"}' title='{{{this.dstTooltipContent}}}'>{{{this.dstId}}}</a>
+                    </h6>
+                    <dl class="row">
+                        <dt class="col-xs-9">Sessions Initiated: </dt>
+                        <dd class="col-xs-2">{{this.dst_session_initiated}}</dd>
+                        <dt class="col-xs-9">Sessions Responded: </dt>
+                        <dd class="col-xs-2">{{this.dst_session_responded}}</dd>
+                    </dl>
+                </div>
+            {{/IfCompare}}
+        </div>
+        {{/IfCompare}}
+    </li>
+    {{/each}}
+    {{else}}
+    <div class="row col-xs-12 padding-bottom-5">
+        <dl>
+            <dt>Rule: {{this.rules}}</dt>
+        </dl>
+    </div>
+    {{/IfCompare}}
+</script>
+
+<script type="text/x-handlebars-template" id="tg-policy-tab-template">
+    <div class="traffic-rules">
+        <div class="select2Noborder">
+            <label for="tg_app_select" class="hidden">Application </label>
+            <div id="tg_app_select"></div>
+        </div>
+        <ul class="policyRules" id="tg_policy_rules"></ul>
+    </div>
+</script>
+<script type="text/x-handlebars-template" id="tg-matched-rules-tab-template">
+    <div class="traffic-rules">
+        <ul class="policyRules" id="tg_matched_rules"></ul>
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="tg-vmi-details-template">
+    <div class="vmiDetails">
+        {{#IfCompare this.data 'nodata' operator='=='}}
+            <div class="text-center margin-top-25">
+               No results found
+            </div>
+        {{else IfCompare this.data '' operator='!='}}
+            <h1>{{this.vmiLabel}} {{#IfCompare this.vmiCount '' operator='!='}}
+                ({{this.vmiCount}}){{/IfCompare}}</h1>
+            <div class="row">
+                {{#each this.data}}
+                <dl class="col-xs-12 margin-5-0">
+                    <dt class="col-xs-12 no-padding font-bold">{{this.name}} ({{this.uuid}})</dt>
+                    <dd class="col-xs-6 margin-5-0-0">VN : </dd>
+                    <dd class="col-xs-6 margin-5-0-0">{{this.vn}}</dd>
+                    <dd class="col-xs-6 margin-5-0-0">vRouter : </dd>
+                    <dd class="col-xs-6 margin-5-0-0">{{this.vrouter}}</dd>
+                    <dd class="col-xs-6 margin-5-0-0">Sampled Bytes (In/Out) : </dd>
+                    <dd class="col-xs-6 margin-5-0-0">{{this.sampledIn}} / {{this.sampledOut}}</dd>
+                </dl>
+                {{/each}}
+                {{else}}
+                <div class="text-center margin-top-25">
+                    <span class="loading"><i class="fa fa-spinner fa-spin"></i></span>
+                    Loading...
+                </div>
+                {{/IfCompare}}
+            </div>
+        </div>
+</script>
+
+<script type="text/x-handlebars-template" id="tg-sidepanel-template">
     <div class="trafficGroups_content">
         <section class="trafficGroups_sidePanel">
             {{#IfCompare option 'linkInfo' operator='=='}}
-            <div class="traffic-rules">
-                <header class="iconFontStyle">
-                    <span> {{{this.srcId}}} </span>
-                    <img src="/img/double_arrow.svg"/>
-                <span> {{{this.dstId}}} </span>
-                </header>
-                <h1> Matched Rules:
-                <span class="allSessionInfo pull-right" title="Endpoint Stats"><i class="fa fa-table"></i></span>
-                </h1>
-                <ul class="policyRules">
-                   {{#IfCompare this.policyRules.length 0 operator='!='}}
-                   {{#each this.policyRules}}
-                    <li>
-                        <h2 class="margin-0-0-10">
-                            <a data-toggle="tooltip" class="showMoreInfo customTooltip policyName" data-placement="top" data-delay='{"show":"10", "hide":"10"}' data-policyFQN="{{this.rule_fqn}}" data-ruleId="{{this.rule_name}}" title='<b>Rule UUID:</b> {{this.rule_name}}'>
-                            Policy: <span class="ruleName {{this.implicitRule}}">{{this.policy_name}}</span>
-                            </a>
-                        </h2>
-                        {{#IfCompare this.src null operator = '!='}}
-                            <h3>{{this.simple_action}}</h3>
-                            <div class="row simpleAction padding-bottom-5">
-                                <dl class="col-xs-5">
-                                    <dt>{{this.srcType}}</dt><dd>{{this.src}}</dd>
-                                </dl>
-                                <div class="rulesBiArrow col-xs-2">
-                                  {{#IfCompare this.direction 'uni' operator='=='}}
-                                    <img src="/img/single_arrow.svg"/>
-                                  {{/IfCompare}}
-                                  {{#IfCompare this.direction 'bi' operator='=='}}
-                                    <img src="/img/double_arrow.svg"/>
-                                  {{/IfCompare}}
-                                </div>
-                                <dl class="col-xs-5">
-                                    <dt>{{this.dstType}}</dt><dd>{{this.dst}}</dd>
-                                </dl>
-                            </div>
-                        {{/IfCompare}}
-                        {{#IfCompare this.service null operator='!='}}
-                            <div class="row padding-bottom-5">
-                                <h3 class="col-xs-2"> Service </h3>
-                                <dl class="col-xs-10">
-                                    <dt>{{this.service}}</dt>
-                                </dl>
-                            </div>
-                        {{/IfCompare}}
-                        <div class="row padding-bottom-5">
-                            <div class="col-xs-6 no-padding">
-                                <h6 class="iconFontStyle">
-                                    <a class="showMoreInfo customTooltip" data-placement="top" data-delay='{"show":"400", "hide":"200"}' title='{{{this.srcTooltipContent}}}'>{{{this.srcId}}}</a>
-                                </h6>
-                                <dl class="row">
-                                    <dt class="col-xs-9">Sessions Initiated: </dt>
-                                    <dd class="col-xs-2">{{this.src_session_initiated}}</dd>
-                                    <dt class="col-xs-9">Sessions Responded: </dt>
-                                    <dd class="col-xs-2">{{this.src_session_responded}}</dd>
-                                </dl>
-                            </div>
-                            {{#IfCompare this.srcId this.dstId operator='!='}}
-                                <div class="col-xs-6 no-padding borderLeft">
-                                    <h6 class="iconFontStyle">
-                                        <a class="showMoreInfo customTooltip" data-placement="top" data-delay='{"show":"400", "hide":"200"}' title='{{{this.dstTooltipContent}}}'>{{{this.dstId}}}</a>
-                                    </h6>
-                                    <dl class="row">
-                                        <dt class="col-xs-9">Sessions Initiated: </dt>
-                                        <dd class="col-xs-2">{{this.dst_session_initiated}}</dd>
-                                        <dt class="col-xs-9">Sessions Responded: </dt>
-                                        <dd class="col-xs-2">{{this.dst_session_responded}}</dd>
-                                    </dl>
-                                </div>
-                            {{/IfCompare}}
-                        </div>
-                    </li>
-                    {{/each}}
-                    {{else}}
-                    <div class="row col-xs-12 padding-bottom-5">
-                        <dl>
-                            <dt>Rule: {{this.rules}}</dt>
-                        </dl>
-                    </div>
-                    {{/IfCompare}}
-                </ul>
-            </div>
+            <header class="iconFontStyle">
+                <span> {{{this.srcId}}} </span>
+                <img src="/img/double_arrow.svg"/>
+            <span> {{{this.dstId}}} </span>
+            </header>
+            <span class="allSessionInfo pull-right" title="Endpoint Stats">
+                <i class="fa fa-table"></i>
+            </span>
+            <div id="linkTabsSection"></div>
             {{else}}
             <div class="vmiDetails">
                 <header class="iconFontStyle">
                     <span> {{{this.title}}} </span>
                 </header>
-                <h1>{{this.vmiLabel}} {{#IfCompare this.vmiCount '' operator='!='}}
-                    ({{this.vmiCount}}){{/IfCompare}}</h1>
-                <div class="row">
-                    {{#IfCompare this.data 'nodata' operator='=='}}
-                    <div class="text-center margin-top-25">
-                       No results found
-                    </div>
-                    {{else IfCompare this.data '' operator='!='}}
-                    {{#each this.data}}
-                    <dl class="col-xs-12 margin-5-0">
-                        <dt class="col-xs-12 no-padding font-bold">{{this.name}}</dt>
-                        <dd class="col-xs-6 margin-5-0-0">VN : </dd>
-                        <dd class="col-xs-6 margin-5-0-0">{{this.vn}}</dd>
-                        <dd class="col-xs-6 margin-5-0-0">vRouter : </dd>
-                        <dd class="col-xs-6 margin-5-0-0">{{this.vrouter}}</dd>
-                        <!--<dd class="col-xs-6 margin-5-0-0">Logged Bytes (In/Out) : </dd>
-                        <dd class="col-xs-6 margin-5-0-0">{{this.loggedIn}} / {{this.loggedOut}}</dd>-->
-                        <dd class="col-xs-6 margin-5-0-0">Sampled Bytes (In/Out) : </dd>
-                        <dd class="col-xs-6 margin-5-0-0">{{this.sampledIn}} / {{this.sampledOut}}</dd>
-                    </dl>
-                    {{/each}}
-                    {{else}}
-                    <div class="text-center margin-top-25">
-                        <span class="loading"><i class="fa fa-spinner fa-spin"></i></span>
-                        Loading...
-                    </div>
-                    {{/IfCompare}}
-                </div>
+                <div id="arcTabsSection"></div>
             </div>
             {{/IfCompare}}
         </section>
