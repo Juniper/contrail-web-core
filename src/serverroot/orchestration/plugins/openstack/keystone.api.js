@@ -465,7 +465,8 @@ function getRoleList (req, callback)
 
 function getAuthRetryData (token, req, reqUrl, callback, isSvcPortReq)
 {
-    getAuthDataByReqUrlObj({req: req, token: token, reqUrl: reqUrl},
+    getAuthDataByReqUrlObj({req: req, token: token, reqUrl: reqUrl,
+                           isSvcPortReq: isSvcPortReq},
                         function(err, data) {
         if ((err) &&
             (err.responseCode == global.HTTP_STATUS_AUTHORIZATION_FAILURE)) {
@@ -483,10 +484,11 @@ function getAuthRetryData (token, req, reqUrl, callback, isSvcPortReq)
                     commonUtils.redirectToLogout(req, req.res);
                     return;
                 }
-                getAuthDataByReqUrlObj({req: req, token: token, reqUrl: reqUrl},
+                getAuthDataByReqUrlObj({req: req, token: token, reqUrl: reqUrl,
+                                       isSvcPortReq: isSvcPortReq},
                                     function(err, newData) {
                     callback(err, newData);
-                }, isSvcPortReq);
+                });
             });
         } else {
             callback(null, data);
