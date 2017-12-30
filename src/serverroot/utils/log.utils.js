@@ -8,6 +8,7 @@ var winston = require('winston'),
 	util = require('util'),
     moment = require('moment'),
     configUtils = require('../common/config.utils'),
+    _ = require("lodash"),
     commonUtils = require('./common.utils');
 
 function getLoggingTime ()
@@ -18,8 +19,7 @@ function getLoggingTime ()
 function getLogLevel ()
 {
     var config = configUtils.getConfig(),
-        logLevel = commonUtils.getValueByJsonPath(config,
-                'logs;level', 'debug');
+        logLevel = _.result(config, "logs.level", "debug");
     return logLevel;
 }
 

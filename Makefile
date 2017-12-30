@@ -162,7 +162,10 @@ test-env:
 test-ui:
 	./unit-test.sh ui $(REPO) $(ENV)
 
-test: test-env test-ui
+test-core:
+	./unit-test.sh core $(REPO) $(ENV)
+
+test: test-env test-core test-ui
 
 clean:
 	rm -f src/serverroot/jobs/core/jobsCb.api.js

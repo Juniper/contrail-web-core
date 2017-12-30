@@ -8,7 +8,8 @@ WEBCORE_DIR=$ROOT_DIR/contrail-web-core
 GRUNT_DIR=$WEBCORE_DIR/node_modules/grunt-cli
 GRUNT_BIN=$GRUNT_DIR/bin/grunt
 
-WEBCORE_TEST_DIR=$WEBCORE_DIR/webroot/test/ui
+WEBCORE_UI_TEST_DIR=$WEBCORE_DIR/webroot/test/ui
+WEBCORE_API_TEST_DIR=$WEBCORE_DIR/src/tests
 CONTROLLER_TEST_DIR=$ROOT_DIR/contrail-web-controller/webroot/test/ui
 SM_TEST_DIR=$ROOT_DIR/contrail-web-server-manager/webroot/test/ui
 STORAGE_TEST_DIR=$ROOT_DIR/contrail-web-storage/webroot/test/ui
@@ -24,7 +25,7 @@ if [ "$1" = 'set-env' ] ; then
       exit;
     fi;
     # Set test specific environments.
-    $node_exec $WEBCORE_TEST_DIR/js/tasks/setTestConfig.js "$@"
+    $node_exec $WEBCORE_UI_TEST_DIR/js/tasks/setTestConfig.js "$@"
 fi
 
 if [ -d "$GRUNT_DIR" ]; then
@@ -32,7 +33,8 @@ if [ -d "$GRUNT_DIR" ]; then
     
     if [ "$1" = 'init' ] ; then
         echo -e "== Test infrastructure initialization\n"
-        ln -sfn $WEBCORE_DIR/node_modules $WEBCORE_TEST_DIR/node_modules
+        ln -sfn $WEBCORE_DIR/node_modules $WEBCORE_UI_TEST_DIR/node_modules
+        ln -sfn $WEBCORE_DIR/node_modules $WEBCORE_API_TEST_DIR/node_modules
         for REPO in "${REPOS[@]}"; do
             if [ $REPO = 'webController' ] ; then
                 echo "Repo: $REPO"
@@ -58,11 +60,24 @@ if [ -d "$GRUNT_DIR" ]; then
         done
     fi
 
+    if [ "$1" = 'core' ] ; then
+        if [ ! -z "$3" ] && [ "$3" = 'dev' ] ; then
+            RUNTEST_ARG='--force'
+        fi
+        echo    "**************************************************"
+        echo    "*     Web Core Unit Tests                  *"
+        echo -e "**************************************************\n"
+        cd $WEBCORE_API_TEST_DIR ;\
+        ./run_tests.sh $RUNTEST_ARG ;\
+        cd -
+        echo "DONE"
+    fi
+
     if [ "$1" = 'ui' ] ; then
         if [ ! -z "$3" ] && [ "$3" = 'dev' ] ; then
             RUNTEST_ARG='--force'
         fi
-        
+
         for REPO in "${REPOS[@]}"; do
             if [ $REPO = 'webController' ] ; then
                 echo    "**************************************************"

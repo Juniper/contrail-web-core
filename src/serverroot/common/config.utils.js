@@ -199,6 +199,9 @@ function updateConfig(confFile)
  */
 function getConfig()
 {
+    if (null == contrailConfig) {
+        updateConfig("../../../config/config.global.js");
+    }
   return contrailConfig;
 }
 
