@@ -1251,6 +1251,16 @@ function isVCenter() {
     else
         return false; 
 }
+
+function isOpenstackOrchModel ()
+{
+    if ("openstack" ==
+        globalObj['webServerInfo']['loggedInOrchestrationMode']) {
+        return true;
+    }
+    return false;
+}
+
 //Returns the corresponding NetMask for a givne prefix length
 function prefixToNetMask(prefixLen) {
     var prefix = Math.pow(2,prefixLen) - 1;
