@@ -281,13 +281,15 @@ function getQueryOptions(queryReqObj) {
     return queryOptions;
 }
 
-function getQueryDataByCacheOrServer (req, queryJSON, appData, callback)
+function getQueryDataByCacheOrServer (req, queryJSON, appData, callback,
+                                      asyncHeader)
 {
     var isCachedData = req.query['takeCachedData'];
     if ('true' == isCachedData) {
         qUtils.getQueryDataByCache(queryJSON, appData, callback);
     } else {
-        opApiServer.apiPost(global.RUN_QUERY_URL, queryJSON, appData, callback);
+        opApiServer.apiPost(global.RUN_QUERY_URL, queryJSON, appData, callback,
+                            asyncHeader);
     }
 }
 
