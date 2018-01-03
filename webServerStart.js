@@ -22,6 +22,7 @@ var server_port = (config.redis_server_port) ?
     config.redis_server_port : global.DFLT_REDIS_SERVER_PORT;
 var server_ip = (config.redis_server_ip) ?
     config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
+var secretKeyLen = 100;
 
 var express = require('express')
     , path = require('path')
@@ -71,39 +72,6 @@ var serCiphers = ((null != config.server_options) &&
                (null != config.server_options.ciphers)) ?
     config.server_options.ciphers : defCiphers;
 
-var keyFile = './keys/cs-key.pem';
-var certFile = './keys/cs-cert.pem';
-if (config.server_options) {
-    keyFile = config.server_options.key_file;
-    if (null != keyFile) {
-        keyFile = path.normalize(keyFile);
-        if (false == fs.existsSync(keyFile)) {
-            keyFile = './keys/cs-key.pem';
-        }
-    } else {
-        keyFile = './keys/cs-key.pem';
-    }
-    certFile = config.server_options.cert_file;
-    if (null != certFile) {
-        certFile = path.normalize(certFile);
-        if (false == fs.existsSync(certFile)) {
-            certFile = './keys/cs-cert.pem';
-        }
-    } else {
-        certFile = './keys/cs-cert.pem';
-    }
-}
-
-var options = {
-    key:fs.readFileSync(keyFile),
-    cert:fs.readFileSync(certFile),
-    /* From https://github.com/nodejs/node-v0.x-archive/issues/2727
-       https://github.com/nodejs/node-v0.x-archive/pull/2732/files
-     */
-    ciphers: serCiphers,
-    honorCipherOrder: true
-};
-
 var insecureAccessFlag = false;
 if (config.insecure_access && (config.insecure_access == true)) {
     insecureAccessFlag = true;
@@ -120,13 +88,12 @@ var httpsApp = express(),
 
 function initializeAppConfig (appObj)
 {
+    var crypto = require("crypto");
     var app = appObj.app;
     var port = appObj.port;
+    var buff = crypto.randomBytes(secretKeyLen);
     var secretKey =
-        'enterasupbK3xg8qescJK.dUbdgfVq0D70UaLTMGTzO4yx5vVJral2zIhVersecretkey';
-    if ((null != config.session) && (null != config.session.secret_key)) {
-        secretKey = config.session.secret_key;
-    }
+            buff.toString('base64').replace(/\//g,'_').replace(/\+/g,'-');
     app.set('port', process.env.PORT || port);
     app.use(express.cookieParser());
     var maxAgeTime =
@@ -474,13 +441,57 @@ function generateFaviconFile(isRetry) {
     });
 }
 
+function getHttpsServerOptions ()
+{
+    var keyFile = './keys/cs-key.pem';
+    var certFile = './keys/cs-cert.pem';
+    if (config.server_options) {
+        keyFile = config.server_options.key_file;
+        if (null != keyFile) {
+            keyFile = path.normalize(keyFile);
+            if (false == fs.existsSync(keyFile)) {
+                keyFile = './keys/cs-key.pem';
+            }
+        } else {
+            keyFile = './keys/cs-key.pem';
+        }
+        certFile = config.server_options.cert_file;
+        if (null != certFile) {
+            certFile = path.normalize(certFile);
+            if (false == fs.existsSync(certFile)) {
+                certFile = './keys/cs-cert.pem';
+            }
+        } else {
+            certFile = './keys/cs-cert.pem';
+        }
+    }
+
+    var serverOptions = {
+        key:fs.readFileSync(keyFile),
+        cert:fs.readFileSync(certFile),
+        /* From https://github.com/nodejs/node-v0.x-archive/issues/2727
+           https://github.com/nodejs/node-v0.x-archive/pull/2732/files
+         */
+        ciphers: serCiphers,
+        honorCipherOrder: true
+    };
+    return serverOptions;
+}
+
 function startWebUIService (webUIIP, callback)
 {
-    httpsServer = https.createServer(options, httpsApp);
-    httpsServer.listen(httpsPort, webUIIP, function () {
-        logutils.logger.info("Contrail UI HTTPS server listening on host:" + 
-                             webUIIP + " Port:" + httpsPort);
-    });
+    if (false == insecureAccessFlag) {
+        var serverOptions = getHttpsServerOptions();
+        httpsServer = https.createServer(serverOptions, httpsApp);
+        httpsServer.listen(httpsPort, webUIIP, function () {
+            logutils.logger.info("Contrail UI HTTPS server listening on host:" +
+                                 webUIIP + " Port:" + httpsPort);
+        });
+        httpsServer.on('clientError', function(exception, socket) {
+            logutils.logger.error("httpsServer Exception: on clientError:" +
+                                  exception);
+        });
+    }
 
     httpServer = http.createServer(httpApp);
     httpServer.listen(httpPort, webUIIP, function () {
@@ -491,10 +502,6 @@ function startWebUIService (webUIIP, callback)
     httpServer.on('clientError', function(exception, socket) {
         logutils.logger.error("httpServer Exception: on clientError:" +
                                exception);
-    });
-    httpsServer.on('clientError', function(exception, socket) {
-        logutils.logger.error("httpsServer Exception: on clientError:" +
-                              exception);
     });
     
     if (false == insecureAccessFlag) {

@@ -447,13 +447,9 @@ config.multi_tenancy.enabled = true;
  * keystone), and if it is having some token expiry, then session timeout is set
  * to mimimum of token expiry and session.timeout config value
  *
- * secret_key - Session cookie is signed with this secret key to prevent
- * tampering
  *****************************************************************************/
 config.session = {};
 config.session.timeout = 1 * 60 * 60 * 1000;
-config.session.secret_key =
-'enterasupbK3xg8qescJK.dUbdgfVq0D70UaLTMGTzO4yx5vVJral2zIhVersecretkey';
 
 /*****************************************************************************
  * router_L3Enable flag indicates whether to update external gateway 
