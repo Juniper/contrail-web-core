@@ -118,8 +118,8 @@ function getConfigJSONDiff (type, oldJson, newJson)
         childType = parentType;
     }
     if (null != fieldsObj.error) {
-        logutils.logger.error("Config Diff: Not found the type: " + type);
-        return null;
+        logutils.logger.debug("Config Diff: Not found the type: " + type);
+        return newJson;
     }
     optFields = fieldsObj['optFields'];
     mandateFields = fieldsObj['mandateFields'];
@@ -193,7 +193,7 @@ function getConfigFieldsByType (type, isArray)
     var error = null;
     var configJsonModifyObj = process.mainModule.exports['configJsonModifyObj'];
 
-    if ((null != isArray) || (false == isArray)) {
+    if ((null != isArray) || (true == isArray)) {
         if ((null == configJsonModifyObj['arrayDiff']) ||
             (null == configJsonModifyObj['arrayDiff'][type])) {
             error = new appErrors.RESTServerError('type ' + type + ' not ' +
@@ -306,7 +306,9 @@ function doFeatureJsonDiffParamsInit ()
                 configJsonModifyObj[key] = jsonDiffApi[key];
                 if (('arrayDiff' == key) || ('configDelete' == key)) {
                     for (tmpKey in jsonDiffApi[key]) {
-                        configJsonModifyObj[key] = {};
+                        if (null == configJsonModifyObj[key]) {
+                            configJsonModifyObj[key] = {};
+                        }
                         configJsonModifyObj[key][tmpKey] =
                             jsonDiffApi[key][tmpKey];
                     }
@@ -327,6 +329,19 @@ var arrayDiffpatcher = jsondiffpatch.create({
     }
 });
 
+function filterFieldsByComparators (arrayJson, comparators)
+{
+    var len = arrayJson.length;
+    for (var i = 0; i < len; i++) {
+        for (var key in arrayJson[i]) {
+            /* If key is not found in comparators, then delete that object */
+            if (-1 == comparators.indexOf(key)) {
+                delete arrayJson[i][key];
+            }
+        }
+    }
+}
+
 function getConfigArrayDelta (type, oldArrayJson, newArrayJson)
 {
     if (null == oldArrayJson) {
@@ -335,10 +350,13 @@ function getConfigArrayDelta (type, oldArrayJson, newArrayJson)
     if (null == newArrayJson) {
         newArrayJson = [];
     }
+    var origOldArrayJson = commonUtils.cloneObj(oldArrayJson);
+    var origNewArrayJson = commonUtils.cloneObj(newArrayJson);
     oldArrayJson = commonUtils.doDeepSort(oldArrayJson);
     newArrayJson = commonUtils.doDeepSort(newArrayJson);
     var resultJSON = {'addedList': [], 'deletedList': []};
     var fieldsType = getConfigFieldsByType(type, true);
+
     if (null != fieldsType) {
         if (null != fieldsType['preProcessCB']) {
             var preProcessOnOldJsonCB =
@@ -350,6 +368,11 @@ function getConfigArrayDelta (type, oldArrayJson, newArrayJson)
             }
             if (null != preProcessOnNewJsonCB) {
                 newArrayJson = preProcessOnNewJsonCB(newArrayJson);
+            }
+            var comparators = fieldsType['preProcessCB']['comparators'];
+            if ((null != comparators) && (comparators.length > 0)) {
+                filterFieldsByComparators(oldArrayJson, comparators);
+                filterFieldsByComparators(newArrayJson, comparators);
             }
         }
     }
@@ -377,11 +400,11 @@ function getConfigArrayDelta (type, oldArrayJson, newArrayJson)
             }
             if (0 == delta_I[2]) {
                 /* Deleted entry */
-                resultJSON['deletedList'].push(oldArrayJson[i]);
+                resultJSON['deletedList'].push(origOldArrayJson[i]);
             }
         }
         if (null != deltaI) {
-            resultJSON['addedList'].push(newArrayJson[i]);
+            resultJSON['addedList'].push(origNewArrayJson[i]);
         }
     }
     return resultJSON;
@@ -443,4 +466,5 @@ exports.doFeatureJsonDiffParamsInit = doFeatureJsonDiffParamsInit;
 exports.getConfigDiffAndMakeCall = getConfigDiffAndMakeCall;
 exports.getConfigArrayDeltaByURL = getConfigArrayDeltaByURL;
 exports.getConfigArrayDelta = getConfigArrayDelta;
+exports.filterFieldsByComparators = filterFieldsByComparators;
 
