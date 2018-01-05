@@ -9,6 +9,9 @@ var logutils = require('../utils/log.utils');
 var appErrors = require('../errors/app.errors');
 var configUtils = require('./config.utils');
 
+var defMandateObjs = ['fq_name', 'uuid', 'display_name', 'parent_type',
+                      'parent_uuid'];
+
 var diffpatcher = jsondiffpatch.create({
     objectHash: function(obj, index) {
         // try to find an id property, otherwise just use the index in the array
@@ -110,6 +113,8 @@ function getConfigJSONDiff (type, oldJson, newJson)
     var tmpNewJson = {};
     var optFields = [];
     var mandateFields = [];
+    oldJson = (null != oldJson) ? oldJson : {};
+    newJson = (null != newJson) ? newJson : {};
 
     var fieldsObj = getConfigFieldsByType(type);
     var parentType = fieldsObj['parentType'];
@@ -137,12 +142,12 @@ function getConfigJSONDiff (type, oldJson, newJson)
         }
     }
     if (null == oldJson[childType]) {
-        typeNotFoundInJson = false;
         tmpOldJson[childType] = commonUtils.cloneObj(oldJson);
     } else {
         tmpOldJson = commonUtils.cloneObj(oldJson);
     }
     if (null == newJson[childType]) {
+        typeNotFoundInJson = false;
         tmpNewJson[childType] = commonUtils.cloneObj(newJson);
     } else {
         tmpNewJson = commonUtils.cloneObj(newJson);
@@ -225,6 +230,9 @@ function getConfigFieldsByType (type, isArray)
     configTypeObj['error'] = error;
     configTypeObj['parentType'] = typeSplit[0];
     configTypeObj['childType'] = typeSplit[1];
+    if (null == configTypeObj.mandateFields) {
+        configTypeObj.mandateFields = defMandateObjs;
+    }
     return configTypeObj;
 }
 
