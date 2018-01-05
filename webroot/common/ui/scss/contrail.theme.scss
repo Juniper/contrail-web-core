@@ -4658,8 +4658,8 @@ body.mob-safari .sidebar.sidebar-fixed {
     display: none; }
 
 .breadcrumbs {
-    position: relative;
-    z-index: auto;
+    // position: relative;
+    z-index: 999;
     border-bottom: 1px solid #E5E5E5;
     background-color: #FFF;
     min-height: 38px;

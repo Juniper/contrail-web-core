@@ -219,6 +219,7 @@ define(['underscore',
                 return {
                     modelCfg: {
                        modelId: 'alarms-table-stats-model',
+                       needContrailListModel: true,
                        source:"STATTABLE",
                        config: {
                            table_name: 'StatTable.AlarmgenStatus.counters.table_stats',
@@ -277,6 +278,7 @@ define(['underscore',
                     modelCfg: {
                         modelId: 'alarms-object-logs-model',
                         source:'OBJECT',
+                        needContrailListModel: true,
                         config: getModelConfigForObjectLogs()
                     },
 //                    modelCfg: {listModel: self.objectLogsModel},
@@ -318,13 +320,14 @@ define(['underscore',
                 return {
                     modelCfg: {
                         modelId: 'alarms-table-stats-model-non-aggregate',
+                        needContrailListModel: true,
                         source:"STATTABLE",
                         config: {
                             type: 'NonAggregate',
                             table_name: 'StatTable.AlarmgenStatus.counters.table_stats',
                             select: 'T, Source, counters.table_stats.table_name, counters.table_stats.alarm_name, counters.table_stats.set_count, counters.table_stats.reset_count, counters.table_stats.active_count',
                             parser: function(response) {
-                                var data = response['data'];
+                                var data = response || [];
                                 data = _.filter(data, function(d){
                                     //include only with set or reset count
                                     if(d['counters.table_stats.set_count'] > 0 || d['counters.table_stats.reset_count'] > 0){

@@ -12,14 +12,14 @@
     </require>
 
     <item>
-        <url>/api/qe/query</url>
+        <url>/api/qe/query/:table?</url>
         <method>get</method>
         <timeout>600</timeout>
         <feature>query-engine</feature>
         <callback>qeapi.runGETQuery</callback>
     </item>
     <item>
-        <url>/api/qe/query</url>
+        <url>/api/qe/query/:table?</url>
         <method>post</method>
         <timeout>600</timeout>
         <feature>query-engine</feature>

@@ -86,7 +86,7 @@ $(document).ready(function () {
             }
         });
 
-    $(window).on('scroll', function () {
+    /*$(window).on('scroll', function () {
         var scrollHeight = $(document).height() - $(window).height(),
             previousScroll = 0,
             currentScroll = $(this).scrollTop();
@@ -99,6 +99,7 @@ $(document).ready(function () {
             $('#breadcrumbs').removeClass('scrolled');
             $('#content-container').removeClass('scrolled');
             $('#back-to-top').fadeOut();
+            $('#page-content').css('z-index',0);
         }
         else {
             $("#pageHeader").hide();
@@ -108,11 +109,12 @@ $(document).ready(function () {
             $('#breadcrumbs').addClass('scrolled');
             $('#content-container').addClass('scrolled');
             $('#back-to-top').fadeIn();
+            $('#page-content').css('z-index',-1);
         }
         if (currentScroll < scrollHeight) {
             previousScroll = $(window).scrollTop();
         }
-    });
+    });*/
 
     $(document).on('click', '#back-to-top', function (event) {
         event.preventDefault();
@@ -477,3 +479,30 @@ $(document).on('click', '.pre-format-JSON2HTML .collapser', function(){
     }
 	
 })(jQuery);
+
+/*document.arrive('[data-spy="affix"]', function() {
+    console.info("affix element added", $(this));
+    activateAffixPlugin($(this));
+});*/
+
+function activateAffixPlugin(elem) {
+    var data = $(elem).data();
+    data.offset = data.offset || {}
+
+    if (data.offsetBottom != null) data.offset.bottom = data.offsetBottom;
+    if (data.offsetTop    != null) data.offset.top    = data.offsetTop;
+    var $spy = $(elem).affix(data);
+}
+
+$(document).ready(function() {
+    if(typeof($().affix) == 'function') {
+        $('[data-spy="affix"]').each(function() { 
+            var data = $(this).data();
+            data.offset = data.offset || {}
+
+            if (data.offsetBottom != null) data.offset.bottom = data.offsetBottom;
+            if (data.offsetTop    != null) data.offset.top    = data.offsetTop;
+            var $spy = $(this).affix(data);
+        });
+    }
+});

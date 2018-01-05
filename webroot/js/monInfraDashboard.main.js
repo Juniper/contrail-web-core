@@ -11,10 +11,10 @@ function MonInfraDashboardLoader() {
             renderFn = paramObject['function'],
             loadingStartedDefObj = paramObject['loadingStartedDefObj'];
 
-        require(['mon-infra-dashboard-view'], function (MonitorInfraDashboardView) {
-            self.monitorInfraDashboardView = MonitorInfraDashboardView;
-            self.monitorInfraDashboardView.render({
-                el:$(contentContainer)
+        require(['core-basedir/js/views/DashboardListView'], function (DashboardListView) {
+            self.dashboardListView = new DashboardListView();
+            self.dashboardListView.render({
+                el: $(contentContainer)
             });
             if (loadingStartedDefObj != null) {
                 loadingStartedDefObj.resolve();
