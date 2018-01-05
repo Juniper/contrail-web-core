@@ -743,7 +743,10 @@ function getSafeDataToJSONify (data)
 
 function cloneObj (obj)
 {
-	return JSON.parse(JSON.stringify(obj));
+    if (null == obj) {
+        return null;
+    }
+    return JSON.parse(JSON.stringify(obj));
 };
 
 /**

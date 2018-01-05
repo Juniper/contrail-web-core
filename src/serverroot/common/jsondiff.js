@@ -8,6 +8,11 @@ var commonUtils = require('../utils/common.utils');
 var logutils = require('../utils/log.utils');
 var appErrors = require('../errors/app.errors');
 var configUtils = require('./config.utils');
+var fs = require("fs");
+var path = require("path");
+
+var defMandateObjs = ['fq_name', 'uuid', 'display_name', 'parent_type',
+                      'parent_uuid'];
 
 var diffpatcher = jsondiffpatch.create({
     objectHash: function(obj, index) {
@@ -110,6 +115,8 @@ function getConfigJSONDiff (type, oldJson, newJson)
     var tmpNewJson = {};
     var optFields = [];
     var mandateFields = [];
+    oldJson = (null != oldJson) ? oldJson : {};
+    newJson = (null != newJson) ? newJson : {};
 
     var fieldsObj = getConfigFieldsByType(type);
     var parentType = fieldsObj['parentType'];
@@ -137,12 +144,12 @@ function getConfigJSONDiff (type, oldJson, newJson)
         }
     }
     if (null == oldJson[childType]) {
-        typeNotFoundInJson = false;
         tmpOldJson[childType] = commonUtils.cloneObj(oldJson);
     } else {
         tmpOldJson = commonUtils.cloneObj(oldJson);
     }
     if (null == newJson[childType]) {
+        typeNotFoundInJson = false;
         tmpNewJson[childType] = commonUtils.cloneObj(newJson);
     } else {
         tmpNewJson = commonUtils.cloneObj(newJson);
@@ -225,6 +232,9 @@ function getConfigFieldsByType (type, isArray)
     configTypeObj['error'] = error;
     configTypeObj['parentType'] = typeSplit[0];
     configTypeObj['childType'] = typeSplit[1];
+    if (null == configTypeObj.mandateFields) {
+        configTypeObj.mandateFields = defMandateObjs;
+    }
     return configTypeObj;
 }
 
@@ -315,6 +325,24 @@ function doFeatureJsonDiffParamsInit ()
                 }
             }
         }
+    }
+    /* Now merge both the UI Default and auto generated schemas */
+    var cfgSchemaFound = false;
+    var cfgJsonSchemaPath = path.resolve(config.jsonSchemaPath +
+                                         "/uiConfigSchema.json");
+    if (false == fs.existsSync(cfgJsonSchemaPath)) {
+        cfgJsonSchemaPath =
+            path.resolve("src/serverroot/configJsonSchemas/sample/uiConfigSchema.json");
+        if (true == fs.existsSync(cfgJsonSchemaPath)) {
+            cfgSchemaFound = true;
+        }
+    } else {
+        cfgSchemaFound = true;
+    }
+    if (true == cfgSchemaFound) {
+        configJsonModifyObj =
+            configUtils.mergeObjects(require(cfgJsonSchemaPath),
+                                     configJsonModifyObj);
     }
     process.mainModule.exports.configJsonModifyObj = configJsonModifyObj;
     exports.configJsonModifyObj = configJsonModifyObj;
