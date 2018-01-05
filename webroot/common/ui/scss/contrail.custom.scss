@@ -2435,8 +2435,22 @@ $label_color: #3182bd;
     }
 }
 .traffic-groups-view {
+    #tg_settings_sec_edit {
+        border: none;
+        #Traffic_Groups_Settings-container {
+            width: 100%;
+            font-size: 13px;
+            border-bottom: 1px solid #cccccc;
+        }
+        .select2-search-field {
+            width: 0;
+        }
+        .form-element {
+            margin:0;
+        }
+    }
     #traffic-groups-radial-chart #chartBox.noLegend {
-        width:80vh;
+        width:70vh;
     }
     .select-dropdown,.where-dropdown {
         width: 400px;
@@ -2466,8 +2480,11 @@ $label_color: #3182bd;
     .link-arrow-start textPath, .link-arrow-end textPath {
         fill: #939393;
     }
-    .traffic-stats-duration, .clear-traffic-stats, #filterByTagNameSec {
+    .traffic-stats-duration, .clear-traffic-stats, #filterByTagNameSec, #tg_settings_sec_view {
         font-size: 13px;
+    }
+    #tg_settings_sec_view.widget-header{
+        cursor: default;
     }
     #filterByTagNameSec {
         width: 600px;
@@ -2484,15 +2501,20 @@ $label_color: #3182bd;
             opacity: .4;
             color: #898989;
         }
+        .contrail-editable-grid-table tr td {
+            padding:0px;
+        }
         .select2-container-multi {
-            margin: 3px 5px 0 0;
+            padding: 0px;
         }
         .dropdown-menu {
-            left: auto;
+            padding-top:12px;
+        }
+        .contrail-editable-grid-table tr td.action-cell {
+            vertical-align: top;
         }
     }
-    .traffic-stats-duration {
-        margin-right: 15px;
+    .traffic-stats-duration, .categoryType {
         color: #888888;
     }
     .implicitRuleStyle {
@@ -2602,7 +2624,7 @@ $label_color: #3182bd;
     #traffic-groups-link-info {
         position: absolute;
         height: calc(100vh - 128px);
-        top: 43px;
+        top: 86px;
         right: 0px;
         margin:0px;
         -webkit-box-shadow: -3px 0px 2px -2px rgba(0,0,0,0.1);
@@ -2699,6 +2721,9 @@ $label_color: #3182bd;
             text-align: center;
             padding:0;
         }
+    }
+    #traffic-groups-link-info.noSettings {
+        top: 43px;
     }
     .borderLeft {
         border-left:#e5e5e5 solid 1px;
@@ -2809,6 +2834,14 @@ button.ui-multiselect {
 .multiSelectViewWithIcon {
     label {
         width: auto;
+    }
+}
+.multiSelectViewLeftLabel {
+    label {
+        margin-right: 10px !important;
+    }
+    .form-element {
+        width: 100%;
     }
 }
 $disable-color: #898989;
@@ -3932,4 +3965,7 @@ Alarms popup css
 }
 .bg-color-grey {
     background-color: #f3f4f5 !important;
+}
+.display-flex {
+    display: flex;
 }
