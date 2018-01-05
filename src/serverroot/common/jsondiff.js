@@ -110,6 +110,8 @@ function getConfigJSONDiff (type, oldJson, newJson)
     var tmpNewJson = {};
     var optFields = [];
     var mandateFields = [];
+    oldJson = (null != oldJson) ? oldJson : {};
+    newJson = (null != newJson) ? newJson : {};
 
     var fieldsObj = getConfigFieldsByType(type);
     var parentType = fieldsObj['parentType'];
@@ -137,12 +139,12 @@ function getConfigJSONDiff (type, oldJson, newJson)
         }
     }
     if (null == oldJson[childType]) {
-        typeNotFoundInJson = false;
         tmpOldJson[childType] = commonUtils.cloneObj(oldJson);
     } else {
         tmpOldJson = commonUtils.cloneObj(oldJson);
     }
     if (null == newJson[childType]) {
+        typeNotFoundInJson = false;
         tmpNewJson[childType] = commonUtils.cloneObj(newJson);
     } else {
         tmpNewJson = commonUtils.cloneObj(newJson);
