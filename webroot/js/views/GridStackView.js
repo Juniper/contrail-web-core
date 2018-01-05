@@ -227,7 +227,7 @@ define([
         add: function(cfg, isMoved) {
             var self = this;
             var itemAttr = _.result(cfg,'itemAttr',{});
-            itemAttr = $.extend(true, {panelLayout: cowc.panelLayout});
+            $.extend(itemAttr, {panelLayout: cowc.panelLayout});
             var widgetTemplate = contrail.getTemplate4Id('gridstack-widget-template');
             var currElem = $(widgetTemplate(itemAttr)).attr('data-gs-height',2);
             var defaultWidth = ifNull(self.gridAttr['widthMultiplier'],1);
@@ -343,9 +343,9 @@ define([
         },
         getModelForCfg: function(cfg,options) {
             //Maintain a mapping of cacheId vs contrailListModel and if found,return that
-            var modelCfg = cfg['modelCfg'],model;
-            var modelId = cfg['modelId'];
-            var region = contrail.getCookie('region');
+            var model,
+                modelId = cfg['modelId'];
+                region = contrail.getCookie('region');
             if(region == null) {
                 region = "Default"
             }
@@ -365,7 +365,8 @@ define([
                 model = widgetConfigManager.modelInstMap[modelId]['model'];
             } else if(cowu.getValueByJsonPath(cfg,'source','').match(/STATTABLE|LOG|OBJECT/)) {
                 if(options['needContrailListModel'] == true) {
-                    defObj = cowu.fetchStatsListModel(cfg['config']);
+                    defObj = cowu.fetchStatsListModel(cfg['config'],
+                            {needContrailListModel: options['needContrailListModel']});
                     model = new ContrailListModel([]);
                     // getRemoteConfig is a function which is
                     // available in contrailListModel when we
@@ -381,46 +382,8 @@ define([
                         return defObj.listModelConfig
                     };
                 } else {
-                    BbCollection = Backbone.Collection.extend({});
-                    BbModel = Backbone.Model.extend({
-                        defaults: {
-                            type: cfg['type'],
-                            data: []
-                        },
-                        isRequestInProgress: function() {
-                            if(model.fetched == false) {
-                                return true;
-                            } else {
-                                return false;
-                            }
-                        },
-                        getItems: function() {
-                            return this.get('data');
-                        },
-                        initialize: function(options) {
-                            this.cfg = options['cfg'];
-                        },
-                        sync: function(method,model,options) {
-                            var defObj;
-                            if(method == "read") {
-                                defObj = cowu.fetchStatsListModel(this.cfg);
-                            }
-                            defObj.done(function(data) {
-                                model.fetched = true;
-                                options['success'](data); 
-                            });
-                        },
-                        parse: function(data) {
-                            var self = this;
-                            this.set({data: data});
-                        }
-                    });
-                    bbModelInst = new BbModel({
-                        cfg:cfg['config']
-                    });
-                    bbModelInst.fetched = false;
-                    bbModelInst.fetch();
-                    model = bbModelInst;
+                    options['source'] = cfg['source'];
+                    model = cowu.populateModel(cfg['config'], options);
                 }
             } else if(cowu.getValueByJsonPath(cfg,'listModel','') != '') {
                 model = cfg['listModel'];
