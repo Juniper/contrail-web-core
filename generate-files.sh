@@ -17,11 +17,12 @@ $node_exec src/tools/configTemplateGenerator.js
 
 #Generate the json schemas and copy over to the core
 if [ -a ../controller/src/schema/all_cfg.xsd ]; then
-    ../tools/generateds/generateDS.py -f -g json-schema -o configJsonSchemas ../controller/src/schema/all_cfg.xsd
+    python ../tools/generateds/generateDS.py -f -g json-schema -o configJsonSchemas ../controller/src/schema/all_cfg.xsd
     test -d src/serverroot/configJsonSchemas || mkdir -p src/serverroot/configJsonSchemas
     cp configJsonSchemas/* src/serverroot/configJsonSchemas;
     echo "Copied json schema files to src/serverroot/configJsonSchemas";
     rm -rf configJsonSchemas;
+    $node_exec src/tools/uiConfigSchemaBuilder.js
 else
     echo "error: ../controller/src/schema/all_cfg.xsd not found";
     echo "error: json-schema files not generated"
