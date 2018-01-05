@@ -329,8 +329,9 @@ define(['underscore'], function (_) {
                         }
                         fhCobj['items'] = {item:[]};
                         shCobj['items'] = {item:[]};
-                        if (menuObj.items[1] != null && menuObj.items[1].items != null &&
-                                menuObj.items[1].items.item != null) {
+                        if (menuObj.items != null && menuObj.items.item[1] != null &&
+                            menuObj.items.item[1].items &&
+                            menuObj.items.item[1].items.item != null) {
                             menuObj.items.item[1].items.item.forEach(function(val, idx){
                                 if(idx < 2 || idx > 3){
                                     fhCobj.items.item.push(val);
