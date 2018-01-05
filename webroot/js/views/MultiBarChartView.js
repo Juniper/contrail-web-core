@@ -12,17 +12,15 @@ define([
 ], function (_, ChartView, MultiBarChartModel, ContrailListModel, nv, chUtils) {
     var MultiBarChartView = ChartView.extend({
         render: function () {
-            var loadingSpinnerTemplate = contrail.getTemplate4Id(cowc.TMPL_LOADING_SPINNER),
-                viewConfig = this.attributes.viewConfig,
+            var viewConfig = this.attributes.viewConfig,
                 ajaxConfig = viewConfig['ajaxConfig'],
                 self = this,
                 selector = $(self.$el);
 
-            $(selector).append(loadingSpinnerTemplate);
-
             if (self.model === null && viewConfig['modelConfig'] !== null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
             }
+            self.renderChart(selector, viewConfig, self.model)
             ChartView.prototype.bindListeners.call(self);
         },
 
@@ -34,8 +32,11 @@ define([
             chartViewConfig = getChartViewConfig(chartData, chartOptions);
             chartData  = (chartDataModel instanceof Backbone.Model) ? chartDataModel.get('data') : chartDataModel.getItems(),
             chartOptions = chartViewConfig['chartOptions'];
+            if (contrail.checkIfFunction(viewConfig['parseFn'])) {
+                chartData = viewConfig['parseFn'](chartData, chartOptions, chartDataModel.isRequestInProgress());
+            }
             if (cowu.isGridStackWidget(selector)) {
-                chartOptions['height'] = $(selector).closest('.custom-grid-stack-item').height();
+                chartOptions['height'] = $(selector).closest('.custom-grid-stack-item').height() - 10;
             }
             chartModel = new MultiBarChartModel(chartOptions);
             this.chartModel = chartModel;
@@ -61,8 +62,6 @@ define([
 
             if (chartOptions['deferredObj'] != null)
                 chartOptions['deferredObj'].resolve();
-
-            $(selector).find('.loading-spinner').remove();
         }
     });
 
