@@ -8,6 +8,11 @@ var commonUtils = require('../utils/common.utils');
 var logutils = require('../utils/log.utils');
 var appErrors = require('../errors/app.errors');
 var configUtils = require('./config.utils');
+var fs = require("fs");
+var path = require("path");
+
+var defMandateObjs = ['fq_name', 'uuid', 'display_name', 'parent_type',
+                      'parent_uuid'];
 
 var diffpatcher = jsondiffpatch.create({
     objectHash: function(obj, index) {
@@ -43,23 +48,31 @@ function buildConfigDeltaJson (delta, oldJson, newJson, type, optFields,
         optFieldsCnt = optFields.length;
     }
     resultJSON[type] = {};
+    var splitArrParams = [];
     var tmpOldJson = commonUtils.cloneObj(oldJson);
     for (var i = 0; i < optFieldsCnt; i++) {
         var splitArr = optFields[i].split(':');
         var splitArrLen = splitArr.length;
         if (splitArrLen > 1) {
-            if ((splitArr[0] in delta) &&
-                (splitArr[1] in delta[splitArr[0]])) {
-                if (splitArr[0] in oldJson) {
-                    resultJSON[type][splitArr[0]] =
-                        tmpOldJson[splitArr[0]];
-                    resultJSON[type][splitArr[0]][splitArr[1]] =
-                        newJson[splitArr[0]][splitArr[1]];
-                    tmpOldJson[splitArr[0]][splitArr[1]] =
-                        newJson[splitArr[0]][splitArr[1]];
-                } else if (splitArr[0] in newJson) {
-                    resultJSON[type][splitArr[0]] =
-                        newJson[splitArr[0]];
+            if (!(splitArr[0] in newJson)) {
+                continue;
+            }
+            if (splitArr[0] in delta) {
+                if (delta[splitArr[0]] instanceof Array) {
+                    resultJSON[type][splitArr[0]] = delta[splitArr[0]][0];
+                } else {
+                    if (splitArr[1] in delta[splitArr[0]]) {
+                        if (splitArr[0] in newJson) {
+                            if (null == resultJSON[type][splitArr[0]]) {
+                                resultJSON[type][splitArr[0]] = {};
+                            }
+                            resultJSON[type][splitArr[0]][splitArr[1]] =
+                                newJson[splitArr[0]][splitArr[1]];
+                            if (-1 == splitArrParams.indexOf(splitArr[0])) {
+                                splitArrParams.push(splitArr[0]);
+                            }
+                        }
+                    }
                 }
             }
             continue;
@@ -67,14 +80,16 @@ function buildConfigDeltaJson (delta, oldJson, newJson, type, optFields,
         if ((optFields[i] in delta) && (null != newJson)) {
             if (optFields[i] in newJson) {
                 resultJSON[type][optFields[i]] = newJson[optFields[i]];
-            } else {
-                if ((optFields[i] in oldJson) && (optFields[i] in newJson) &&
-                    (oldJson[optFields[i]] instanceof Array)) {
-                    /* Delete entry */
-                    resultJSON[type][optFields[i]] = [];
-                }
             }
         }
+    }
+    /* Now add all other missing values from oldJson */
+    var splitArrParamsLen = splitArrParams.length;
+    for (var i = 0; i < splitArrParamsLen; i++) {
+        var param = splitArrParams[i];
+        resultJSON[type][param] =
+            configUtils.mergeObjects(oldJson[param],
+                                     resultJSON[type][param]);
     }
     if (null == mandateFields) {
         return resultJSON;
@@ -110,6 +125,8 @@ function getConfigJSONDiff (type, oldJson, newJson)
     var tmpNewJson = {};
     var optFields = [];
     var mandateFields = [];
+    oldJson = (null != oldJson) ? oldJson : {};
+    newJson = (null != newJson) ? newJson : {};
 
     var fieldsObj = getConfigFieldsByType(type);
     var parentType = fieldsObj['parentType'];
@@ -137,12 +154,12 @@ function getConfigJSONDiff (type, oldJson, newJson)
         }
     }
     if (null == oldJson[childType]) {
-        typeNotFoundInJson = false;
         tmpOldJson[childType] = commonUtils.cloneObj(oldJson);
     } else {
         tmpOldJson = commonUtils.cloneObj(oldJson);
     }
     if (null == newJson[childType]) {
+        typeNotFoundInJson = false;
         tmpNewJson[childType] = commonUtils.cloneObj(newJson);
     } else {
         tmpNewJson = commonUtils.cloneObj(newJson);
@@ -225,6 +242,9 @@ function getConfigFieldsByType (type, isArray)
     configTypeObj['error'] = error;
     configTypeObj['parentType'] = typeSplit[0];
     configTypeObj['childType'] = typeSplit[1];
+    if (null == configTypeObj.mandateFields) {
+        configTypeObj.mandateFields = defMandateObjs;
+    }
     return configTypeObj;
 }
 
@@ -315,6 +335,24 @@ function doFeatureJsonDiffParamsInit ()
                 }
             }
         }
+    }
+    /* Now merge both the UI Default and auto generated schemas */
+    var cfgSchemaFound = false;
+    var cfgJsonSchemaPath = path.resolve(config.jsonSchemaPath +
+                                         "/uiConfigSchema.json");
+    if (false == fs.existsSync(cfgJsonSchemaPath)) {
+        cfgJsonSchemaPath =
+            path.resolve("src/serverroot/configJsonSchemas/sample/uiConfigSchema.json");
+        if (true == fs.existsSync(cfgJsonSchemaPath)) {
+            cfgSchemaFound = true;
+        }
+    } else {
+        cfgSchemaFound = true;
+    }
+    if (true == cfgSchemaFound) {
+        configJsonModifyObj =
+            configUtils.mergeObjects(require(cfgJsonSchemaPath),
+                                     configJsonModifyObj);
     }
     process.mainModule.exports.configJsonModifyObj = configJsonModifyObj;
     exports.configJsonModifyObj = configJsonModifyObj;
