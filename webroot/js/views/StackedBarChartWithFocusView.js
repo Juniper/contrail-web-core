@@ -9,8 +9,9 @@ define([
     'contrail-list-model',
     'legend-view',
     'core-constants',
-    'chart-utils'
-], function (_, ChartView,  ContrailListModel, LegendView, cowc, chUtils) {
+    'chart-utils',
+    'node-color-mapping'
+], function (_, ChartView,  ContrailListModel, LegendView, cowc, chUtils, NodeColorMapping) {
     var cfDataSource;
     var stackedBarChartWithFocusChartView = ChartView.extend({
         settingsChanged: function(newSettings) {
@@ -185,7 +186,10 @@ define([
             var colorNodes = _.without(_.pluck(data, 'key'), failureLabel);
             self.parsedValues = data;
             self.parsedData = _.indexBy(data, 'key');
-            if (colors != null && colorNodes[0] != 'DEFAULT') {
+            if(self.model instanceof Backbone.Model && self.model.get('type') != null) {
+                self.colors = NodeColorMapping.getNodeColorMap(_.without(_.pluck(data, 'key'), failureLabel),resetColor, self.model.get('type'));
+            }
+            if (colors != null && colorNodes[0] != 'DEFAULT' && self.colors == null) {
                 if (typeof colors == 'function') {
                     self.colors = colors(_.without(_.pluck(data, 'key'), failureLabel), resetColor);
                 } else if (typeof colors == 'object') {
