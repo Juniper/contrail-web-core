@@ -1290,10 +1290,11 @@ if (typeof document !== 'undefined' && document) {
                                 require(['lodashv4'],function(lodashv4) { lodashv4 = lodashv4;});
                                 layoutHandler.load(menuXML);
                                 //Initialize toolbar
-                                require(['toolbar-view'],function(ToolbarView) {
+                                require(['toolbar-view', 'core-views-default-config'],function(ToolbarView, CoreViewsDefaultConfig) {
+                                    covdc = new CoreViewsDefaultConfig();
                                     new ToolbarView({
                                         el: $('#toolbar'),
-                                        viewCfg: ctwvc.getToolbarViewConfig()
+                                        viewCfg: covdc.getToolbarViewConfig()
                                     });
                                 });
                         });

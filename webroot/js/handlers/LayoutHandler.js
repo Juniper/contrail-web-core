@@ -91,7 +91,7 @@ define(['underscore', 'menu-handler', 'content-handler'], function (_, MenuHandl
         };
 
         this.onHashChange = function(lastHash, currHash, loadingStartedDefObj) {
-            if (cowc.SUMMARY_PAGE_HASHES.indexOf(currHash['p']) > -1) {
+            if (cowc.SUMMARY_PAGE_HASHES.indexOf(currHash['p']) > -1 && currHash['q'] == null) {
                 $('#toolbar').show();
             } else {
                 $('#toolbar').hide();

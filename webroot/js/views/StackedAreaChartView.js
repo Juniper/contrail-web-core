@@ -165,7 +165,8 @@ define([
             if(self.model instanceof Backbone.Model && self.model.get('type') != null) {
                 self.colors = NodeColorMapping.getNodeColorMap(_.without(_.pluck(data, 'key'), failureLabel),resetColor, self.model.get('type'));
             }
-            if (colors != null) {
+            // if nodecolormapping returns colors don't override.
+            if (colors != null && self.colors == null) {
                 if (typeof colors == 'function') {
                     self.colors = colors(_.without(_.pluck(data, 'key'), failureLabel), resetColor);
                 } else if (typeof colors == 'object') {

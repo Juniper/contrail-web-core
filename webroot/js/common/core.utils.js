@@ -1836,7 +1836,7 @@ define([
                    showTextAtCenter: showTextAtCenter
                 });
             }
-            if(isRequestInProgress || defaultZeroLineDisplay && groupBy!=null){
+            if(response.length == 0 || (isRequestInProgress && defaultZeroLineDisplay && groupBy != null)){
                 parsedData.push({
                     key: 'DEFAULT',
                     color: cowc.DEFAULT_COLOR,
@@ -2010,7 +2010,7 @@ define([
                               name: failureLabel,
                               total: total,
                           });
-                      } else if(isRequestInProgress || defaultZeroLineDisplay && groupBy!=null){
+                      } else if(response.length == 0 || (isRequestInProgress && defaultZeroLineDisplay && groupBy != null)){
                           parsedData['DEFAULT'].values.push({
                               date: new Date(i/1000),
                               x: ifNull(i, 0)/1000,
