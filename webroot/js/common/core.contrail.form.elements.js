@@ -1061,6 +1061,14 @@ define([
                 <div class="modal-dialog" role="document">\
                     <div class="modal-content">\
                         <div class="modal-header"> \
+                          <div class="dropdown" id="helper" style="position:absolute;top:10px;right:40px;display:none;">\
+                            <div class="dropdown-toggle fa fa-ellipsis-h" type="button" data-toggle="dropdown"></div>\
+                            <ul class="dropdown-menu ellipsis" style="left: auto;right:0px;top:22px;">\
+                              <li><a href="#" id="view-address-group">View Address Groups</a></li>\
+                              <li><a href="#" id="view-service-group">View Service Groups</a></li>\
+                              <li><a href="#" id="view-visble-tags">View Visible Tags</a></li>\
+                            </ul>\
+                         </div>\
                             <button id="modal-header-close" type="button" class="close"><i class="fa fa-remove"></i></button> \
                             <h6 class="modal-header-title"></h6> \
                         </div> \
