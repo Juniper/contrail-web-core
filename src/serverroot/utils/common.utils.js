@@ -91,6 +91,22 @@ function putJsonViaInternalApi (api, ignoreError,
         });
     }
 };
+function isIPBoundToRange(range,ipAddress){
+    var IP = new v4.Address(ipAddress);
+    var IPRange = new v4.Address(range);
+    if(IP.isValid() === true && IPRange.isValid() === true){
+        return IP.isInSubnet(IPRange);
+    } else {
+        IP = new v6.Address(ipAddress);
+        IPRange = new v6.Address(range);
+        if(IP.isValid() === true && IPRange.isValid() === true){
+            return IP.isInSubnet(IPRange);
+        }
+        else{
+            return false;
+        }
+    }
+}
 /**
  * Get JSON for a url from a given API.
  * @param {Object} API Object
@@ -2348,3 +2364,4 @@ exports.doDeepSort = doDeepSort;
 exports.invalidateReqSession = invalidateReqSession;
 exports.handleAuthToAuthorizeError = handleAuthToAuthorizeError;
 exports.sendWebServerInfo = sendWebServerInfo;
+exports.isIPBoundToRange = isIPBoundToRange;
