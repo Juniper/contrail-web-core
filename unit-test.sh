@@ -104,7 +104,7 @@ if [ -d "$GRUNT_DIR" ]; then
                 echo    "*     Web Storage Unit Tests              *"
                 echo -e "*******************************************\n"
                 cd $STORAGE_TEST_DIR ;\
-                ./run_test.sh $RUNTEST_ARG ;\
+                ./run_tests.sh $RUNTEST_ARG ;\
                 cd -
                 echo "DONE"
             fi
