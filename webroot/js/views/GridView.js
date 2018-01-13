@@ -48,7 +48,7 @@ define([
             contrailListModel = (self.model != null && self.model['_type'] === 'contrailListModel') ? self.model : new ContrailListModel(listModelConfig);
 
             //delete viewConfig.elementConfig['body']['dataSource']['remote'];
-            //viewConfig.elementConfig['body']['dataSource'] = {dataView: contrailListModel};
+            viewConfig.elementConfig['body']['dataSource'] = {dataView: contrailListModel};
             viewConfig.elementConfig['body']['dataSource']['dataView'] = contrailListModel;
 
 
@@ -66,6 +66,32 @@ define([
             gridDataSource = gridConfig.body.dataSource;
             gridColumns = gridConfig.columnHeader.columns;
             gridOptions = gridConfig.body.options;
+            if(gridOptions.detail){
+                var source = gridOptions.detail.template;
+                var templateKey = gridContainer.prop('id') + '-grid-detail-template';
+                source = source.replace(/ }}/g, "}}");
+                source = source.replace(/{{ /g, "{{");
+                var template = contrail.getTemplate4Source(source, templateKey,
+                                   gridOptions.detail.noCache);
+                var data = gridDataSource.dataView.getItems();
+                var dc;
+                _.each(data, function(value, key) {
+                    dc = gridDataSource.dataView.getItems()[key];
+                    if (contrail.checkIfExist(dc)) {
+                        var domDetailData = $.parseHTML(template({data: dc, ignoreKeys: ['cgrid'], requestState: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY}));
+                        console.log(dc['detailData']);
+                        dc['detailData'] = _.get(domDetailData[0], 'children[1].innerText', []);
+                    }
+                });
+            }
+            gridColumns.push({
+                field: 'id',
+                hide: true,
+                formatter: function(r,c,v,cd,dc){
+                    return JSON.stringify(dc);
+                }
+            });
+
             gridConfig.footer = ($.isEmptyObject(gridConfig.footer)) ? false : gridConfig.footer;
 
             if (contrail.checkIfKeyExistInObject(true, customGridConfig, 'footer.pager.options.pageSizeSelect')) {
