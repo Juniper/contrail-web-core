@@ -3,7 +3,7 @@
  */
 
 define([
-    'underscore',
+    'lodash',
     'handlebars',
     'contrail-view',
     'contrail-list-model',
@@ -66,24 +66,25 @@ define([
             gridDataSource = gridConfig.body.dataSource;
             gridColumns = gridConfig.columnHeader.columns;
             gridOptions = gridConfig.body.options;
-            if(gridOptions.detail){
-                var source = gridOptions.detail.template;
-                var templateKey = gridContainer.prop('id') + '-grid-detail-template';
-                source = source.replace(/ }}/g, "}}");
-                source = source.replace(/{{ /g, "{{");
-                var template = contrail.getTemplate4Source(source, templateKey,
-                                   gridOptions.detail.noCache);
-                var data = gridDataSource.dataView.getItems();
-                var dc;
-                _.each(data, function(value, key) {
-                    dc = gridDataSource.dataView.getItems()[key];
-                    if (contrail.checkIfExist(dc)) {
-                        var domDetailData = $.parseHTML(template({data: dc, ignoreKeys: ['cgrid'], requestState: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY}));
-                        console.log(dc['detailData']);
-                        dc['detailData'] = _.get(domDetailData[0], 'children[1].innerText', []);
-                    }
-                });
-            }
+            contrailListModel.onAllRequestsComplete.subscribe(function () {
+                if(gridOptions.detail){
+                    var source = gridOptions.detail.template;
+                    var templateKey = gridContainer.prop('id') + '-grid-detail-template';
+                    source = source.replace(/ }}/g, "}}");
+                    source = source.replace(/{{ /g, "{{");
+                    var template = contrail.getTemplate4Source(source, templateKey,
+                                       gridOptions.detail.noCache);
+                    var data = gridDataSource.dataView.getItems();
+                    var dc;
+                    _.each(data, function(value, key) {
+                        dc = gridDataSource.dataView.getItems()[key];
+                        if (contrail.checkIfExist(dc)) {
+                            var domDetailData = $.parseHTML(template({data: dc, ignoreKeys: ['cgrid'], requestState: cowc.DATA_REQUEST_STATE_SUCCESS_NOT_EMPTY}));
+                            dc['detailData'] = _.get(domDetailData[0], 'children[1].innerText', []);
+                        }
+                    });
+                }
+            })
             gridColumns.push({
                 field: 'id',
                 hide: true,
