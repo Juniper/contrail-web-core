@@ -25,27 +25,34 @@ $(GENERATEDS):
 	if [ ! -d ../$(GENERATEDS) ]; then git clone https://github.com/Juniper/contrail-generateDS.git ../$(GENERATEDS); else cd ../$(GENERATEDS) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
 
 $(CONTROLLER):
+	rm -rf ../$(CONTROLLER)/src/schema;
 	mkdir -p ../$(CONTROLLER)/src/schema;
 	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/alarm.xsd;
 	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/all_cfg.xsd;
 	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/bfd_schema.xsd;
 	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/bgp_schema.xsd;
+	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/bgpvpn.xsd;
+	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/e2_services.xsd;
+	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/firewall_policy.xsd;
 	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/ietf-bfd-schema.xsd;
 	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/ietf-l3vpn-schema.xsd;
 	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/loadbalancer.xsd;
 	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/routing_policy.xsd;
 	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/services.xsd;
 	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/smi-base.xsd;
+	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/structured_syslog_config.xsd;
+	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/tag.xsd;
 	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/usr_def_cntr.xsd;
 	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/vnc_cfg.xsd;
 	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/xmpp_enet.xsd;
 	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/xmpp_multicast.xsd;
+	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/xmpp_mvpn.xsd;
 	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/xmpp_unicast.xsd;
 
 
 repos: $(WEBUISERVER) $(WEBUICLIENT) $(WEBUITHIRDPARTY) $(GENERATEDS) $(CONTROLLER)
 
-fetch-schema: $(GENERATEDS) $(CONTROLLER)
+fetch-schemas: $(GENERATEDS) $(CONTROLLER)
 
 fetch-pkgs-prod:
 	python ../contrail-webui-third-party/fetch_packages.py -f ../contrail-webui-third-party/packages.xml
@@ -98,7 +105,7 @@ dev-env:
 	ln -sf ../../webroot/html/dashboard.tmpl webroot/html/dashboard.html
 	ln -sf ../../webroot/html/login.tmpl webroot/html/login.html
 	ln -sf ../../webroot/html/login-error.tmpl webroot/html/login-error.html
-	if [ ! -d ../$(CONTROLLER) ]; then make fetch-schema; fi
+	if [ ! -d ../$(CONTROLLER) ]; then make fetch-schemas; fi
 	bash generate-keys.sh
 	./generate-files.sh "dev-env" $(REPO)
 	./dev-install.sh
