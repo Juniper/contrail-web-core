@@ -150,6 +150,7 @@ define([
         this.TMPL_EDITABLE_GRID_DROPDOWN_VIEW = "core-editable-grid-dropdown-view-template";
         this.TMPL_EDITABLE_GRID_DROPDOWN_LEFT_LABEL_VIEW = "core-editable-grid-label-left-dropdown-view-template";
         this.TMPL_MULTISELECT_VIEW = "core-multiselect-view-template";
+        this.TMPL_MULTISELECT_LEFT_LABEL_VIEW = "core-multiselect-left-label-view-template";
         this.TMPL_EDITABLE_GRID_MULTISELECT_LEFT_LABEL_VIEW = "core-editable-grid-label-left-multiselect-view-template";
         this.TMPL_EDITABLE_GRID_MULTISELECT_VIEW = "core-editable-grid-multiselect-view-template";
         this.TMPL_EDITABLE_GRID_MULTISELECT_WITH_ICON_VIEW = "core-editable-grid-multiselect-with-icon-view-template";

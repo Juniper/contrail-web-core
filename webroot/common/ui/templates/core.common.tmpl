@@ -1299,6 +1299,28 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-multiselect-left-label-view-template">
+    <div class="multiSelectViewLeftLabel" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}}
+                   {{/if}}">
+        <div class="display-flex">
+            <div class="form-label">
+                {{> coreFormLabel}}
+            </div>
+            <div class="form-element">
+                <input id="{{id}}" name="{{name}}" class="{{class}}"
+                    data-bind="
+                        {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
+                        value: {{viewConfig.dataBindValue}},
+                        optionList: {{viewConfig.dataBindOptionList}},
+                        event: { change: function() { validateAttr('{{viewConfig.path}}', '{{validation}}') } },
+                        contrailMultiselect: {}"
+                />
+                <span class="help-block red" data-bind="visible: errors().{{name}}_error, text: errors().{{name}}_error"></span>
+            </div>
+        </div>
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-editable-grid-multiselect-with-icon-view-template">
    <div class="form-group multiSelectViewWithIcon" data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}">
        {{> coreFormLabel}}
@@ -2731,14 +2753,31 @@
                         </span>
                     </span>
                 </div>
-                <div class="widget-toolbar pull-right" id="filterByTagNameSec">
-                    <a data-toggle="dropdown" class="dropdown-toggle noFiltersApplied" title="Clear Filter">
+                <div class="widget-toolbar pull-right hidden" id="filterByTagNameSec">
+                    <a data-toggle="dropdown" class="dropdown-toggle" title="Filter By Endpoints">
                         <i class="fa fa-filter"></i>
                         <sup class="filterCount hidden"></sup>
                     </a>
                     <div class="pull-right dropdown-menu dropdown-caret dropdown-closer">
+                        <div id="tg_filter_sec"></div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="widget-box transparent hidden" id="tg_settings_container">
+            <div class="widget-header" id="tg_settings_sec_view">
+                <div>
+                    <div class="pull-left margin-0-10">Category (
+                        <span id="tgCategory" class="categoryType">{{this.category}}</span> )
+                    </div>
+                    <div class="pull-left margin-0-10">Subcategory (
+                        <span id="tgSubCategory" class="categoryType">{{this.subCategory}})</span> )
+                    </div>
+                    <a id="editTgSettings" class="widget-toolbar-icon" title="Edit Settings">
+                    <i class="fa fa-pencil-square-o"></i></a>
+                </div>
+            </div>
+            <div class="widget-header hidden" id="tg_settings_sec_edit">
             </div>
         </div>
         <div id="traffic-groups-options" class="hidden"></div>
@@ -2757,7 +2796,6 @@
                     <li><span class="customIcon implictRule"></span>Implicit Deny / Allow</li>
                 </ul>
             </div>
-            <div class="col-xs-4 tgCirclesLegend margin-left-21"></div>
         </div>
         <div id="traffic-groups-link-info" class="hidden"></div>
     </div>
