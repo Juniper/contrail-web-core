@@ -1066,7 +1066,7 @@ define([
                             <ul class="dropdown-menu ellipsis" style="left: auto;right:0px;top:22px;">\
                               <li><a href="#" id="view-address-group">View Address Groups</a></li>\
                               <li><a href="#" id="view-service-group">View Service Groups</a></li>\
-                              <li><a href="#" id="view-visble-tags">View Visible Tags</a></li>\
+                              <li><a href="#" id="view-visble-tags">View Tags</a></li>\
                             </ul>\
                          </div>\
                             <button id="modal-header-close" type="button" class="close"><i class="fa fa-remove"></i></button> \

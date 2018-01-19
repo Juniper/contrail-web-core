@@ -1209,7 +1209,7 @@
 </script>
 
 <script type="text/x-handlebars-template" id="core-dropdown-view-template">
-   <div class="form-group"
+   <div class="form-group" 
         data-bind="{{#if viewConfig.visible}} visible: {{viewConfig.visible}} {{/if}}"
         {{#if viewConfig.help}}
             {{#IfCompare viewConfig.help.target 'tooltip' operator='!=='}}
@@ -1218,7 +1218,10 @@
         {{/if}}
    >
         {{> coreFormLabel}}
-        <input id="{{id}}" name="{{name}}" class="{{class}}"
+        {{#if viewConfig.plusFlag}}
+            <span class="fa fa-plus plus-button"></span>
+        {{/if}}
+        <input id="{{id}}"  name="{{name}}" class="{{class}}"
             data-bind="
                 {{#if viewConfig.disabled}}disable: {{viewConfig.disabled}}, {{/if}}{{#if lockAttr}}disable: locks().{{name}}_locked, {{/if}}
                 value: {{viewConfig.dataBindValue}},
@@ -1731,7 +1734,10 @@
         <tr>
             {{#each viewConfig.rows.0.columns}}
             <th class="{{this.class}}" data-bind="style: {width: '{{width}}px' }">
-                {{this.name}}
+                    {{this.name}} 
+                    {{#if viewConfig.plusFlag}}
+                        <span class="fa fa-plus plus-button-endpoints" style="color:#3182bd;"></span>
+                    {{/if}}
             </th>
             {{/each}}
             <th>
