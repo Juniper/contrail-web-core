@@ -67,7 +67,7 @@ function buildUIConfigSchema ()
                     }
                     var uiChildName = resType.replace(/-/g, "_");
                     uiConfigSchema[parent].children[uiChildName] =
-                        {"comparators": "to"};
+                        {"comparators": ["to"]};
                 }
             }
         }
