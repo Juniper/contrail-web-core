@@ -248,21 +248,13 @@ div.t-grid td {
   &.menu-min li.head i {
     display: inline-block;
   }
-  &:not(.menu-min) {
+  &:not(.menu-min) ul#menu {
     overflow-y: auto;
     overflow-x: hidden;
+    height:calc(100% - 45px);
   }
-}
+ }
 
-#sidebar-shortcuts.scrolled {
-  position: fixed;
-  top: 0 !important;
-  padding-right: 5px;
-}
-
-#content-container.scrolled {
-  height: calc(100vh - 45px);
-}
 
 .menu-min #sidebar-shortcuts.scrolled ~ ul {
   padding-top: 35px !important;
@@ -2226,6 +2218,16 @@ div.stack-bar-chart-tooltip > .popover.popover-tooltip {
 #configure-policy #PolicyRules td.error-cell[colspan="10"] {
     position: relative;
 }
+@-webkit-keyframes fadeIn {
+    0% { opacity: 0;}
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@keyframes fadeIn {
+    0% { opacity: 0;}
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+}
 @-webkit-keyframes fade-out {
     0% { opacity: .5; -webkit-transform: scale(1);}
     85% {opacity: .5; -webkit-transform: scale(1);}
@@ -3036,6 +3038,8 @@ footer#footer-container * {
 }
 #back-to-top {
     bottom: 35px;
+    opacity:0;
+ 
 }
 
 /*Load Balancer starts here*/
@@ -3435,6 +3439,8 @@ footer#footer-container * {
 }
 .breadcrumbs .breadcrumb > li:hover .breadcrum-drop-down-menu{
     display: block;
+    -webkit-animation: fadeIn .8s;
+    animation: fadeIn .8s;
 }
 #drop-down-l0-menu-area div:first-child{
     overflow-y: auto;
@@ -3523,9 +3529,7 @@ footer#footer-container * {
     }
 }
 
-body {
-    position: relative;
-}
+
 #sidebar.affix,
 #breadcrumbs.affix {
     top: 0px;
@@ -3537,7 +3541,7 @@ body {
     position: relative;
 }
 #main-container {
-    height: 700px;
+    height: 100%;
 }
 
 /*
