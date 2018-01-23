@@ -10,6 +10,8 @@ var appErrors = require('../errors/app.errors');
 var configUtils = require('./config.utils');
 var fs = require("fs");
 var path = require("path");
+var _ = require('lodash');
+var async = require('async');
 
 var defMandateObjs = ['fq_name', 'uuid', 'display_name', 'parent_type',
                       'parent_uuid'];
@@ -205,6 +207,12 @@ function getConfigJSONDiff (type, oldJson, newJson)
     return (false == typeNotFoundInJson) ? delta[childType] : delta;
 }
 
+function getConfigJsonModifyByType (type)
+{
+    var configJsonModifyObj = process.mainModule.exports['configJsonModifyObj'];
+    return configJsonModifyObj[type];
+}
+
 function getConfigFieldsByType (type, isArray)
 {
     var error = null;
@@ -248,7 +256,7 @@ function getConfigFieldsByType (type, isArray)
     return configTypeObj;
 }
 
-function getJSONDiffByConfigUrl (url, appData, newJson, callback)
+function getJSONDiffByConfigUrl (url, appData, newJson, callback, uuid)
 {
     var error = null;
     var optFields = [];
@@ -290,11 +298,84 @@ function getJSONDiffByConfigUrl (url, appData, newJson, callback)
             return;
         }
         var delta = getConfigJSONDiff(type, configData, newJson);
-        callback(err, delta, configData);
+        if(uuid) {
+            //prepare refs array delta map
+            var refsDeltaArrayMap = {};
+            var optFields = _.get(fieldsObj, 'optFields', []);
+            var exceptionList = _.get(fieldsObj, 'exception_list', []);
+            _.forEach(optFields, function(optField) {
+                if(_.endsWith(optField, "_refs") && _.indexOf(exceptionList, optField) === -1){
+                    var oldRefs = _.get(configData, type + '.' + optField, []);
+                    var newRefs = _.get(newJson, type + '.' + optField, []);
+                    var refDelta  = getConfigArrayDelta(type, oldRefs, newRefs);
+                    if(refDelta) {
+                        refsDeltaArrayMap[optField] = refDelta;
+                    }
+                    if(delta[type]) {
+                        delete delta[type][optField];
+                    }
+                }
+            });
+            setRefUpdates(appData, refsDeltaArrayMap, type, uuid, delta, configData, callback);
+        } else {
+            callback(err, delta, configData);
+        }
     });
 }
 
-function getConfigDiffAndMakeCall (url, appData, newJson, callback, headers)
+function setRefUpdates (appData, refsDeltaArrayMap, type, uuid, delta, configData, callback)
+{
+    var dataObjArr = [];
+    _.forIn(refsDeltaArrayMap, function(value, key) {
+        var addedList = _.get(value, 'addedList', []);
+        var deletedList = _.get(value, 'deletedList', []);
+        _.forEach(addedList, function(ref) {
+            prepareRefUpdates(appData, dataObjArr, type, key, ref, 'ADD', uuid);
+        });
+        _.forEach(deletedList, function(ref) {
+            prepareRefUpdates(appData, dataObjArr, type, key, ref, 'DELETE', uuid);
+        });
+    });
+    if(!dataObjArr.length) {
+        callback(null, delta, configData);
+        return;
+    }
+    async.map(dataObjArr,
+            commonUtils.getServerResponseByRestApi(configApiServer, true),
+            function(error, results) {
+                if(error) {
+                    logutils.logger.info("setRefUpdates: " + error);
+                }
+                callback(null, delta, configData);
+                return;
+            }
+        );
+}
+
+function prepareRefUpdates (appData, dataObjArr, type, key, ref, operation, uuid)
+{
+    var refFQName = _.get(ref, 'to', '');
+    var refType = _.replace(key, '_refs', '');
+    var refAttr = _.get(ref, 'attr', null);
+    refType =  _.replace(refType, '_', '-');
+    var putData = {
+            'type': type,
+            'uuid': uuid,
+            'ref-type': refType,
+            'ref-fq-name': refFQName,
+            'operation': operation
+        };
+    if(refAttr) {
+        putData.attr = refAttr;
+    }
+    var reqUrl = '/ref-update';
+    commonUtils.createReqObj(dataObjArr, reqUrl,
+                             global.HTTP_REQUEST_POST,
+                             commonUtils.cloneObj(putData), null,
+                             null, appData);
+}
+
+function getConfigDiffAndMakeCall (url, appData, newJson, callback, headers, uuid)
 {
     getJSONDiffByConfigUrl(url, appData, newJson, function(err, configDelta,
                                                            configData) {
@@ -305,7 +386,7 @@ function getConfigDiffAndMakeCall (url, appData, newJson, callback, headers)
         configApiServer.apiPut(url, configDelta, appData, function(err, data) {
             callback(err, data);
         }, headers);
-    });
+    }, uuid);
 }
 
 function doFeatureJsonDiffParamsInit ()
@@ -393,11 +474,11 @@ function getConfigArrayDelta (type, oldArrayJson, newArrayJson)
     oldArrayJson = commonUtils.doDeepSort(oldArrayJson);
     newArrayJson = commonUtils.doDeepSort(newArrayJson);
     var resultJSON = {'addedList': [], 'deletedList': []};
-    var fieldsType = getConfigFieldsByType(type, true);
+    var fieldsType = getConfigJsonModifyByType(type);
 
     if (null != fieldsType) {
         if (null != fieldsType['preProcessCB']) {
-            var preProcessOnOldJsonCB =
+            /*var preProcessOnOldJsonCB =
                 fieldsType['preProcessCB']['applyOnOldJSON'];
             var preProcessOnNewJsonCB =
                 fieldsType['preProcessCB']['applyOnNewJSON'];
@@ -406,7 +487,7 @@ function getConfigArrayDelta (type, oldArrayJson, newArrayJson)
             }
             if (null != preProcessOnNewJsonCB) {
                 newArrayJson = preProcessOnNewJsonCB(newArrayJson);
-            }
+            }*/
             var comparators = fieldsType['preProcessCB']['comparators'];
             if ((null != comparators) && (comparators.length > 0)) {
                 filterFieldsByComparators(oldArrayJson, comparators);
