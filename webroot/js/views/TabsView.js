@@ -134,8 +134,11 @@ define([
               && contrail.checkIfExist(self.tabs[tabIndex].elementId)) {
                 tabHashUrlObj[elId] = self.tabs[tabIndex].elementId;
               }
-            window.layoutHandler.setURLHashParams({ tab: tabHashUrlObj }, { triggerHashChange: false });
-
+            /* below check is required to not update
+               url hash params when tab is selected */
+             if(viewConfig.type !== cowc.TAB_FORM_TYPE) {
+              window.layoutHandler.setURLHashParams({ tab: tabHashUrlObj }, { triggerHashChange: false });
+             }
             self.activateTimeout = null;
           }, 300);
         },
