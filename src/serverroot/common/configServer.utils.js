@@ -7,6 +7,7 @@ var commonUtils = require('../utils/common.utils');
 var async = require('async');
 var configApiServer = require('./configServer.api');
 var logutils = require('./../utils/log.utils');
+var _ = require('lodash');
 
 /**
  * @listProjectsAPIServer
@@ -355,10 +356,67 @@ function getProjectRole (req, res, appData)
     });
 }
 
+function prepareRefUpdates (appData, dataObjArr, type, key, ref,
+        operation, uuid)
+{
+    var refFQName = _.get(ref, 'to', '');
+    var refType = _.replace(key, '_refs', '');
+    var refAttr = _.get(ref, 'attr', null);
+    refType =  _.replace(refType, '_', '-');
+    var putData = {
+            'type': type,
+            'uuid': uuid,
+            'ref-type': refType,
+            'ref-fq-name': refFQName,
+            'operation': operation
+        };
+    if(refAttr) {
+        putData.attr = refAttr;
+    }
+    var reqUrl = '/ref-update';
+    commonUtils.createReqObj(dataObjArr, reqUrl,
+                             global.HTTP_REQUEST_POST,
+                             commonUtils.cloneObj(putData), null,
+                             null, appData);
+}
+
+function setRefUpdates (appData, refsDeltaArrayMap, type, uuid, delta,
+        configData, callback)
+{
+    var dataObjArr = [];
+    _.forIn(refsDeltaArrayMap, function(value, key) {
+        var addedList = _.get(value, 'addedList', []);
+        var deletedList = _.get(value, 'deletedList', []);
+        _.forEach(addedList, function(ref) {
+            prepareRefUpdates(appData, dataObjArr, type, key,
+                    ref, 'ADD', uuid);
+        });
+        _.forEach(deletedList, function(ref) {
+            prepareRefUpdates(appData, dataObjArr, type, key,
+                    ref, 'DELETE', uuid);
+        });
+    });
+    if(!dataObjArr.length) {
+        callback(null, delta, configData);
+        return;
+    }
+    async.map(dataObjArr,
+            commonUtils.getServerResponseByRestApi(configApiServer, true),
+            function(error, results) {
+                if(error) {
+                    logutils.logger.info("setRefUpdates: " + error);
+                }
+                callback(null, delta, configData);
+                return;
+            }
+        );
+}
+
 exports.listProjectsAPIServer = listProjectsAPIServer;
 exports.getProjectsFromApiServer = getProjectsFromApiServer;
 exports.getTenantListAndSyncDomain = getTenantListAndSyncDomain;
 exports.getDomainsFromApiServer = getDomainsFromApiServer;
 exports.getProjectRole = getProjectRole;
 exports.getRoles = getRoles;
+exports.setRefUpdates = setRefUpdates;
 

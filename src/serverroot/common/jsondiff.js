@@ -4,12 +4,14 @@
 
 var jsondiffpatch = require('jsondiffpatch');
 var configApiServer = require('./configServer.api');
+var configServerUtils = require('./configServer.utils');
 var commonUtils = require('../utils/common.utils');
 var logutils = require('../utils/log.utils');
 var appErrors = require('../errors/app.errors');
 var configUtils = require('./config.utils');
 var fs = require("fs");
 var path = require("path");
+var _ = require('lodash');
 
 var defMandateObjs = ['fq_name', 'uuid', 'display_name', 'parent_type',
                       'parent_uuid'];
@@ -205,6 +207,12 @@ function getConfigJSONDiff (type, oldJson, newJson)
     return (false == typeNotFoundInJson) ? delta[childType] : delta;
 }
 
+function getConfigJsonModifyByType (type)
+{
+    var configJsonModifyObj = process.mainModule.exports['configJsonModifyObj'];
+    return configJsonModifyObj[type];
+}
+
 function getConfigFieldsByType (type, isArray)
 {
     var error = null;
@@ -248,7 +256,7 @@ function getConfigFieldsByType (type, isArray)
     return configTypeObj;
 }
 
-function getJSONDiffByConfigUrl (url, appData, newJson, callback)
+function getJSONDiffByConfigUrl (url, appData, newJson, callback, uuid)
 {
     var error = null;
     var optFields = [];
@@ -290,11 +298,34 @@ function getJSONDiffByConfigUrl (url, appData, newJson, callback)
             return;
         }
         var delta = getConfigJSONDiff(type, configData, newJson);
-        callback(err, delta, configData);
+        if(uuid) {
+            //prepare refs array delta map
+            var refsDeltaArrayMap = {};
+            var optFields = _.get(fieldsObj, 'optFields', []);
+            var exceptionList = _.get(fieldsObj, 'exception_list', []);
+            _.forEach(optFields, function(optField) {
+                if(_.endsWith(optField, "_refs")
+                        && _.indexOf(exceptionList, optField) === -1){
+                    var oldRefs = _.get(configData, type + '.' + optField, []);
+                    var newRefs = _.get(newJson, type + '.' + optField, []);
+                    var refDelta  = getConfigJSONArrayDelta(type, oldRefs, newRefs);
+                    if(refDelta) {
+                        refsDeltaArrayMap[optField] = refDelta;
+                    }
+                    if(delta[type]) {
+                        delete delta[type][optField];
+                    }
+                }
+            });
+            configServerUtils.setRefUpdates(appData, refsDeltaArrayMap, type, uuid,
+                    delta, configData, callback);
+        } else {
+            callback(err, delta, configData);
+        }
     });
 }
 
-function getConfigDiffAndMakeCall (url, appData, newJson, callback, headers)
+function getConfigDiffAndMakeCall (url, appData, newJson, callback, headers, uuid)
 {
     getJSONDiffByConfigUrl(url, appData, newJson, function(err, configDelta,
                                                            configData) {
@@ -305,7 +336,7 @@ function getConfigDiffAndMakeCall (url, appData, newJson, callback, headers)
         configApiServer.apiPut(url, configDelta, appData, function(err, data) {
             callback(err, data);
         }, headers);
-    });
+    }, uuid);
 }
 
 function doFeatureJsonDiffParamsInit ()
@@ -407,6 +438,64 @@ function getConfigArrayDelta (type, oldArrayJson, newArrayJson)
             if (null != preProcessOnNewJsonCB) {
                 newArrayJson = preProcessOnNewJsonCB(newArrayJson);
             }
+            var comparators = fieldsType['preProcessCB']['comparators'];
+            if ((null != comparators) && (comparators.length > 0)) {
+                filterFieldsByComparators(oldArrayJson, comparators);
+                filterFieldsByComparators(newArrayJson, comparators);
+            }
+        }
+    }
+    var delta = arrayDiffpatcher.diff(oldArrayJson, newArrayJson);
+    if ((null == delta) || (undefined == delta) ||
+        ('undefined' == delta)) {
+        return null;
+    }
+    if ((null != delta['_t']) && ('a' != delta['_t'])) {
+        return null;
+    }
+
+    var oldArrayLen = oldArrayJson.length;
+    var newArrayLen = newArrayJson.length;
+    var maxArrLen = oldArrayLen + newArrayLen;
+    for (var i = 0; i < maxArrLen; i++) {
+        var deltaI = delta[i.toString()];
+        var delta_I = delta['_' + i.toString()];
+        if ((null == deltaI) && (null == delta_I)) {
+            continue;
+        }
+        if (null != delta_I) {
+            if (3 == delta_I[2]) {
+                /* Array Move, do not do anything */
+            }
+            if (0 == delta_I[2]) {
+                /* Deleted entry */
+                resultJSON['deletedList'].push(origOldArrayJson[i]);
+            }
+        }
+        if (null != deltaI) {
+            resultJSON['addedList'].push(origNewArrayJson[i]);
+        }
+    }
+    return resultJSON;
+}
+
+function getConfigJSONArrayDelta (type, oldArrayJson, newArrayJson)
+{
+    if (null == oldArrayJson) {
+        oldArrayJson = [];
+    }
+    if (null == newArrayJson) {
+        newArrayJson = [];
+    }
+    var origOldArrayJson = commonUtils.cloneObj(oldArrayJson);
+    var origNewArrayJson = commonUtils.cloneObj(newArrayJson);
+    oldArrayJson = commonUtils.doDeepSort(oldArrayJson);
+    newArrayJson = commonUtils.doDeepSort(newArrayJson);
+    var resultJSON = {'addedList': [], 'deletedList': []};
+    var fieldsType = getConfigJsonModifyByType(type);
+
+    if (null != fieldsType) {
+        if (null != fieldsType['preProcessCB']) {
             var comparators = fieldsType['preProcessCB']['comparators'];
             if ((null != comparators) && (comparators.length > 0)) {
                 filterFieldsByComparators(oldArrayJson, comparators);
