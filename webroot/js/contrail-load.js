@@ -3,7 +3,6 @@
  */
 
 $(document).ready(function () {
-
     //Listener to expand/collapse widget based on toggleButton in widget header
     $("#content-container").on('click', 'div.widget-box div.widget-header div.widget-toolbar a[data-action="collapse"]', function () {
         $(this).find('i').toggleClass('fa-chevron-up').toggleClass('fa-chevron-down');
@@ -54,6 +53,7 @@ $(document).ready(function () {
                 thisParent.find('.group-detail-advanced-action-item').removeClass('selected');
                 $(this).addClass('selected');
 
+
                 if (contrail.checkIfExist($(this).parents('.slick-row-detail').data('cgrid'))) {
                     $(this).parents('.contrail-grid').data('contrailGrid').adjustDetailRowHeight($(this).parents('.slick-row-detail').data('cgrid'));
                 }
@@ -86,6 +86,7 @@ $(document).ready(function () {
             }
         });
 
+
     /*$(window).on('scroll', function () {
         var scrollHeight = $(document).height() - $(window).height(),
             previousScroll = 0,
@@ -115,13 +116,117 @@ $(document).ready(function () {
             previousScroll = $(window).scrollTop();
         }
     });*/
-
     $(document).on('click', '#back-to-top', function (event) {
         event.preventDefault();
         $('html, body').animate({scrollTop: 0}, 500);
         return false;
     });
+ // ------------------  Scroll start plugin start
+    (function(){
+            var special = jQuery.event.special,
+            uid1 = 'D' + (+new Date()),
+            uid2 = 'D' + (+new Date() + 1);
 
+        special.scrollstart = {
+            setup: function() {
+
+                var timer,
+                    handler =  function(evt) {
+
+                        var _self = this,
+                            _args = arguments;
+
+                        if (timer) {
+                            clearTimeout(timer);
+                        } else {
+                            evt.type = 'scrollstart';
+                           // jQuery.event.handle.apply(_self, _args);
+                            jQuery.event.dispatch.apply(_self, _args);
+                        }
+
+                        timer = setTimeout( function(){
+                            timer = null;
+                        }, special.scrollstop.latency);
+
+                    };
+
+                jQuery(this).bind('scroll', handler).data(uid1, handler);
+
+            },
+            teardown: function(){
+                jQuery(this).unbind( 'scroll', jQuery(this).data(uid1) );
+            }
+        };
+
+        special.scrollstop = {
+            latency: 50,
+            setup: function() {
+
+                var timer,
+                        handler = function(evt) {
+
+                        var _self = this,
+                            _args = arguments;
+
+                        if (timer) {
+                            clearTimeout(timer);
+                        }
+
+                        timer = setTimeout( function(){
+
+                            timer = null;
+                            evt.type = 'scrollstop';
+                            jQuery.event.dispatch.apply(_self, _args);
+
+                        }, special.scrollstop.latency);
+
+                    };
+
+                jQuery(this).bind('scroll', handler).data(uid2, handler);
+
+            },
+            teardown: function() {
+                jQuery(this).unbind( 'scroll', jQuery(this).data(uid2) );
+            }
+        };
+
+    })();
+    // -----------------  plugin end
+
+    var before = 0;
+
+
+    $(window).bind('scrollstart', function() {
+        before = $(window).scrollTop();
+    });
+
+    $(window).bind('scrollstop', function() {
+         var scrollHeight = $(document).height() - $(window).height(),
+            previousScroll = 0,
+            currentScroll = $(this).scrollTop();
+
+        if (currentScroll < 45 || previousScroll - currentScroll > 40) {
+            $("#pageHeader").show();
+            $('#page-content').removeClass('scrolled');
+            $('#sidebar').removeClass('scrolled');
+            $('#breadcrumbs').removeClass('scrolled');
+            $('#back-to-top').fadeOut();
+            $('#page-content').css('z-index',0);
+        }
+        else {
+            $("#pageHeader").hide();
+            $('#page-content').addClass('scrolled');
+            $('#sidebar').addClass('scrolled');
+            $('#breadcrumbs').addClass('scrolled');
+            $('#back-to-top').fadeIn();
+            $('#page-content').css('z-index',-1);
+        }
+        if (currentScroll < scrollHeight) {
+            previousScroll = $(window).scrollTop();
+        }
+        before = $(window).scrollTop();
+
+    });
 
     // layoutHandler.load();
 
@@ -494,7 +599,9 @@ function activateAffixPlugin(elem) {
     var $spy = $(elem).affix(data);
 }
 
+
 $(document).ready(function() {
+
     if(typeof($().affix) == 'function') {
         $('[data-spy="affix"]').each(function() { 
             var data = $(this).data();
