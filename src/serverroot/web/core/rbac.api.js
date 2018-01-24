@@ -173,7 +173,7 @@ function checkUserAccess (req, res, callback)
 {
   var userRoleLen = 0;
   var authApi = require("../../common/auth.api");
-  if (authApi.isValidUrlWithXAuthToken(req.url, req)) {
+  if (authApi.isReqHasXAuthTokenHeader(req.url, req)) {
     /* If the request contains the X-Auth-Token and URL contains the
      * forward-proxy, then verify that token is valid, if valid, then assume that
      * request is authorized
