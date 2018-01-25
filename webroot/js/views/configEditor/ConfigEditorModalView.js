@@ -840,8 +840,9 @@ define([
                             }
                         }
                         var objDiff = lodash.diff(oldKeys, updatedKeys, false, oldJson, enumKeys);
-                        var schemaProp = schema.properties[Object.keys(editedJson)[0]].properties;
-                        var updatedRefs = self.updateModelRefsForForm(objDiff, schemaProp, refs);
+                        var objName = Object.keys(editedJson)[0];
+                        var schemaProp = schema.properties[objName].properties;
+                        var updatedRefs = self.updateModelRefsForForm(objDiff, schemaProp, refs, objName);
                         var updatedObj = {};
                         updatedObj[Object.keys(editedJson)[0]] = updatedRefs;
                         if(oldKeys.uuid !== undefined){
@@ -995,7 +996,7 @@ define([
           return model;
         },
 
-        updateModelRefsForForm:function(diffObj, schemaProp, refs){
+        updateModelRefsForForm:function(diffObj, schemaProp, refs, objName){
         var self = this;
             var oldRefs = [];
             for(var i in diffObj){
@@ -1042,6 +1043,10 @@ define([
                     for(var m = 0; m < diffObj[i].length; m++){
                         if(typeof diffObj[i][m].to == 'string'){
                             diffObj[i][m].to = diffObj[i][m].to.split(':');
+                        }
+                        if(cowc.NETWORK_POLICY_INCLUDING_OBJ_LIST.indexOf(objName) !== -1 && diffObj[i][m].attr === undefined){
+                            diffObj[i][m]['attr'] = {};
+                            diffObj[i][m]['attr']['rule'] = [];
                         }
                     }
                 }
