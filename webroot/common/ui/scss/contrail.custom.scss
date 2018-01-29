@@ -246,21 +246,14 @@ div.t-grid td {
   &.menu-min li.head i {
     display: inline-block;
   }
-  &:not(.menu-min) {
+  &:not(.menu-min) ul#menu {
     overflow-y: auto;
     overflow-x: hidden;
+    height:calc(100% - 45px);
   }
 }
 
-#sidebar-shortcuts.scrolled {
-  position: fixed;
-  top: 0 !important;
-  padding-right: 5px;
-}
 
-#content-container.scrolled {
-  height: calc(100vh - 45px);
-}
 
 .menu-min #sidebar-shortcuts.scrolled ~ ul {
   padding-top: 35px !important;
@@ -453,6 +446,9 @@ p.error, p.error-text {
     color: #b94a48;
 }
 
+#main-container{
+    height:100%;
+}
 /*Style for the underlay topology svg elements*/
 .topology-visualization svg {
     cursor:move;
