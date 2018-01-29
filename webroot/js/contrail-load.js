@@ -96,8 +96,11 @@ $(document).ready(function () {
             $('#page-content').removeClass('scrolled');
             $('#sidebar').removeClass('scrolled');
             $('#sidebar-shortcuts').removeClass('scrolled');
+            if($('#page-content').height()<=$(window).height()-85){
+            $('#sidebar:not(.menu-min) ul#menu').css('height','calc( 100vh - 105px )');
+            }
+            else{ $('#sidebar:not(.menu-min) ul#menu').css('height','100%');}
             $('#breadcrumbs').removeClass('scrolled');
-            $('#content-container').removeClass('scrolled');
             $('#back-to-top').fadeOut();
         }
         else {
@@ -106,7 +109,6 @@ $(document).ready(function () {
             $('#sidebar').addClass('scrolled');
             $('#sidebar-shortcuts').addClass('scrolled');
             $('#breadcrumbs').addClass('scrolled');
-            $('#content-container').addClass('scrolled');
             $('#back-to-top').fadeIn();
         }
         if (currentScroll < scrollHeight) {
