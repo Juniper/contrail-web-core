@@ -3,7 +3,7 @@
  */
 
 define([
-    'lodash',
+    'lodashv4',
     'moment',
     'handlebars',
     'lodash',
@@ -18,6 +18,7 @@ define([
 
     var CoreUtils = function () {
         var self = this;
+        self.modelMap = {};
         //Setting the sevLevels used to display the node colors
         sevLevels = {
             CRITICAL : 0, //Red
@@ -1874,7 +1875,7 @@ define([
                 var groupByMap = groupDim.group().all(),
                     groupByMap = _.sortBy(groupByMap, 'key'),
                     groupByMapLen = groupByMap.length,
-                    groupByKeys = _.pluck(groupByMap, 'key');
+                    groupByKeys = _.map(groupByMap, 'key');
                 if ((options.type != null) || (colors != null && typeof colors == 'function')) {
                     if(options.type != null) {
                         colors = NodeColorMapping.getNodeColorMap(groupByKeys,options.resetColor,options.type);
@@ -1904,7 +1905,7 @@ define([
             }
 
             if (parsedData.length > 0) {
-                parsedData = _.indexBy(parsedData, 'key');
+                parsedData = _.keyBy(parsedData, 'key');
             }
             var lastTimeStamp = _.max(_.keys(buckets));
             for(var i  in buckets) {
@@ -1923,8 +1924,8 @@ define([
                                 return cowu.getValueByJsonPath(d, yField);
                         });
                         if (yFieldOperation == 'average') {
-                            groupCountsObj = _.indexBy(groupDim.group().reduceCount().all(), 'key');
-                            groupSumObj = _.indexBy(groupByDimSum.top(Infinity), 'key');
+                            groupCountsObj = _.keyBy(groupDim.group().reduceCount().all(), 'key');
+                            groupSumObj = _.keyBy(groupByDimSum.top(Infinity), 'key');
                             groupByMap = [];
                             for (var key in groupCountsObj) {
                                 var count = getValueByJsonPath(groupCountsObj, key+';value', 1);
@@ -1943,7 +1944,7 @@ define([
                     if (limit != null) {
                         groupByMap = _.sortBy(groupByMap, 'value');
                         groupByMap = groupByMap.reverse();
-                        var othersSum = _.pluck(groupByMap.slice(limit, groupByMap.length - 1), 'value').reduce(function (a, b) {
+                        var othersSum = _.map(groupByMap.slice(limit, groupByMap.length - 1), 'value').reduce(function (a, b) {
                             return a + b;
                         }, 0);
                         groupByMap = groupByMap.slice(0, limit);
@@ -1952,7 +1953,7 @@ define([
                             value: othersSum
                         });
                     }
-                    /*var missingKeys = _.difference(_.without(groupByKeys, failureLabel), _.pluck(groupByMap, 'key'));
+                    /*var missingKeys = _.difference(_.without(groupByKeys, failureLabel), _.map(groupByMap, 'key'));
                     $.each(missingKeys, function(idx, obj){
                         groupByMap.push({
                             key: obj,
@@ -1960,7 +1961,7 @@ define([
                         });
                     });*/
                     groupByMapLen = groupByMap.length;
-                    total = _.pluck(groupByMap, 'value').reduce(function (a, b) {
+                    total = _.map(groupByMap, 'value').reduce(function (a, b) {
                         return a + b;
                     }, 0);
                     for (var j = 0; j < groupByMapLen; j++) {
@@ -1972,7 +1973,7 @@ define([
                         if (failureCheckFn) {
                             var failureDim = groupDim.group().reduceSum(failureCheckFn),
                                 failureArr = failureDim.top(Infinity);
-                            failureMap = _.indexBy(failureArr, 'key');
+                            failureMap = _.keyBy(failureArr, 'key');
                             if(failureMap[groupByObjKey] != null) {
                                 var failedSliceCnt = getValueByJsonPath(failureMap,
                                         groupByObjKey+';value', 0);
@@ -2174,7 +2175,7 @@ define([
             if (groupBy != null ) {
                 groupDim = cf.dimension(function (d) {return d[groupBy]});
                 groupDimData = groupDim.group().all();
-                var groupDimKeys = _.pluck(groupDimData, 'key');
+                var groupDimKeys = _.map(groupDimData, 'key');
                 if (typeof colors == 'function') {
                    colors = colors(_.sortBy(groupDimKeys), resetColor);
                 } else if(options.type != null) {
@@ -2310,7 +2311,64 @@ define([
             });
             return retObj;
         }
-
+        /**
+         * This function merges the analytics data with config data
+         * based on the options parameter
+         * eg: consider session stats from analytics and firewall rule from config
+         * then options should be
+         * {
+         *      modelKey: 'eps.__key' // key which is used to compare with config data
+         *      joinKey: 'uuid' // key which is used to compare with analytics data
+         * }
+         *
+         * returns an array of records with configData embedded with key configData in
+         * each record
+         */
+        self.updateModelDataWithAdditionalFields = function (options) {
+            var model = options['model'],
+                data = options['data'],
+                modelKey = options['modelKey'],
+                joinKey = options['joinKey'],
+                primaryData = model.get('data'),
+                compareFn = function (obj1, obj2) {return obj1 == obj2},
+                pValue,
+                mergedDataArr = [];
+                if (options['compareFn'] != null && typeof options['compareFn'] == 'function') {
+                    compareFn = options['compareFn'];
+                }
+                _.forEach(data, function(value, key) {
+                    _.forEach(primaryData, function (pValueObj, pKey) {
+                        if (modelKey != null) {
+                            if (!$.isArray(modelKey)) {
+                                modelKey = [modelKey];
+                            }
+                            $.each(modelKey, function (i, obj) {
+                               pValue = pValueObj[obj];
+                               if (pValue != null) {
+                                   if ($.isArray(pValue)) {
+                                       if (modelKey[i+1] != null) {
+                                           $.each(pValue, function (j, pValueArrObj) {
+                                               if (compareFn(pValueArrObj[modelKey[i+1]], value[joinKey])) {
+                                                   $.extend(pValueArrObj, value);
+                                               }
+                                           });
+                                       }
+                                   } else if (typeof pValue == 'object') {
+                                       if (modelKey[i+1] != null
+                                            && compareFn(pValue[modelKey[i+1]], value[joinKey])) {
+                                           $.extend(pValue, value);
+                                       }
+                                   } else if (compareFn(pValue, value[joinKey])) {
+                                       $.extend(pValueObj, value);
+                                   }
+                                   mergedDataArr.push(pValueObj);
+                               }
+                            });
+                        }
+                    });
+                });
+            return mergedDataArr;
+        }
         self.parseAndMergeStats = function (response,primaryDS) {
             var primaryData = $.isArray(primaryDS)? primaryDS :primaryDS.getItems();
             if(primaryData.length == 0 && primaryDS.setData) {
@@ -2459,9 +2517,12 @@ define([
          * The first one is considered as primary req and the rest are added as
          * vl config
          */
-        self.fetchStatsListModel = function (config, timeRange) {
+        self.fetchStatsListModel = function (config, options) {
             var listModel = new ContrailListModel({data:[]});
-            var defObj = $.Deferred();
+            var defObj = $.Deferred(),
+                timeRange = _.result(options, 'timeRange'),
+                mergeFn, parseFn, needListModel = _.result(options, 'needListModel', false);
+            
             if (!_.isArray(config)) {
                 config = [config];
             }
@@ -2469,7 +2530,7 @@ define([
                     [Date.now() - (2 * 60 * 60 * 1000), Date.now()];
             var primaryRemoteConfig ;
             var vlRemoteList = [];
-            var ajaxArr = [], mergeFn, parseFn;
+            var ajaxArr = [];
             for (var i = 0; i < config.length; i++) {
 				var statsConfig = config[i],whereDefObj = $.Deferred();
                 var noSanitize = cowu.getValueByJsonPath(statsConfig,'no_sanitize',false);
@@ -2530,7 +2591,11 @@ define([
                             whereDefObj.resolve();
                         }
                     } else {
-                        //whereDefObj.resolve();
+                        whereDefObj.resolve();
+                    }
+                }
+                whereDefObj.done(function() {
+                    if (!needListModel) {
                         ajaxArr.push($.ajax({
                             url : "/api/qe/query/" + _.result(postData,'formModelAttrs.table_name'),
                             type: 'POST',
@@ -2538,71 +2603,36 @@ define([
                             dataType: "json",
                             data: JSON.stringify(postData)
                         }));
-                        if (statsConfig['mergeFn'] != null) {
-                            mergeFn = statsConfig['mergeFn'];
-                        }
-                        if (statsConfig['parser'] != null) {
-                            parseFn = statsConfig['parser'];
-                        }
                     }
-                }
+                });
                 if(i == 0) {
-                    if (statsConfig['type'] != null && statsConfig['type'] == "non-stats-query"){
-                        primaryRemoteConfig = remoteConfig;
-                    } else {
-                        whereDefObj.done(function() {
-                            $.ajax({
-                                url : "/api/qe/query/" + _.result(postData,'formModelAttrs.table_name'),
-                                type: 'POST',
-                                contentType: "application/json; charset=utf-8",
-                                dataType: "json",
-                                data: JSON.stringify(postData)
-                            }).done(function(response) {
-                                if(typeof(statsConfig['parser']) == 'function') {
-                                    var data = statsConfig['parser'](response);
-                                    listModel.setData(data);
-                                    defObj.resolve(data);
-                                } else {
-                                    var data = getValueByJsonPath(response,'data',[]);
-                                    //Copying queryJSON property from request to response
-                                    if (response['queryJSON'] != null) {
-                                        data = _.map(data, function(obj) { 
-                                            return _.extend({}, obj, {queryJSON: response['queryJSON']});
-                                        });
-                                    }
-                                    listModel.setData(data);
-                                    defObj.resolve(data);
+                    var remoteObj = {
+                        ajaxConfig : {
+                            url : "/api/qe/query",
+                            type: 'POST',
+                            data: JSON.stringify(postData)
+                        },
+                        dataParser : (statsConfig['parser'])? statsConfig['parser'] :
+                            function (response) {
+                                var data = getValueByJsonPath(response,'data',[]);
+                                //Copying queryJSON property from request to response
+                                if (response['queryJSON'] != null) {
+                                    data = _.map(data, function(obj) {
+                                        return _.extend({}, obj, {queryJSON: response['queryJSON']});
+                                    });
                                 }
-                            });
-                        });
-                        var remoteObj = {
-                            ajaxConfig : {
-                                url : "/api/qe/query",
-                                type: 'POST',
-                                data: JSON.stringify(postData)
-                            },
-                            dataParser : (statsConfig['parser'])? statsConfig['parser'] :
-                                function (response) {
-                                    var data = getValueByJsonPath(response,'data',[]);
-                                    //Copying queryJSON property from request to response
-                                    if (response['queryJSON'] != null) {
-                                        data = _.map(data, function(obj) {
-                                            return _.extend({}, obj, {queryJSON: response['queryJSON']});
-                                        });
-                                    }
-                                    return data;
-                                }
-                        };
-                        if(noSanitize) {
-                            remoteObj.ajaxConfig['dataFilter'] = function(data){
-                                                                    return data;
-                                                                };
-                        }
-                        if (statsConfig['timeout']) {
-                            remoteObj.ajaxConfig['timeout'] = statsConfig['timeout'];
-                        }
-                        primaryRemoteConfig = remoteObj;
+                                return data;
+                            }
+                    };
+                    if(noSanitize) {
+                        remoteObj.ajaxConfig['dataFilter'] = function(data){
+                                                                return data;
+                                                            };
                     }
+                    if (statsConfig['timeout']) {
+                        remoteObj.ajaxConfig['timeout'] = statsConfig['timeout'];
+                    }
+                    primaryRemoteConfig = remoteObj;
                 } else {
                     var vlRemoteObj = {
                         getAjaxConfig: function(primaryResponse) {
@@ -2675,6 +2705,7 @@ define([
                     defObj.resolve(data);
                     listModel.setData(data);
                 });
+                return defObj;
             }
             //Alarms page need the listmodel config
             var listModelConfig =  {
@@ -2692,6 +2723,224 @@ define([
             }
             defObj['listModelConfig'] = listModelConfig;
             return defObj;
+        };
+
+        self.populateModel = function (ajaxConfig, options) {
+            if (!$.isArray(ajaxConfig)) {
+                ajaxConfig = [ajaxConfig];
+            }
+            BbModel = Backbone.Model.extend({
+                defaults: {
+                    type: options['type'],
+                    data: []
+                },
+                isRequestInProgress: function() {
+                    if(bbModelInst.fetched == false) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                },
+                // Backbone default getter function returns
+                // the pointer of array attributes so when
+                // we update those attributes it updates in model
+                // so change event is not triggered, so we overriding
+                // the getter such that it returns the cloned copy
+                // when the attribute type is key
+                get: function (key) {
+                    if (this.attributes[key] != null && $.isArray(this.attributes[key])) {
+                        return _.cloneDeep(this.attributes[key]);
+                    } else {
+                        return this.attributes[key];
+                    }
+                },
+                getItems: function() {
+                    return this.get('data');
+                },
+                initialize: function(options) {
+                    this.cfg = ajaxConfig
+                }
+            });
+            bbModelInst = new BbModel({
+                //cfg:cfg['config']
+            });
+            bbModelInst.fetched = false;
+            self.fetchModel(ajaxConfig, $.Deferred(), bbModelInst, options);
+            return bbModelInst;
+        };
+        self.fetchModel = function (modelConfigArr, defObj, model, options) {
+            var modelConfig = modelConfigArr.shift(), ajaxConfigDefObj = $.Deferred();
+            var source = _.result(modelConfig,'source',_.result(options, 'source', 'STATTABLE'));
+            if (source.match(/STATTABLE|LOG|OBJECT/)) {
+                self.getStatQueryAjaxConfig (modelConfig, model, ajaxConfigDefObj);
+            } else if (source.match(/APISERVER/)) {
+                self.getApiserverAjaxConfig (modelConfig, model, ajaxConfigDefObj);
+            }
+            ajaxConfigDefObj.done(function (ajaxConfig) {
+                if (!$.isEmptyObject(ajaxConfig)) {
+                    if (modelConfig['modelId'] != null && self.modelMap[modelConfig['modelId']] != null) {
+                        self.modelMap[modelConfig['modelId']].done(function (data) {
+                            ajaxSucessCallback(data);
+                        });
+                    } else {
+                        if (modelConfig['modelId'] != null) {
+                            self.modelMap[modelConfig['modelId']] = defObj;
+                        }
+                        $.ajax(ajaxConfig).done(function (response) {
+                            var data = response;
+                            if (response['data'] != null) {
+                                data = response['data'];
+                            }
+                            if (response && response['queryJSON'] != null) {
+                                data = _.map(_.result(response, 'data', []), function(obj) {
+                                    return _.extend({}, obj, {queryJSON: response['queryJSON']});
+                                });
+                            }
+                            if (source.match(/APISERVER/)) {
+                                data = _.result(response, '0.'+modelConfig['table_name'], []);
+                                data = _.map(data, function (value, key) {
+                                    return _.values(value)[0];
+                                });
+                            }
+                            //NOTE: concat is called before the parser
+                            if (modelConfig['type'] == 'concat') {
+                                data = model.getItems().concat(data);
+                            }
+                            //NOTE: parser called before the merge
+                            if (modelConfig['parser'] != null && typeof modelConfig['parser'] == 'function') {
+                                data = modelConfig['parser'](data, model);
+                            }
+                            if (modelConfig['mergeFn'] != null) {
+                                if (typeof modelConfig['mergeFn'] == 'object') {
+                                    data = self.updateModelDataWithAdditionalFields($.extend({
+                                        model: model,
+                                        data: data,
+                                    }, modelConfig['mergeFn']));
+                                }
+                                else if (typeof modelConfig['mergeFn'] == 'function') {
+                                    data = modelConfig['mergeFn'](data, model)
+                                }
+                            }
+                            defObj.resolve(data);
+                            defObj.done(function (data) {
+                                ajaxSucessCallback(data);
+                            });
+                        });
+                    }
+                }
+            });
+            function ajaxSucessCallback (data) {
+                if (modelConfigArr.length > 0 ) {
+                    self.fetchModel(modelConfigArr, $.Deferred(), model);
+                } else {
+                    model.fetched = true;
+                }
+                model.set('data', data);
+            }
+        };
+        self.getStatQueryAjaxConfig = function (statsConfig, model, whereDefObj) {
+            var timeRange = [Date.now() - (2 * 60 * 60 * 1000), Date.now()],defObj = $.Deferred(),
+                postData = {
+                    "autoSort": true,
+                    "async": false,
+                    "formModelAttrs": {
+                      "table_type": "STAT",
+                      "query_prefix": "stat",
+                      "from_time": timeRange[0],
+                      "from_time_utc": timeRange[0],
+                      "to_time": timeRange[1],
+                      "to_time_utc": timeRange[1],
+                      "limit": "150000"
+                    }
+                };
+            var ajaxConfig = {
+                url : "/api/qe/query/" + _.result(statsConfig,'table_name'),
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(postData)
+            };
+            postData['formModelAttrs']['time_granularity_unit'] = "secs";
+            postData['formModelAttrs']['time_granularity'] = 150;
+            if (statsConfig['from_time_utc'] != null) {
+                postData['formModelAttrs']['from_time_utc'] = statsConfig['from_time_utc'];
+            }
+            if (statsConfig['to_time_utc'] != null) {
+                postData['formModelAttrs']['to_time_utc'] = statsConfig['to_time_utc'];
+            }
+            if (statsConfig['table_name'] != null) {
+                postData['formModelAttrs']['table_name'] = statsConfig['table_name'];
+            }
+            if (statsConfig['table_type'] != null) {
+                postData['formModelAttrs']['table_type'] = statsConfig['table_type'];
+            }
+            if (statsConfig['select'] != null) {
+                postData['formModelAttrs']['select'] = statsConfig['select'];
+            }
+            if (statsConfig['time_granularity'] != null) {
+                postData['formModelAttrs']['time_granularity'] = statsConfig['time_granularity'];
+            }
+            if (statsConfig['time_granularity_unit'] != null) {
+                postData['formModelAttrs']['time_granularity_unit'] = statsConfig['time_granularity_unit'];
+            }
+            if (statsConfig['where'] != null && typeof statsConfig['where'] == 'function') {
+                postData['formModelAttrs']['where'] = statsConfig['where'](model, defObj);
+                defObj.done(function (whereClause) {
+                    postData['formModelAttrs']['where'] = whereClause;
+                    ajaxConfig['data'] = JSON.stringify(postData);
+                    whereDefObj.resolve(ajaxConfig);
+                })
+            } else if (statsConfig['where'] != null) {
+                if(matchArr = statsConfig['where'].match(/node-type = (.*)/)) {
+                    monitorInfraUtils.fetchHostNamesForNodeType({nodeType:matchArr[1]}).
+                    done(function(whereClause) {
+                        postData['formModelAttrs']['where'] = monitorInfraUtils.getWhereClauseForSystemStats(whereClause);
+                        ajaxConfig['data'] = JSON.stringify(postData);
+                        whereDefObj.resolve(ajaxConfig);
+                    });
+                } else {
+                    postData['formModelAttrs']['where'] = statsConfig['where'];
+                    ajaxConfig['data'] = JSON.stringify(postData);
+                    whereDefObj.resolve(ajaxConfig);
+                }
+            } else {
+                ajaxConfig['data'] = JSON.stringify(postData);
+                whereDefObj.resolve(ajaxConfig);
+            }
+        };
+        self.getApiserverAjaxConfig = function (apiConfig, model, whereDefObj) {
+            var where = apiConfig['where'], defObj = $.Deferred(),
+                postData = {
+                    data: [{type: _.result(apiConfig, 'table_name')}],
+                },
+                obj_uuids = [],
+                ajaxConfig = {
+                    url: "/api/tenants/config/get-config-details",
+                    type: "POST"
+                };
+            if (_.result(apiConfig, 'fields') != null) {
+                postData['data'][0]['fields'] = _.result(apiConfig, 'fields', []);
+            }
+            if (where != null && typeof where == 'function') {
+                where(model, defObj);
+                defObj.done(function (data) {
+                    postData['data'][0]['obj_uuids'] = data;
+                    ajaxConfig['data'] = postData;
+                    if (data.length == 0) {
+                        whereDefObj.resolve({});
+                    } else {
+                        whereDefObj.resolve(ajaxConfig);
+                    }
+                });
+            } else if (where != null) {
+                postData['data'][0]['obj_uuids'] = where;
+                ajaxConfig['data'] = JSON.stringify(postData);
+                if (where.length == 0) {
+                    whereDefObj.resolve({});
+                } else {
+                    whereDefObj.resolve(ajaxConfig);
+                }
+            }
         };
         self.modifyTimeRangeInRemoteConfig = function (remoteConfig,timeExtent) {
             var postData = JSON.parse(getValueByJsonPath(remoteConfig,'ajaxConfig;data'));

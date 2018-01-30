@@ -2990,7 +2990,11 @@
                 <div class="flip">
                     <div class="front face">
                         <div class='item-container'>
-                            <div class='item-content'></div>
+                            {{#if this.showTitle}}
+                                <h4 class="title"> {{this.title}}</h4>
+                            {{/if}}
+                            <div class='item-content'>
+                            </div>
                             <i class="fa fa-info-circle flip-button"></i>
                         </div>
                     </div>
@@ -3008,6 +3012,9 @@
                 </div>
             </div>
             {{else}}
+            {{#if this.showTitle}}
+                 <h4 class="title"> {{this.title}}</h4>
+            {{/if}}
             <div class='item-content'>
             </div>
             {{/if}}
