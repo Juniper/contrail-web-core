@@ -348,3 +348,19 @@
   content: "\e913";
   color:#5E57AC;
 }
+.contrailGlyph-insert-top:before {
+      content: "\e914";
+      font-size: 22px;
+ }
+.contrailGlyph-insert-bottom:before {
+  content: "\e915";
+  font-size: 22px;
+}
+.contrailGlyph-insert-below:before {
+  content: "\e916";
+  font-size: 22px;
+}
+.contrailGlyph-insert-above:before {
+  content: "\e917";
+  font-size: 22px;
+}
