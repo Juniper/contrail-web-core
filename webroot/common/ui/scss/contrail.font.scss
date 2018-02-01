@@ -348,3 +348,22 @@
   content: "\e913";
   color:#5E57AC;
 }
+.contrailGlyph-insert-top:before {
+      content: "\e914";
+      font-size: 20px;
+ }
+.contrailGlyph-insert-bottom:before {
+  content: "\e915";
+  font-size: 20px;
+}
+.contrailGlyph-insert-below:before {
+  content: "\e916";
+  font-size: 20px;
+}
+.contrailGlyph-insert-above:before {
+  content: "\e917";
+  font-size: 20px;
+}
+ul[id^='fw-wz-policy-grid-action-menu-'].grid-action-menu .fa{
+   width: 20px;padding:0px;
+ }
