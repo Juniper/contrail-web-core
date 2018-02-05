@@ -116,6 +116,7 @@ define([
         this.KEY_DATABIND_VALUE = 'dataBindValue';
         this.KEY_TYPE = 'type';
         this.KEY_UI_ADDED_PARAMS = 'ui_added_parameters';
+        this.KEY_DETAILDATA = 'detailData';
 
         this.TYPE_NUMBER = 'number';
         this.TYPE_INTEGER = 'integer';
