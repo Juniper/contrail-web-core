@@ -227,29 +227,31 @@ function routeAll (req, res, next, callback)
     'res' : res,
   };
   /* Check if the session is authenticated or not */
-  if (!handler.isSessionAuthenticated(req)) {
-    /* Session not authenticated yet, so do not store this context in Q */
-    if (!checkLoginReq(req)) {
-      commonUtils.redirectToLogout(req, res);
-      callback(null);
-      return;
+  handler.setTokensIfValidByXAuthToken(req, function(isAuthed) {
+    if (false == isAuthed) {
+        /* Session not authenticated yet, so do not store this context in Q */
+        if (!checkLoginReq(req)) {
+            commonUtils.redirectToLogout(req, res);
+            callback(null);
+            return;
+        }
+        pendingReqQObj[ctx.id] = ctx;
+        callback(ctx);
+    } else {
+        /* Session is authenticated, now check resource access permission */
+        rbac.checkUserAccess(req, res, function(hasAccess) {
+            if (false == hasAccess) {
+                /* We are yet to get authorized */
+                insertResToReadyQ(res, global.HTTP_STATUS_FORBIDDEN_STR,
+                                  global.HTTP_STATUS_FORBIDDEN, 0);
+                callback(null);
+                return;
+            }
+            pendingReqQObj[ctx.id] = ctx;
+            callback(ctx);
+        });
     }
-    pendingReqQObj[ctx.id] = ctx;
-    callback(ctx);
-  } else {
-    /* Session is authenticated, now check resource access permission */
-    rbac.checkUserAccess(req, res, function(hasAccess) {
-      if (false == hasAccess) {
-        /* We are yet to get authorized */
-        insertResToReadyQ(res, global.HTTP_STATUS_FORBIDDEN_STR,
-                          global.HTTP_STATUS_FORBIDDEN, 0);
-        callback(null);
-        return;
-      }
-      pendingReqQObj[ctx.id] = ctx;
-      callback(ctx);
-    });
-  }
+  });
 }
 
 /* Function: insertResToReadyQ

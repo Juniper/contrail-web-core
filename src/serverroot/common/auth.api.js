@@ -16,6 +16,7 @@ var configUtils = require('./config.utils'),
     redisSub = require('../web/core/redisSub'),
     orch = require('../orchestration/orchestration.api'),
     global = require('./global'),
+    appErrors = require("../errors/app.errors"),
     _ = require("lodash");
 
 var keystoneAuthApi = require('../orchestration/plugins/openstack/keystone.api');
@@ -88,40 +89,112 @@ function redirectToConnectedApps (req, res) {
         }
     });
 }
-function singleSignOn (req, res) {
-    var config = configUtils.getConfig();
-    getAuthMethod[req.session.loggedInOrchestrationMode].checkIfValidToken (req, null, function (err, data) {
-        var tokenObj = data.access.token;
+
+var singleSignOnCB = {
+    "v2.0": singleSignOnV2,
+    "v3": singleSignOnV3
+};
+
+function singleSignOnV2 (req, tokenData, callback)
+{
+    var tokenObj = _.result(tokenData, "access.token", null);
+    var loggedInOrchMode = req.session.loggedInOrchestrationMode;
+    getAuthMethod[loggedInOrchMode].getTenantListByToken(req, tokenObj,
+                                                         function (err, tenantData) {
+        if (null != err) {
+            callback(err);
+            return;
+        }
+        getAuthMethod[loggedInOrchMode].doV2AuthCB(err, tenantData, req, null,
+                                                   null, tokenObj.id, function (err) {
+            callback(err);
+        });
+    });
+}
+
+function singleSignOnV3 (req, tokenData, callback)
+{
+    var loggedInOrchMode = req.session.loggedInOrchestrationMode;
+    req.session.userid = _.result(tokenData, 'access.user.id', null);
+    var tokenObj = _.result(tokenData, "access.token", null);
+    getAuthMethod[loggedInOrchMode].getV3ProjectListByToken(req, tokenObj.id,
+                                                            function (err, tenantData) {
+        if (null != err) {
+            callback(err);
+            return;
+        }
+        var userObj = {
+            tokenid: tokenObj.id,
+            //req: req
+        };
+        getAuthMethod[loggedInOrchMode].doV3AuthCB(err, tenantData, req,
+                                                   userObj, function (err) {
+            callback(err);
+        });
+    });
+}
+
+function updateTokensByXAuthToken (req, accessData)
+{
+    var project = _.result(accessData, "access.token.tenant.name", null);
+    var svcCatalog = _.result(accessData, "access.serviceCatalog", null);
+    if ((null == project) || (null == svcCatalog)) {
+        return;
+    }
+    delete accessData.access.serviceCatalog;
+    var tokenObjs = _.result(req, "session.tokenObjs", null);
+    if (null == tokenObjs) {
+        /* We must not come here */
+        logutils.logger.error("Weired, we did not get token, but verify passed");
+        return;
+    }
+    req.session.tokenObjs[project] = accessData.access;
+    req.session.def_token_used = accessData.access.token;
+    req.session.last_token_used = accessData.access.token;
+    req.session.last_token_Obj_used = accessData.access;
+}
+
+function fillAuthTokenObjsByXAuthToken (req, callback)
+{    var config = configUtils.getConfig();
+    var loggedInOrchMode = req.session.loggedInOrchestrationMode;
+    getAuthMethod[loggedInOrchMode].checkIfValidToken(req, null,
+                                                      function(isValid, data) {
+        if ((false == isValid) || (null == data)) {
+            var err = new appErrors.RESTServerError("Token is not valid");
+            callback(err);
+            return;
+        }
+        var tokenObj = _.result(data, "access.token", null);
         req.session.authApiVersion = _.result(config, 'identityManager.apiVersion.0', 'v2.0');
-        if (req.session.authApiVersion == 'v2.0') {
-            getAuthMethod[req.session.loggedInOrchestrationMode].getTenantListByToken(req, tokenObj, function (err, tenantData) {
-                getAuthMethod[req.session.loggedInOrchestrationMode].doV2AuthCB(err, tenantData, req, null, null, tokenObj.id, function (err) {
-                    if (err != null) {
-                        logutils.logger.error('Unauthorized project access');
-                        commonUtils.handleJSONResponse(null, res, err);
-                    } else {
-                        res.redirect('/');
-                        res.end();
-                    }
-                });
-            });
-        } else if (req.session.authApiVersion == 'v3'){
-            req.session.userid = _.result(data, 'access.user.id', null);
-            getAuthMethod[req.session.loggedInOrchestrationMode].getV3ProjectListByToken(req, tokenObj.id, function (err, tenantData) {
-                var userObj = {
-                    tokenid: tokenObj.id,
-                    //req: req
-                };
-                getAuthMethod[req.session.loggedInOrchestrationMode].doV3AuthCB(err, tenantData, req, userObj, function (err) {
-                    if (err != null) {
-                        logutils.logger.error('Unauthorized project access');
-                        commonUtils.handleJSONResponse(null, res, err);
-                    } else {
-                        res.redirect('/');
-                        res.end();
-                    }
-                })
-            });
+        var ssCB = singleSignOnCB[req.session.authApiVersion];
+        if (null == ssCB) {
+            var err =
+                new appErrors.RESTServerError("Invalid keystone version " +
+                                              req.session.authApiVersion);
+                callback(err);
+                return;
+        }
+        ssCB(req, data, function(err) {
+             /* Note that checkIfValidToken() returns token data corresponding
+              * to x-auth-token which user has requested to verify with and
+              * singleSignOnCB creates a new token from user provided token, so
+              * we must override this with 'data' as we got from
+              * checkIfValidToken
+              */
+             updateTokensByXAuthToken(req, data);
+            callback(err);
+        });
+    });
+}
+
+function singleSignOn (req, res) {
+    fillAuthTokenObjsByXAuthToken(req, function(err) {
+        if (err != null) {
+            logutils.logger.error('Unauthorized project access');
+            commonUtils.handleJSONResponse(null, res, err);
+        } else {
+            res.redirect('/');
+            res.end();
         }
     });
 }
@@ -277,20 +350,13 @@ function getServiceAPIVersionByReqObj (request, appData, svcType, callback, reqB
                                                                 svcType,
                                                                 callback, reqBy);
 }
-function isValidUrlWithXAuthToken (reqUrl, req)
+function isReqHasXAuthTokenHeader (reqUrl, req)
 {
-    var validUrlsWithXAuthToken = global.URLS_TO_BYPASS_AUTH;
     var xAuthToken = req.headers["x-auth-token"];
     if (null == xAuthToken) {
         return false;
     }
-    var validUrlsCnt = validUrlsWithXAuthToken.length;
-    for (var i = 0; i < validUrlsCnt; i++) {
-        if (0 == reqUrl.indexOf(validUrlsWithXAuthToken[i])) {
-            return true;
-        }
-    }
-    return false;
+    return true;
 }
 
 function setAuthFlagByXAuthTokenHeader (req)
@@ -299,7 +365,7 @@ function setAuthFlagByXAuthTokenHeader (req)
     if (null == orchMode) {
         orchMode = "openstack";
     }
-    if (isValidUrlWithXAuthToken(req.url, req)) {
+    if (isReqHasXAuthTokenHeader(req.url, req)) {
         if (null == req.session) {
             req.session = {};
         }
@@ -544,9 +610,10 @@ exports.singleSignOn = singleSignOn;
 exports.redirectToConnectedApps = redirectToConnectedApps;
 exports.setAuthFlagByXAuthTokenHeader = setAuthFlagByXAuthTokenHeader;
 exports.checkIfValidToken = checkIfValidToken;
-exports.isValidUrlWithXAuthToken = isValidUrlWithXAuthToken;
+exports.isReqHasXAuthTokenHeader = isReqHasXAuthTokenHeader;
 exports.isOrchEndptFromConfig = isOrchEndptFromConfig;
 exports.isContrailEndptFromConfig = isContrailEndptFromConfig;
 exports.isServiceEndptsFromOrchestrationModule = isServiceEndptsFromOrchestrationModule;
 exports.getContrailEndPoints = getContrailEndPoints;
+exports.fillAuthTokenObjsByXAuthToken = fillAuthTokenObjsByXAuthToken;
 

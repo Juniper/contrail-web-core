@@ -68,7 +68,7 @@ function validateProxyIpPort (request, proxyHost, proxyPort, callback)
 
     var config = configUtils.getConfig();
     var addAuthInfo = false;
-    if (authApi.isValidUrlWithXAuthToken(request.url, request)) {
+    if (authApi.isReqHasXAuthTokenHeader(request.url, request)) {
         /* In this case, just check if introspect name is listed in
          * allowed_introspect_list_access_by_token
          */

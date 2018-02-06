@@ -18,6 +18,7 @@ var http = require('http'),
     authApi = require('../../common/auth.api'),
     vCenterApi = require('../../orchestration/plugins/vcenter/vcenter.api');
     fs = require('fs'),
+    _ = require("lodash"),
     messages = require('../../common/messages');
 
 if (!module.parent) {
@@ -236,7 +237,8 @@ exports.checkURLInAllowedList = function(req) {
 /* Function: isSessionAuthenticated
     This function returns the isAuthenticated flag for a user session
  */
-exports.isSessionAuthenticated = function(req) {
+function isSessionAuthenticated (req)
+{
     //If url contains "/vcenter" and not loginReq and session doesn't contain vmware_soap_session
     //If loggedInOrchestrationMode doesn't match on client and server
     if(!longPoll.checkLoginReq(req) && req.session.loggedInOrchestrationMode != null && req.headers['x-orchestrationmode'] != null) {
@@ -270,7 +272,31 @@ exports.isSessionAuthenticated = function(req) {
      * forward-proxy, then assume that the request is authenticated
      */
     authApi.setAuthFlagByXAuthTokenHeader(req);
-    return ((req.session) ? req.session.isAuthenticated : false);
+    return ((null != req.session.isAuthenticated) ? req.session.isAuthenticated : false);
+}
+
+function setTokensIfValidByXAuthToken (req, callback)
+{
+    var isAuthed = isSessionAuthenticated(req);
+    if (false == isAuthed) {
+        /* If session is not authed, then caller will take care action */
+        callback(isAuthed);
+        return;
+    }
+    var xAuthToken = req.headers["x-auth-token"];
+    if (null == xAuthToken) {
+        callback(isAuthed);
+        return;
+    }
+    var tokenObjs = _.result(req, "session.tokenObjs", null);
+    if (null != tokenObjs) {
+        /* tokenObjs already set */
+        callback(isAuthed);
+        return;
+    }
+    authApi.fillAuthTokenObjsByXAuthToken(req, function(err) {
+        callback(isAuthed);
+    });
 }
 
 /* Function: checkAndRedirect
@@ -288,7 +314,7 @@ checkAndRedirect = function(req, res, sendFile) {
         res.end();
         return;
     }
-    if (false == exports.isSessionAuthenticated(req)) {
+    if (false == isSessionAuthenticated(req)) {
         commonUtils.redirectToLogin(req, res);
     } else {
         var pkgList = process.mainModule.exports['pkgList'];
@@ -520,3 +546,6 @@ exports.vcenter_login = vcenter_login;
 exports.vcenter_logout = vcenter_logout;
 exports.doAuthenticate = doAuthenticate;
 exports.doVcenterAuthenticate = doVcenterAuthenticate;
+exports.isSessionAuthenticated = isSessionAuthenticated;
+exports.setTokensIfValidByXAuthToken = setTokensIfValidByXAuthToken;
+
