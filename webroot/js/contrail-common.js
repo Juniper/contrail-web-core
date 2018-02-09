@@ -244,7 +244,6 @@ define([
             if (typeof json == 'string') {
                 json = JSON.parse(json);
             }
-
             return '<pre class="pre-format-JSON2HTML">' + this.formatJsonObject(json, formatDepth, 0, ignoreKeys) + '</pre>';
         };
 
@@ -294,22 +293,23 @@ define([
             else {
                 output += '<i class="node-' + currentDepth + ' fa fa-minus collapser"></i> ' + objType.startTag + '<ul data-depth="' + currentDepth + '" class="node-' + currentDepth + ' node">';
                 $.each(jsonObj, function (key, val) {
-                    if (!contrail.checkIfExist(ignoreKeys) || (contrail.checkIfExist(ignoreKeys) && ignoreKeys.indexOf(key) === -1)) {
-                        if (objType['type'] == 'object') {
-                            output += '<li class="key-value"><span class="key">' + key + '</span>: ';
+                   if(key != cowc.KEY_DETAILDATA){
+                       if (!contrail.checkIfExist(ignoreKeys) || (contrail.checkIfExist(ignoreKeys) && ignoreKeys.indexOf(key) === -1)) {
+                            if (objType['type'] == 'object') {
+                                output += '<li class="key-value"><span class="key">' + key + '</span>: ';
+                            }
+                            else {
+                                output += '<li class="key-value">';
+                            }
+                            if (val != null && typeof val == 'object') {
+                                output += '<span class="value">' + self.formatJsonObject(val, formatDepth - 1, currentDepth + 1, ignoreKeys) + '</span>';
+                            }
+                            else {
+                                output += '<span class="value ' + typeof val + '">' + val + '</span>';
+                            }
+                            output += '</li>';
                         }
-                        else {
-                            output += '<li class="key-value">';
-                        }
-
-                        if (val != null && typeof val == 'object') {
-                            output += '<span class="value">' + self.formatJsonObject(val, formatDepth - 1, currentDepth + 1, ignoreKeys) + '</span>';
-                        }
-                        else {
-                            output += '<span class="value ' + typeof val + '">' + val + '</span>';
-                        }
-                        output += '</li>';
-                    }
+                   }
                 });
                 output += '</ul><span class="node-' + currentDepth + ' collapsed hidden expander"> ... </span>' + objType.endTag;
             }
