@@ -74,7 +74,7 @@ define([
                 window.addEventListener('resize',self.resizeFunction);
                 $(self.$el).parents('.custom-grid-stack-item').on('resize',self.resizeFunction);*/
                 self.renderChart($(self.$el), viewConfig, self.model);
-                if (widgetConfig !== null) {
+                if (widgetConfig !== null && !$(self.$el).find('#'+widgetConfig.elementId).length) {
                     self.renderView4Config($(self.$el).find('.zoom-scatter-chart-container'), self.model, widgetConfig, null, null, null);
                 }
         },
@@ -1356,11 +1356,14 @@ define([
             width = $(chartSelector).width() - 10,
             widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null,
             height = ($(selector).closest('.custom-grid-stack-item').length > 0 )? 
-                    $(selector).find('.zoom-scatter-chart-container').height() :
+                    $(selector).closest('.custom-grid-stack-item').height() :
                         (chartOptions['height'])? chartOptions['height'] : 275;
         if (widgetConfig != null) {
           //Reduce the height of the chart to accomodate the widget header.
             height = height - 33;
+        }
+        if (chartOptions['showColorFilter']) {
+            height = height - 30;
         }
         var chartViewConfig = {
             maxCircleRadius: 10,
