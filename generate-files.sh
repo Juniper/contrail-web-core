@@ -22,7 +22,7 @@ if [ -a ../controller/src/schema/all_cfg.xsd ]; then
     cp configJsonSchemas/* src/serverroot/configJsonSchemas;
     echo "Copied json schema files to src/serverroot/configJsonSchemas";
     rm -rf configJsonSchemas;
-    $node_exec src/tools/uiConfigSchemaBuilder.js
+    $node_exec src/tools/uiConfigSchemaBuilder.js `pwd`/src/serverroot/configJsonSchemas
 else
     echo "error: ../controller/src/schema/all_cfg.xsd not found";
     echo "error: json-schema files not generated"

@@ -3,6 +3,7 @@
  */
 var _       = require("lodash");
 var fs      = require("fs");
+var args    = process.argv.slice(2);
 var path    = require("path");
 var config  = require("../../config/config.global");
 var assert  = require("assert");
@@ -11,14 +12,17 @@ var idPermsExcludeFields = ["uuid", "created", "creator", "last_modified"];
 
 function buildUIConfigSchema ()
 {
+    var fromSampleSchema = false;
     var includeReqds = ["required", "optional"];
-    var cofnigJsonSchemaPath = path.resolve(config.jsonSchemaPath);
-    var objListPath = cofnigJsonSchemaPath + "/objectList.json";
+    var jsonSchemaPath = args[0];
+    var objListPath = jsonSchemaPath + "/objectList.json";
+    var configJsonSchemaPath = path.resolve(config.jsonSchemaPath);
     if (false == fs.existsSync(objListPath)) {
-        cofnigJsonSchemaPath = path.resolve("src/serverroot/configJsonSchemas/sample");
-        objListPath = cofnigJsonSchemaPath + "/objectList.json";
+        jsonSchemaPath = path.resolve("src/serverroot/configJsonSchemas/sample");
+        objListPath = jsonSchemaPath + "/objectList.json";
         assert(fs.existsSync(objListPath));
         console.error("Config Pages Schema from sample schema");
+        fromSampleSchema = true;
     }
     var uiConfigSchema = {};
     var schemaObjects = require(objListPath);
@@ -26,7 +30,7 @@ function buildUIConfigSchema ()
     var objsCnt = objects.length;
     for (var i = 0; i < objsCnt; i++) {
         var resType = objects[i];
-        var resPath = cofnigJsonSchemaPath + "/" + resType + "-schema.json";
+        var resPath = jsonSchemaPath + "/" + resType + "-schema.json";
         var resObj = require(resPath);
         var properties = _.result(resObj, "properties." + resType +
                                   ".properties", {});
@@ -72,10 +76,18 @@ function buildUIConfigSchema ()
             }
         }
     }
-    var uiConfigSchemaFilePath = cofnigJsonSchemaPath + "/uiConfigSchema.json";
-    fs.writeFileSync(uiConfigSchemaFilePath,
+    var uiSchemaFilePath = jsonSchemaPath + "/uiConfigSchema.json";
+    var uiConfileSchemaFilePath =
+        path.resolve(__dirname +
+                     "/../../src/serverroot/configJsonSchemas/uiConfigSchema.json");
+    fs.writeFileSync(uiSchemaFilePath,
                      JSON.stringify(uiConfigSchema, null, 4));
-    console.log("Done, creating file: " + uiConfigSchemaFilePath);
+    console.log("Done, creating file: " + uiSchemaFilePath);
+    if (true == fromSampleSchema) {
+        fs.renameSync(uiSchemaFilePath, uiConfileSchemaFilePath);
+        console.log("Moved the uiConfigSchema from " + uiSchemaFilePath + " to "
+                    + uiConfileSchemaFilePath);
+    }
 }
 
 buildUIConfigSchema();
