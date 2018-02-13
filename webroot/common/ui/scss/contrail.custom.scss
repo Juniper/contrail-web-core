@@ -246,20 +246,21 @@ div.t-grid td {
   &.menu-min li.head i {
     display: inline-block;
   }
-  &:not(.menu-min) {
+  &:not(.menu-min) ul#menu {
     overflow-y: auto;
     overflow-x: hidden;
+    height:calc(100% - 45px);
+  }
+    &:not(.menu-min) #sidebar-shortcuts.scrolled ~ ul#menu {
+    padding-top:45px;
   }
 }
 
 #sidebar-shortcuts.scrolled {
   position: fixed;
   top: 0 !important;
-  padding-right: 5px;
-}
-
-#content-container.scrolled {
-  height: calc(100vh - 45px);
+  padding-right: 2px;
+  padding-left:4px;
 }
 
 .menu-min #sidebar-shortcuts.scrolled ~ ul {
