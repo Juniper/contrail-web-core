@@ -32,12 +32,20 @@ define([
             chartViewConfig = getChartViewConfig(chartData, chartOptions);
             chartData  = (chartDataModel instanceof Backbone.Model) ? chartDataModel.get('data') : chartDataModel.getItems(),
             chartOptions = chartViewConfig['chartOptions'];
+            if (!chartData.length) {
+                chartOptions['yDomain'] = [0,5];
+                chartOptions['staggerLabels'] = false;
+            }
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
-                chartData = viewConfig['parseFn'](chartData, chartOptions, chartDataModel.isRequestInProgress());
+                chartData = viewConfig['parseFn'](chartData, chartOptions, chartDataModel);
+            }
+            if ( ! chartDataModel.isRequestInProgress()) {
+                chartData = chUtils.formatDataForMultibarChart(chartData);
             }
             if (cowu.isGridStackWidget(selector)) {
                 chartOptions['height'] = $(selector).closest('.custom-grid-stack-item').height() - 10;
             }
+            chartOptions['chartData'] = chartData;
             chartModel = new MultiBarChartModel(chartOptions);
             this.chartModel = chartModel;
 
@@ -47,7 +55,6 @@ define([
             ChartView.prototype.appendTemplate(selector, chartOptions);
             //Store the chart object as a data attribute so that the chart can be updated dynamically
             $(selector).data('chart', chartModel);
-
             if (!($(selector).is(':visible'))) {
                 $(selector).find('svg').bind("refresh", function () {
                     d3.select($(selector)[0]).select('svg').datum(chartData).call(chartModel);
@@ -55,7 +62,6 @@ define([
             } else {
                 d3.select($(selector)[0]).select('svg').datum(chartData).call(chartModel);
             }
-
             nv.utils.windowResize(function () {
                 chUtils.updateChartOnResize(selector, chartModel);
             });
@@ -68,7 +74,7 @@ define([
     function getChartViewConfig(chartData, chartOptions) {
         var chartViewConfig = {};
         var chartDefaultOptions = {
-            margin: {top: 10, right: 30, bottom: 20, left: 60},
+            margin: {top: 10, right: 30, bottom: 80, left: 60},
             height: 250,
             barOrientation: 'vertical',
             xAxisLabel: 'Items',
@@ -82,7 +88,6 @@ define([
             stacked: false,
             showControls: false,
             showTooltips: true,
-            reduceXTicks: true,
             rotateLabels: 0,
             groupSpacing: 0.5,
             transitionDuration: 350,

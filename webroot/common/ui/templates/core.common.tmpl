@@ -2390,15 +2390,10 @@
                 </div>
             </div>
         {{else}}
-            <div class="chart-container flex-1 {{#IfCompare cssClass null operator='!='}}{{cssClass}}{{/IfCompare}}">
-                <div class="main-chart flex-1">
-                    <svg class="nvd3-svg" {{#IfCompare height null operator='!='}} style='height:{{height}}px'{{/IfCompare}}></svg>
-                </div>
-            </div>
+            {{> plain-chart-template}}
         {{/if}}        
     {{/if}}
 </script>
-
 <script type="text/x-handlebars-template" id="core-zoomed-scatter-chart-control-panel-legend-template">
     <div class="control-panel-legend-container">
         <div class="">
@@ -2865,38 +2860,7 @@
    {{#IfCompare this.policyRules.length 0 operator='!='}}
    {{#each this.policyRules}}
     <li>
-        <h2 class="margin-0-0-10">
-            <a data-toggle="tooltip" class="showMoreInfo customTooltip policyName" data-placement="top" data-delay='{"show":"10", "hide":"10"}' data-policyFQN="{{this.rule_fqn}}" data-ruleId="{{this.rule_name}}" title='<b>Rule UUID:</b> {{this.rule_name}}'>
-            Policy: <span class="ruleName {{this.implicitRule}}">{{this.policy_name}}</span>
-            </a>
-        </h2>
-        {{#IfCompare this.src null operator = '!='}}
-            <h3>{{this.simple_action}}</h3>
-            <div class="row simpleAction padding-bottom-5">
-                <dl class="col-xs-5">
-                    <dt>{{this.srcType}}</dt><dd>{{this.src}}</dd>
-                </dl>
-                <div class="rulesBiArrow col-xs-2">
-                  {{#IfCompare this.direction 'uni' operator='=='}}
-                    <img src="/img/single_arrow.svg"/>
-                  {{/IfCompare}}
-                  {{#IfCompare this.direction 'bi' operator='=='}}
-                    <img src="/img/double_arrow.svg"/>
-                  {{/IfCompare}}
-                </div>
-                <dl class="col-xs-5">
-                    <dt>{{this.dstType}}</dt><dd>{{this.dst}}</dd>
-                </dl>
-            </div>
-        {{/IfCompare}}
-        {{#IfCompare this.service null operator='!='}}
-            <div class="row padding-bottom-5">
-                <h3 class="col-xs-2"> Service </h3>
-                <dl class="col-xs-10">
-                    <dt>{{this.service}}</dt>
-                </dl>
-            </div>
-        {{/IfCompare}}
+        {{> firewall-rule-template}}
         {{#IfCompare this.showSessionData true operator='=='}}
         <div class="row padding-bottom-5">
             <div class="col-xs-6 no-padding">
@@ -3006,7 +2970,6 @@
         </section>
     </div>
 </script>
-
 <script type="text/x-handlebars-template" id="gridstack-widget-template">
     <div class='custom-grid-stack-item'>
         <div class='grid-stack-item-content'>
@@ -3346,7 +3309,8 @@
 </div>
 </script>
 <script type="text/x-handlebars-template" id="tooltip-lineareachart-template">
-  <div class="nvtooltip xy-tooltip nv-pointer-events-none popover popover-tooltip popover-tooltip-no-icon" id="nvtooltip">
+  <div class="nvtooltip xy-tooltip nv-pointer-events-none popover {{#IfCompare this.cssClass null operator='!='}} {{this.cssClass}}
+{{/IfCompare}}popover-tooltip popover-tooltip-no-icon" id="nvtooltip">
     <div class="popover-title">
         <p class="heading">{{{this.yAxisLabel}}}</p>
         <p class="sub-heading">{{{this.subTitle}}}</p>
@@ -3356,13 +3320,22 @@
             <i class="false"></i>
         </div>
         <div class="popover-info">
+            {{#IfCompare this.Time null operator='>'}}
                 <span  class="sub-heading">{{{this.Time}}}</span>
+            {{/IfCompare}}
             <table>
                        <tbody>
                         {{#each this.series}}
                        <tr><td class="legend-color-guide"><div
                        style="background-color: {{{this.color}}};"></div></td>
                        <td class="key" style="">{{{this.key}}} :</td><td
+                       class="value">{{{this.value}}}</tr>
+                        {{/each}}
+                        {{#each this.lblValue}}
+                            <tr>
+                                <td class="legend-color-guide"><div
+                       style="background-color: {{{this.color}}};"></div></td>
+                            <td class="key" style="">{{{this.key}}} :</td><td
                        class="value">{{{this.value}}}</tr>
                         {{/each}}
                        </tbody>

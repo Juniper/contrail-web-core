@@ -2042,7 +2042,7 @@ define([
             return _.values(parsedData);
         };
         this.parseDataForDiscreteBarChart = function (data, options) {
-            var parsedData = {}, chartData = [],
+            var parsedData = {}, chartData = [],chartObj = [],
                 groupBy, axisField;
             	topCnt = _.result(options, 'topCnt');
             if (typeof options['groupBy'] == 'string') {
@@ -2052,34 +2052,54 @@ define([
             	axisField = options['axisField'];
             }
             _.each(data, function (obj, i) {
-                var service = typeof options['groupBy'] == 'function' ? options['groupBy'](obj) : obj[groupBy];
+                var grpByKey = typeof options['groupBy'] == 'function' ? options['groupBy'](obj) : _.result(obj, groupBy);
                 var value = typeof options['axisField'] == 'function' ? options['axisField'](obj): _.result(obj, axisField, 0);
-                if (parsedData[service] != null) {
-                     parsedData[service] += value;
-                 } else {
-                     parsedData[service] = value;
-                 }
+                if (grpByKey != null) {
+                    if (parsedData[grpByKey] != null) {
+                        parsedData[grpByKey]['value'] += value;
+                        parsedData[grpByKey]['data'].push(obj);
+                   } else {
+                        parsedData[grpByKey] = {
+                           value: value,
+                           data: [obj]
+                        }
+                   }
+                }
             });
             _.map(parsedData, function (value, key) {
-                 chartData.push({label: key, value: value})
+                 chartData.push({label: key, value: value['value'], data: value['data']});
             });
             chartData = _.sortBy(chartData, function (obj){
-                return topCnt != null ? -obj.value: obj.value;//minus to get descending order
+                return topCnt != null ? -obj['value']: obj['value'];//minus to get descending order
             })
+            var values = _.map(chartData, 'value'),
+                maxValue = _.max(values),
+                zerofillValue = maxValue != null ? maxValue * 1/100 : 0;
+
             if (topCnt != null) {
                 if (options['zerofill'] && chartData.length < topCnt) {
                     var originalDataLen = chartData.length;
                     var zeroFillCnt = Math.abs(originalDataLen - topCnt);
-                    for (var i = 0; i < zeroFillCnt; i++) {
-                        chartData.push({label: originalDataLen + i + 1, value: 0});
-                    }
+                    // Axis labels are shown as 1,2,3 etc for
+                    // zerofill bars so till we find the option to
+                    // hide the x labels we are Commenting the zerofill code
+                    //if (originalDataLen == 0) {
+                        for (var i = 0; i < zeroFillCnt; i++) {
+                            chartData.push({label: originalDataLen + i + 1, value: 0, zerofill: true});
+                        }
+                    //}
                 }
                 chartData = chartData.slice(0, topCnt)
             }
-            return [{
+
+            chartObj =  [{
                 key: options['label'],
                 values: chartData
             }];
+            if (_.result(options, 'color') != null) {
+                chartObj[0]['color'] = options['color'];
+            }
+            return chartObj;
         };
         this.parseDataForScatterChart = function(data,options) {
             //Loop through and set the x, y and size field based on the chartOptions selected
@@ -2331,12 +2351,24 @@ define([
                 joinKey = options['joinKey'],
                 primaryData = model.get('data'),
                 compareFn = function (obj1, obj2) {return obj1 == obj2},
-                pValue,
-                mergedDataArr = [];
+                pValue;
+                //mergedDataArr = [];
                 if (options['compareFn'] != null && typeof options['compareFn'] == 'function') {
                     compareFn = options['compareFn'];
                 }
-                _.forEach(data, function(value, key) {
+                _.forEach(primaryData, function (value, key) {
+                    if (value != null) {
+                        var modelKeyValue = value[modelKey];
+                        var matchedObj = _.find(data, function (obj) {
+                            return compareFn(modelKeyValue, obj[joinKey]);
+                        })
+                        if (matchedObj != null) {
+                            value[modelKey] = matchedObj;
+                        }
+                    }
+                    //mergedDataArr.push($.extend(true, ))
+                });
+                /*_.forEach(data, function(value, key) {
                     _.forEach(primaryData, function (pValueObj, pKey) {
                         if (modelKey != null) {
                             if (!$.isArray(modelKey)) {
@@ -2366,8 +2398,8 @@ define([
                             });
                         }
                     });
-                });
-            return mergedDataArr;
+                });*/
+            return primaryData;
         }
         self.parseAndMergeStats = function (response,primaryDS) {
             var primaryData = $.isArray(primaryDS)? primaryDS :primaryDS.getItems();
@@ -2775,6 +2807,8 @@ define([
                 self.getStatQueryAjaxConfig (modelConfig, model, ajaxConfigDefObj);
             } else if (source.match(/APISERVER/)) {
                 self.getApiserverAjaxConfig (modelConfig, model, ajaxConfigDefObj);
+            } else if (source.match(/UVE/)) {
+                self.getUVEAjaxConfig (modelConfig, model, ajaxConfigDefObj);
             }
             ajaxConfigDefObj.done(function (ajaxConfig) {
                 if (!$.isEmptyObject(ajaxConfig)) {
@@ -2795,13 +2829,15 @@ define([
                                 data = _.map(_.result(response, 'data', []), function(obj) {
                                     return _.extend({}, obj, {queryJSON: response['queryJSON']});
                                 });
-                            }
-                            if (source.match(/APISERVER/)) {
+                            } else if (source.match(/APISERVER/)) {
                                 data = _.result(response, '0.'+modelConfig['table_name'], []);
                                 data = _.map(data, function (value, key) {
                                     return _.values(value)[0];
                                 });
+                            } else if (source.match(/UVE/)) {
+                                data = _.result(response, '0.value', []);
                             }
+
                             //NOTE: concat is called before the parser
                             if (modelConfig['type'] == 'concat') {
                                 data = model.getItems().concat(data);
@@ -2827,15 +2863,66 @@ define([
                             });
                         });
                     }
+                } else {
+                    ajaxSucessCallback(model.getItems());
                 }
             });
             function ajaxSucessCallback (data) {
-                if (modelConfigArr.length > 0 ) {
-                    self.fetchModel(modelConfigArr, $.Deferred(), model);
-                } else {
+                // Set the fetch flag before setting data
+                // to model because when we set data to model
+                // it triggers change event which inturn triggers
+                // view renders, we might be using the fetched flag there
+                if (modelConfigArr.length == 0 ) {
                     model.fetched = true;
                 }
+                // Data set to model before
+                // issuing next call
                 model.set('data', data);
+                if (modelConfigArr.length > 0 ) {
+                    self.fetchModel(modelConfigArr, $.Deferred(), model);
+                }
+            }
+        };
+        self.getUVEAjaxConfig = function (uveConfig, model, whereDefObj) {
+            var where = uveConfig['where'], defObj = $.Deferred(),
+                postData = {
+                    data: [{
+                        type: uveConfig['table_name']
+                    }]
+                };
+            if (uveConfig['cfilt'] != null) {
+                postData['data'][0]['cfilt'] = uveConfig['cfilt'];
+            }
+            var ajaxConfig = {
+                url : "/api/tenant/get-data/" + _.result(uveConfig,'table_name'),
+                type: 'POST',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(postData)
+           };
+            if (where != null && typeof where == 'function') {
+                where(model, defObj);
+                defObj.done(function (data, key) {
+                    postData['data'][0][key || 'kfilt'] = data;
+                    ajaxConfig['data'] = JSON.stringify(postData);
+                    if (data.length == 0) {
+                        whereDefObj.resolve({});
+                    } else {
+                        whereDefObj.resolve(ajaxConfig);
+                    }
+                });
+            } else if (where != null) {
+                postData['data'][0]['kfilt'] = where;
+                ajaxConfig['data'] = JSON.stringify(postData);
+                if (where.length == 0) {
+                    whereDefObj.resolve({});
+                } else {
+                    whereDefObj.resolve(ajaxConfig);
+                }
+            } else {
+                //Where null case which fetches all config object of given type
+                ajaxConfig['data'] = JSON.stringify(postData);
+                whereDefObj.resolve(ajaxConfig);
             }
         };
         self.getStatQueryAjaxConfig = function (statsConfig, model, whereDefObj) {
@@ -2923,8 +3010,8 @@ define([
             }
             if (where != null && typeof where == 'function') {
                 where(model, defObj);
-                defObj.done(function (data) {
-                    postData['data'][0]['obj_uuids'] = data;
+                defObj.done(function (data, key) {
+                    postData['data'][0][key || 'obj_uuids'] = data;
                     ajaxConfig['data'] = postData;
                     if (data.length == 0) {
                         whereDefObj.resolve({});
@@ -2934,12 +3021,16 @@ define([
                 });
             } else if (where != null) {
                 postData['data'][0]['obj_uuids'] = where;
-                ajaxConfig['data'] = JSON.stringify(postData);
+                ajaxConfig['data'] = postData;
                 if (where.length == 0) {
                     whereDefObj.resolve({});
                 } else {
                     whereDefObj.resolve(ajaxConfig);
                 }
+            } else {
+                //Where null case which fetches all config object of given type
+                ajaxConfig['data'] = postData;
+                whereDefObj.resolve(ajaxConfig);
             }
         };
         self.modifyTimeRangeInRemoteConfig = function (remoteConfig,timeExtent) {
@@ -3389,7 +3480,6 @@ define([
           return r;
         }
    });
-
 
     return CoreUtils;
 });

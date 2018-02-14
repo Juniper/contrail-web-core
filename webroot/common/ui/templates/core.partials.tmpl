@@ -94,3 +94,48 @@
     {{/IfCompare}}
     {{/IfCompare}}
 </script>
+
+<script type="text/x-handlebars-template" id="firewall-rule-template">
+    <div class = "firewall-rule-container">
+        <h2 class="margin-0-0-10">
+            <a data-toggle="tooltip" class="showMoreInfo customTooltip policyName" data-placement="top" data-delay='{"show":"10", "hide":"10"}' data-policyFQN="{{this.rule_fqn}}" data-ruleId="{{this.rule_name}}" title='<b>Rule UUID:</b> {{this.rule_name}}'>
+            Policy: <span class="ruleName {{this.implicitRule}}">{{this.policy_name}}</span>
+            </a>
+        </h2>
+        {{#IfCompare this.src null operator = '!='}}
+            <h3>{{this.simple_action}}</h3>
+            <div class="row simple-action padding-bottom-5">
+                <dl class="col-xs-5">
+                    <dt>{{this.srcType}}</dt><dd>{{this.src}}</dd>
+                </dl>
+                <div class="rules-bi-arrow col-xs-2">
+                  {{#IfCompare this.direction 'uni' operator='=='}}
+                    <img src="/img/single_arrow.svg"/>
+                  {{/IfCompare}}
+                  {{#IfCompare this.direction 'bi' operator='=='}}
+                    <img src="/img/double_arrow.svg"/>
+                  {{/IfCompare}}
+                </div>
+                <dl class="col-xs-5">
+                    <dt>{{this.dstType}}</dt><dd>{{this.dst}}</dd>
+                </dl>
+            </div>
+        {{/IfCompare}}
+        {{#IfCompare this.service null operator='!='}}
+            <div class="row padding-bottom-5">
+                <h3 class="col-xs-2"> Service </h3>
+                <dl class="col-xs-10">
+                    <dt>{{this.service}}</dt>
+                </dl>
+            </div>
+        {{/IfCompare}}
+    </div>
+</script>
+
+<script type="text/x-handlebars-template" id="plain-chart-template">
+    <div class="chart-container flex-1 {{#IfCompare cssClass null operator='!='}}{{cssClass}}{{/IfCompare}}">
+                <div class="main-chart flex-1">
+                    <svg class="nvd3-svg" {{#IfCompare height null operator='!='}} style='height:{{height}}px'{{/IfCompare}}></svg>
+                </div>
+            </div>
+</script

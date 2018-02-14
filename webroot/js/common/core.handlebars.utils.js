@@ -15,7 +15,8 @@ define([
     Handlebars.registerPartial('coreFormLabel', $('#core-form-label-template').html());
     Handlebars.registerPartial('scatterTooltip', $('#title-lblval-tooltip-template').html());
     Handlebars.registerPartial('scatterTooltipNew', $('#title-lblval-tooltip-template-new').html());
-
+    Handlebars.registerPartial("firewall-rule-template", $("#firewall-rule-template").html());
+    Handlebars.registerPartial("plain-chart-template", $("#plain-chart-template").html());
     /*
      * Handlebars Helpers
      */

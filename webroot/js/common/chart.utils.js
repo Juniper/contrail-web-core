@@ -189,6 +189,84 @@ define([
                 series:series
             });
         },
+        /**
+         * Multibar chart in stacked mode needs data such that
+         * all the keys should be there across all the series
+         * if a key doesn't exist in one series full it zero
+         * and order of the keys across the series should be same
+         * function does data format according to the
+         * mulitbar chart compatibility format.
+         */
+        formatDataForMultibarChart: function (data) {
+            // if there is only one series we need to
+            // do
+            if (data.length <= 1) {
+                return data;
+            }
+            //Get all keys(label) across the data
+            var keysFromAllSeries = _.map(data, function (value) {
+                var nonZeros =  _.filter(_.result(value, 'values', []),  function (valueObj) {
+                    return valueObj['zerofill'] != true;
+                });
+                return _.map(nonZeros, 'label');
+            });
+            //pick unique keys
+            var uniqueKeys = _.unique(_.flatten(keysFromAllSeries));
+            // Check the unique keys exists in all series, if any keys
+            // missing add it.
+            uniqueKeys.forEach(function (value) {
+               data = _.map(data, function (series) {
+                  var valuesArr = _.result(series, 'values', []);
+                  var matchedObj = _.filter(valuesArr, function (valueObj) {
+                      return valueObj['label'] == value;
+                  });
+                  if (!matchedObj.length) {
+                      // if we push one object we need to remove one
+                      // zerofillobject such that the series size should be same
+                      var nonZeroArr = _.filter(valuesArr, function (value) {
+                          return value['zerofill'] != true;
+                      });
+                      var zeroFillArr = _.filter(valuesArr, function (value) {
+                          return value['zerofill'] == true;
+                      });
+                      zeroFillArr.pop();
+                      nonZeroArr.push({
+                          label: value,
+                          value: 0
+                      });
+                      series['values'] = nonZeroArr.concat(zeroFillArr);
+                  }
+                  return series;
+               });
+            });
+            //sort the keys to retain order of keys across the series
+            data = _.map(data, function (series) {
+                var values = _.result(series, 'values', []);
+                values.sort(function (a, b) {
+                    if (a['zerofill'] && b['zerofill']) {
+                        return 0;
+                    } else if (a['zerofill']) {
+                        return 1
+                    } else if (b['zerofill']) {
+                        return -1
+                    } else {
+                        if (typeof a['label'] == 'string' && typeof b['label'] == 'string') {
+                            var label1 = a['label'].toUpperCase(), label2 = b['label'].toUpperCase();
+                            if (label1 < label2) {
+                                return -1;
+                            }
+                            if (label1 > label2) {
+                                return 1;
+                            }
+                        }
+                        return a['value'] - b['value'];
+                    }
+                });
+                series['values'] = values;
+                return series;
+            })
+            return data;
+        },
         defaultLineWithFocusChartTooltipFn: function (d,chartOptions, yAxisFormatter) {
             var series = d.series;
             if(yAxisFormatter != null){
@@ -426,6 +504,25 @@ define([
                 y += ' %';
             }
             return y;
+        },
+        /*
+         * Function splits the text across
+         * all the text tags in give container and
+         * adds to each substring as new line
+         */
+        wrapSVGText: function (container, delimiter) {
+            delimiter = delimiter || ' ';
+            d3.select(container).selectAll('text').each(function (d) {
+                var el = d3.select(this);
+                var words=d3.select(this).text().split(delimiter);
+                el.text('');
+                for (var i = 0; i < words.length; i++) {
+                    var tspan = el.append('tspan').text(words[i]);
+                    if (i > 0){
+                        tspan.attr('x', 0).attr('dy', '15');
+                    }
+                }
+            });
         }
     };
 

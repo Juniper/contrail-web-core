@@ -37,17 +37,24 @@ define([
             chartModel.tooltips(chartOptions.showTooltips)
                 .reduceXTicks(chartOptions.reduceXTicks)
                 .rotateLabels(chartOptions.rotateLabels)
+                .staggerLabels(chartOptions.staggerLabels);
         }
-
+        if (chartOptions['yDomain'] != null) {
+            chartModel.yDomain(chartOptions['yDomain']);
+        }
         chartModel.legend.rightAlign(chartOptions.legendRightAlign)
             .padding(chartOptions.legendPadding);
-
         chartModel.xAxis.axisLabel(chartOptions.xAxisLabel);
         chartModel.xAxis.tickPadding(chartOptions.xAxisTickPadding);
         chartModel.yAxis.axisLabel(chartOptions.yAxisLabel).tickFormat(chartOptions.yFormatter);
         chartModel.yAxis.tickPadding(chartOptions.yAxisTickPadding);
+        if (chartOptions.tooltipContent != null) {
+            chartModel.tooltipContent(chartOptions.tooltipContent);
+        }
         if (chartOptions['xLblFormatter'] != null) {
-            chartModel.xAxis.tickFormat(chartOptions['xLblFormatter'])
+            chartModel.xAxis.tickFormat(function (xLabel) {
+                return chartOptions['xLblFormatter'](xLabel, chartOptions['chartData']);
+            });
         }
 
         return chartModel;
