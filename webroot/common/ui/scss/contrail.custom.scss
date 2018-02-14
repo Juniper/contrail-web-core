@@ -253,9 +253,20 @@ div.t-grid td {
     overflow-x: hidden;
     height:calc(100% - 45px);
   }
+  &:not(.menu-min) #sidebar-shortcuts.scrolled ~ ul#menu {
+    padding-top:45px;
+  }
  }
-
-
+ #sidebar-shortcuts.scrolled {
+  position: fixed;
+  top: 0 !important;
+  padding-right: 2px;
+  padding-left: 4px;
+  }
+.menu-min #sidebar-shortcuts.scrolled{
+  padding-left:0px;
+  padding-right:0px;
+  }
 .menu-min #sidebar-shortcuts.scrolled ~ ul {
   padding-top: 35px !important;
 }
@@ -3038,7 +3049,6 @@ footer#footer-container * {
 }
 #back-to-top {
     bottom: 35px;
-    opacity:0;
 }
 
 /*Load Balancer starts here*/
@@ -3440,6 +3450,9 @@ footer#footer-container * {
     display: block;
     -webkit-animation: fadeIn .8s;
     animation: fadeIn .8s;
+}
+.breadcrumbs{
+    z-index: 1600;
 }
 #drop-down-l0-menu-area div:first-child{
     overflow-y: auto;
