@@ -19,7 +19,7 @@ define([
 
             $(self.$el).html('');
 
-            if (self.model !== null) {
+            if (self.model !== null && self.model.isRequestInProgress) {
                 if(self.model.loadedFromCache || !(self.model.isRequestInProgress())) {
                     self.renderText(selector, viewConfig, self.model);
                 }
@@ -38,6 +38,8 @@ define([
 
                 $(window).on('resize',self.resizeFunction);
 
+            } else if(self.model) {
+                self.renderTemplate($(self.$el), viewConfig, self.model);
             }
         },
 
@@ -67,7 +69,12 @@ define([
             }
 
             $(selector).append(html);
+        },
+        renderTemplate: function(selector, viewConfig, data) {
+            var template = contrail.getTemplate4Id(viewConfig['template']);
+            $(selector).html(template(data))
         }
+
     });
     return TextView;
 });
