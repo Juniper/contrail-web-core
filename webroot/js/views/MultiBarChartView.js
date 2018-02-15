@@ -36,6 +36,7 @@ define([
                 chartOptions['yDomain'] = [0,5];
                 chartOptions['staggerLabels'] = false;
             }
+            chartOptions.setTickValuesForByteAxis = this.setTickValuesForByteAxis;
             if (contrail.checkIfFunction(viewConfig['parseFn'])) {
                 chartData = viewConfig['parseFn'](chartData, chartOptions, chartDataModel);
             }
@@ -53,6 +54,7 @@ define([
                 $(selector).empty();
             }
             ChartView.prototype.appendTemplate(selector, chartOptions);
+
             //Store the chart object as a data attribute so that the chart can be updated dynamically
             $(selector).data('chart', chartModel);
             if (!($(selector).is(':visible'))) {
@@ -62,12 +64,22 @@ define([
             } else {
                 d3.select($(selector)[0]).select('svg').datum(chartData).call(chartModel);
             }
+            if(chartOptions['yUnit'] == 'bytes' || chartOptions['yUnit'] == 'bps') {
+              var yTickValues = this.setTickValuesForByteAxis(
+                      chartModel.yScale().domain()[0],
+                      chartModel.yScale().domain()[1],
+                      nv.utils.calcTicksY(chartOptions.height, chartData),
+                      false, chartOptions['yUnit']);
+              chartModel.yAxis.tickValues(yTickValues);
+              d3.select($(selector)[0]).select('svg').datum(chartData).call(chartModel);
+            }
             nv.utils.windowResize(function () {
                 chUtils.updateChartOnResize(selector, chartModel);
             });
 
             if (chartOptions['deferredObj'] != null)
                 chartOptions['deferredObj'].resolve();
+
         }
     });
 

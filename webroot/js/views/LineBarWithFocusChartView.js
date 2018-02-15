@@ -186,6 +186,7 @@ define([
 
             chartOptions['forceY1'] = getForceY1Axis(chartData, chartOptions['forceY1']);
             chartOptions['forceY2'] = getForceY2Axis(chartData, chartOptions['forceY2']);
+            chartOptions.setTickValuesForByteAxis = this.setTickValuesForByteAxis;
             if (chartData.length > 0 && chartOptions['focusEnable']) {
                 var values = chartData[0].values,
                     brushExtent = null,

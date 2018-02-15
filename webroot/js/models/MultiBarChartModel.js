@@ -47,6 +47,9 @@ define([
         chartModel.xAxis.axisLabel(chartOptions.xAxisLabel);
         chartModel.xAxis.tickPadding(chartOptions.xAxisTickPadding);
         chartModel.yAxis.axisLabel(chartOptions.yAxisLabel).tickFormat(chartOptions.yFormatter);
+        if(chartOptions['yUnit'] == 'bytes' || chartOptions['yUnit'] == 'bps') {
+            chartModel.yAxis.showMaxMin(false);
+        }
         chartModel.yAxis.tickPadding(chartOptions.yAxisTickPadding);
         if (chartOptions.tooltipContent != null) {
             chartModel.tooltipContent(chartOptions.tooltipContent);

@@ -127,6 +127,7 @@ define([
             chartOptions = $.extend(true, {}, covdc.lineWithFocusChartConfig, chartOptions, chartAxesOption);
 
             chartOptions['forceY'] = getForceYAxis(chartData, chartOptions, isRequestInProgress);
+            chartOptions.setTickValuesForByteAxis = this.setTickValuesForByteAxis;
 
             if (chartData.length > 0) {
                 if (chartOptions['spliceAtBorders'] != false) {

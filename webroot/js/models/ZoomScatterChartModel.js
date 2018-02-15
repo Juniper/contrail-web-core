@@ -190,11 +190,23 @@ define([
             } else if(chartConfig.yLabelFormat != null) {
                 self.yAxis.tickFormat(chartConfig.yLabelFormat)
             }
-            if (chartConfig['showXMinMax']) {
-                self.xAxis.tickValues([self.xMin, self.xMax])
+            if(chartConfig['xUnit'] == 'bytes' || chartConfig['xUnit'] == 'bps') {
+                var xTickValues = chartConfig.setTickValuesForByteAxis(self.xMin, self.xMax,
+                        chartConfig.xTickCount, chartConfig['showXMinMax'], chartConfig['xUnit']);
+                self.xAxis.tickValues(xTickValues);
+            } else {
+                if (chartConfig['showXMinMax']) {
+                    self.xAxis.tickValues([self.xMin, self.xMax]);
+                }
             }
-            if (chartConfig['showYMinMax']) {
-                self.yAxis.tickValues([self.yMin, self.yMax])
+            if(chartConfig['yUnit'] == 'bytes'|| chartConfig['yUnit'] == 'bps') {
+                var yTickValues = chartConfig.setTickValuesForByteAxis(self.yMin, self.yMax,
+                        chartConfig.yTickCount, chartConfig['showYMinMax'], chartConfig['yUnit']);
+                self.yAxis.tickValues(yTickValues);
+            } else {
+                if (chartConfig['showYMinMax']) {
+                    self.yAxis.tickValues([self.yMin, self.yMax]);
+                }
             }
             self.xMed = median(_.map(chartData, function (d) {
                 return d[chartConfig.xField];

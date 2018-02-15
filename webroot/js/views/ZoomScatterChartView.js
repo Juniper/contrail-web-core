@@ -21,6 +21,7 @@ define([
                 deferredObj = $.Deferred(),
                 cfDataSource = self.attributes.viewConfig.cfDataSource,
                 selector = $(self.$el);
+            viewConfig.setTickValuesForByteAxis = self.setTickValuesForByteAxis;
             self.viewConfig = viewConfig;
             ChartView.prototype.bindListeners.call(self);
             /*if (self.model == null && viewConfig['modelConfig'] != null) {
@@ -1379,6 +1380,8 @@ define([
             yTickCount: getValueByJsonPath(chartOptions,'yTickCount',5),
             xField: getValueByJsonPath(chartOptions,'xField','x'),
             yField: getValueByJsonPath(chartOptions,'yField','y'),
+            xUnit: getValueByJsonPath(chartOptions,'xUnit',''),
+            yUnit: getValueByJsonPath(chartOptions,'yUnit',''),
             sizeField: getValueByJsonPath(chartOptions,'sizeField','size'),
             forceX: chartOptions.forceX,
             forceY: chartOptions.forceY,
@@ -1389,6 +1392,7 @@ define([
             height: height,
             width: width,
             dataParser: chartOptions['dataParser'],
+            setTickValuesForByteAxis: viewConfig.setTickValuesForByteAxis,
             sizeFieldName: chartOptions['sizeFieldName'],
             noDataMessage: chartOptions['noDataMessage'],
             doBucketize : chartOptions['doBucketize'],

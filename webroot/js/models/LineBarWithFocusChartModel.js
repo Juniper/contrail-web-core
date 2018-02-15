@@ -353,7 +353,6 @@ define([
                         .scale(y4)
                         ._ticks( availableHeight2 / 36 )
                         .tickSize(dataBars.length ? 0 : -availableWidth, 0); // Show the y2 rules only if y1 has none
-
                     g.select('.nv-context .nv-y3.nv-axis')
                         .attr('transform', 'translate(0,' + x2.range()[0] + ')');
                     g.select('.nv-context .nv-y2.nv-axis')
@@ -530,16 +529,37 @@ define([
                     // Setup and Update Main (Focus) Y Axes
                     g.select('.nv-focus .nv-x.nv-axis')
                         .attr('transform', 'translate(0,' + y1.range()[0] + ')');
-
-                    y1Axis
-                        .scale(y1)
-                        ._ticks( nv.utils.calcTicksY(availableHeight1/36, data) )
-                        .tickSize(-availableWidth, 0);
-                    y2Axis
-                        .scale(y2)
-                        ._ticks( nv.utils.calcTicksY(availableHeight1/36, data) )
-                        .tickSize(dataBars.length ? 0 : -availableWidth, 0); // Show the y2 rules only if y1 has none
-
+                    if(chartOptions['y1Unit'] == 'bytes'|| chartOptions['y1Unit'] == 'bps') {
+                        var y1TickValues = chartOptions.setTickValuesForByteAxis(
+                                chartOptions.forceY1[0],
+                                chartOptions.forceY1[1],
+                                nv.utils.calcTicksY(availableHeight1/36, data)-1,
+                                false, chartOptions['y1Unit']);
+                        y1Axis
+                            .scale(y1)
+                            .tickValues(y1TickValues);
+                    } else {
+                        y1Axis
+                            .scale(y1)
+                            ._ticks( nv.utils.calcTicksY(availableHeight1/36, data) )
+                            .tickSize(-availableWidth, 0);
+                    }
+                    if(chartOptions['y2Unit'] == 'bytes'|| chartOptions['y2Unit'] == 'bps') {
+                        var y2TickValues = chartOptions.setTickValuesForByteAxis(
+                                chartOptions.forceY2[0],
+                                chartOptions.forceY2[1],
+                                nv.utils.calcTicksY(availableHeight1/36, data)-1,
+                                false, chartOptions['y2Unit']);
+                        y2Axis
+                            .scale(y2)
+                            .tickValues(y2TickValues);
+                    } else {
+                        y2Axis
+                            .scale(y2)
+                            ._ticks( nv.utils.calcTicksY(availableHeight1/36, data) )
+                            .tickSize(dataBars.length ? 0 : -availableWidth, 0);
+                            // Show the y2 rules only if y1 has none
+                    }
                     g.select('.nv-focus .nv-y1.nv-axis')
                     g.select('.nv-focus .nv-y2.nv-axis')
                         .attr('transform', 'translate(' + x2.range()[1] + ',0)');

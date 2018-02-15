@@ -395,11 +395,29 @@ define([
             self.barPadding = 2; //Space between the bars
             xOverview.domain(x.domain());
             yOverview.domain(y.domain());
-            if (showXMinMax) {
-                xAxis.tickValues(x.domain());
+            if(chartOptions['xUnit'] == 'bytes' || chartOptions['xUnit'] == 'bps') {
+                var xTickValues = self.setTickValuesForByteAxis(
+                      x.domain()[0],
+                      x.domain()[1],
+                      2,
+                      false, chartOptions['yUnit']);
+                xAxis.tickValues(xTickValues);
+            } else {
+                if (showXMinMax) {
+                    xAxis.tickValues(x.domain());
+                }
             }
-            if (showYMinMax) {
-                yAxis.tickValues(y.domain());
+            if(chartOptions['yUnit'] == 'bytes' || chartOptions['yUnit'] == 'bps') {
+                var yTickValues = self.setTickValuesForByteAxis(
+                      y.domain()[0],
+                      y.domain()[1],
+                      2,
+                      false, chartOptions['yUnit']);
+                yAxis.tickValues(yTickValues);
+            } else {
+                if (showYMinMax) {
+                    yAxis.tickValues(y.domain());
+                }
             }
             // draw the axes now that they are fully set up
             if (showXAxis) {

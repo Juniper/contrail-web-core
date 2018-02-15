@@ -239,6 +239,22 @@ define([
                   else
                       chart.yDomain(domain);
               }
+              if(chartOptions['xUnit'] == 'bytes' || chartOptions['xUnit'] == 'bps') {
+                  var xTickValues = self.setTickValuesForByteAxis(
+                          chart.xDomain()[0],
+                          chart.xDomain()[1],
+                          2,
+                          false, chartOptions['yUnit']);
+                  chart.xAxis.tickValues(xTickValues).showMaxMin(false);;
+              }
+              if(chartOptions['yUnit'] == 'bytes' || chartOptions['yUnit'] == 'bps') {
+                  var yTickValues = self.setTickValuesForByteAxis(
+                          chart.yDomain()[0],
+                          chart.yDomain()[1],
+                          2,
+                          false, chartOptions['yUnit']);
+                  chart.yAxis.tickValues(yTickValues).showMaxMin(false);
+              }
               //initialize the chart in the svg element
               
               svg.datum(data)

@@ -152,6 +152,36 @@ define([
             }
         },
 
+        setTickValuesForByteAxis: function(min, max, ticks, showMinMaxOnly, units) {
+            var tickValues = [];
+            if(ticks > 0) {
+                var multiplier = (units == 'bytes') ? 1024 : 1000,
+                    multiplier2 = 1,
+                    offset = (max - min) / ticks,
+                    count = 0;
+                while(offset > multiplier) {
+                    offset = offset / multiplier;
+                    count++;
+                }
+                if(units == 'bytes') {
+                    for(var n = 768; n >= 256; n -= 256) {
+                        if(offset > n) {
+                            multiplier2 = n;
+                            break;
+                        }
+                    }
+                    offset /= multiplier2;
+                }
+                offset = Math.floor(offset);
+                for(var tickCnt = 0; tickCnt <= ticks; tickCnt++)
+                    if(!showMinMaxOnly || tickCnt == 0 || tickCnt == ticks) {
+                        tickValues.push(min + (offset * tickCnt * Math.pow(multiplier, count)
+                                            * multiplier2));
+                    }
+            }
+            return tickValues;
+        },
+
         bindListeners: function() {
             var self = this,
                 viewConfig = cowu.getValueByJsonPath(self, 'viewConfig', cowu.getValueByJsonPath(self,'attributes;viewConfig'));

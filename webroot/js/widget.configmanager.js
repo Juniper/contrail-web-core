@@ -33,8 +33,8 @@ define([ 'lodash',
                 DBNodeViewCfg, VRouterViewCfg, SecurityDashboardViewConfig, AlarmsViewConfig);
         //,ControlNodeViewCfg,VRouterViewCfg,DatabaseNodeViewCfg,AnaltyicsNodeViewCfg,);
 
-        self.get = function(widgetId,overrideCfg) {
-            var widgetCfg = _.isFunction(widgetCfgMap[widgetId]) ? widgetCfgMap[widgetId](overrideCfg) : widgetCfgMap[widgetId];
+        self.get = function(widgetId,overrideCfg,i) {
+            var widgetCfg = _.isFunction(widgetCfgMap[widgetId]) ? widgetCfgMap[widgetId](overrideCfg,i) : widgetCfgMap[widgetId];
             if (widgetCfg == null) {
                 widgetCfg = _.isFunction(widgetViewCfgMap[widgetId]) ? widgetViewCfgMap[widgetId](overrideCfg) : widgetViewCfgMap[widgetId];
             }

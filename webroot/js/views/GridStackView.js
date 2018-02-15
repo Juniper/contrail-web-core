@@ -203,7 +203,7 @@ define([
             // currWidgetCfg['itemAttr'] - Defined in viewconfig.js / Read from localstorage
             // widgetCfgList[i]['itemAttr'] - Defined in ListView file
             for(var i=0;i < widgetCfgList.length;i++) {
-                var currWidgetCfg = widgetConfigManager.get(widgetCfgList[i]['id'],widgetCfgList[i]);
+                var currWidgetCfg = widgetConfigManager.get(widgetCfgList[i]['id'],widgetCfgList[i],i);
                 //Here using extend for itemAttr - to get properties from both view.config & ListView
                 self.add({
                     widgetCfg: widgetCfgList[i],

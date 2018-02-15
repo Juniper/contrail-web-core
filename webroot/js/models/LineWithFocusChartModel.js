@@ -104,7 +104,8 @@ define([
             , yTickCnt = cowu.getValueByJsonPath(chartOptions, 'yTickCnt')
             , yTickFormat = getValueByJsonPath(chartOptions, 'yTickFormat', cowu.getValueByJsonPath(chartOptions, 'yFormatter', null))
             ;
-
+        if(chartOptions['yUnit'] || chartOptions['y1Unit'])
+            showYMinMax = false;
         if (!showXAxis) {
             margin['bottom'] = 0;
         }
@@ -300,10 +301,21 @@ define([
                     ._ticks(tickPadding)
                     .tickSize(-availableHeight1, 0);
 
-                yAxis
-                    .scale(yScale)
-                    ._ticks(nv.utils.calcTicksY(availableHeight1 / 40, data))
-                    .tickSize(-availableWidth, 0);
+                if(chartOptions['yUnit'] == 'bytes'|| chartOptions['yUnit'] == 'bps') {
+                    var yTickValues = chartOptions.setTickValuesForByteAxis(
+                            chartOptions.forceY[0],
+                            chartOptions.forceY[1],
+                            nv.utils.calcTicksY(availableHeight1 / 40, data)-1,
+                            false, chartOptions['yUnit']);
+                    yAxis
+                        .scale(yScale)
+                        .tickValues(yTickValues);
+                } else {
+                    yAxis
+                        .scale(yScale)
+                        ._ticks(nv.utils.calcTicksY(availableHeight1 / 40, data))
+                        .tickSize(-availableWidth, 0);
+                }
 
                 g.select('.nv-focus .nv-x.nv-axis')
                     .attr('transform', 'translate(0,' + availableHeight1 + ')');
