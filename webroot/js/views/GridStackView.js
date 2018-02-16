@@ -274,6 +274,40 @@ define([
             if(region == null) {
                 region = "Default"
             }
+            if (itemAttr['dropdown'] != null) {
+                var dropDownData = _.result(itemAttr, 'dropdown.data', []);
+                $(currElem).find('.title').contrailDropdown({
+                    dataTextField: "text",
+                    dataValueField: "id",
+                    dropdownAutoWidth: true,
+                    //width: 'auto',
+                    defaultValueId: 0,
+                    data: dropDownData,
+                    change: function(e) {
+                        //Remove the current widget
+                        var currView = $(currElem).find('.item-content').data('ContrailView');
+                        if(currView != null)
+                        currView.destroy();
+                        $(currElem).find('.item-content').empty();
+                        var itemAttrViewCfg = _.result(e, 'added.id.viewCfg');
+                        var itemAttrModelCfg = _.result(e, 'added.id.modelCfg', []);
+                        $.extend(true,_.result(cfg, 'viewCfg'), itemAttrViewCfg);
+                        $.each(itemAttrModelCfg, function (i, configObj) {
+                            // As of now we are matching the source and overriding the
+                            // itemattr model config and modelconfig, we need to
+                            // change it to key(modelId) based. 
+                            var modelCfgObj = _.filter(_.result(cfg, 'modelCfg.config', []), function (value) {
+                                return value['source'] == configObj['source'];
+                            });
+                            if (modelCfgObj.length > 0) {
+                                modelCfgObj = modelCfgObj[0];
+                            }
+                            $.extend(true, modelCfgObj, configObj); 
+                        });
+                        self.renderWidget(cfg,currElem);
+                    }
+                });
+            }
             //if there exists a mapping of modelId in widgetConfigManager.modelInstMap, use it
             /*$(currElem).find('.widget-dropdown').contrailDropdown({
                 dataTextField: "name",

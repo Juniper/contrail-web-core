@@ -2136,7 +2136,7 @@ define([
         this.RESOURCE_UTILIZATION_CHART_COLOR = ['#599AC9'];
         this.SINGLE_NODE_COLOR = ['#6f97ae'];
         this.THREE_NODE_COLOR = ['#a8c0d1', '#6f97ae', '#617683'];
-        this.FIVE_NODE_COLOR = ['rgb(168,192,209)', 'rgb(111,151,174)', 'rgb(97,118,131)', 'rgb(185,213,232)', 'rgb(209,230,245)'];
+        this.FIVE_NODE_COLOR = ['#045a8d', '#2b8cbe', '#74a9cf', '#a6bddb', '#d0d1e6'];
         this.TRAFFIC_GROUP_COLOR = ['#5282a7', '#91cd99', '#80d4f9', '#d0abd6'];
 
         /*this.THREE_NODE_COLOR = ['#01579b', '#03a9f4', '#81d4fa'];

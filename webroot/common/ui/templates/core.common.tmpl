@@ -3000,9 +3000,9 @@
                 </div>
             </div>
             {{else}}
-            {{#if this.showTitle}}
-                 <h4 class="title"> {{this.title}}</h4>
-            {{/if}}
+            {{#IfCompare this.showTitle this.dropdown operator='||'}}
+                 <div class="title"> {{this.title}}</div>
+            {{/IfCompare}}
             <div class='item-content'>
             </div>
             {{/if}}
