@@ -3465,6 +3465,8 @@ footer#footer-container * {
 .l1menu-header{
     font-size: 14px;
     font-weight: 600;
+    text-transform:uppercase;
+    padding-left:4px;
 }
 .l2menu-header{
     font-size: 13px;
@@ -3480,8 +3482,10 @@ footer#footer-container * {
 .l3menu-header:hover{
     color: #3182bd;
     cursor: pointer;
-    background: #c6dbef;
-    font-weight: 600;
+    background: rgba(198, 219, 239, 0.3)
+ }
+ #breadcrumb li a div {
+    padding-left: 4px;
 }
 .breadcrumbs .breadcrumb > li:hover .breadcrum-drop-down-menu{
     display: block;
@@ -3490,6 +3494,10 @@ footer#footer-container * {
 }
 .breadcrumbs{
     z-index: 1600;
+}
+#breadcrumb li #nav-search{
+    margin-top:0px;
+    padding-bottom:10px;
 }
 #drop-down-l0-menu-area div:first-child{
     overflow-y: auto;
@@ -3532,19 +3540,21 @@ footer#footer-container * {
     position: relative;
 }
 .breadcrumb-menu-highlight-search{
-    border-bottom: 1px dashed #3182bd;
-    border-top: 1px dashed #3182bd;
     text-decoration: none;
-    background-color: rgba(49, 189, 163, 0.79);
+    background-color: #fffadc;
 }
 .breadcrumb-menu-highlight-search div{
-    color: #fff !important;
-    font-weight: 600;
+    color: #5a7b92 !important; 
 }
-.breadcrumb-menu-highlight{
-    color: #3182bd;
+
+.breadcrumb-menu-highlight {
+    color:#5a7b92;
     background: #c6dbef;
     font-weight: 600;
+}
+.l2menu-header {
+    text-decoration:underline;
+    color: #3182bd;
 }
 .col-xs-15,
 .col-sm-15,
@@ -4037,8 +4047,6 @@ Alarms popup css
         margin-right: 20px;
     }
 }
-/*
-*/
 .crisp-tooltip {
     p {
         text-align: left;
