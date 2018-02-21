@@ -70,7 +70,8 @@ function searchSiteMap() {
             queryParams = siteMap[hash]['queryParams'];
             currHash = {p: hash, q: queryParams};
             globalObj['menuClicked'] = true;
-            layoutHandler.onHashChange(lastHash, currHash);
+            loadFeature(currHash);
+            //layoutHandler.onHashChange(lastHash, currHash);
             lastHash = currHash;
             return false;
         }
