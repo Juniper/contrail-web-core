@@ -30,9 +30,9 @@ define(['underscore'], function (_) {
             globalObj['siteMapSearchStrings'] = [];
             processXMLJSON(menuObj, optFeatureList);
             //populate the autocomplete dropdown for siteMap
-            if(cfg != null && cfg['reload'] != true) {
+            //if(cfg != null && cfg['reload'] != true) {
                 enableSearchAhead();
-            }
+            //}
             var menuShortcuts = contrail.getTemplate4Id('menu-shortcuts')(menuHandler.filterMenuItems(menuObj['items']['item'], 'menushortcut', featurePkgsInfo));
             //Load top-level menu buttons (Configure,Monitor,Settings,Query)
             $("#sidebar-shortcuts").html(menuShortcuts);
