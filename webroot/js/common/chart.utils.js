@@ -267,6 +267,21 @@ define([
             })
             return data;
         },
+        sortDataForMultibarChart: function (data){
+            var sortedData = cowu.sortData({
+                data: $.extend([],data)
+            });
+            keys = _.map(sortedData, 'label');
+            _.each(data, function (dataObj) {
+                var valuesArr = _.result(dataObj, 'values', []);
+                valuesArr.sort(function (value1, value2) {
+                    var label1 = value1['label'];
+                    var label2 = value2['label'];
+                    return keys.indexOf(label1) - keys.indexOf(label2);
+                });
+            })
+            return data;
+        },
         defaultLineWithFocusChartTooltipFn: function (d,chartOptions, yAxisFormatter) {
             var series = d.series;
             if(yAxisFormatter != null){

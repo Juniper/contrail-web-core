@@ -52,7 +52,9 @@ define([
         }
         chartModel.yAxis.tickPadding(chartOptions.yAxisTickPadding);
         if (chartOptions.tooltipContent != null) {
-            chartModel.tooltipContent(chartOptions.tooltipContent);
+            chartModel.tooltipContent(function (data) {
+                return chartOptions.tooltipContent(data, chartOptions);
+            });
         }
         if (chartOptions['xLblFormatter'] != null) {
             chartModel.xAxis.tickFormat(function (xLabel) {

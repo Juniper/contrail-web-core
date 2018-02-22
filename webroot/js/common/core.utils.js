@@ -2757,10 +2757,11 @@ define([
             return defObj;
         };
 
-        self.populateModel = function (ajaxConfig, options) {
-            if (!$.isArray(ajaxConfig)) {
-                ajaxConfig = [ajaxConfig];
+        self.populateModel = function (ajaxConfigArr, options) {
+            if (!$.isArray(ajaxConfigArr)) {
+                ajaxConfigArr = [ajaxConfigArr];
             }
+            var ajaxConfig = $.extend([], ajaxConfigArr);
             BbModel = Backbone.Model.extend({
                 defaults: {
                     type: options['type'],
@@ -3159,6 +3160,50 @@ define([
             var roles = _.result(globalObj, 'webServerInfo.role', []);
             return roles.indexOf(cowc.CLOUDADMIN_ROLE) > -1 ? true : false;
         };
+        /*
+         * Function accepts data array like below, sortBy key
+         * and order like ascending or descending and returns
+         * the flattened array of objets grouped by labels in
+         * array of values.
+         * [{
+         *      key: '',
+         *      values: [{
+                    "label": "default-domain:sap:sap-db",
+                    "value": 0
+                  },{
+                    "label": "default-domain:sap:sap-fronent",
+                    "value": 676200
+                }]
+         *  },{
+         *      key: '',
+         *      values: [{
+                    "label": "default-domain:sap:sap-db",
+                    "value": 0
+                  },{
+                    "label": "default-domain:sap:sap-fronent",
+                    "value": 676200
+                }]
+         * }]
+         */
+        self.sortData = function(options) {
+            var data = _.result(options, 'data', []),
+                sortBy = _.result(options, 'sortBy', 'value'),
+                order = _.result(options, 'order', 'desc');
+
+            var dataObjArr = _.flatten(_.map(data, 'values'));
+            var lblValArr = [];
+            _.each(dataObjArr, function (dataObj, idx) {
+                var matchedRecord = _.filter(lblValArr, function (value) {
+                    return value['label'] == dataObj['label'];
+                });
+                if (matchedRecord.length == 0) {
+                    lblValArr.push({label: dataObj['label'], value: dataObj['value']})
+                } else {
+                    matchedRecord[0]['value'] += dataObj['value'];
+                }
+            });
+            return _.orderBy(lblValArr, [sortBy], [order]);
+        }
     };
 
     function filterXML(xmlString, is4SystemLogs) {

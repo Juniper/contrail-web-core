@@ -3037,6 +3037,19 @@ $active-color: #3182bd;
 	.title {
 		font-size: 15px;
 		color: rgb(49, 130, 189);
+		margin: 10px;
+		.select2-chosen {
+            color: rgb(49, 130, 189);  
+		}
+	}
+	.title.select2-container {
+	   border: none;
+	   width: 27%;
+	   margin-bottom: 0px;
+	   background-color: transparent;
+	}
+	.title.select2-container-active {
+	   box-shadow: none;
 	}
 }
 footer {
