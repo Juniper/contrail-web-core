@@ -13,6 +13,7 @@ define([
             var ajaxConfig = {}, returnFlag = false;
 
             var self  = this;
+            data.requestType = cowc.GENERIC_API_BASIC;
             ajaxConfig.async = false;
             ajaxConfig.type  = 'POST';
             ajaxConfig.data  = JSON.stringify(data);
