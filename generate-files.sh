@@ -16,15 +16,15 @@ $node_exec src/tools/preParsePackage.js "$@"
 $node_exec src/tools/configTemplateGenerator.js
 
 #Generate the json schemas and copy over to the core
-if [ -a ../controller/src/schema/all_cfg.xsd ]; then
-    python ../tools/generateds/generateDS.py -f -g json-schema -o configJsonSchemas ../controller/src/schema/all_cfg.xsd
+if [ -a ../src/contrail-api-client/schema/all_cfg.xsd ]; then
+    python ../tools/generateds/generateDS.py -f -g json-schema -o configJsonSchemas ../src/contrail-api-client/schema/all_cfg.xsd
     test -d src/serverroot/configJsonSchemas || mkdir -p src/serverroot/configJsonSchemas
     cp configJsonSchemas/* src/serverroot/configJsonSchemas;
     echo "Copied json schema files to src/serverroot/configJsonSchemas";
     rm -rf configJsonSchemas;
     $node_exec src/tools/uiConfigSchemaBuilder.js `pwd`/src/serverroot/configJsonSchemas
 else
-    echo "error: ../controller/src/schema/all_cfg.xsd not found";
+    echo "error: ../src/contrail-api-client/schema/all_cfg.xsd not found";
     echo "error: json-schema files not generated"
 fi;
 
