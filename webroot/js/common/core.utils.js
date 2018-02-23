@@ -2975,7 +2975,9 @@ define([
             if (statsConfig['where'] != null && typeof statsConfig['where'] == 'function') {
                 postData['formModelAttrs']['where'] = statsConfig['where'](model, defObj);
                 defObj.done(function (whereClause) {
-                    postData['formModelAttrs']['where'] = whereClause;
+                    if (whereClause != null) {
+                        postData['formModelAttrs']['where'] = whereClause;
+                    }
                     ajaxConfig['data'] = JSON.stringify(postData);
                     whereDefObj.resolve(ajaxConfig);
                 })

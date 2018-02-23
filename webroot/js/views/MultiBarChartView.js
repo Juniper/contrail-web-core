@@ -53,7 +53,6 @@ define([
                 chartOptions['height'] = $(selector).closest('.custom-grid-stack-item').height() - 10;
             }
             chartOptions['chartData'] = chartData;
-            console.log('chartData ', chartData);
             if (!chartDataModel.isRequestInProgress()) {
                 chartData = chUtils.sortDataForMultibarChart(chartData);
             }
