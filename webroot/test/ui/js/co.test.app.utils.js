@@ -97,7 +97,8 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         'contrail-charts-view'        : coreWebDir + '/js/views/ContrailChartsView',
         'contrail-charts'             : coreWebDir + '/assets/contrail-charts/js/contrail-charts',
         'chart-view'                  : coreWebDir + '/js/views/ChartView',
-        'node-color-mapping'          : coreWebDir + '/js/NodeColorMapping'
+        'node-color-mapping'          : coreWebDir + '/js/NodeColorMapping',
+        'toolbar-view'                : coreWebDir + '/js/views/ToolbarView'
     };
 
     //Separate out aliases that need to be there for both prod & dev environments

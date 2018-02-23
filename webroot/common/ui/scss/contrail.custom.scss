@@ -3388,11 +3388,14 @@ footer#footer-container * {
     }
 }
 
-#toolbar_settings {
+#toolbar_settings, #traffic_groups_toolbar_settings {
     position: fixed;
     top: 89px;
     right: 20px;
     z-index: 2000;
+}
+#traffic_groups_toolbar_settings {
+   top: 132px;
 }
 
 #content-container {
