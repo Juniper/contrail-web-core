@@ -3593,14 +3593,14 @@
     </div>
 </script>
 <script type="text/x-handlebars-template" id="l0menu-template">
-    <!--<div>
+    <div>
         <div id="nav-search" class="nav-search">
             <span class="input-icon">
                 <input id="nav-search-input" type="text" placeholder="Search Menu" class="input-medium search-query nav-search-input" autocomplete="on">
                 <i class="fa fa-search" id="nav-search-icon"></i>
             </span>
         </div>
-    </div>-->
+    </div>
     {{#each this.items.item}}
             {{#IfCompare @index 1 operator='!='}}
             <div class="item mainMenu col-md-15" {{#if this.hash}}id="{{this.hash}}"{{/if}} data-help="{{#if this.help}} {{this.help}} {{/if}}">

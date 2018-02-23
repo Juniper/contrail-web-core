@@ -333,7 +333,7 @@ define(['underscore'], function (_) {
                             menuObj.items.item[1].items &&
                             menuObj.items.item[1].items.item != null) {
                             menuObj.items.item[1].items.item.forEach(function(val, idx){
-                                if(idx < 2 || idx > 3){
+                                if(idx < 4){
                                     fhCobj.items.item.push(val);
                                 }else{
                                     shCobj.items.item.push(val);
