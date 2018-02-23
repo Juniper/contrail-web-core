@@ -73,6 +73,14 @@ define([
             } else {
                 d3.select($(selector)[0]).select('svg').datum(chartData).call(chartModel);
             }
+            /*
+             * xLblHTMLFormatter is for HTML formatting
+             * the label array of text tags is the paramter
+             * to the handler
+             */
+            if (chartOptions['xLblHTMLFormatter'] != null) {
+                chartOptions['xLblHTMLFormatter']($(selector).find('.nv-x .tick text'));
+            }
             if(chartOptions['yUnit'] == 'bytes' || chartOptions['yUnit'] == 'bps') {
               var yTickValues = this.setTickValuesForByteAxis(
                       chartModel.yScale().domain()[0],

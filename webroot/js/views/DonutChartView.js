@@ -60,7 +60,7 @@ define([
 
         renderChart: function (selector, viewConfig, chartViewModel) {
             var data = chartViewModel.getItems(),
-                chartTemplate = contrail.getTemplate4Id(cowc.TMPL_CHART),
+                chartTemplate,
                 chartViewConfig, chartModel, chartData, chartOptions,
                 widgetConfig = contrail.checkIfExist(viewConfig.widgetConfig) ? viewConfig.widgetConfig : null;
 
@@ -79,6 +79,7 @@ define([
             if ($(selector).find("svg") != null) {
                 $(selector).empty();
             }
+            chartTemplate = contrail.getTemplate4Id(_.result(chartOptions, 'chartTemplate', cowc.TMPL_CHART));
             $(selector).append(chartTemplate(chartOptions));
 
             //Store the chart object as a data attribute so that the chart can be updated dynamically
