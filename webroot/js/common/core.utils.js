@@ -2393,37 +2393,6 @@ define([
                     }
                     //mergedDataArr.push($.extend(true, ))
                 });
-                /*_.forEach(data, function(value, key) {
-                    _.forEach(primaryData, function (pValueObj, pKey) {
-                        if (modelKey != null) {
-                            if (!$.isArray(modelKey)) {
-                                modelKey = [modelKey];
-                            }
-                            $.each(modelKey, function (i, obj) {
-                               pValue = pValueObj[obj];
-                               if (pValue != null) {
-                                   if ($.isArray(pValue)) {
-                                       if (modelKey[i+1] != null) {
-                                           $.each(pValue, function (j, pValueArrObj) {
-                                               if (compareFn(pValueArrObj[modelKey[i+1]], value[joinKey])) {
-                                                   $.extend(pValueArrObj, value);
-                                               }
-                                           });
-                                       }
-                                   } else if (typeof pValue == 'object') {
-                                       if (modelKey[i+1] != null
-                                            && compareFn(pValue[modelKey[i+1]], value[joinKey])) {
-                                           $.extend(pValue, value);
-                                       }
-                                   } else if (compareFn(pValue, value[joinKey])) {
-                                       $.extend(pValueObj, value);
-                                   }
-                                   mergedDataArr.push(pValueObj);
-                               }
-                            });
-                        }
-                    });
-                });*/
             return primaryData;
         }
         self.parseAndMergeStats = function (response,primaryDS) {
