@@ -35,7 +35,12 @@ function buildUIConfigSchema ()
         var properties = _.result(resObj, "properties." + resType +
                                   ".properties", {});
         if (null == uiConfigSchema[resType]) {
-            uiConfigSchema[resType] = {isConfig: true};
+            uiConfigSchema[resType] = {
+                isConfig: true,
+                preProcessCB: {
+                    comparators: ["to"]
+                }
+            };
         }
         if (null == uiConfigSchema[resType]["optFields"]) {
             uiConfigSchema[resType]["optFields"] = [];
