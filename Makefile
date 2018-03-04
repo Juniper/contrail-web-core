@@ -25,29 +25,29 @@ $(GENERATEDS):
 	if [ ! -d ../$(GENERATEDS) ]; then git clone https://github.com/Juniper/contrail-generateDS.git ../$(GENERATEDS); else cd ../$(GENERATEDS) && touch testFile && git stash; git pull --rebase; git stash pop; rm testFile; fi
 
 $(CONTROLLER):
-	rm -rf ../$(CONTROLLER)/src/schema;
-	mkdir -p ../$(CONTROLLER)/src/schema;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/alarm.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/all_cfg.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/bfd_schema.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/bgp_schema.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/bgpvpn.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/e2_services.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/firewall_policy.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/ietf-bfd-schema.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/ietf-l3vpn-schema.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/loadbalancer.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/routing_policy.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/services.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/smi-base.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/structured_syslog_config.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/tag.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/usr_def_cntr.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/vnc_cfg.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/xmpp_enet.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/xmpp_multicast.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/xmpp_mvpn.xsd;
-	cd ../$(CONTROLLER)/src/schema && wget https://raw.githubusercontent.com/Juniper/contrail-controller/$(BRANCH)/src/schema/xmpp_unicast.xsd;
+	rm -rf ../src/contrail-api-client/schema/;
+	mkdir -p ../src/contrail-api-client/schema/;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/alarm.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/all_cfg.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/bfd_schema.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/bgp_schema.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/bgpvpn.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/e2_services.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/firewall_policy.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/ietf-bfd-schema.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/ietf-l3vpn-schema.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/loadbalancer.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/routing_policy.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/services.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/smi-base.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/structured_syslog_config.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/tag.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/usr_def_cntr.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/vnc_cfg.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/xmpp_enet.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/xmpp_multicast.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/xmpp_mvpn.xsd;
+	cd ../src/contrail-api-client/schema/ && wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/xmpp_unicast.xsd;
 
 
 repos: $(WEBUISERVER) $(WEBUICLIENT) $(WEBUITHIRDPARTY) $(GENERATEDS) $(CONTROLLER)
