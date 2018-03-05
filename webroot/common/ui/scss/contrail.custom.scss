@@ -3494,13 +3494,16 @@ footer#footer-container * {
 .l1menu-header{
     font-size: 14px;
     font-weight: 600;
-    text-transform:uppercase;
     padding-left:4px;
 }
 .l2menu-header{
     font-size: 13px;
     font-weight:600;
-    color: #393939;
+    color: #3182bd;
+}
+.lmenu-seperator{
+	border-bottom:#eeeeee solid 1px;
+	width: '100%'
 }
 .l3menu-header{
     font-size: 12px;
@@ -3581,10 +3584,7 @@ footer#footer-container * {
     background: #c6dbef;
     font-weight: 600;
 }
-.l2menu-header {
-    text-decoration:underline;
-    color: #3182bd;
-}
+
 .col-xs-15,
 .col-sm-15,
 .col-md-15,
