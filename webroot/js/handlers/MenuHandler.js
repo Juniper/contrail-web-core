@@ -337,6 +337,7 @@ define(['underscore'], function (_) {
                                     fhCobj.items.item.push(val);
                                 }else{
                                     shCobj.items.item.push(val);
+                                    shCobj['label']="";
                                 }
                             });
                         }

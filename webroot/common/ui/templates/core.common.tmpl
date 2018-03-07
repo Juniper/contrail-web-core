@@ -36,7 +36,6 @@
         <a id="menu-toggler" href="#">
             <span></span>
         </a>
-
         <div id="sidebar">
             <div id="sidebar-shortcuts">
             </div>
@@ -3617,6 +3616,7 @@
                 <span class="l1menu-header">{{this.label}}</span>
                 {{#IfCompare this.items null operator='!='}}
                     <!--<ul class="submenu">-->
+                    <div class="lmenu-seperator"></div>
                         {{#each this.items.item}}
                             <div id="{{this.hash}}" data-help="{{#if this.help}} {{this.help}} {{/if}}">
                                 <!--<span class="l2menu-header">{{this.label}}<span>-->
@@ -3632,15 +3632,17 @@
                                                 </a>
                                             </div>
                                        {{/each}}
+                                        <div class="lmenu-seperator"></div>
                                    <!--</ul>-->
                                 {{/IfCompare}}
                             </div>
                        {{/each}}
-                   <!--</ul>-->
+                    <!--</ul>-->
                 {{/IfCompare}}
             </div>
             {{/IfCompare}}
     {{/each}}
+    <div class="lmenu-seperator"></div>
 </script>
 <script type="text/x-handlebars-template" id="l1menu-template">
     {{#each this.items.item}}
