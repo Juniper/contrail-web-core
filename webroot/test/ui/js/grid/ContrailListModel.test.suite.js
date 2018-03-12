@@ -13,6 +13,7 @@ define([
         var mockData = ifNull(suiteConfig.mockData, []),
             gridListModel = viewObj.$el.data('contrailGrid')._dataView,
             dataParsers;
+
         if (contrail.checkIfExist(suiteConfig.modelConfig)) {
             dataParsers = suiteConfig.modelConfig.dataParsers;
         }
@@ -72,9 +73,6 @@ define([
         //cgrid seems to not start from id_0 always. find out why inconsistent TODO
         var mockDataIdx0 = mockData[0],
             gridListModelItemsIdx0 = gridListModelItems[0];
-            if(gridListModelItemsIdx0['detailData']){
-                mockDataIdx0['detailData'] = gridListModelItemsIdx0['detailData'];
-            }
         delete mockDataIdx0.cgrid;
         delete gridListModelItemsIdx0.cgrid;
         deepEqual(mockDataIdx0, gridListModelItemsIdx0 , "listmodel first item should equal to mockData[0]");
