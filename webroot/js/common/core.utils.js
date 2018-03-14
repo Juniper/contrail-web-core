@@ -171,6 +171,26 @@ define([
                     onKeyupEnter: true
                 });
             }
+            if ((contrail.checkIfExist(options['onRevert'])) && (contrail.checkIfFunction(options['onRevert']))) {
+                footer.push({
+                    id        : 'backBtn',
+                    className : 'btn-primary',
+                    title     : 'Revert',
+                    onclick   : function () {
+                        options['onRevert']();
+                    }
+                });
+            }
+            if ((contrail.checkIfExist(options['onCommit'])) && (contrail.checkIfFunction(options['onCommit']))) {
+                footer.push({
+                    id        : 'backBtn',
+                    className : 'btn-primary',
+                    title     : 'Commit',
+                    onclick   : function () {
+                        options['onCommit']();
+                    }
+                });
+            }
             } else {
                 footer = options['footer'];
             }
