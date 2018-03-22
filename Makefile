@@ -8,7 +8,7 @@ WEBUICLIENT = contrail-web-controller
 WEBUITHIRDPARTY = contrail-webui-third-party
 THIRD_PARTY='../contrail-webui-third-party'
 WEBCONTROLLERREPO = ../contrail-web-controller,webController
-GENERATEDS = tools/generateds
+GENERATEDS = src/contrail-api-client/generateds
 CONTROLLER = controller
 BRANCH = master
 
