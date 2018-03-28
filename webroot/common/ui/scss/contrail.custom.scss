@@ -3186,6 +3186,14 @@ footer#footer-container * {
     content: "\f069";
     font-size: 7px;
   }
+  #pool_protocol::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 67px;
+    content: "\f069";
+    font-size: 7px;
+  }
 }
 
 #loadbalancer_monitor{
@@ -3267,6 +3275,14 @@ footer#footer-container * {
     content: "\f069";
     font-size: 7px;
   }
+  #protocol::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 67px;
+    content: "\f069";
+    font-size: 7px;
+  }
 }
 #configure-config_pool_info{
   #loadbalancer_method::before {
@@ -3274,6 +3290,14 @@ footer#footer-container * {
     color: #3282bd;
     position: absolute;
     left: 153px;
+    content: "\f069";
+    font-size: 7px;
+  }
+  #protocol::before {
+    font-family: 'FontAwesome';
+    color: #3282bd;
+    position: absolute;
+    left: 67px;
     content: "\f069";
     font-size: 7px;
   }
