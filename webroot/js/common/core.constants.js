@@ -277,7 +277,8 @@ define([
         this.TOOLTIP_DELAY = 1000;
         this.SUMMARY_PAGE_HASHES = ['mon_infra_config',
             'mon_infra_database', 'mon_infra_analytics',
-            'mon_infra_vrouter', 'mon_infra_control'];
+            'mon_infra_vrouter', 'mon_infra_control',
+            'mon_security_dashboard'];
 
         this.DEFAULT_CONFIG_ELEMENT_TOOLTIP = {
             dimension: {

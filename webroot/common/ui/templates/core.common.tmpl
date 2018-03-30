@@ -2620,6 +2620,38 @@
         </div>
     </div>
 </script>
+<script type="text/x-handlebars-template" id="security-policy-draft-review-template">
+  <div class="panel-group" id="{{{name}}}">
+  {{#each data}}
+    <div class="panel panel-default" id="reviewJson">
+      <div class="panel-heading">
+      <a role="button" data-toggle="collapse" data-parent="#{{{name}}}" href="#{{{uuid}}}">
+        <h4 class="panel-title">
+          {{{reviewName}}}
+                {{#IfCompare this.reviewState "created" operator='=='}}
+                    <i class="fa fa-file-o fa-lg"></i>
+                {{/IfCompare}}
+                {{#IfCompare this.reviewState "updated" operator='=='}}
+                    <i class="fa fa-pencil-square-o fa-lg"></i>
+                {{/IfCompare}}
+                {{#IfCompare this.reviewState "deleted" operator='=='}}
+                    <i class="fa fa-file-excel-o  fa-lg"></i>
+                {{/IfCompare}}
+        </h4></a>
+      </div>
+      <div id="{{{uuid}}}" class="panel-collapse collapse">
+        <div class="panel-body">
+            <div id="reviewDelta">
+                <pre>
+                    {{{delta}}}
+                </pre>
+            </div>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+    </div>
+</script>
 
 <script type="text/x-handlebars-template" id="core-modal-template">
     <div id="{{prefixId}}_modal"></div>
