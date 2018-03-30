@@ -6,21 +6,38 @@ define([
     'underscore',
     'chart-view',
     'core-basedir/js/models/MultiBarChartModel',
+    'legend-view',
+    'node-color-mapping',
     'contrail-list-model',
     'nv.d3',
     'chart-utils'
-], function (_, ChartView, MultiBarChartModel, ContrailListModel, nv, chUtils) {
+], function (_, ChartView, MultiBarChartModel, LegendView, ContrailListModel, NodeColorMapping, nv, chUtils) {
     var MultiBarChartView = ChartView.extend({
+        settingsChanged: function(newSettings) {
+            var self = this,
+            vc = self.attributes.viewConfig;
+            if(vc.hasOwnProperty("chartOptions")) {
+                vc.chartOptions["resetColor"] = true;
+                for(var key in newSettings) {
+                    if(key in vc.chartOptions) {
+                        vc.chartOptions[key] = newSettings[key];
+                    }
+                }
+            }
+            self.renderChart($(self.$el), vc, self.model);
+        },
         render: function () {
             var viewConfig = this.attributes.viewConfig,
                 ajaxConfig = viewConfig['ajaxConfig'],
                 self = this,
                 selector = $(self.$el);
-
             if (self.model === null && viewConfig['modelConfig'] !== null) {
                 self.model = new ContrailListModel(viewConfig['modelConfig']);
             }
+            cowu.updateSettingsWithCookie(viewConfig);
             self.renderChart(selector, viewConfig, self.model)
+            self.updateOverviewText();
+            self.viewConfig = viewConfig;
             ChartView.prototype.bindListeners.call(self);
         },
 
@@ -63,7 +80,10 @@ define([
                 $(selector).empty();
             }
             ChartView.prototype.appendTemplate(selector, chartOptions);
-
+            var showLegend = chartOptions['showLegend'];
+            if (showLegend) {
+                chartOptions['height'] -= 30;
+            }
             //Store the chart object as a data attribute so that the chart can be updated dynamically
             $(selector).data('chart', chartModel);
             if (!($(selector).is(':visible'))) {
@@ -72,6 +92,13 @@ define([
                 });
             } else {
                 d3.select($(selector)[0]).select('svg').datum(chartData).call(chartModel);
+            }
+            if (chartOptions['showLegend'] && chartOptions['legendView'] != null) {
+                self.legendView = new chartOptions['legendView']({
+                    el: $(selector),
+                    viewConfig: getLegendViewConfig(chartOptions, chartData)
+                });
+                self.legendView.render();
             }
             /*
              * xLblHTMLFormatter is for HTML formatting
@@ -103,7 +130,7 @@ define([
     function getChartViewConfig(chartData, chartOptions) {
         var chartViewConfig = {};
         var chartDefaultOptions = {
-            margin: {top: 10, right: 30, bottom: 80, left: 60},
+            margin: {top: 10, right: 30, bottom: 100, left: 60},
             height: 250,
             barOrientation: 'vertical',
             xAxisLabel: 'Items',
@@ -124,11 +151,11 @@ define([
             legendPadding: 32,
             barColor: d3.scale.category10()
         };
-        //Incase of horizontal we need more left margin to 
+        //Incase of horizontal we need more left margin to
         //accomodate the labels.
         if (chartOptions['barOrientation'] == 'horizontal') {
-            chartDefaultOptions.margin['left'] = 120;
-            chartDefaultOptions.margin['bottom'] = 105;
+           // chartDefaultOptions.margin['left'] = 120;
+            //chartDefaultOptions.margin['bottom'] = 105;
         }
         var chartOptions = $.extend(true, {}, chartDefaultOptions, chartOptions);
 
@@ -137,6 +164,29 @@ define([
 
         return chartViewConfig;
     };
+    function formatLegendData(data) {
+        var barData = [], lineData = [];
+        _.each(data, function(obj) {
+            if (obj['bar']) {
+                barData.push({
+                    name: obj['key'],
+                    color: obj['color']
+                })
+            } else {
+                lineData.push({
+                    name: obj['key'],
+                    color: obj['color']
+                })
+            }
+        });
+        return {bar: barData, line: lineData};
+    };
+
+    function getLegendViewConfig(chartOptions, data) {
+        return {
+            showLegend: chartOptions['showLegend'],
+        };
+    }
 
     return MultiBarChartView;
 });
