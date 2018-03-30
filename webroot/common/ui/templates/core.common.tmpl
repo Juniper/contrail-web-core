@@ -2621,6 +2621,74 @@
     </div>
 </script>
 
+<script type="text/x-handlebars-template" id="core-collection-view-template">
+    {{#IfCompare viewConfig.label null operator='!='}}
+        <label style="margin:0px">{{viewConfig.label}}</label>
+    {{/IfCompare}}
+    <div>
+        <table class="collection-table">
+            <tbody data-bind="foreach: {{viewConfig.collection}}">
+            {{#each viewConfig.rows}}
+            <tr class="data-row" data-bind="css: 'data-row-' + $index(), {{#if visible}} visible: {{visible}}, {{/if}}">
+                {{#each columns}}
+                <td class="data-cell data-cell-{{elementId}}" data-bind="style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }"></td>
+                {{/each}}
+                {{#each rowActions}}
+                <td class="action-cell"><a data-bind="click: {{this.onClick}}, style: { {{#if viewConfig.width}} width: '{{viewConfig.width}}px' {{/if}} }"><i class="{{this.iconClass}}"></i></a></td>
+                {{/each}}
+            </tr>
+            {{/each}}
+            <tr class="error-row">
+                {{#each columns}}
+                <td class="error-cell"><span class="help-block red" data-bind="visible: model().attributes.errors().{{elementId}}_error, text: model().attributes.errors().{{elementId}}_error"></span></td>
+                {{/each}}
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    {{#if viewConfig.collectionActions}}
+    <div class="row collection-actions collection-actions-add">
+        <a data-bind='click: {{viewConfig.collectionActions.add.onClick}}'>
+            <i class="{{viewConfig.collectionActions.add.iconClass}}"></i> {{viewConfig.collectionActions.add.buttonTitle}}
+        </a>
+    </div>
+    {{/if}}
+</script>
+
+<script type="text/x-handlebars-template" id="security-policy-draft-review-template">
+  <div class="panel-group" id="{{{name}}}">
+  {{#each data}}
+    <div class="panel panel-default" id="reviewJson">
+      <div class="panel-heading"><a role="button" data-toggle="collapse" data-parent="#{{{name}}}" href="#{{{reviewName}}}-{{{@index}}}">
+        <h4 class="panel-title">
+          {{{reviewName}}}
+        
+        	{{#IfCompare this.reviewState "created" operator='=='}}
+        		<i class="fa fa-file-o fa-lg"></i> 
+        	{{/IfCompare}}
+        	{{#IfCompare this.reviewState "updated" operator='=='}}
+        		<i class="fa fa-pencil-square-o fa-lg"></i>
+        	{{/IfCompare}}
+        	{{#IfCompare this.reviewState "deleted" operator='=='}}
+        		<i class="fa fa-file-excel-o  fa-lg"></i>
+        	{{/IfCompare}}
+        	</h4>
+        </a> 
+      </div>
+      <div id="{{{reviewName}}}-{{{@index}}}" class="panel-collapse collapse">
+        <div class="panel-body">
+           <div id="reviewDelta">
+            		<pre>
+            			{{{delta}}}
+           			</pre>
+                </div>
+		</div>
+      </div>
+    </div>
+    {{/each}}
+    </div>
+</script>
+
 <script type="text/x-handlebars-template" id="core-modal-template">
     <div id="{{prefixId}}_modal"></div>
 </script>
