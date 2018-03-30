@@ -4,11 +4,14 @@
 **/rolemap.api.js
 
 config/*.js
-
+keys
+webroot/common/api/
 webroot/dist/*
 webroot/assets/*
 webroot/menu_*
 webroot/common/ui/fonts
+src/serverroot/configJsonSchemas/*.json
+webroot/common/ui/css/*.css
 webroot/build/core.build.config.js
 webroot/js/config_global.js
 webroot/js/uuid.js
@@ -19,6 +22,3 @@ webroot/test/ui/js/co.test.init.js
 
 node_modules
 dump.rdb
-
-
-

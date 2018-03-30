@@ -173,7 +173,7 @@ define([
             }
             if ((contrail.checkIfExist(options['onRevert'])) && (contrail.checkIfFunction(options['onRevert']))) {
                 footer.push({
-                    id        : 'backBtn',
+                    id        : 'revertBtn',
                     className : 'btn-primary',
                     title     : 'Revert',
                     onclick   : function () {
@@ -183,7 +183,7 @@ define([
             }
             if ((contrail.checkIfExist(options['onCommit'])) && (contrail.checkIfFunction(options['onCommit']))) {
                 footer.push({
-                    id        : 'backBtn',
+                    id        : 'commitBtn',
                     className : 'btn-primary',
                     title     : 'Commit',
                     onclick   : function () {
