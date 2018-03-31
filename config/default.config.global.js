@@ -370,7 +370,7 @@ config.physicaldevices.interface_delimiters = ['.', ':'];
 *
 *****************************************************************************/
 config.optFeatureList = {};
-config.optFeatureList.mon_infra_underlay = false;
+config.optFeatureList.mon_infra_underlay = true;
 config.optFeatureList.mon_infra_mx = false;
 config.optFeatureList.query_udd_webController = false;
 config.optFeatureList.mon_security_dashboard = true;
