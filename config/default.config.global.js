@@ -283,6 +283,10 @@ config.featurePkg.webController = {};
 config.featurePkg.webController.path = '/usr/src/contrail/contrail-web-controller';
 config.featurePkg.webController.enable = true;
 
+/* by default Physical Topology is enabled*/
+config.optFeatureList = {};
+config.optFeatureList.mon_infra_underlay = true;
+
 /* Enable/disable Stat Query Links in Sidebar*/
 config.qe = {};
 config.qe.enable_stat_queries = false;
