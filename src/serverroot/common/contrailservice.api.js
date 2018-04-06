@@ -9,6 +9,7 @@ var configUtils = require('./config.utils'),
     commonUtils = require('../utils/common.utils'),
     redisUtils = require('../utils/redis.utils'),
     os = require('os'),
+    global = require("./global"),
     _ = require('underscore');
 var serviceRespData = {},
     activeServiceRespData = {},
@@ -262,17 +263,23 @@ function getServerResponse (serviceObj, callback, stopRetry)
         });
         return;
     }
-    apiServer.api.get(serviceObj.url, function(err, data) {
-        if ((err != null) && (true != stopRetry)) {
-            if (global.HTTP_STATUS_AUTHORIZATION_FAILURE ==
-                err.responseCode) {
-                getTokenAndServerResponse(serviceObj, callback, true);
-                return;
+    apiServer.api.get(serviceObj.url, commonUtils.doEnsureExecution(function(err, data) {
+        if ((err != null) || (data == null)) {
+            if (true != stopRetry) {
+                if ((err != null) && (global.HTTP_STATUS_AUTHORIZATION_FAILURE ==
+                    err.responseCode)) {
+                    getTokenAndServerResponse(serviceObj, callback, true);
+                } else {
+                    callback(null, null);
+                }
+            } else {
+                callback(null, null);
             }
+            return
         }
         callback(null, {err: err, data:
                        {serviceType: serviceObj.serviceType, data: data}});
-    }, headers);
+    }, 5000), headers);
 }
 
 function subscribeToContrailService (serviceObj, callback)
@@ -336,6 +343,12 @@ function updateContrailServiceData(statusData)
         statusDataLen = statusData.length, i, actData = {},
         actService = {"serviceType": serviceType};
     for(i = 0; i < statusDataLen; i++) {
+        if (null == statusData[i]) {
+            statusData.splice(i, 1);
+            i--;
+            statusDataLen--;
+            continue
+        }
         if ((null != statusData[i].err) &&
             (('ECONNREFUSED' == statusData[i].err.code) ||
             ('ETIMEDOUT' == statusData[i].err.code) ||
