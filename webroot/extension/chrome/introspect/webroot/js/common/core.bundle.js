@@ -29,7 +29,6 @@ define([
     'knockout',
     'layout-handler',
     'menu-handler',
-    'help-handler',
     'content-handler',
     'validation',
     //Dashboard

@@ -325,7 +325,7 @@ function testAppInit(testAppConfig) {
                         require(['underscore'], function (_) {
                             _.noConflict();
                         });
-                        require(['layout-handler', 'content-handler', 'help-handler', 'contrail-load', 'lodash'], function (LayoutHandler, ContentHandler, helpHandler, ChartUtils, _) {
+                        require(['layout-handler', 'content-handler', 'contrail-load', 'lodash'], function (LayoutHandler, ContentHandler, helpHandler, ChartUtils, _) {
                             window._ = _;
                             contentHandler = new ContentHandler();
                             globalObj.resourcePathStub = sinon.stub(contentHandler, 'getPath', function (resourceDir, type, fileName) {

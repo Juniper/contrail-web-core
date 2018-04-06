@@ -144,7 +144,6 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'moment'                      : coreWebDir + "/assets/moment/moment",
             'layout-handler'              : coreWebDir + '/js/handlers/LayoutHandler',
             'menu-handler'                : coreWebDir + '/js/handlers/MenuHandler',
-            'help-handler'                : coreWebDir + '/js/handlers/HelpHandler',
             'content-handler'             : coreWebDir + '/js/handlers/ContentHandler',
             'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd',
             'mon-infra-node-list-model'   : coreWebDir + '/js/models/NodeListModel',
@@ -511,7 +510,6 @@ var coreBundles = {
             'knockback',
             'layout-handler',
             'menu-handler',
-            'help-handler',
             'content-handler',
             'validation',
             'chart-config',
@@ -1552,7 +1550,7 @@ if (typeof document !== 'undefined' && document) {
                         require(['underscore'],function(_) {
                             _.noConflict();
                         });
-                        require(['layout-handler', 'content-handler', 'help-handler', 'contrail-load','lodash'], function(LayoutHandler, ContentHandler, helpHandler, ChartUtils,_) {
+                        require(['layout-handler', 'content-handler', 'contrail-load','lodash'], function(LayoutHandler, ContentHandler, helpHandler, ChartUtils,_) {
                             window._ = _;
                             contentHandler = new ContentHandler();
                             initBackboneValidation();
