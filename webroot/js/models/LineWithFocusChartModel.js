@@ -764,8 +764,7 @@ define([
         chartModel.brushExtent(chartOptions['brushExtent'])
                   .useInteractiveGuideline(true);
 
-        chartModel.interpolate(chUtils.interpolateSankey);
-        
+        chartModel.interpolate("monotone");
 
         if (showXAxis) {
             chartModel.xAxis.axisLabel(chartOptions.xAxisLabel)
