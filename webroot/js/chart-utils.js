@@ -1343,6 +1343,10 @@ function barChart() {
          y.domain([0, 0]);
          */
 
+         /*
+          * License: Apache-2.0
+          * https://gist.github.com/tyrauber/3350666
+          */
         div.each(function () {
             var div = d3.select(this),
                 g = div.select("g");
@@ -1571,6 +1575,10 @@ d3.custom.barChart = function barChart() {
             xaxis_max_value = x.domain()[1];
         logMessage('crossFilterChart','Start');
 
+        /*
+         * License: Apache-2.0
+         * https://gist.github.com/tyrauber/3350666
+         */
         div.each(function () {
             var div = d3.select(this),
                 g = div.select("g");
@@ -1706,6 +1714,10 @@ d3.custom.barChart = function barChart() {
         }
     });
 
+    /*
+     * License: Apache-2.0
+     * https://gist.github.com/tyrauber/3350666
+     */
     brush.on("brushend.chart", function () {
         if (brush.empty()) {
             var div = d3.select(this.parentNode.parentNode.parentNode);

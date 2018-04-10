@@ -263,6 +263,10 @@ function endWidgetLoading(selectorId) {
 $.deparamURLArgs = function (query) {
     var query_string = {};
     var query = ifNull(query,'');
+    /*
+     * License: CC-BY-SA-3.0
+     * https://stackoverflow.com/questions/979975/how-to-get-the-value-from-the-get-parameters/979995
+     */
     if (query.indexOf('?') > -1) {
         query = query.substr(query.indexOf('?') + 1);
         var vars = query.split("&");
