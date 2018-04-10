@@ -246,6 +246,11 @@ define([
                     }
                 }
             } else {
+                /*
+                 * License: GPL-2.0 or Apache-2.0
+                 * Copyright 2012 Igor Vaynberg
+                 * https://github.com/select2/select2/blob/3.5.0/select2.js
+                 */
                 process = function(datum, collection) {
                     var group, attr;
                     datum = datum[0];

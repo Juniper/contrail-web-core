@@ -138,6 +138,11 @@ define([
                             return 0.5;
                     });
 
+                /*
+                 * License: Apache-2.0
+                 * Copyright (c) 2011-2014 Novus Partners, Inc
+                 * https://github.com/novus/nvd3
+                 */
                 function outerArcTween(a) {
                     var i = d3.interpolate(this._current, a);
                     this._current = i(0);

@@ -3,6 +3,11 @@
  * All rights reserved.
  */
 
+/*
+ * "License: GPL-2.0 or MIT
+ * Copyright (c) 2010 ""Cowboy"" Ben Alman
+ * https://github.com/cowboy/jquery-bbq/blob/master/jquery.ba-bbq.js
+ */
 define(['underscore'], function (_) {
     var jq_param_fragment, jq_deparam_fragment,
         str_querystring = 'querystring',

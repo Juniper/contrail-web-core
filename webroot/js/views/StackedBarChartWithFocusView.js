@@ -390,6 +390,11 @@ define([
                 yExtent = [0,1];//Default y extent
                 yAxisMaxValue = 1;
             }
+            /*
+             * License: MIT
+             * Copyright 2016 Graham Odds
+             * http://bl.ocks.org/godds/ec089a2cf3e06a2cd5fc
+             */
             x.domain(dateExtent);
             y.domain(yExtent);
             self.barPadding = 2; //Space between the bars

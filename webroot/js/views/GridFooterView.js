@@ -131,6 +131,11 @@ define([
             csgCurrentPageDropDown.value('0');
         }
 
+        /*
+         * License: MIT
+         * (c) 2010 Michael Leibman, http://github.com/mleibman/slickgrid
+         * https://github.com/mleibman/SlickGrid/blob/master/controls/slick.pager.js
+         */
         function getNavState() {
             var pagingInfo = dataView.getPagingInfo();
             var lastPage = pagingInfo.totalPages - 1;
