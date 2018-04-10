@@ -2,6 +2,11 @@
  * Copyright (c) 2015 Juniper Networks, Inc. All rights reserved.
  */
 
+/*
+ * License: Apache-2.0
+ * Copyright (c) 2011-2014 Novus Partners, Inc
+ * https://github.com/novus/nvd3
+ */
 define([
     'underscore'
 ], function (_) {

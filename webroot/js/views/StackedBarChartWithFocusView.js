@@ -401,6 +401,11 @@ define([
                       x.domain()[1],
                       2,
                       false, chartOptions['yUnit']);
+                /*
+                 * License: MIT
+                 * Copyright 2016 Graham Odds
+                 * http://bl.ocks.org/godds/ec089a2cf3e06a2cd5fc
+                 */
                 xAxis.tickValues(xTickValues);
             } else {
                 if (showXMinMax) {

@@ -60,6 +60,10 @@ function pad(num, size) {
 }
 
 function clone(obj) {
+    /*
+     * License: CC-BY-SA-3.0
+     * https://stackoverflow.com/questions/728360/how-do-i-correctly-clone-a-javascript-object/728694#728694
+     */
     // Handle the 3 simple types, and null or undefined
     if (null == obj || "object" != typeof obj) return obj;
 

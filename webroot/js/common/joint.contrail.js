@@ -485,6 +485,10 @@ define([
         return new joint.dia.Link($.extend(true, {}, defaultLinkConfig, linkConfig));
     };
 
+    /*
+     * License: MPL-2.0
+     * https://www.jointjs.com/opensource
+     */
     joint.layout.contrail.DirectedGraph = $.extend(true, joint.layout.DirectedGraph, {
         layout: function (graph, opt) {
 

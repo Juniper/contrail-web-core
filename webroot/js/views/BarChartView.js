@@ -2,6 +2,11 @@
  * Copyright (c) 2015 Juniper Networks, Inc. All rights reserved.
  */
 
+/*
+ * License: Apache-2.0
+ * https://gist.github.com/tyrauber/3350666
+ */
+
 define([
     'underscore',
     'contrail-view'

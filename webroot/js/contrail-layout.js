@@ -2,6 +2,11 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
+/*
+ * "License: MIT
+ * Copyright 2012 jQuery Foundation and other contributors
+ * http://code.jquery.com/jquery-1.8.3.js
+ */
 
 var lastHash = {};
 

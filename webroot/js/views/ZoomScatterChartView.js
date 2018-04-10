@@ -335,6 +335,11 @@ define([
 
             destroyTooltip(null);
 
+            /*
+             * License: ISC
+             * Copyright 2012 Jason Davies https://www.jasondavies.com
+             * http://bl.ocks.org/jasondavies/3689931
+              */
             var e = this,
                 origin = d3.mouse(e),
                 rect = chartSVG.append("rect").attr("class", "zoom");
