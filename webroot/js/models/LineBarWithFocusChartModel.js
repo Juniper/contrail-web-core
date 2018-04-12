@@ -713,7 +713,7 @@ define([
                   .legendLeftAxisHint('')
                   .brushExtent(chartOptions['brushExtent']);
 
-        chartModel.interpolate(chUtils.interpolateSankey);
+        chartModel.interpolate("monotone");
         //chartModel.bars.padData(false);
 
         if(chartOptions.forceY1) {
