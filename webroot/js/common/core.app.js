@@ -144,7 +144,6 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
             'moment'                      : coreWebDir + "/assets/moment/moment",
             'layout-handler'              : coreWebDir + '/js/handlers/LayoutHandler',
             'menu-handler'                : coreWebDir + '/js/handlers/MenuHandler',
-            'help-handler'                : coreWebDir + '/js/handlers/HelpHandler',
             'content-handler'             : coreWebDir + '/js/handlers/ContentHandler',
             'validation'                  : coreWebDir + '/assets/backbone/backbone-validation-amd',
             'mon-infra-node-list-model'   : coreWebDir + '/js/models/NodeListModel',
@@ -511,7 +510,6 @@ var coreBundles = {
             'knockback',
             'layout-handler',
             'menu-handler',
-            'help-handler',
             'content-handler',
             'validation',
             'chart-config',
@@ -640,24 +638,9 @@ var coreBundles = {
 function initBackboneValidation() {
     require(['validation'],function(kbValidation) {
         _.extend(kbValidation.callbacks, {
-            valid: function (view, attr, selector) {
-                /*
-                var $el = $(view.modalElementId).find('[name=' + attr + ']'),
-                $group = $el.closest('.form-element');
-
-                $group.removeClass('has-error');
-                $group.find('.help-block').html('').addClass('hidden');
-                */
-            },
             invalid: function (view, attr, error, selector, validation) {
                 var model = view.model;
                 model.validateAttr(attr, validation);
-                /*
-                var $el = $(view.modalElementId).find('[name=' + attr + ']'),
-                $group = $el.closest('.form-element');
-                $group.addClass('has-error');
-                $group.find('.help-block').html(error).removeClass('hidden');
-                */
             }
         });
     });
@@ -1552,15 +1535,13 @@ if (typeof document !== 'undefined' && document) {
                         require(['underscore'],function(_) {
                             _.noConflict();
                         });
-                        require(['layout-handler', 'content-handler', 'help-handler', 'contrail-load','lodash'], function(LayoutHandler, ContentHandler, helpHandler, ChartUtils,_) {
+                        require(['layout-handler', 'content-handler', 'contrail-load','lodash'], function(LayoutHandler, ContentHandler, ChartUtils,_) {
                             window._ = _;
                             contentHandler = new ContentHandler();
                             initBackboneValidation();
                             initCustomKOBindings(window.ko);
                             layoutHandler = new LayoutHandler();
                             layoutHandlerLoadDefObj.resolve();
-
-                            // helpHandler.init();
                         });
                     });
                 });
