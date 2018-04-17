@@ -206,6 +206,11 @@ function shiftServiceEndpointList (req, serviceType, regionName)
     return;
 }
 
+function updateRouter (req, appData, svcType, callback)
+{
+    callback(null);
+}
+
 exports.authenticate = authenticate;
 exports.getServiceCatalog = getServiceCatalog;
 exports.getAPIServerAuthParamsByReq = getAPIServerAuthParamsByReq;
@@ -227,4 +232,5 @@ exports.getExtUserRoleByTenant = getExtUserRoleByTenant;
 exports.getUIRolesByExtRoles = getUIRolesByExtRoles;
 exports.getServiceAPIVersionByReqObj = getServiceAPIVersionByReqObj;
 exports.shiftServiceEndpointList = shiftServiceEndpointList;
+exports.updateRouter = updateRouter;
 
