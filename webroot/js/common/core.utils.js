@@ -171,13 +171,13 @@ define([
                     onKeyupEnter: true
                 });
             }
-            if ((contrail.checkIfExist(options['onRevert'])) && (contrail.checkIfFunction(options['onRevert']))) {
+            if ((contrail.checkIfExist(options['onDiscard'])) && (contrail.checkIfFunction(options['onDiscard']))) {
                 footer.push({
-                    id        : 'revertBtn',
+                    id        : 'discardBtn',
                     className : 'btn-primary',
-                    title     : 'Revert',
+                    title     : 'Discard',
                     onclick   : function () {
-                        options['onRevert']();
+                        options['onDiscard']();
                     }
                 });
             }
