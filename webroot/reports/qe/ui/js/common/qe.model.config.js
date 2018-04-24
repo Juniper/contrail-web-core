@@ -141,6 +141,10 @@ define([
                 isCheckedMap = dataObject.checked_map(),
                 selectFields = dataObject.select_fields();
 
+            if (aggregateType == "Count Distinct") {
+                aggregateType = aggregateType.replace(' ', '_');
+            }
+
             if(!selectDataObject.isSelectAggregateChecked(root, aggregateType)) {
                 _.forEach(isEnableMap, function(enableMapValue, enableMapKey){
                     if (enableMapValue()) {
@@ -197,6 +201,10 @@ define([
                 isCheckedMap = dataObject.checked_map(),
                 checkedFields = qeUtils.getCheckedFields(isCheckedMap),
                 selectAggregateChecked = false;
+
+            if (aggregateType == "Count Distinct") {
+                aggregateType = aggregateType.replace(' ', '_');
+            }
 
             if (checkedFields.length === 0) {
                 return false;
