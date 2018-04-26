@@ -12,6 +12,11 @@ define([
 
     var libTestSuiteClass = function (suiteConfig){
 
+        /*
+         * License: MIT
+         * (c) 2010 Michael Leibman, http://github.com/mleibman/slickgrid
+         * https://github.com/mleibman/SlickGrid/blob/master/tests/grid/grid.js
+         */
         var grid;
 
         var ROWS = 500, COLS = 10;

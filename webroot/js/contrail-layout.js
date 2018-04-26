@@ -2,7 +2,6 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
-
 var lastHash = {};
 
 Object.identical = function (a, b, sortArrays) {
@@ -237,6 +236,10 @@ function initWidget(widget) {
 };
 
 //code taken from http://code.jquery.com/jquery-1.8.3.js to provide simple browser detection for 1.9+ versions
+/*
+ * "License: MIT
+ * Copyright 2012 jQuery Foundation and other contributors
+ */
 function addBrowserDetection($) {
     if (!$.browser) {
         var matched, browser;

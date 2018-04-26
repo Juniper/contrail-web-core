@@ -1,5 +1,7 @@
 /* Copyright (c) 2016 Juniper Networks, Inc. All rights reserved. */
 
+/* From https://robots.thoughtbot.com/how-to-make-a-chrome-extension */
+
 // Called when the user clicks on the browser action.
 chrome.browserAction.onClicked.addListener(function(tab) {
   // Send a message to the active tab
