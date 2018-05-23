@@ -96,7 +96,9 @@ function parseJobListFile (result, fileToGen, cb)
     jobCbStr += "    jobsProcess." + itemList[i]['callback'] + "(\n";
     jobCbStr += "        job.data.taskData.pubChannel,\n";
     jobCbStr += "        job.data.taskData.saveChannelKey,\n";
-    jobCbStr += "        job.data, done);";
+    jobCbStr += "        job.data, parseJobsReq.commonUtils.doEnsureExecution(function() {";
+    jobCbStr += "            done();"
+    jobCbStr += "        }, job.data.taskData.reqTimeout));";
     jobCbStr += "\n  });\n";
     if (itemList[i]['requireJob']) {
         dependFound = true;

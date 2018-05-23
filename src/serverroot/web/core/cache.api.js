@@ -335,6 +335,7 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
 		runDelay:firstRunDelay,
 		jobPriority:'normal',
 		data:{
+            reqTimeout: req.appData.authObj.reqTimeout,
             authObj:authObj,
 			nextRunDelay:nextRunDelay,
 			reqId:reqId,
