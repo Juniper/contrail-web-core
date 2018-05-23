@@ -155,7 +155,7 @@ function parseURLFile (result, fileToGen, cb)
       longPollArrStr += 'defHandleReqTimeout);\n';
     }
     longPollArrStr += "      /* Now process the resuest */\n";
-    longPollArrStr += "      parseURLReq.longPoll.processPendingReq(reqCtx, next, " +
+    longPollArrStr += "      parseURLReq.longPoll.processPendingReq(reqCtx, " + timeout + ", next, " +
       itemList[i]['callback'] + ");\n";
     longPollArrStr += "    }\n";
     longPollArrStr += "  });\n";

@@ -108,7 +108,7 @@ function triggerResponse ()
     This function is invoked after processing the request, so here just delete
     the reqCtx
  */
-function processPendingReq (ctx, next, callback)
+function processPendingReq (ctx, timeout, next, callback)
 {
   var token = null;
   var defProjectObj = {};
@@ -127,10 +127,13 @@ function processPendingReq (ctx, next, callback)
   var appData = {
     authObj: {
       req: ctx.req,
+      reqTimeout: timeout,
       defTokenObj: defTokenObj
     },
     genBy: global.service.MAINSEREVR
   };
+  /* Add appData in req object */
+  ctx.req.appData = appData;
   callback(ctx.req, ctx.res, appData);
 }
 
