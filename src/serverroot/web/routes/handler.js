@@ -268,21 +268,12 @@ function isSessionAuthenticated (req)
             return false;
         }
     }
-    /* If the request contains the X-Auth-Token and URL contains the
-     * forward-proxy, then assume that the request is authenticated
-     */
-    authApi.setAuthFlagByXAuthTokenHeader(req);
     return ((null != req.session.isAuthenticated) ? req.session.isAuthenticated : false);
 }
 
 function setTokensIfValidByXAuthToken (req, callback)
 {
     var isAuthed = isSessionAuthenticated(req);
-    if (false == isAuthed) {
-        /* If session is not authed, then caller will take care action */
-        callback(isAuthed);
-        return;
-    }
     var xAuthToken = req.headers["x-auth-token"];
     if (null == xAuthToken) {
         callback(isAuthed);
@@ -294,8 +285,30 @@ function setTokensIfValidByXAuthToken (req, callback)
         callback(isAuthed);
         return;
     }
+    config = configUtils.getConfig();
+    if (null == req.session.loggedInOrchestrationMode) {
+        var orchMode = req.headers["x-orchestrationmode"];
+        if (null == orchMode) {
+            orchMode = "openstack";
+        }
+        req.session.loggedInOrchestrationMode = orchMode;
+    }
+
+    req.session.authApiVersion = _.result(config,
+                                          'identityManager.apiVersion.0',
+                                          'v2.0');
     authApi.fillAuthTokenObjsByXAuthToken(req, function(err) {
-        callback(isAuthed);
+        var secureCookieStr = (false == config.insecure_access) ? "; secure" : "";
+        var svcCatalog = _.result(req, "session.serviceCatalog", {});
+        var regionName = _.keys(svcCatalog)[0];
+        req.res.setHeader('Set-Cookie', 'region=' + regionName + '; path=/' +
+                          secureCookieStr);
+        req.cookies.region = regionName;
+        /* If the request contains the X-Auth-Token and URL contains the
+         * forward-proxy, then set request session as authenticated
+         */
+        authApi.setAuthFlagByXAuthTokenHeader(req);
+        callback(isSessionAuthenticated(req));
     });
 }
 
