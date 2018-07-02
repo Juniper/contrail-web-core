@@ -310,10 +310,10 @@ config.redis_dump_file = '/var/lib/redis/dump-webui.rdb';
 config.redis_password = '';
 
 /* Logo File: Use complete path of logo file location */
-config.logo_file = '/usr/src/contrail/contrail-web-core/webroot/img/opencontrail-logo.png';
+config.logo_file = '/usr/src/contrail/contrail-web-core/webroot/img/tf-logo.png';
 
 /* Favicon File: Use complete path of favicon file location */
-config.favicon_file = '/usr/src/contrail/contrail-web-core/webroot/img/opencontrail-favicon.ico';
+config.favicon_file = '/usr/src/contrail/contrail-web-core/webroot/img/tf-favicon.ico';
 
 config.featurePkg = {};
 /* Add new feature Package Config details below */

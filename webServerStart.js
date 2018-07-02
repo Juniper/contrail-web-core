@@ -391,7 +391,7 @@ function doPreStartServer (isRetry)
 
 function generateLogoFile(isRetry) {
     var rootPath = path.join(__dirname, 'webroot');
-    var defLogoFile = '/img/opencontrail-logo.png';
+    var defLogoFile = '/img/tf-logo.png';
     var srcLogoFile = rootPath + defLogoFile;
 
     if ((null != config.logo_file) && (false == isRetry)) {
@@ -417,7 +417,7 @@ function generateLogoFile(isRetry) {
 
 function generateFaviconFile(isRetry) {
     var rootPath = path.join(__dirname, 'webroot');
-    var defFaviconFile = '/img/opencontrail-favicon.ico';
+    var defFaviconFile = '/img/tf-favicon.ico';
     var srcFaviconFile = rootPath + defFaviconFile;
 
     if ((null != config.favicon_file) && (false == isRetry)) {
