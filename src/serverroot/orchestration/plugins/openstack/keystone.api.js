@@ -751,6 +751,7 @@ function getV3TokenByAuthObj (authObj, callback)
     var authPort    = authServerDetails.authServerPort;
     var authProto   = null;
     var reqUrl = '/v3/auth/tokens';
+    var tokenId     = '';
     reqUrl = addUrlPrefix(reqUrl);
     var tmpAuthRestObj = getAuthRestApiInst(authObj.req, reqUrl);
 
@@ -766,7 +767,8 @@ function getV3TokenByAuthObj (authObj, callback)
                                                'headers;x-subject-token',
                                                null, false);
             if (null != token) {
-                tokenObj['id'] = removeSpecialChars(token);
+                tokenId = removeSpecialChars(token);
+                tokenObj['id'] = tokenId;
             }
         }
         if (null != authObj['tenant']) {
@@ -777,7 +779,10 @@ function getV3TokenByAuthObj (authObj, callback)
                           function(err, data) {
                 if ((null == err) && (null != data) && (null != data['token'])
                     && (null != data['token']['project'])) {
+                    tokenObj = data['token']
                     tokenObj['tenant'] = data['token']['project'];
+                    tokenObj['id'] = tokenId;
+                    delete tokenObj['catalog'];
                     callback(err, tokenObj);
                 } else {
                     callback(err, tokenObj);
@@ -865,6 +870,7 @@ function formatV3AuthDataToV2AuthData (v3AuthData, authObj, callback)
                                                null);
             if (null != tokenProj) {
                 tokenObj['access']['token']['tenant'] = tokenProj;
+                tokenObj['access']['token']['project'] = tokenProj;
             }
         }
         tokenObj['access']['serviceCatalog'] =  v3AuthData['token']['catalog'];
