@@ -306,8 +306,8 @@ function getJSONDiffByConfigUrl (url, appData, newJson, callback, uuid)
             _.forEach(optFields, function(optField) {
                 if(_.endsWith(optField, "_refs")
                         && _.indexOf(exceptionList, optField) === -1){
-                    var oldRefs = _.get(configData, type + '.' + optField, []);
-                    var newRefs = _.get(newJson, type + '.' + optField, []);
+                    var oldRefs = _.get(configData, type + '.' + optField, null);
+                    var newRefs = _.get(newJson, type + '.' + optField, null);
                     var refDelta  = getConfigJSONArrayDelta(type, oldRefs, newRefs);
                     if(refDelta) {
                         refsDeltaArrayMap[optField] = refDelta;
@@ -481,17 +481,18 @@ function getConfigArrayDelta (type, oldArrayJson, newArrayJson)
 
 function getConfigJSONArrayDelta (type, oldArrayJson, newArrayJson)
 {
+    var resultJSON = {'addedList': [], 'deletedList': []};
+    if (null == newArrayJson) {
+        //No changes to refs return
+        return resultJSON;
+    }
     if (null == oldArrayJson) {
         oldArrayJson = [];
-    }
-    if (null == newArrayJson) {
-        newArrayJson = [];
     }
     var origOldArrayJson = commonUtils.cloneObj(oldArrayJson);
     var origNewArrayJson = commonUtils.cloneObj(newArrayJson);
     oldArrayJson = commonUtils.doDeepSort(oldArrayJson);
     newArrayJson = commonUtils.doDeepSort(newArrayJson);
-    var resultJSON = {'addedList': [], 'deletedList': []};
     var fieldsType = getConfigJsonModifyByType(type);
 
     if (null != fieldsType) {
