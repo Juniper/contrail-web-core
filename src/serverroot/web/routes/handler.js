@@ -16,6 +16,7 @@ var http = require('http'),
     crypto = require('crypto'),
     redisSub = require('../core/redisSub'),
     authApi = require('../../common/auth.api'),
+    plugins = require('../../orchestration/plugins/plugins.api'),
     vCenterApi = require('../../orchestration/plugins/vcenter/vcenter.api');
     fs = require('fs'),
     _ = require("lodash"),
@@ -274,9 +275,13 @@ function isSessionAuthenticated (req)
 function setTokensIfValidByXAuthToken (req, callback)
 {
     var isAuthed = isSessionAuthenticated(req);
-    var xAuthToken = req.headers["x-auth-token"];
-    if (null == xAuthToken) {
+    if (false == authApi.isReqHasXAuthTokenHeader(req.url, req)) {
         callback(isAuthed);
+        return;
+    }
+    if (plugins.isNoneOrchestrationModel()) {
+        req.session.loggedInOrchestrationMode = "none";
+        callback(true);
         return;
     }
     var tokenObjs = _.result(req, "session.tokenObjs", null);

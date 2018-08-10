@@ -128,6 +128,14 @@ function getOrchestrationPluginModel ()
     return {'orchestrationModel' : orchModels}
 }
 
+function isNoneOrchestrationModel ()
+{
+    if (-1 != orchModels.indexOf('none')) {
+        return true
+    }
+    return false;
+}
+
 function doDomainExist (domain, domainList)
 {
     var data = domainList['domains'];
@@ -248,6 +256,7 @@ function setAllCookies (req, res, appData, cookieObj, callback)
 
 exports.getApiServerRequestedByData = getApiServerRequestedByData;
 exports.getOrchestrationPluginModel = getOrchestrationPluginModel;
+exports.isNoneOrchestrationModel = isNoneOrchestrationModel;
 exports.setAllCookies = setAllCookies;
 exports.doDomainExist = doDomainExist;
 exports.formatDomainList = formatDomainList;
