@@ -180,6 +180,7 @@ global.PKIZ_PREFIX = 'PKIZ_';
 global.ALL_PROJECT_UUID = 'all';
 global.COOKIE_PROJECT_DISPLAY_NAME = "project-display-name";
 global.COOKIE_DOMAIN_DISPLAY_NAME = "domain-display-name";
+global.COOKIE_X_AUTH_TOKEN = "x-auth-token";
 
 global.label = {};
 global.label.VNCONFIG_API_SERVER = 'vnconfig-api-server';
