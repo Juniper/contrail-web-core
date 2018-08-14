@@ -3185,13 +3185,11 @@ function getConfigEntityByServiceEndpoint (req, serviceName)
 
 function checkIfValidToken (req, tokenId, callback)
 {
-    var xAuthToken = req.headers["x-auth-token"];
+    var xAuthToken = req.headers["x-auth-token"] || req.param('tokenid') ||
+        req.cookies[global.COOKIE_X_AUTH_TOKEN];
     if (null == xAuthToken) {
-        xAuthToken = req.param('tokenid');
-        if (null == xAuthToken) {
-            callback(false);
-            return;
-        }
+        callback(false);
+        return;
     }
     getUserAuthDataByConfigAuthObj(null, function(error, data, version) {
         if ((null != error) || (null == data) ||

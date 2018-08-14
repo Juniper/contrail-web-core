@@ -352,7 +352,8 @@ function getServiceAPIVersionByReqObj (request, appData, svcType, callback, reqB
 }
 function isReqHasXAuthTokenHeader (reqUrl, req)
 {
-    var xAuthToken = req.headers["x-auth-token"];
+    var xAuthToken = req.headers["x-auth-token"] || req.param('tokenid') ||
+        req.cookies[global.COOKIE_X_AUTH_TOKEN];
     if (null == xAuthToken) {
         return false;
     }

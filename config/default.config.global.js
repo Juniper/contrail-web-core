@@ -481,7 +481,8 @@ config.network.router_L3Enable = true;
  * allowed_introspect_list_access_by_token - the list of introspect names
  *      (Snh_XXX) allowed to access by keystone token. The token is passed in
  *      X-Auth-Token header along with request.
-    Default: Empty list
+ *      Use '*' to allow all list
+    Default: '*'
  *
  * Note: Introspect port must be added inside introspect section, if not a
  *       introspect port, then add that against some key, ex:
@@ -534,7 +535,7 @@ config.proxy.config_node_ports = {
         "node-manager"      :"8100"             /* HttpPortConfigNodemgr */
     }
 };
-config.proxy.allowed_introspect_list_access_by_token = [];
+config.proxy.allowed_introspect_list_access_by_token = ["*"];
 
 /*****************************************************************************
  *

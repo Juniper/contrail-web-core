@@ -78,6 +78,9 @@ function validateProxyIpPort (request, proxyHost, proxyPort, callback)
                                            []);
         var allowedIntrospectListLen = allowedIntrospectList.length;
         for (var i = 0; i < allowedIntrospectListLen; i++) {
+            if ('*' == allowedIntrospectList[i]) {
+                break;
+            }
             if (request.url.indexOf(allowedIntrospectList[i]) > -1) {
                 break;
             }
