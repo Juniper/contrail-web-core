@@ -175,11 +175,11 @@ function checkUserAccess (req, res, callback)
   var userRoleLen = 0;
   var authApi = require("../../common/auth.api");
   if (authApi.isReqHasXAuthTokenHeader(req.url, req)) {
-      if (false == plugins.isNoneOrchestrationModel()) {
-        /* If the request contains the X-Auth-Token and URL contains the
-         * forward-proxy, then verify that token is valid, if valid, then assume that
-         * request is authorized
-         */
+      if (true == plugins.isOpenstackModel()) {
+       /* If the request contains the X-Auth-Token and URL contains the
+        * forward-proxy, then verify that token is valid, if valid, then assume that
+        * request is authorized
+        */
         var xAuthToken = req.headers["x-auth-token"];
         authApi.checkIfValidToken(req, xAuthToken, function(isValidToken) {
             callback(isValidToken);
