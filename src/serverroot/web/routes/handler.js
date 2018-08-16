@@ -279,8 +279,15 @@ function setTokensIfValidByXAuthToken (req, callback)
         callback(isAuthed);
         return;
     }
-    if (plugins.isNoneOrchestrationModel()) {
-        req.session.loggedInOrchestrationMode = "none";
+    if (false == plugins.isOpenstackModel()) {
+        var orchModel = plugins.getOrchestrationPluginModel();
+        if (orchModel && orchModel.orchestrationModel &&
+            orchModel.orchestrationModel.length > 0) {
+            req.session.loggedInOrchestrationMode =
+                orchModel.orchestrationModel[0];
+        } else {
+            req.session.loggedInOrchestrationMode = 'none';
+        }
         callback(true);
         return;
     }

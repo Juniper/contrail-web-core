@@ -128,9 +128,9 @@ function getOrchestrationPluginModel ()
     return {'orchestrationModel' : orchModels}
 }
 
-function isNoneOrchestrationModel ()
+function isOpenstackModel()
 {
-    if (-1 != orchModels.indexOf('none')) {
+    if (-1 != orchModels.indexOf('openstack')) {
         return true
     }
     return false;
@@ -256,8 +256,9 @@ function setAllCookies (req, res, appData, cookieObj, callback)
 
 exports.getApiServerRequestedByData = getApiServerRequestedByData;
 exports.getOrchestrationPluginModel = getOrchestrationPluginModel;
-exports.isNoneOrchestrationModel = isNoneOrchestrationModel;
+exports.isOpenstackModel = isOpenstackModel;
 exports.setAllCookies = setAllCookies;
 exports.doDomainExist = doDomainExist;
 exports.formatDomainList = formatDomainList;
 exports.getDomainFqnByDomainUUID = getDomainFqnByDomainUUID;
+
