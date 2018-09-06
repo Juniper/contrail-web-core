@@ -15,7 +15,8 @@ var config = process.mainModule.exports['config'],
     commonUtils = require('../utils/common.utils'),
     redisSub = require('../web/core/redisSub'),
     orch = require('../orchestration/orchestration.api'),
-    messages = require('./messages');
+    messages = require('./messages'),
+    util = require("util"),
     global = require('./global');
 
 var keystoneAuthApi = require('../orchestration/plugins/openstack/keystone.api');
@@ -53,6 +54,21 @@ function createAuthKeyBySessionId (sessionId)
     return (global.STR_AUTH_KEY + global.ZWQ_MSG_SEPERATOR + sessionId);
 }
 
+function checkIfUserRestricted (username)
+{
+    var restricted_users_patterns =
+        commonUtils.getValueByJsonPath(config, "restricted_users_patterns", []);
+    var len = restricted_users_patterns.length;
+    for (var i = 0; i < len; i++) {
+        var pattern = restricted_users_patterns[i];
+        var regExp = new RegExp(pattern);
+        if (true == regExp.test(username)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 /** Function: authorize
   * 1. This function is wrapper API to authenticate the user using authentication
   *    credentials
@@ -72,6 +88,13 @@ function doAuthenticate (req, res, appData, callback) {
     if(req.param('built_at') != null && builtAtVersion != 0 && builtAtVersion != parseInt(req.param('built_at'))) {
         callback(messages.warn.webui_upgraded);
     } else {
+        var post = req.body;
+        var username = commonUtils.getValueByJsonPath(post, "username", null);
+        if (true == checkIfUserRestricted(username)) {
+            var errMsg = util.format(messages.error.restricted_user, username);
+            callback(errMsg);
+            return;
+        }
         getAuthMethod[req.session.loggedInOrchestrationMode].authenticate(req, res,
                                                                         appData, function(err, data) {
             callback(err, data);

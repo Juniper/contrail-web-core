@@ -23,6 +23,7 @@ messages.error.broken_link = 'Encountered broken link: %s';
 messages.error.invalid_json = 'Invalid JSON returned by url: %s';
 messages.error.invalid_json_xml = 'url: %s returned Invalid JSON/XML: %s';
 messages.error.invalid_user_pass = 'Invalid username or password.';
+messages.error.restricted_user = "User '%s' is not allowed to login";
 messages.error.unauthorized_to_project = 'User is not authorized to any project.';
 messages.error.unauthenticate_to_project = 'User is not authenticated to available projects.';
 messages.error.delete_mirror = 'Delete Mirror Failed.';

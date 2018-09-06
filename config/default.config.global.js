@@ -488,6 +488,19 @@ config.server_options.ciphers =
 config.server_options.key_file = '/etc/contrail/webui_ssl/cs-key.pem';
 config.server_options.cert_file = '/etc/contrail/webui_ssl/cs-cert.pem';
 
+/*****************************************************************************
+ *
+ * restricted_users_patterns:
+ *      Array of regular expressions for the pattern of user name's to restrict
+ *      the login
+ *
+ * For ex: User name pattern
+ * - letter 'm' followed by 5 numbers (ex. m12345)
+ * - letter 's' followed by 5 numbers (ex. s54321)
+ * Then pattern becomes: ^[m,s][0-9]{5}$
+ ****************************************************************************/
+config.restricted_users_patterns  = [];
+
 /*
  * This is Message of the day(MOTD) configuration
  * file_path: Path of the file where MOTD is specified.
