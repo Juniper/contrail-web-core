@@ -1405,6 +1405,19 @@ function sendWebServerInfo (req, res) {
     commonUtils.handleJSONResponse(null, res, serverObj);
 }
 
+function getRequiredEnvironmentVariables () {
+    var reqEnvVarList = [
+        "ANALYTICS_ALARM_NODES",
+        "ANALYTICS_SNMP_NODES",
+        "ANALYTICSDB_NODES"
+    ];
+    var retEnvVarJson = {};
+    _.each(reqEnvVarList, function(envName){
+        retEnvVarJson[envName] = process.env[envName];
+    });
+    return retEnvVarJson;
+}
+
 function getWebServerInfo (req, res, appData)
 {
     var config = configUtils.getConfig();
@@ -1453,6 +1466,7 @@ function getWebServerInfo (req, res, appData)
         serverObj['regionList'].unshift("All Regions");
     }
     serverObj['currentRegionName'] = authApi.getCurrentRegion(req);
+    serverObj['environmentVariables'] = getRequiredEnvironmentVariables();
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;
     var activePkgs = [];
@@ -2304,6 +2318,19 @@ function handleAuthToAuthorizeError(err, req, callback)
     }
 }
 
+
+function checkIfReqdPackagesInstalled (packages, req, res) {
+    var webServerInfo = getWebServerInfo(req, res, null);
+    var envVars = getValueByJsonPath(webServerInfo,'environmentVariables',null);
+    var retVal = true;
+    _.each(packages, function(pkg) {
+        if(envVars[pkg] == null) {
+            retVal = false;
+        }
+    });
+    return retVal;
+}
+
 exports.filterJsonKeysWithNullValues = filterJsonKeysWithNullValues;
 exports.createJSONBySandeshResponseArr = createJSONBySandeshResponseArr;
 exports.createJSONBySandeshResponse = createJSONBySandeshResponse;
@@ -2368,3 +2395,4 @@ exports.invalidateReqSession = invalidateReqSession;
 exports.handleAuthToAuthorizeError = handleAuthToAuthorizeError;
 exports.sendWebServerInfo = sendWebServerInfo;
 exports.isIPBoundToRange = isIPBoundToRange;
+exports.checkIfReqdPackagesInstalled = checkIfReqdPackagesInstalled;
