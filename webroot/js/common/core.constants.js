@@ -2200,6 +2200,11 @@ define([
         this.URL_UPDATE_CONFIG_OBJECT = "/api/tenants/config/update-config-object";
         this.NETWORK_POLICY_INCLUDING_OBJ_LIST = ['security-logging-object'];
         this.GENERIC_API_BASIC = 'basic';
+
+        /** Package Names **/
+        this.ANALYTICS_QUERY_PACKAGES = ["ANALYTICSDB_NODES"];
+        this.ANALYTICS_SNMP_PACKAGES = ["ANALYTICS_SNMP_NODES"];
+        this.ANALYTICS_ALARM_PACKAGES = ["ANALYTICS_ALARM_NODES"];
     };
     //Export to global scope
     cowc = new CoreConstants();
