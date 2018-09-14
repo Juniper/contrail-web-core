@@ -139,21 +139,24 @@ define(
                 };
 
                 self.checkAndAddAnalyticsDownOrAlarmProcessDownAlarms = function (uve,alarmUVE) {
+                    if(!cowu.checkIfPackagesInstalled(['ANALYTICS_ALARM_ENABLE'])) {
+                        return self.alarmsSort(alarmUVE);
+                    }
                     var processStatus = getValueByJsonPath(uve,
                             'value;NodeStatus;process_status');
-                    var isAnalyticsApiDown = isAlarmGenDown = true;
+                    var isAnalyticsApiDown = isAlarmGenDown = false;
                     // var alarmObjs = [];
                     if (processStatus != null) {
                         $.each(
                             processStatus,
                             function(i, proc) {
                                 if (proc.module_id == cowc.ANALYTICS_API_PROCESS) {
-                                    if (proc.state == 'Functional') {
-                                        isAnalyticsApiDown = false;
+                                    if (proc.state != 'Functional') {
+                                        isAnalyticsApiDown = true;
                                     }
                                 } else if (proc.module_id == cowc.ALARMGEN_PROCESS) {
-                                    if (proc.state == 'Functional') {
-                                        isAlarmGenDown = false;
+                                    if (proc.state != 'Functional') {
+                                        isAlarmGenDown = true;
                                     }
                                 }
                             });
