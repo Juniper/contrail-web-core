@@ -35,6 +35,10 @@
         <define>authApi</define>
         <path>./auth.api.js</path>
     </require>
+    <require>
+        <define>commonUtils</define>
+        <path>process.mainModule.exports["corePath"] + '/src/serverroot/utils/common.utils'</path>
+    </require>
     <item>
         <url>/api/service/networking/device-status/:ip</url>
         <method>post</method>
@@ -64,6 +68,11 @@
         <method>get</method>
         <feature>alarms</feature>
         <callback>alarmsApi.getAlarms</callback>
+        <reqdPackages>
+            <packages>
+                <package>ANALYTICS_ALARM_ENABLE</package>
+            </packages>
+        </reqdPackages>
     </item>
     <item>
         <url>/api/tenant/monitoring/alarmtypes</url>

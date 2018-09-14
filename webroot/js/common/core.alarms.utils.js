@@ -139,6 +139,9 @@ define(
                 };
 
                 self.checkAndAddAnalyticsDownOrAlarmProcessDownAlarms = function (uve,alarmUVE) {
+                    if(!cowu.checkIfPackagesInstalled(['ANALYTICS_ALARM_ENABLE'])) {
+                        return self.alarmsSort(alarmUVE);
+                    }
                     var processStatus = getValueByJsonPath(uve,
                             'value;NodeStatus;process_status');
                     var isAnalyticsApiDown = isAlarmGenDown = true;
