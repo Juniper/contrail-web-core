@@ -26,6 +26,10 @@ define(['underscore'], function (_) {
             var featurePkgsInfo =
                 getValueByJsonPath(globalObj, 'webServerInfo;featurePkgsInfo',
                                    null);
+            //if required packages are installed add the bell icon by removing the hidden class
+            if(cowu.checkIfPackagesInstalled(['ANALYTICS_ALARM_NODES'])) {
+                $('#alarms-popup-link').attr("class","pull-right");
+            }
             //processXMLJSON populates siteMapsearchStrings
             globalObj['siteMapSearchStrings'] = [];
             processXMLJSON(menuObj, optFeatureList);
@@ -64,8 +68,9 @@ define(['underscore'], function (_) {
                 items = items.filter(function (value) {
                     var hasAccess = false;
                     hasAccess = checkForAccess(value);
-                    if (value['items'] != null && value['items']['item'] instanceof Array && hasAccess)
+                    if (value['items'] != null && value['items']['item'] instanceof Array && hasAccess) {
                         value['items']['item'] = menuHandler.filterMenuItems(value['items']['item']);
+                    }
                     return hasAccess;
                 });
                 return items;
@@ -119,9 +124,15 @@ define(['underscore'], function (_) {
          */
         function checkForAccess(value) {
             var roleExists = false, orchExists = false, accessFnRetVal = false, allRegion=false;
+            var reqdPackagesExists = false;
             var orchModel = globalObj['webServerInfo']['loggedInOrchestrationMode'];
             var loggedInUserRoles = globalObj['webServerInfo']['role'];
             if (value.access != null) {
+                if(value.access.reqdPackages != null) {
+                    reqdPackagesExists = cowu.checkIfPackagesInstalled(value.access.reqdPackages);
+                } else {
+                    reqdPackagesExists = true;
+                }
                 if (value.access.roles != null) {
                     if (!(value.access.roles.role instanceof Array))
                         value.access.roles.role = [value.access.roles.role];
@@ -161,7 +172,7 @@ define(['underscore'], function (_) {
                     }
                 } else
                     orchExists = true;
-                    return (roleExists && orchExists && accessFnRetVal);
+                    return (reqdPackagesExists && roleExists && orchExists && accessFnRetVal);
             } else {
                 return true;
             }
@@ -171,6 +182,7 @@ define(['underscore'], function (_) {
             var currentBCTemplate = contrail.getTemplate4Id('current-breadcrumb');
             var currPageHashArray, subMenuId, reloadMenu, linkId;
             var hostname = window.location.hostname;
+            menuObj["items"]["item"] = menuHandler.filterMenuItems(menuObj['items']['item']);
             if (menuButton == null) {
                 currPageHashArray = currPageHash.split('_');
                 //Looks scalable only till 2nd level menu
