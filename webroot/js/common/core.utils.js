@@ -3153,7 +3153,12 @@ define([
         */
         self.getAllowedTabs = function (tabsConfig) {
            return tabsConfig.filter(function (tabObj) {
-               return _.result(tabObj, 'tabConfig.visible', true);
+               var ret = _.result(tabObj, 'tabConfig.visible', true);
+               if(_.result(tabObj, 'tabConfig.reqdPackages', false) &&
+                       !self.checkIfPackagesInstalled(_.result(tabObj, 'tabConfig.reqdPackages',[]))){
+                   ret = false;
+               }
+               return ret;
            })
         };
         /*
@@ -3207,6 +3212,17 @@ define([
                 }
             });
             return _.orderBy(lblValArr, [sortBy], [order]);
+        }
+
+        self.checkIfPackagesInstalled = function (packagesList) {
+            var envVars = self.getValueByJsonPath(globalObj,'webServerInfo;environmentVariables',{});
+            var retVal = true;
+            _.each(packagesList, function(pkg) {
+                if(envVars[pkg] == null) {
+                    retVal = false;
+                }
+            });
+            return retVal;
         }
     };
 
