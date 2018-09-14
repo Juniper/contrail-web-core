@@ -126,9 +126,23 @@ function parseURLFile (result, fileToGen, cb)
     if (pos == -1) {
       assert(0);
     }
-   
+
     longPollArrStr += callback.substr(1, pos - 1) + "_" + callback.slice(pos + 1) + 
       " = function(req, res, next) {\n";
+    if (itemList[i]['reqdPackages'] && itemList[i]['reqdPackages'][0]['packages'][0]) {
+        var packages = itemList[i]['reqdPackages'][0]['packages'][0]['package'];
+        var reqdPackagesInstalled = true;
+        var noPackageResponse = null;
+        if(itemList[i]['reqdPackages'][0]['noPackageResponse']) {
+            noPackageResponse = itemList[i]['reqdPackages'][0]['noPackageResponse'];
+        }
+        longPollArrStr += " /*return default response if reqdPackages are not installed*/\n";
+        longPollArrStr += "  if(!commonUtils.checkIfReqdPackagesInstalled ("+
+                             JSON.stringify(packages) +", req, res)) {\n";
+        longPollArrStr += "    commonUtils.handleJSONResponse(null, res, "+ noPackageResponse +");\n";
+        longPollArrStr += "    return;\n";
+        longPollArrStr += "  }\n";
+    }
     longPollArrStr += "  /* Check if this request needs to be added in \n";
     longPollArrStr += "     pendingQ \n";
     longPollArrStr += "   */\n";
@@ -161,7 +175,6 @@ function parseURLFile (result, fileToGen, cb)
     longPollArrStr += "  });\n";
     longPollArrStr += "}\n";
 
-      
     urlCbStr += "'" + itemList[i]['url'] + "', " + 
       callback.substr(1, pos - 1) + "_" + callback.slice(pos + 1) + ");\n";
  
