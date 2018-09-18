@@ -108,7 +108,7 @@ function initializeAppConfig (appObj)
     // Implement X-XSS-Protection
     app.use(helmet.xssFilter());
     // Implement X-Frame: SameOrigin
-    app.use(helmet.xframe('sameorigin'));
+    app.use(helmet.frameguard('sameorigin'));
     // Implement Strict-Transport-Security
 
     var compressOptions = {
