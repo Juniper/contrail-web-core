@@ -58,6 +58,7 @@ function createAuthKeyBySessionId (sessionId)
 
 function checkIfUserRestricted (username)
 {
+    var config = configUtils.getConfig();
     var restricted_users_patterns =
         commonUtils.getValueByJsonPath(config, "restricted_users_patterns", []);
     var len = restricted_users_patterns.length;
