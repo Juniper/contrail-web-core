@@ -122,6 +122,11 @@ function processPendingReq (ctx, timeout, next, callback)
                           ctx.req.session.loggedInOrchestrationMode);
   }
 
+  /* Get the client requestor IP */
+  var client_ip = (ctx.req.headers['x-forwarded-for'] || '').split(',').pop() ||
+      ctx.req.connection.remoteAddress ||
+      ctx.req.socket.remoteAddress ||
+      ctx.req.connection.socket.remoteAddress;
   /* Process the request */
   defTokenObj = authApi.getAPIServerAuthParams(ctx.req);
   var appData = {
@@ -130,6 +135,7 @@ function processPendingReq (ctx, timeout, next, callback)
       reqTimeout: timeout,
       defTokenObj: defTokenObj
     },
+    requestorIP: client_ip,
     genBy: global.service.MAINSEREVR
   };
   /* Add appData in req object */

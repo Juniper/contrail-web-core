@@ -352,6 +352,7 @@ function createReqData (req, type, jobName, reqUrl, runCount, defCallback,
             region: req.session.region,
             session: req.session,
             tokenid: tokenid,
+            requestorIP: req.appData.requestorIP,
             cookies: req.cookies,
 			loggedInOrchestrationMode: req.session.loggedInOrchestrationMode,
 			appData: appData
