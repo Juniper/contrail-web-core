@@ -361,6 +361,19 @@ function doCheckJobsProcess ()
 
 function createJobAtInit (jobObj)
 {
+    var ipAddrs = commonUtils.getIPAddressList(global.IP_ADDRESS_FAMILY_IPV4);
+    ipAddr = null;
+    if ((ipAddrs != null) && (ipAddrs.length > 0)) {
+        var ipAddrsCnt = ipAddrs.length;
+        for (var i = 0; i < ipAddrsCnt; i++) {
+            ipAddr = ipAddrs[i];
+            if (ipAddr == '127.0.0.1') {
+                continue;
+            }
+            break;
+        }
+    }
+
     if (null == jobObj) {
         logutils.logger.error("In createJobAtInit(): jobObj is null");
         return;
@@ -406,6 +419,9 @@ function createJobAtInit (jobObj)
     msgObj['data']['reqId'] = 0;
     msgObj['data']['url'] = url;
     msgObj['data']['reqBy'] = global.REQ_AT_SYS_INIT;
+    if (ipAddr != null) {
+        msgObj['data']['requestorIP'] = ipAddr;
+    }
     createJob(jobName, jobName, 'normal', firstRunDelay, runCount, msgObj['data']);
 }
 

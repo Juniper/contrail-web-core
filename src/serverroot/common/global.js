@@ -357,4 +357,8 @@ global.ASYNC_MAP_LIMIT_COUNT = 100;
 /* UVE Stream */
 global.STR_UVE_STREAM = "uveStream";
 
+/* Ip Address Family */
+global.IP_ADDRESS_FAMILY_IPV4 = 'IPv4';
+global.IP_ADDRESS_FAMILY_IPV6 = 'IPv6';
+
 module.exports = global;

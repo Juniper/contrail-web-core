@@ -353,7 +353,7 @@ function getCurrentTimestamp ()
 
 /** Returns network IP Address List
 */
-function getIPAddressList()
+function getIPAddressList(type)
 {
     var addressList = [];
     var interfaces = os.networkInterfaces();
@@ -361,6 +361,9 @@ function getIPAddressList()
         var iface = interfaces[devName];
         var ln = iface.length;
         for (var i = 0; i < ln; i++) {
+            if ((type != null) && (iface[i].family != type)) {
+                continue;
+            }
             addressList.push(iface[i].address);
         }
     }
@@ -2368,3 +2371,4 @@ exports.invalidateReqSession = invalidateReqSession;
 exports.handleAuthToAuthorizeError = handleAuthToAuthorizeError;
 exports.sendWebServerInfo = sendWebServerInfo;
 exports.isIPBoundToRange = isIPBoundToRange;
+exports.getIPAddressList = getIPAddressList;

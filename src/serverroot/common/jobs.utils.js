@@ -121,6 +121,7 @@ function getHeaders (dataObj, callback)
 {
     var jobData = dataObj['jobData'];
     var apiName = dataObj['apiName'];
+    var requestorIP = commonUtils.getValueByJsonPath(dataObj, "jobData;taskData;requestorIP");
     var headers = {};
     headers = configAppHeaders(headers, jobData);
     var appHeaders = dataObj['appHeaders'];
@@ -131,6 +132,7 @@ function getHeaders (dataObj, callback)
         /* App Header overrides default header */
         headers[key] = appHeaders[key];
     }
+    headers['X-Requestor-IP'] = requestorIP;
     dataObj['headers'] = headers;
     if (null == req) {
         callback(null, dataObj);

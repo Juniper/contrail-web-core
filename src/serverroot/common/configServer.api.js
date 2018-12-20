@@ -86,6 +86,7 @@ function configAppHeaders (headers, appData)
                                                              null),
                               defProject);
     headers['X-Auth-Token'] = xAuthTokenObj['token'];
+    headers['X-Requestor-IP'] = appData['requestorIP'];
     if (true == multiTenancyEnabled) {
         var userRole = commonUtils.getValueByJsonPath(appData,
                 'authObj;req;session;userRoles;' + xAuthTokenObj['project'], null);
