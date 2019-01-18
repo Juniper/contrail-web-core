@@ -233,6 +233,8 @@ config.cassandra.server_port = '9042';
 config.cassandra.enable_edit = false;
 config.cassandra.username = '';
 config.cassandra.password = '';
+config.cassandra.use_ssl = false;
+config.cassandra.ca_certs = '';
 
 /* KUE Job Scheduler */
 config.kue = {};

@@ -1,6 +1,7 @@
 /* Copyright (c) 2016 Juniper Networks, Inc. All rights reserved. */
 
 var _ = require("lodash");
+var fs = require('fs')
 var commonUtils = require(process.mainModule.exports.corePath + "/src/serverroot/utils/common.utils");
 var configUtils = require(process.mainModule.exports.corePath +
         "/src/serverroot/common/config.utils");
@@ -9,7 +10,16 @@ var cassandra = require("cassandra-driver");
 var uddKeyspace = "config_webui";
 var tableName = "user_widgets";
 var config = configUtils.getConfig();
-var client = new cassandra.Client({ contactPoints: config.cassandra.server_ips, keyspace: "system" });
+var cass_options = { contactPoints: config.cassandra.server_ips, keyspace: "system" };
+if (config.cassandra.username && confid.cassandra.password) {
+    var cAuthProvider = new cassandra.auth.PlainTextAuthProvider(cUsername, cPassword);
+    cass_options.authProvider = cAuthProvider;
+}
+cass_options.sslOptions = { rejectUnauthorized: false };
+if ('ca_certs' in config.cassandra && config.cassandra.ca_certs) {
+    cass_options.sslOptions.ca = [ fs.readFileSync(config.cassandra.ca_certs) ];
+}
+var client = new cassandra.Client(cass_options);
 client.execute("SELECT keyspace_name FROM system_schema.keyspaces;", function(err, result) {
     if (err) {
         console.error(err);
