@@ -107,7 +107,19 @@ Set the path where contrail-web-controller code resides
 
     config.featurePkg.webController.path
 
+Set the credentials with any value pair, this will be the admin credential used to login the UI:
+    auth.admin_user
+    auth.admin_password
+
 You must set the above configuration before issuing "make dev-env REPO=webController".
+
+If you want to run the system without orchestrator (i.e. set config.orchestration.Manager="none" in `/etc/contrail/config.global.js`), you'll have to set below fields (multiple credentials can be provided as array items of `config.staticAuth`) in the configuration file(`config.global.js`). An example:
+```javascript
+    config.staticAuth = [];
+    config.staticAuth[0] = {};
+    config.staticAuth[0].username = "username";
+    config.staticAuth[0].password = "password";
+```
 
 If you want to enable authentication support of contrail-webui while communicating with redis-server, then in redis config file set the password
 
