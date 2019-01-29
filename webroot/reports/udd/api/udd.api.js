@@ -15,9 +15,11 @@ if (config.cassandra.username && confid.cassandra.password) {
     var cAuthProvider = new cassandra.auth.PlainTextAuthProvider(cUsername, cPassword);
     cass_options.authProvider = cAuthProvider;
 }
-cass_options.sslOptions = { rejectUnauthorized: false };
-if ('ca_certs' in config.cassandra && config.cassandra.ca_certs) {
-    cass_options.sslOptions.ca = [ fs.readFileSync(config.cassandra.ca_certs) ];
+if (config.cassandra.use_ssl) {
+    cass_options.sslOptions = { rejectUnauthorized: false };
+    if ('ca_certs' in config.cassandra && config.cassandra.ca_certs) {
+        cass_options.sslOptions.ca = [ fs.readFileSync(config.cassandra.ca_certs) ];
+    }
 }
 var client = new cassandra.Client(cass_options);
 client.execute("SELECT keyspace_name FROM system_schema.keyspaces;", function(err, result) {
