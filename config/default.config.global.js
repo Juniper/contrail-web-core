@@ -334,8 +334,8 @@ config.getDomainProjectsFromApiServer = false;
  ******************************************************************************/
 config.staticAuth = [];
 config.staticAuth[0] = {};
-config.staticAuth[0].username = 'admin';
-config.staticAuth[0].password = 'contrail123';
+config.staticAuth[0].username = '';
+config.staticAuth[0].password = '';
 config.staticAuth[0].roles = ['cloudAdmin'];
 
 /*****************************************************************************
