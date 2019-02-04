@@ -295,6 +295,12 @@ function testAppInit(testAppConfig) {
             // loadUtils.fetchMenu(menuXMLLoadDefObj);
 
             globalObj['webServerInfo'] = JSON.parse(testAppConfig.webServerInfo);
+            //Setting the environmentVariables to enable the features
+            globalObj['webServerInfo']['environmentVariables'] = {
+                    ANALYTICSDB_ENABLE: "True",
+                    ANALYTICS_ALARM_ENABLE: "True",
+                    ANALYTICS_SNMP_ENABLE: "True"
+                };
             webServerInfoDefObj.resolve();
 
             /*
