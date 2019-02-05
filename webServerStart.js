@@ -487,7 +487,7 @@ function startWebUIService (webUIIP, callback)
             logutils.logger.info("Contrail UI HTTPS server listening on host:" +
                                  webUIIP + " Port:" + httpsPort);
         });
-        httpsServer.on('clientError', function(exception, socket) {
+        httpsServer.on('clientError', function(exception, securePair) {
             logutils.logger.error("httpsServer Exception: on clientError:" +
                                   exception);
         });
@@ -500,8 +500,11 @@ function startWebUIService (webUIIP, callback)
     });
 
     httpServer.on('clientError', function(exception, socket) {
-        logutils.logger.error("httpServer Exception: on clientError:" +
-                               exception);
+        var errStr = "httpServer Exception: on clientError: " + exception;
+        if (null != socket) {
+            errStr = errStr + " from " + socket.remoteAddress + ":" + socket.remotePort;
+        }
+        logutils.logger.error(errStr);
     });
     
     if (false == insecureAccessFlag) {
