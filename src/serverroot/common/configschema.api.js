@@ -85,14 +85,8 @@ function getObjectList (request, response, appData)
             commonUtils.handleJSONResponse(error, response, null);
             return;
         }
-        var dataObj = JSON.parse(data),
-            objects =
-                commonUtils.getValueByJsonPath(dataObj, 'objects', [], false),
-            formattedObjs =  objects.map(function(object){
-                return object + 's';
-            });
-        commonUtils.handleJSONResponse(error,
-                response, { objects: formattedObjs});
+
+        commonUtils.handleJSONResponse(error, response, JSON.parse(data));
     });
 }
 
