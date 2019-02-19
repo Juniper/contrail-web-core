@@ -163,6 +163,20 @@ function getContrailServiceByApiServerType (apiServerType)
     return getContrailServiceByServiceType(serviceType);
 }
 
+function getServiceTypeByContrailService (contrailService)
+{
+    switch (contrailService) {
+    case global.CONTRAIL_SERVICE_TYPE_API_SERVER:
+        return global.label.VNCONFIG_API_SERVER;
+    case global.CONTRAIL_SERVICE_TYPE_OP_SERVER:
+        return global.label.OPS_API_SERVER;
+    case global.CONTRAIL_SERVICE_TYPE_DNS_SERVER:
+        return global.label.DNS_SERVER;
+    default:
+        return null;
+    }
+}
+
 function getServerTypeByServerName (serverName)
 {
     switch (serverName) {
@@ -397,7 +411,8 @@ function formatConfigData (data, serviceId, dataObjArr, serviceType)
         });
 
         dataObjArr.push({
-            apiServer: rest.getAPIServer({server: ipList[i], port: port}),
+            apiServer: rest.getAPIServer({server: ipList[i], port: port,
+                                          apiName: getServiceTypeByContrailService(serviceType)}),
             url: statusUrl,
             serviceType: serviceType
         });
