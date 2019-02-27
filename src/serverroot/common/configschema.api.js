@@ -7,6 +7,10 @@
  *     - Handler to fetch the json schema, list of objects and list of
  *     properties for an object
  */
+var global = require(process.mainModule.exports["corePath"] +
+                     '/src/serverroot/common/global');
+var messages = require(process.mainModule.exports["corePath"] +
+                       '/src/serverroot/common/messages')
 var commonUtils = require(process.mainModule.exports["corePath"] +
                           '/src/serverroot/utils/common.utils');
 var appErrors   = require(process.mainModule.exports["corePath"] +
@@ -103,19 +107,41 @@ function getPropertiesForObject (request, response, appData)
     var schemaDir = commonUtils.getValueByJsonPath(config,"jsonSchemaPath",
         defaultSchemaDir);
     var filePath = path.join(schemaDir, id + '-schema.json');
-    fs.readFile(filePath, 'utf8', function (error,data) {
-        if (error) {
-            console.log("Error getting properties for " + id);
-            commonUtils.handleJSONResponse(error, response, null);
-            return;
+    fs.exists(filePath, function (isExist) {
+        if (isExist) {
+            fs.readFile(filePath, 'utf8', function (error,data) {
+                if (error) {
+                    console.log("Error getting properties for " + id);
+                    var err = new appErrors.RESTServerError(messages.error.unexpected);
+                    err['custom'] = true;
+                    err['responseCode'] = global.HTTP_STATUS_INTERNAL_ERROR;
+                    commonUtils.handleJSONResponse(err, response, null);
+                    return;
+                }
+
+                var jsonObj = {};
+                try {
+                    jsonObj = JSON.parse(data);
+                } catch (e) {
+                    var err = new appErrors.RESTServerError(messages.error.unexpected);
+                    err['custom'] = true;
+                    err['responseCode'] = global.HTTP_STATUS_INTERNAL_ERROR;
+                    commonUtils.handleJSONResponse(err, response, null);
+                }
+
+                var objectProps = commonUtils.getValueByJsonPath(jsonObj,'properties;' + id + ";properties");
+                var properties = [];
+                for (key in objectProps) {
+                    properties.push(key);
+                }
+                commonUtils.handleJSONResponse(null, response, properties);
+            });
+        } else {
+            var err = new appErrors.RESTServerError(messages.error.unexpected);
+            err['custom'] = true;
+            err['responseCode'] = global.HTTP_STATUS_BAD_REQUEST;
+            commonUtils.handleJSONResponse(err, response, null);
         }
-        var jsonObj = JSON.parse(data);
-        var objectProps = commonUtils.getValueByJsonPath(jsonObj,'properties;' + id + ";properties");
-        var properties = [];
-        for (key in objectProps) {
-            properties.push(key);
-        }
-        commonUtils.handleJSONResponse(error, response, properties);
     });
 }
 
