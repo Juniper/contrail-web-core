@@ -427,8 +427,31 @@ define([
                     dis.val(ui.item.value);
                     dis.trigger('change');
                 })
-                .on('change', function(event){
-                    dis.val($(event.target).val());
+                .on("autocompletechange", function( event, ui ) {
+                    if (ui.item) {
+                        return;
+                    }
+
+                    if (config.onlyAllowListedValue) {
+                        var value = input.val();
+                        var hasMatch = formattedData.some(function (dataPoint) {
+                            return dataPoint && dataPoint.text === value;
+                        });
+
+                        if (!hasMatch) {
+                            var originalTitle = input.attr("title");
+                            input
+                                .val("")
+                                .attr("title", value + " didn't match any item")
+                                .tooltip("show");
+                            setTimeout(function() {
+                                input.tooltip("destroy").attr("title", originalTitle);
+                            }, 1500);
+                            return;
+                        }
+                    }
+
+                    dis.val(input.val());
                     dis.trigger('change');
                 });
 
