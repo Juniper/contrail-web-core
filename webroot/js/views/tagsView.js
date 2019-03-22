@@ -154,10 +154,7 @@ define([
         }
     });
     function tagsParser(result, tagName) {
-        var textValue, actValue, tagsArray = [];
-        if($.inArray(tagName, ctwc.FW_PREDEFINED_TAGS) !== -1){
-            tagsArray.push({'text':"None","value":"None"});
-        }
+        var actValue, tagsArray = [], sortedTagsArray;
         var pHashParam = getValueByJsonPath(layoutHandler.getURLHashObj(),"p");
         var isGlobal = false;
         if (pHashParam != null) {
@@ -205,7 +202,26 @@ define([
               }
           }
         }
-        return tagsArray;
+
+        sortedTagsArray = sortTagsByName(tagsArray);
+        if($.inArray(tagName, ctwc.FW_PREDEFINED_TAGS) !== -1){
+            sortedTagsArray.unshift({'text':"None","value":"None"});
+        }
+
+        return sortedTagsArray;
+    }
+
+    function sortTagsByName(tags) {
+        var sortedTags = _.sortBy(tags, function(tag) { return tag.text; });
+        var partitionResult = _.partition(sortedTags, isTagGlobal);
+        var globalTags = partitionResult[0];
+        var projectTags = partitionResult[1];
+
+        return [].concat(projectTags, globalTags);
+    }
+
+    function isTagGlobal(tag) {
+        return tag.text.indexOf("global:") === 0;
     }
 
     function getDataSourceForDropdown (tagName) {
