@@ -16,6 +16,54 @@
     </require>
 
     <item>
+        <url>/api/qe/query/export</url>
+        <method>get</method>
+        <timeout>300</timeout>
+        <feature>query-engine</feature>
+        <callback>qeapi.exportQueryResult</callback>
+        <reqdPackages>
+            <packages>
+                <package>ANALYTICSDB_ENABLE</package>
+            </packages>
+        </reqdPackages>
+    </item>
+    <item>
+        <url>/api/qe/query/queue</url>
+        <method>get</method>
+        <timeout>300</timeout>
+        <feature>query-engine</feature>
+        <callback>qeapi.getQueryQueue</callback>
+        <reqdPackages>
+            <packages>
+                <package>ANALYTICSDB_ENABLE</package>
+            </packages>
+        </reqdPackages>
+    </item>
+    <item>
+        <url>/api/qe/query/chart-groups</url>
+        <method>get</method>
+        <timeout>300</timeout>
+        <feature>query-engine</feature>
+        <callback>qeapi.getChartGroups</callback>
+        <reqdPackages>
+            <packages>
+                <package>ANALYTICSDB_ENABLE</package>
+            </packages>
+        </reqdPackages>
+    </item>
+    <item>
+        <url>/api/qe/query/chart-data</url>
+        <method>get</method>
+        <timeout>300</timeout>
+        <feature>query-engine</feature>
+        <callback>qeapi.getChartData</callback>
+        <reqdPackages>
+            <packages>
+                <package>ANALYTICSDB_ENABLE</package>
+            </packages>
+        </reqdPackages>
+    </item>
+    <item>
         <url>/api/qe/query/:table?</url>
         <method>get</method>
         <timeout>600</timeout>
@@ -66,47 +114,10 @@
         </reqdPackages>
     </item>
     <item>
-        <url>/api/qe/query/export</url>
-        <method>get</method>
-        <timeout>300</timeout>
-        <feature>query-engine</feature>
-        <callback>qeapi.exportQueryResult</callback>
-        <reqdPackages>
-            <packages>
-                <package>ANALYTICSDB_ENABLE</package>
-            </packages>
-        </reqdPackages>
-    </item>
-    <item>
         <url>/api/qe/query/queue</url>
-        <method>get</method>
-        <timeout>300</timeout>
+        <method>delete</method>
         <feature>query-engine</feature>
-        <callback>qeapi.getQueryQueue</callback>
-        <reqdPackages>
-            <packages>
-                <package>ANALYTICSDB_ENABLE</package>
-            </packages>
-        </reqdPackages>
-    </item>
-    <item>
-        <url>/api/qe/query/chart-groups</url>
-        <method>get</method>
-        <timeout>300</timeout>
-        <feature>query-engine</feature>
-        <callback>qeapi.getChartGroups</callback>
-        <reqdPackages>
-            <packages>
-                <package>ANALYTICSDB_ENABLE</package>
-            </packages>
-        </reqdPackages>
-    </item>
-    <item>
-        <url>/api/qe/query/chart-data</url>
-        <method>get</method>
-        <timeout>300</timeout>
-        <feature>query-engine</feature>
-        <callback>qeapi.getChartData</callback>
+        <callback>qeapi.deleteQueryCache4Queue</callback>
         <reqdPackages>
             <packages>
                 <package>ANALYTICSDB_ENABLE</package>
@@ -118,17 +129,6 @@
         <method>delete</method>
         <feature>query-engine</feature>
         <callback>qeapi.deleteQueryCache4Ids</callback>
-        <reqdPackages>
-            <packages>
-                <package>ANALYTICSDB_ENABLE</package>
-            </packages>
-        </reqdPackages>
-    </item>
-    <item>
-        <url>/api/qe/query/queue</url>
-        <method>delete</method>
-        <feature>query-engine</feature>
-        <callback>qeapi.deleteQueryCache4Queue</callback>
         <reqdPackages>
             <packages>
                 <package>ANALYTICSDB_ENABLE</package>
