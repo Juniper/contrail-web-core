@@ -12,34 +12,6 @@
     </require>
 
     <item>
-        <url>/api/qe/query/:table?</url>
-        <method>get</method>
-        <timeout>600</timeout>
-        <feature>query-engine</feature>
-        <callback>qeapi.runGETQuery</callback>
-    </item>
-    <item>
-        <url>/api/qe/query/:table?</url>
-        <method>post</method>
-        <timeout>600</timeout>
-        <feature>query-engine</feature>
-        <callback>qeapi.runPOSTQuery</callback>
-    </item>
-    <item>
-        <url>/api/analytics/query</url>
-        <method>post</method>
-        <timeout>600</timeout>
-        <feature>query-engine</feature>
-        <callback>qeapi.runAnalyticsQuery</callback>
-    </item>
-    <item>
-        <url>/api/qe/get-query</url>
-        <method>post</method>
-        <timeout>600</timeout>
-        <feature>query-engine</feature>
-        <callback>qeapi.getQueryData</callback>
-    </item>
-    <item>
         <url>/api/qe/query/export</url>
         <method>get</method>
         <timeout>300</timeout>
@@ -68,16 +40,44 @@
         <callback>qeapi.getChartData</callback>
     </item>
     <item>
-        <url>/api/qe/query</url>
-        <method>delete</method>
+        <url>/api/qe/query/:table?</url>
+        <method>get</method>
+        <timeout>600</timeout>
         <feature>query-engine</feature>
-        <callback>qeapi.deleteQueryCache4Ids</callback>
+        <callback>qeapi.runGETQuery</callback>
+    </item>
+    <item>
+        <url>/api/qe/query/:table?</url>
+        <method>post</method>
+        <timeout>600</timeout>
+        <feature>query-engine</feature>
+        <callback>qeapi.runPOSTQuery</callback>
+    </item>
+    <item>
+        <url>/api/analytics/query</url>
+        <method>post</method>
+        <timeout>600</timeout>
+        <feature>query-engine</feature>
+        <callback>qeapi.runAnalyticsQuery</callback>
+    </item>
+    <item>
+        <url>/api/qe/get-query</url>
+        <method>post</method>
+        <timeout>600</timeout>
+        <feature>query-engine</feature>
+        <callback>qeapi.getQueryData</callback>
     </item>
     <item>
         <url>/api/qe/query/queue</url>
         <method>delete</method>
         <feature>query-engine</feature>
         <callback>qeapi.deleteQueryCache4Queue</callback>
+    </item>
+    <item>
+        <url>/api/qe/query</url>
+        <method>delete</method>
+        <feature>query-engine</feature>
+        <callback>qeapi.deleteQueryCache4Ids</callback>
     </item>
     <item>
         <url>/api/qe/tables</url>
