@@ -1006,7 +1006,7 @@ define([
                             dataView.setFilter(searchFilter);
                             dataView.refresh();
                             if (dataView.getFilteredItems().length == 0) {
-                                gridContainer.data('contrailGrid').showGridMessage('empty', 'No records found for "' + searchValue + '"')
+                                gridContainer.data('contrailGrid').showGridMessage('empty', 'No records found for "' + _.escape(searchValue) + '"')
                             }
                             gridContainer.find('.slick-row-detail').remove();
                             gridContainer.find('.input-searchbox input').focus();
