@@ -362,7 +362,7 @@ function prepareRefUpdates (appData, dataObjArr, type, key, ref,
     var refFQName = _.get(ref, 'to', '');
     var refType = _.replace(key, '_refs', '');
     var refAttr = _.get(ref, 'attr', null);
-    refType =  _.replace(refType, '_', '-');
+    refType =  _.replace(refType, /_/g, '-');
     var putData = {
             'type': type,
             'uuid': uuid,
@@ -383,33 +383,54 @@ function prepareRefUpdates (appData, dataObjArr, type, key, ref,
 function setRefUpdates (appData, refsDeltaArrayMap, type, uuid, delta,
         configData, callback)
 {
-    var dataObjArr = [];
+    var dataObjArrs = {
+        deletedList: [],
+        addedList: []
+    };
     _.forIn(refsDeltaArrayMap, function(value, key) {
         var addedList = _.get(value, 'addedList', []);
         var deletedList = _.get(value, 'deletedList', []);
         _.forEach(addedList, function(ref) {
-            prepareRefUpdates(appData, dataObjArr, type, key,
+            prepareRefUpdates(appData, dataObjArrs.addedList, type, key,
                     ref, 'ADD', uuid);
         });
         _.forEach(deletedList, function(ref) {
-            prepareRefUpdates(appData, dataObjArr, type, key,
+            prepareRefUpdates(appData, dataObjArrs.deletedList, type, key,
                     ref, 'DELETE', uuid);
         });
     });
-    if(!dataObjArr.length) {
+    if(!dataObjArrs.deletedList.length && !dataObjArrs.addedList.length) {
         callback(null, delta, configData);
         return;
     }
-    async.map(dataObjArr,
-            commonUtils.getServerResponseByRestApi(configApiServer, true),
-            function(error, results) {
-                if(error) {
-                    logutils.logger.info("setRefUpdates: " + error);
+
+    async.waterfall([
+        function (callback) {
+            async.map(
+                dataObjArrs.deletedList,
+                commonUtils.getServerResponseByRestApi(configApiServer, true),
+                function (error, results) {
+                    callback(error, results);
                 }
-                callback(null, delta, configData);
-                return;
+            );
+        },
+        function (deleteResults, callback) {
+            async.map(
+                dataObjArrs.addedList,
+                commonUtils.getServerResponseByRestApi(configApiServer, true),
+                function (error, results) {
+                    callback(error, (deleteResults || []).concat(results));
+                }
+            );
+        }],
+        function(error, results) {
+            if(error) {
+                logutils.logger.info("setRefUpdates: " + error);
             }
-        );
+            callback(null, delta, configData);
+            return;
+        }
+    );
 }
 
 exports.listProjectsAPIServer = listProjectsAPIServer;
