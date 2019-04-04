@@ -231,7 +231,7 @@
                     "minimum": 1, 
                     "required": "required", 
                     "type": "number", 
-                    "maximum": 65534, 
+                    "maximum": 65535, 
                     "description": "16 bit BGP Autonomous System number for the cluster."
                 }, 
                 "bgp_router_refs": {
