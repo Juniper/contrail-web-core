@@ -133,6 +133,13 @@ function initializeAppConfig (appObj)
         cookie: cookieObj
         }));
         app.use(express.methodOverride());
+        app.use(function (req, res, next) {
+            if (req.method === "GET") {
+                delete req.headers["content-type"];
+            }
+
+            next();
+        });
         app.use(express.bodyParser());
         app.use(app.router);
         // Catch-all error handler
