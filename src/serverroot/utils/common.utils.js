@@ -1470,6 +1470,7 @@ function getWebServerInfo (req, res, appData)
     }
     serverObj['currentRegionName'] = authApi.getCurrentRegion(req);
     serverObj['environmentVariables'] = getRequiredEnvironmentVariables();
+    serverObj['isIntrospectSSLEnabled'] = getValueByJsonPath(config, 'introspect;ssl;enabled', false);
     var pkgList = process.mainModule.exports['pkgList'];
     var pkgLen = pkgList.length;
     var activePkgs = [];
