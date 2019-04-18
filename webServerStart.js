@@ -29,6 +29,7 @@ var express = require('express')
     , fs = require("fs")
     , http = require('http')
     , https = require("https")
+    , crypto = require("crypto")
     , underscore = require('underscore')
     , cluster = require('cluster')
     , axon = require('axon')
@@ -88,12 +89,9 @@ var httpsApp = express(),
 
 function initializeAppConfig (appObj)
 {
-    var crypto = require("crypto");
     var app = appObj.app;
     var port = appObj.port;
-    var buff = crypto.randomBytes(secretKeyLen);
-    var secretKey =
-            buff.toString('base64').replace(/\//g,'_').replace(/\+/g,'-');
+    var secretKey = appObj.session_secret;
     app.set('port', process.env.PORT || port);
     app.use(express.cookieParser());
     var maxAgeTime =
@@ -163,15 +161,15 @@ function registerStaticFiles (app)
     }
 }
 
-function initAppConfig ()
+function initAppConfig (sessionSecret)
 {
     if (false == insecureAccessFlag) {
         httpsApp.configure(function () {
-            initializeAppConfig({app:httpsApp, port:httpsPort});
+            initializeAppConfig({app:httpsApp, port:httpsPort, session_secret: sessionSecret});
         });
     } else {
         httpApp.configure(function () {
-            initializeAppConfig({app:httpApp, port:httpPort});
+            initializeAppConfig({app:httpApp, port:httpPort, session_secret: sessionSecret});
         });
     }
 }
@@ -342,6 +340,7 @@ function startWebCluster ()
             logutils.logger.info("Starting Contrail UI in clustered mode.");
             bindProducerSocket();
             addProducerSockListener();
+            generateSessionSecretInRedis();
             for (var i = 0; i < nodeWorkerCount; i += 1) {
                 var worker = cluster.fork();
                 workers[i] = worker;
@@ -364,8 +363,8 @@ function startWebCluster ()
         });
         doPreStartServer(false);
     } else {
-        clusterWorkerInit(function(error) {
-            initAppConfig();
+        clusterWorkerInit(function(sessionSecret) {
+            initAppConfig(sessionSecret);
             var jsonDiff = require('./src/serverroot/common/jsondiff');
             var redisSub = require('./src/serverroot/web/core/redisSub');
             jsonDiff.doFeatureJsonDiffParamsInit();
@@ -381,6 +380,32 @@ function startWebCluster ()
             startServer();
         });
     }
+}
+
+function generateSessionSecretInRedis() {
+    getRedisSessionStore(
+        function (redisClient) {
+            var buff = crypto.randomBytes(secretKeyLen);
+            var secretKey =
+                    buff.toString('base64').replace(/\//g,'_').replace(/\+/g,'-');
+            redisClient.setnx(global.STR_REDIS_SESSION_SECRET_KEY, secretKey, function (err) {
+                if (err) {
+                    logutils.logger.error("Unable to generate session secret in Redis:", err);
+    
+                    throw err;
+                }
+            });
+        }
+    );
+}
+
+function getRedisSessionStore(cb) {
+    redisUtils.createRedisClientAndWait(
+        redisPort,
+        redisIP,
+        global.WEBUI_SESSION_REDIS_DB,
+        cb
+    );
 }
 
 function doPreStartServer (isRetry)
@@ -624,7 +649,17 @@ function clusterWorkerInit (callback)
                                     global.WEBUI_DFLT_REDIS_DB,
                                     function(redisClient) {
         exports.redisClient = redisClient;
-        callback();
+
+        getRedisSessionStore(function (redisSessionStore) {
+            redisSessionStore.get(global.STR_REDIS_SESSION_SECRET_KEY, function(err, sessionSecret) {
+                if (err) {
+                    logutils.logger.warn("Retrieve session secret from store failed");
+                    throw err;
+                }
+
+                callback(sessionSecret);
+            });
+        });
     });
 }
 
