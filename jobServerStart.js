@@ -192,7 +192,7 @@ function startJobCluster ()
     }
 }
 
-function clusterWorkerInit (callback)
+function clusterMasterInit (callback)
 {
     var purgeRedisClient = redisUtils.createRedisClient();
     async.parallel([
@@ -207,7 +207,7 @@ function clusterWorkerInit (callback)
     });
 }
 
-function clusterMasterInit(callback)
+function clusterWorkerInit(callback)
 {
     callback();
 }
