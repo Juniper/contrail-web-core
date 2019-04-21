@@ -306,6 +306,9 @@ function getJSONDiffByConfigUrl (url, appData, newJson, callback, uuid)
             _.forEach(optFields, function(optField) {
                 if(_.endsWith(optField, "_refs")
                         && _.indexOf(exceptionList, optField) === -1){
+                    if (!(optField in configData[type]) || !(optField in newJson[type])) {
+                        return;
+                    }
                     var oldRefs = _.get(configData, type + '.' + optField, []);
                     var newRefs = _.get(newJson, type + '.' + optField, []);
                     var refDelta  = getConfigJSONArrayDelta(type, oldRefs, newRefs);
