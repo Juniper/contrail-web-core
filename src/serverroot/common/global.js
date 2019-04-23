@@ -139,6 +139,7 @@ global.FLOW_TIME_SLICE_FOR_1_HR = 3600000;
 global.FLOW_TIME_SLICE_FOR_60_MIN = 60000;
 global.MAX_AGE_SESSION_ID = 1 * 60 * 60 * 1000;
 /* 24 Hrs, In Milliseconds */
+global.STR_REDIS_SESSION_SECRET_KEY = "sessSecret";
 global.STR_REDIS_STORE_SESSION_ID_PREFIX = 'mySession:';
 global.STR_SESSION_AUTHENTICATED = 'sessAuthenticated';
 global.STR_AUTH_KEY = 'authenticationKey';
