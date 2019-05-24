@@ -283,7 +283,7 @@ function getQueryOptions(queryReqObj) {
 function getQueryDataByCacheOrServer (req, queryJSON, appData, callback,
                                       asyncHeader)
 {
-    var isCachedData = req.query['takeCachedData'];
+    var isCachedData = (req != null) ? req.query['takeCachedData'] : false;
     if ('true' == isCachedData) {
         qUtils.getQueryDataByCache(queryJSON, appData, callback);
     } else {
