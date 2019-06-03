@@ -347,26 +347,27 @@ function startWebCluster ()
             logutils.logger.info("Starting Contrail UI in clustered mode.");
             bindProducerSocket();
             addProducerSockListener();
-            generateSessionSecretInRedis();
-            for (var i = 0; i < nodeWorkerCount; i += 1) {
-                var worker = cluster.fork();
-                workers[i] = worker;
-            }
-
-            clusterUtils.addClusterEventListener(messageHandler);
-
-            // Trick by Ian Young to make cluster and supervisor play nicely together.
-            // https://github.com/isaacs/node-supervisor/issues/40#issuecomment-4330946
-            if (process.env.NODE_HOT_RELOAD === 1) {
-                var signals = ['SIGINT', 'SIGTERM', 'SIGQUIT'];
-                underscore.each(signals, function (signal) {
-                    process.on(signal, function () {
-                        underscore.each(cluster.workers, function (worker) {
-                            worker.destroy();
+            generateSessionSecretInRedis(function() {
+                for (var i = 0; i < nodeWorkerCount; i += 1) {
+                    var worker = cluster.fork();
+                    workers[i] = worker;
+                }
+    
+                clusterUtils.addClusterEventListener(messageHandler);
+    
+                // Trick by Ian Young to make cluster and supervisor play nicely together.
+                // https://github.com/isaacs/node-supervisor/issues/40#issuecomment-4330946
+                if (process.env.NODE_HOT_RELOAD === 1) {
+                    var signals = ['SIGINT', 'SIGTERM', 'SIGQUIT'];
+                    underscore.each(signals, function (signal) {
+                        process.on(signal, function () {
+                            underscore.each(cluster.workers, function (worker) {
+                                worker.destroy();
+                            });
                         });
                     });
-                });
-            }
+                }
+            });
         });
         doPreStartServer(false);
     } else {
@@ -389,7 +390,7 @@ function startWebCluster ()
     }
 }
 
-function generateSessionSecretInRedis() {
+function generateSessionSecretInRedis(cb) {
     getRedisSessionStore(
         function (redisClient) {
             var buff = crypto.randomBytes(secretKeyLen);
@@ -400,6 +401,8 @@ function generateSessionSecretInRedis() {
                     logutils.logger.error("Unable to generate session secret in Redis:", err);
     
                     throw err;
+                } else {
+                    cb();
                 }
             });
         }
