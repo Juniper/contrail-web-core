@@ -158,12 +158,30 @@ function startServers ()
 
 function jobServerPurgeAndStart (redisClient, callback)
 {
-    var redisDBs = [global.WEBUI_SESSION_REDIS_DB, global.WEBUI_DFLT_REDIS_DB,
-        global.QE_DFLT_REDIS_DB, global.SM_DFLT_REDIS_DB];
-    async.map(redisDBs, commonUtils.flushRedisDB, function() {
-        /* Already logged */
-        callback();
-    });
+    var redisDBs = [global.WEBUI_DFLT_REDIS_DB, global.QE_DFLT_REDIS_DB, global.SM_DFLT_REDIS_DB];
+
+    async.parallel(
+        [
+            function removeStaleSessions(cb) {
+                redisUtils.selectRedisDB(global.WEBUI_SESSION_REDIS_DB, redisClient, function (redisSessionDB) {
+                    redisSessionDB.keys(global.STR_REDIS_STORE_SESSION_ID_PREFIX + ':*', function(err, keys) {
+                        if (err) {
+                            throw err;
+                        }
+
+                        async.map(keys, redisClient.del, cb);
+                    });
+                });
+            },
+            function flushDBs(cb) {
+                async.map(redisDBs, commonUtils.flushRedisDB, cb);
+            }
+        ],
+        function () {
+            /* Already logged */
+            callback();
+        }
+    )
 }
 
 function messageHandler (msg)
