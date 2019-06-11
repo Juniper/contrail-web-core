@@ -28,142 +28,164 @@ var server_ip = (config.redis_server_ip) ?
     config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
 
 function loadJobServer () {
-jobsUtils.jobKueEventEmitter.on('kueReady', function() {
-    /* Now start real server processing */
-    if (false == process.kueReinitReqd) {
-        return;
-    }
-    var purgeRedisClient = redisUtils.createRedisClient();//createDefRedisClientAndWait(function(purgeRedisClient) {
-    jobServerPurgeAndStart(purgeRedisClient, function() {
-        startServers();
-        process.kueReinitReqd = false;
-    });
-});
-
-var axon = require('axon')
-    , assert = require('assert')
-    , redisPub = require('./src/serverroot/jobs/core/redisPub')
-    , kue = require('kue')
-    , logutils = require('./src/serverroot/utils/log.utils')
-    , contrailServ = require('./src/serverroot/common/contrailservice.api')
-    , fs = require('fs')
-    , jobsApi = require('./src/serverroot/jobs/core/jobs.api')
-    , jsonPath = require('JSONPath').eval;
-
-var hostName = config.jobServer.server_ip
-    , port = config.jobServer.server_port;
-
-var workerSock = axon.socket('pull');
-var myIdentity = global.service.MIDDLEWARE;
-var discServEnable = ((null != config.discoveryService) &&
-                      (null != config.discoveryService.enable)) ?
-                      config.discoveryService.enable : true;
-
-var pkgList = commonUtils.mergeAllPackageList(global.service.MIDDLEWARE);
-assert(pkgList);
-exports.myIdentity = myIdentity;
-exports.discServEnable = discServEnable;
-exports.pkgList = pkgList;
-
-/* Function: processMsg
- Handler for message processing for messages coming from main Server
- */
-processMsg = function (msg) {
-    jobsApi.createJobByMsgObj(msg);
-}
-
-/* Function: connectToMainServer
- This function is used to connect to main Server on host and port
- defined in config.global.js
- */
-var resetDone = false;
-connectToMainServer = function () {
-    if (true == resetDone) {
-        return;
-    }
-    var connectURL = 'tcp://' + hostName + ":" + port;
-    workerSock.connect(connectURL);
-    logutils.logger.info('Job Server connected to port ' + port);
-    resetDone = true;
-    workerSock.on('message', function (msg) {
-        /* Now based on the message type, act */
-        processMsg(msg);
-    });
-}
-
-kueJobListen = function() {
-    /* kue UI listening port */
-    var kuePort = config.kue.ui_port || 3002;
-    kue.app.listen(kuePort, '127.0.0.1');
-}
-
-function registerTojobListenerEvent()
-{
-    var pkgDir;
-    var pkgListLen = pkgList.length;
-    for (var i = 0; i < pkgListLen; i++) {
-        if (pkgList[i]['jobProcess.xml']) {
-            pkgDir = commonUtils.getPkgPathByPkgName(pkgList[i]['pkgName']);
-            var jobListLen = pkgList[i]['jobProcess.xml'].length;
-            for (var j = 0; j < jobListLen; j++) {
-                logutils.logger.debug("Registering jobListeners: " +
-                                      pkgDir + pkgList[i]['jobProcess.xml'][j]);
-                require(pkgDir +
-                        pkgList[i]['jobProcess.xml'][j]).addjobListenerEvent();
-                require(pkgDir + pkgList[i]['jobProcess.xml'][j]).jobsProcess();
-            }
+    jobsUtils.jobKueEventEmitter.on('kueReady', function() {
+        /* Now start real server processing */
+        if (false == process.kueReinitReqd) {
+            return;
         }
-    }
-}
-
-/* Function: doFeatureTaskInit
-   This function is used to do all initializations of all the feature packages
-   installed and if is set as enabled in config file
- */
-function doFeatureTaskInit ()
-{
-    var featurePkgList = config.featurePkg;
-    for (key in featurePkgList) {
-        if ((config.featurePkg[key]) && (config.featurePkg[key]['path']) &&
-            ((null == config.featurePkg[key]['enable']) ||
-             (true == config.featurePkg[key]['enable'])) &&
-            (true == fs.existsSync(config.featurePkg[key]['path'] +
-                                   '/webroot/common/api/init.api.js'))) {
-            var initApi = require(config.featurePkg[key]['path'] +
-                                   '/webroot/common/api/init.api.js');
-            if (initApi.featureInit) {
-                initApi.featureInit();
-            }
-        }
-    }
-}
-
-function startServers ()
-{
-    kueJobListen();
-    registerTojobListenerEvent();
-    jobsApi.doCheckJobsProcess();
-    contrailServ.getContrailServices();
-    contrailServ.startWatchContrailServiceRetryList();
-    redisPub.createRedisPubClient(function() {
-        redisUtils.createDefRedisClientAndWait(function(redisClient) {
-            exports.redisClient = redisClient;
-            connectToMainServer();
-            doFeatureTaskInit();
-            process.send("INIT IS DONE");
+        var purgeRedisClient = redisUtils.createRedisClient();//createDefRedisClientAndWait(function(purgeRedisClient) {
+        jobServerPurgeAndStart(purgeRedisClient, function() {
+            startServers();
+            process.kueReinitReqd = false;
         });
     });
-}
+
+    var axon = require('axon')
+        , assert = require('assert')
+        , redisPub = require('./src/serverroot/jobs/core/redisPub')
+        , kue = require('kue')
+        , logutils = require('./src/serverroot/utils/log.utils')
+        , contrailServ = require('./src/serverroot/common/contrailservice.api')
+        , fs = require('fs')
+        , jobsApi = require('./src/serverroot/jobs/core/jobs.api')
+        , jsonPath = require('JSONPath').eval;
+
+    var hostName = config.jobServer.server_ip
+        , port = config.jobServer.server_port;
+
+    var workerSock = axon.socket('pull');
+    var myIdentity = global.service.MIDDLEWARE;
+    var discServEnable = ((null != config.discoveryService) &&
+                        (null != config.discoveryService.enable)) ?
+                        config.discoveryService.enable : true;
+
+    var pkgList = commonUtils.mergeAllPackageList(global.service.MIDDLEWARE);
+    assert(pkgList);
+    exports.myIdentity = myIdentity;
+    exports.discServEnable = discServEnable;
+    exports.pkgList = pkgList;
+
+    /* Function: processMsg
+    Handler for message processing for messages coming from main Server
+    */
+    processMsg = function (msg) {
+        jobsApi.createJobByMsgObj(msg);
+    }
+
+    /* Function: connectToMainServer
+    This function is used to connect to main Server on host and port
+    defined in config.global.js
+    */
+    var resetDone = false;
+    connectToMainServer = function () {
+        if (true == resetDone) {
+            return;
+        }
+        var connectURL = 'tcp://' + hostName + ":" + port;
+        workerSock.connect(connectURL);
+        logutils.logger.info('Job Server connected to port ' + port);
+        resetDone = true;
+        workerSock.on('message', function (msg) {
+            /* Now based on the message type, act */
+            processMsg(msg);
+        });
+    }
+
+    kueJobListen = function() {
+        /* kue UI listening port */
+        var kuePort = config.kue.ui_port || 3002;
+        kue.app.listen(kuePort, '127.0.0.1');
+    }
+
+    function registerTojobListenerEvent()
+    {
+        var pkgDir;
+        var pkgListLen = pkgList.length;
+        for (var i = 0; i < pkgListLen; i++) {
+            if (pkgList[i]['jobProcess.xml']) {
+                pkgDir = commonUtils.getPkgPathByPkgName(pkgList[i]['pkgName']);
+                var jobListLen = pkgList[i]['jobProcess.xml'].length;
+                for (var j = 0; j < jobListLen; j++) {
+                    logutils.logger.debug("Registering jobListeners: " +
+                                        pkgDir + pkgList[i]['jobProcess.xml'][j]);
+                    require(pkgDir +
+                            pkgList[i]['jobProcess.xml'][j]).addjobListenerEvent();
+                    require(pkgDir + pkgList[i]['jobProcess.xml'][j]).jobsProcess();
+                }
+            }
+        }
+    }
+
+    /* Function: doFeatureTaskInit
+    This function is used to do all initializations of all the feature packages
+    installed and if is set as enabled in config file
+    */
+    function doFeatureTaskInit ()
+    {
+        var featurePkgList = config.featurePkg;
+        for (key in featurePkgList) {
+            if ((config.featurePkg[key]) && (config.featurePkg[key]['path']) &&
+                ((null == config.featurePkg[key]['enable']) ||
+                (true == config.featurePkg[key]['enable'])) &&
+                (true == fs.existsSync(config.featurePkg[key]['path'] +
+                                    '/webroot/common/api/init.api.js'))) {
+                var initApi = require(config.featurePkg[key]['path'] +
+                                    '/webroot/common/api/init.api.js');
+                if (initApi.featureInit) {
+                    initApi.featureInit();
+                }
+            }
+        }
+    }
+
+    function startServers ()
+    {
+        kueJobListen();
+        registerTojobListenerEvent();
+        jobsApi.doCheckJobsProcess();
+        contrailServ.getContrailServices();
+        contrailServ.startWatchContrailServiceRetryList();
+        redisPub.createRedisPubClient(function() {
+            redisUtils.createDefRedisClientAndWait(function(redisClient) {
+                exports.redisClient = redisClient;
+                connectToMainServer();
+                doFeatureTaskInit();
+                process.send("INIT IS DONE");
+            });
+        });
+    }
 }
 
 function jobServerPurgeAndStart (redisClient, callback)
 {
-    var redisDBs = [global.WEBUI_SESSION_REDIS_DB, global.WEBUI_DFLT_REDIS_DB,
-        global.QE_DFLT_REDIS_DB, global.SM_DFLT_REDIS_DB];
-    async.map(redisDBs, commonUtils.flushRedisDB, function() {
-        /* Already logged */
-        callback();
-    });
+    var redisDBs = [global.WEBUI_DFLT_REDIS_DB, global.QE_DFLT_REDIS_DB, global.SM_DFLT_REDIS_DB];
+
+    async.parallel(
+        [
+            function removeStaleSessions(cb) {
+                redisClient.select(global.WEBUI_SESSION_REDIS_DB, function (err, redisSessionDB) {
+                    if (err) {
+                        throw err;
+                    }
+
+                    redisSessionDB.keys(global.STR_REDIS_STORE_SESSION_ID_PREFIX + ':*', function(err, keys) {
+                        if (err) {
+                            throw err;
+                        }
+
+                        async.map(keys, redisClient.del, cb);
+                    });
+                });
+            },
+            function flushDBs(cb) {
+                async.map(redisDBs, commonUtils.flushRedisDB, cb);
+            }
+        ],
+        function () {
+            /* Already logged */
+            callback();
+        }
+    )
 }
 
 function messageHandler (msg)
