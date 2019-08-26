@@ -303,16 +303,16 @@ function handleJSONResponse (error, res, json, isJson)
             json["data"] = uiResp;
         }
         if ((null == isJson) || (true == isJson)) {
-            res.json(global.HTTP_STATUS_RESP_OK, json);
+            res.status(global.HTTP_STATUS_RESP_OK).json(json);
         } else {
-            res.send(global.HTTP_STATUS_RESP_OK, json);
+            res.status(global.HTTP_STATUS_RESP_OK).send(json);
         }
 	} else {
 		logutils.logger.error(error.stack);
 		if (error.custom) {
-			res.send(error.responseCode, error.message);
+			res.status(error.responseCode).send(error.message);
 		} else {
-			res.send(error.responseCode, messages.error.unexpected);
+			res.status(error.responseCode).send(messages.error.unexpected);
 		}
 	}
 };
@@ -337,9 +337,9 @@ function handleResponse (error, res, data)
 	} else {
 		logutils.logger.error(error.stack);
 		if (error.custom) {
-			res.send(error.responseCode, error.message);
+			res.status(error.responseCode).send(error.message);
 		} else {
-			res.send(error.responseCode, messages.error.unexpected);
+			res.status(error.responseCode).send(messages.error.unexpected);
 		}
 	}
 };
@@ -708,7 +708,7 @@ function upload (req, res, data)
 
 	fs.writeFile(filePath, data, function (err) {
 		if (err) {
-			res.send(err.message);
+			res.status(500).send(err.message);
 		}
 	});
 }
@@ -1281,7 +1281,7 @@ function redirectToURL(req, res, redURL)
        if (null == userAgent) {
            /* We must not come here */
            logutils.logger.error("We did not find user-agent in req header");
-           res.send(307, '');
+           res.status(307).send('');
            return;
        }
        if ((-1 != userAgent.indexOf('MSIE')) ||
@@ -1290,13 +1290,13 @@ function redirectToURL(req, res, redURL)
            /* In IE/Edge Browser, response code 307, does not lead the browser to
             * redirect to certain URL, so sending 200 responseCode
             */
-           res.send(200, '');
+           res.status(200).send('');
        } else {
-           res.send(307, '');
+           res.status(307).send('');
        }
     } else {
        if ("/" == redURL) {
-            res.sendfile('webroot/html/dashboard.html');
+            res.sendFile(path.join(process.mainModule.exports["corePath"], 'webroot/html/dashboard.html'));
             return;
        } 
        res.redirect(302, redURL);

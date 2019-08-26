@@ -68,31 +68,10 @@ function getRoleValueByString (roleStr)
     role:  role specified in string format, 
             ex: admin,user
  */
-function setFeatureByURL (url, method, routes, featureStr)
+function setFeatureByURL (url, method, featureStr)
 {
-  var routesObj = [];
-  if (method == 'get') {
-    routesObj = routes['get'];
-  } else if (method == 'put') {
-    routesObj = routes['put'];
-  } else if (method == 'delete') {
-    routesObj = routes['delete'];
-  } else if (method == 'post') {
-    routesObj = routes['post'];
-  } else {
-    assert(0);
-  }
-
-  var len = routesObj.length;
-  for (var i = 0; i < len; i++) {
-    if (url == routesObj[i]['path']) {
-      /* Set the role now against this regexp-path */
-      var obj = routesObj[i]['regexp'];
-      var key = method + ':' + obj;
-      userFeatureMap[key] = featureStr;
-      break;
-    }
-  }
+  var key = method + ':' + url;
+  userFeatureMap[key] = featureStr;
 }
 
 /* Function: getRoleByURLRegexp
@@ -110,7 +89,8 @@ function getRoleByURLRegexp (urlRegexp)
  */
 function getFeatureByReq (req)
 {
-  var key = req.route.method + ':' + req.route.regexp;
+  var key = req.method.toLowerCase() + ':' + req.route.path;
+
   return userFeatureMap[key];
 }
 
