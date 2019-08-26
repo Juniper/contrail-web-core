@@ -24,7 +24,7 @@ function getTenantIdByReqCookie (req)
         var ajaxCall = req.headers['x-requested-with'];
         if (ajaxCall == 'XMLHttpRequest') {
            req.res.setHeader('X-Redirect-Url','/logout');
-           req.res.send(307,'');
+           req.res.status(307).send('');
         } else {
            req.res.redirect('/logout');
         }
