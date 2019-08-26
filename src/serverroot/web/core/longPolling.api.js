@@ -94,9 +94,9 @@ function triggerResponse ()
     }
     var data = resCtx.data;
     if (resCtx.isJson) {
-      resCtx.res.send(resCtx.statusCode, JSON.parse(data));
+      resCtx.res.status(resCtx.statusCode).send(JSON.parse(data));
     } else {
-      resCtx.res.send(resCtx.statusCode, data);
+      resCtx.res.status(resCtx.statusCode).send(data);
     }
     readyQ[i] = null;
   }

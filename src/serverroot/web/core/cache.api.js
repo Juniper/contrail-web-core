@@ -392,7 +392,7 @@ function handleJSONResponse(error, req, res, jsonStr)
 		longPoll.insertResToReadyQ(res, jsonStr, global.HTTP_STATUS_RESP_OK, 1);
 	} else {
 		logutils.logger.debug(error.stack);
-		res.send(error.responseCode, error.message);
+		res.status(error.responseCode).send(error.message);
 	}
 }
 
