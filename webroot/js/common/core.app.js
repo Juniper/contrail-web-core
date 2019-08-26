@@ -58,7 +58,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         //'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
         //'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.9.1.min',
         'jquery'                      : coreWebDir + '/assets/jquery/js/jquery.min',
-        'lodashv4'                    : coreWebDir + '/assets/lodash-v4.17.2/js/lodash',
+        'lodashv4'                    : coreWebDir + '/assets/lodash-v4.17.12/js/lodash.min',
         'd3v4'                        : coreWebDir + '/assets/d3-v4.4.3/js/d3.min',
         'contrail-load'               : coreWebDir + '/js/contrail-load',
         'vis'                         : coreWebDir + '/assets/vis-v4.9.0/js/vis.min',
@@ -1218,7 +1218,7 @@ if (typeof document !== 'undefined' && document) {
                             if (globalObj['webServerInfo'] != null && globalObj['webServerInfo']['loggedInOrchestrationMode'] != null)
                                 xhr.setRequestHeader("x-orchestrationmode", globalObj['webServerInfo']['loggedInOrchestrationMode']);
                             xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-                            xhr.setRequestHeader("X-CSRF-Token", globalObj['webServerInfo']['_csrf']);
+                            xhr.setRequestHeader("x-csrf-token", globalObj['webServerInfo']['_csrf']);
                         }
                     });
                     globalObj['webServerInfo'] = loadUtils.parseWebServerInfo(response);
@@ -1503,7 +1503,9 @@ if (typeof document !== 'undefined' && document) {
                     if (globalObj['webServerInfo'] != null && globalObj['webServerInfo']['loggedInOrchestrationMode'] != null)
                         xhr.setRequestHeader("x-orchestrationmode", globalObj['webServerInfo']['loggedInOrchestrationMode']);
                     xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-                    xhr.setRequestHeader("X-CSRF-Token", loadUtils.getCookie('_csrf'));
+                    if (loadUtils.getCookie('_csrf')) {
+                        xhr.setRequestHeader("x-csrf-token", loadUtils.getCookie('_csrf'));
+                    }
                 },
                 error: function (xhr, e) {
                     //ajaxDefErrorHandler(xhr);

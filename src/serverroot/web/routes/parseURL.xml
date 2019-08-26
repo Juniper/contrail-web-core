@@ -11,6 +11,10 @@
         <path>../../common/parseURLRequire</path>
     </require>
     <require>
+        <define>routesHandler</define>
+        <path>./handler</path>
+    </require>
+    <require>
         <define>handler</define>
         <path>./handler</path>
     </require>
