@@ -6,6 +6,10 @@
         <path>process.mainModule.exports["corePath"] + '/src/serverroot/common/parseURLRequire'</path>
     </require>
     <require>
+        <define>routesHandler</define>
+        <path>process.mainModule.exports["corePath"] + '/src/serverroot/web/routes/handler'</path>
+    </require>
+    <require>
         <define>uddapi</define>
         <path>process.mainModule.exports["corePath"] + '/webroot/reports/udd/api/udd.api'</path>
     </require>

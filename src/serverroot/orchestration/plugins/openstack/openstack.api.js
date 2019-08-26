@@ -317,11 +317,10 @@ function getServiceAPIVersionByReqObj (req, appData, type, callback, reqBy)
         }
         if ((null == mappedObjs) && (global.service.MAINSEREVR == reqBy)) {
             /* We did not find this region in the service catalog */
-            var secureCookieStr = (false == config.insecure_access) ? "; secure"
-                : "";
             if (global.REGION_ALL != regionCookie) {
-                req.res.setHeader('Set-Cookie', 'region=' +  firstRegion +
-                                  '; path=/' + secureCookieStr);
+                req.res.cookie("region", firstRegion, {
+                    secure: !config.insecure_access
+                });
             }
             callback(null, null, redirectToLogout);
             return;
