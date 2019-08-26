@@ -25,6 +25,12 @@ var server_ip = (config.redis_server_ip) ?
 var secretKeyLen = 100;
 
 var express = require('express')
+    , bodyParser = require('body-parser')
+    , compression = require('compression')
+    , methodOverride = require('method-override')
+    , cookieParser = require('cookie-parser')
+    , session = require('express-session')
+    , csurf = require('csurf')
     , path = require('path')
     , fs = require("fs")
     , http = require('http')
@@ -58,7 +64,7 @@ var server_port = (config.redis_server_port) ?
 var server_ip = (config.redis_server_ip) ?
     config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
 
-var RedisStore = require('connect-redis')(express);
+var RedisStore = require('connect-redis')(session);
 
 var store;
 var myIdentity = global.service.MAINSEREVR;
@@ -87,13 +93,13 @@ var httpsApp = express(),
     redisIP = (config.redis_server_ip) ?
         config.redis_server_ip : global.DFLT_REDIS_SERVER_IP;
 
-function initializeAppConfig (appObj)
+function initializeAppConfig (appObj, routesRegister)
 {
     var app = appObj.app;
     var port = appObj.port;
     var secretKey = appObj.session_secret;
     app.set('port', process.env.PORT || port);
-    app.use(express.cookieParser());
+    app.use(cookieParser());
     var maxAgeTime =
         ((null != config.session) && (null != config.session.timeout)) ?
         config.session.timeout : global.MAX_AGE_SESSION_ID;
@@ -115,36 +121,41 @@ function initializeAppConfig (appObj)
             return /json|text|xml|javascript|tmpl/.test(res.getHeader('Content-Type'))
         }
     };
-    app.use(express.compress(compressOptions));
+    app.use(compression(compressOptions));
     express.static.mime.define({'text/tmpl': ['tmpl']});
     registerStaticFiles(app);
     app.use(helmet.hsts({
         maxAge: maxAgeTime,
         includeSubdomains: true
     }));
-    var cookieObj = {maxAge: null, httpOnly: true};
-    if (false == insecureAccessFlag) {
-        cookieObj['secure'] = true;
-    }
-    app.use(express.session({ store:store,
+    var cookieObj = {
+        maxAge: null,
+        httpOnly: true,
+        secure: !insecureAccessFlag
+    };
+    app.use(session({ store:store,
         secret: secretKey,
-        cookie: cookieObj
-        }));
-        app.use(express.methodOverride());
-        app.use(function (req, res, next) {
-            if (req.method === "GET") {
-                delete req.headers["content-type"];
-            }
+        cookie: cookieObj,
+        resave: false,
+        saveUninitialized: true,
+    }));
+    app.use(methodOverride("_method"));
+    app.use(methodOverride("x-http-method-override"));
+    app.use(function (req, res, next) {
+        if (req.method === "GET") {
+            delete req.headers["content-type"];
+        }
 
-            next();
-        });
-        app.use(express.bodyParser());
-        app.use(app.router);
-        // Catch-all error handler
-        app.use(function (err, req, res, next) {
-            logutils.logger.error(err.stack);
-            res.send(500, 'An unexpected error occurred!');
-        });
+        next();
+    });
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: true }));
+    routesRegister(app);
+    // Catch-all error handler
+    app.use(function (err, req, res, next) {
+        logutils.logger.error(err.stack);
+        res.status(500).send('An unexpected error occurred!');
+    });
 }
 
 function loadStaticFiles (app, pkgDir)
@@ -168,16 +179,12 @@ function registerStaticFiles (app)
     }
 }
 
-function initAppConfig (sessionSecret)
+function initAppConfig (sessionSecret, routesRegister)
 {
     if (false == insecureAccessFlag) {
-        httpsApp.configure(function () {
-            initializeAppConfig({app:httpsApp, port:httpsPort, session_secret: sessionSecret});
-        });
+        initializeAppConfig({app:httpsApp, port:httpsPort, session_secret: sessionSecret}, routesRegister);
     } else {
-        httpApp.configure(function () {
-            initializeAppConfig({app:httpApp, port:httpPort, session_secret: sessionSecret});
-        });
+        initializeAppConfig({app:httpApp, port:httpPort, session_secret: sessionSecret}, routesRegister);
     }
 }
 
@@ -219,28 +226,53 @@ function loadAllFeatureURLs (myApp)
     return;
 }
 
-function registerReqToApp ()
+function registerReqToApp (app)
 {
-    var myApp = httpsApp;
-    if (true == insecureAccessFlag) {
-        myApp = httpApp;
-    }
+    var csrfOptions = {
+        eventEmitter: csrfInvalidEvent
+    };
+    var csrf = csurf(csrfOptions);
+    
+    /*
+     * This middleware does small trick to inject `csrfToken` of `csurf`
+     * to `req`. So that, after successful authentication, `csrfToken` can
+     * be used to create correct CSRF token.
+     * 
+     * `csrfToken` must be used here because `csurf` relies on its return value
+     * to valid a request. A custom CSRF token won't work.
+    */
+    app.use(function (req, res, next) {
+        if (req.url === "/authenticate") {
+            /*
+             * Temporarily override `POST /authenticate`'s original method
+             * with one ignored by `csurf`. So that `csurf` can inject `csrfToken`
+             * without errors.
+             */
+            req.__originalMethod = req.method;
+            req.method = "GET";
+        }
 
-    var csrfOptions = {eventEmitter: csrfInvalidEvent};
-    var csrf = express.csrf(csrfOptions);
+        csrf(req, res, next);
+    }, function (req, res, next) {
+        if (req.url === "/authenticate") {
+            // Restore the original method of `/authenticate`
+            req.method = req.__originalMethod;
+            delete req.__originalMethod;
+        }
+
+        next();
+    });
     //Populate the CSRF token in req.session on login request
-    myApp.get('/', csrf);
-    myApp.get('/vcenter', csrf);
+    app.get('/', csrf);
+    app.get('/vcenter', csrf);
     //Enable CSRF token check for all URLs starting with "/api"
-    myApp.all('/api/*', csrf);
-    myApp.all('/gohan_contrail/*', cgcApi.getCGCAllReq);
-    myApp.all('/gohan_contrail_auth/*', cgcApi.getCGCAuthReq);
-
-    loadAllFeatureURLs(myApp);
-    var handler = require('./src/serverroot/web/routes/handler')
-    handler.addAppReqToAllowedList(myApp.routes);
+    app.all('/api/*', csrf);
+    app.all('/gohan_contrail/*', cgcApi.getCGCAllReq);
+    app.all('/gohan_contrail_auth/*', cgcApi.getCGCAuthReq);
+    loadAllFeatureURLs(app);
     csrfInvalidEvent.on('csrfInvalidated', function(req, res) {
         logutils.logger.debug('_csrf token got invalidated');
+        logutils.logger.debug(["req.session._csrf:", req.session._csrf, req.csrfToken()].join(" "));
         commonUtils.redirectToLogout(req, res);
     });
 }
@@ -372,15 +404,15 @@ function startWebCluster ()
         doPreStartServer(false);
     } else {
         clusterWorkerInit(function(sessionSecret) {
-            initAppConfig(sessionSecret);
+            initAppConfig(sessionSecret, function(app) {
+                registerReqToApp(app);
+            });
             var jsonDiff = require('./src/serverroot/common/jsondiff');
             var redisSub = require('./src/serverroot/web/core/redisSub');
             jsonDiff.doFeatureJsonDiffParamsInit();
             registerSessionDeleteEvent();
-            registerReqToApp();
             registerFeatureLists();
-            redisSub.createRedisClientAndSubscribeMsg(function() {
-            });
+            redisSub.createRedisClientAndSubscribeMsg(function() {});
             contrailServ.getContrailServices();
             contrailServ.startWatchContrailServiceRetryList();
             configUtils.subscribeMOTDFileChange();
