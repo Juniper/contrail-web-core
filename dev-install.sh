@@ -19,11 +19,11 @@ mkdir -p webroot/assets/d3-v4.4.3/js
 cp -af node_modules/d3/build/d3.min.js webroot/assets/d3-v4.4.3/js/
 #End - copy d3-v4.4.3 from node_modules 
 
-#Start - copy lodash-v4.17.2 from node_modules 
-rm -rf webroot/assets/lodash-v4.17.2
-mkdir -p webroot/assets/lodash-v4.17.2/js
-cp -af node_modules/lodash-v4.17.2/lodash.js webroot/assets/lodash-v4.17.2/js/
-#End - copy lodash-v4.17.2 from node_modules 
+#Start - copy lodash-v4.17.12 from node_modules 
+rm -rf webroot/assets/lodash-v4.17.12
+mkdir -p webroot/assets/lodash-v4.17.12/js
+cp -af node_modules/lodash/lodash.min.js webroot/assets/lodash-v4.17.12/js/
+#End - copy lodash-v4.17.12 from node_modules 
 
 #Start - copy contrail-charts from $THIRD_PARTY
 rm -rf webroot/assets/contrail-charts
@@ -232,7 +232,7 @@ cp -af ./$THIRD_PARTY/knockout-3.4.0/dist/knockout.js webroot/assets/knockout/kn
 #Start - Copy Moment Date-Formatter from $THIRD_PARTY
 rm -rf webroot/assets/moment
 mkdir webroot/assets/moment
-cp -af ./$THIRD_PARTY/moment-v2.14.1/moment.js webroot/assets/moment/moment.js
+cp -af ./$THIRD_PARTY/node_modules/moment/moment.js webroot/assets/moment/moment.js
 #End - Copy Moment Date-Formatter from $THIRD_PARTY
 
 #Start - Copy Joint from web-third-party

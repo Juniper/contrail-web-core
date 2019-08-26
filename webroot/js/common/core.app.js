@@ -58,7 +58,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
         //'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.8.3.min',
         //'jquery'                      : coreWebDir + '/assets/jquery/js/jquery-1.9.1.min',
         'jquery'                      : coreWebDir + '/assets/jquery/js/jquery.min',
-        'lodashv4'                    : coreWebDir + '/assets/lodash-v4.17.2/js/lodash',
+        'lodashv4'                    : coreWebDir + '/assets/lodash-v4.17.12/js/lodash.min',
         'd3v4'                        : coreWebDir + '/assets/d3-v4.4.3/js/d3.min',
         'contrail-load'               : coreWebDir + '/js/contrail-load',
         'vis'                         : coreWebDir + '/assets/vis-v4.9.0/js/vis.min',
