@@ -2,6 +2,7 @@
  * Copyright (c) 2014 Juniper Networks, Inc. All rights reserved.
  */
 
+var ip = "10.84.11.4";
 var config = {};
 
 config.orchestration = {};
@@ -142,7 +143,7 @@ config.serviceEndPointTakePublicURL = true;
  *      if you do not want to specify then use ''
  *****************************************************************************/
 config.networkManager = {};
-config.networkManager.ip = '127.0.0.1';
+config.networkManager.ip = ip;
 config.networkManager.port = '9696'
 config.networkManager.authProtocol = 'http';
 config.networkManager.apiVersion = [];
@@ -150,7 +151,7 @@ config.networkManager.strictSSL = false;
 config.networkManager.ca = '';
 
 config.imageManager = {};
-config.imageManager.ip = '127.0.0.1';
+config.imageManager.ip = ip;
 config.imageManager.port = '9292';
 config.imageManager.authProtocol = 'http';
 config.imageManager.apiVersion = ['v1', 'v2'];
@@ -158,7 +159,7 @@ config.imageManager.strictSSL = false;
 config.imageManager.ca = '';
 
 config.computeManager = {};
-config.computeManager.ip = '127.0.0.1';
+config.computeManager.ip = ip;
 config.computeManager.port = '8774';
 config.computeManager.authProtocol = 'http';
 config.computeManager.apiVersion = ['v1.1', 'v2'];
@@ -166,7 +167,7 @@ config.computeManager.strictSSL = false;
 config.computeManager.ca = '';
 
 config.identityManager = {};
-config.identityManager.ip = '127.0.0.1';
+config.identityManager.ip = ip;
 config.identityManager.port = '5000';
 config.identityManager.authProtocol = 'http';
 /******************************************************************************
@@ -176,13 +177,13 @@ config.identityManager.authProtocol = 'http';
  * If want to use with default apiVersion(v2.0), then can specify it as
  * empty array.
  ******************************************************************************/
-config.identityManager.apiVersion = ['v2.0'];
+config.identityManager.apiVersion = ['v3'];
 config.identityManager.strictSSL = false;
 config.identityManager.ca = '';
 config.identityManager.urlPrefix = '';
 
 config.storageManager = {};
-config.storageManager.ip = '127.0.0.1';
+config.storageManager.ip = ip;
 config.storageManager.port = '8776';
 config.storageManager.authProtocol = 'http';
 config.storageManager.apiVersion = ['v1'];
@@ -191,7 +192,7 @@ config.storageManager.ca = '';
 
 // VNConfig API server and port.
 config.cnfg = {};
-config.cnfg.server_ip = ['127.0.0.1'];
+config.cnfg.server_ip = [ip];
 config.cnfg.server_port = '8082';
 config.cnfg.authProtocol = 'http';
 config.cnfg.strictSSL = false;
@@ -200,7 +201,7 @@ config.cnfg.statusURL = "/global-system-configs";
 
 // Analytics API server and port.
 config.analytics = {};
-config.analytics.server_ip = ['127.0.0.1'];
+config.analytics.server_ip = [ip];
 config.analytics.server_port = '8081';
 config.analytics.authProtocol = 'http';
 config.analytics.strictSSL = false;
@@ -212,13 +213,13 @@ config.analytics.statusURL = "/analytics/uves/bgp-peers";
    config.introspect.ssl configuration
  */
 config.dns = {};
-config.dns.server_ip = ['127.0.0.1'];
+config.dns.server_ip = [ip];
 config.dns.server_port = '8092';
 config.dns.statusURL = "/Snh_PageReq?x=AllEntries%20VdnsServersReq";
 
 // vcenter related parameters
 config.vcenter = {};
-config.vcenter.server_ip = '127.0.0.1';         //vCenter IP
+config.vcenter.server_ip = ip;         //vCenter IP
 config.vcenter.server_port = '443';             //Port
 config.vcenter.authProtocol = 'https';          //http or https
 config.vcenter.datacenter = 'vcenter';          //datacenter name
@@ -264,7 +265,7 @@ config.files.download_path = '/tmp';
 
 /* Cassandra Server */
 config.cassandra = {};
-config.cassandra.server_ips = ['127.0.0.1'];
+config.cassandra.server_ips = [ip];
 config.cassandra.server_port = '9042';
 config.cassandra.enable_edit = false;
 config.cassandra.use_ssl = false;
@@ -312,15 +313,15 @@ config.redis_dump_file = '/var/lib/redis/dump-webui.rdb';
 config.redis_password = '';
 
 /* Logo File: Use complete path of logo file location */
-config.logo_file = '/usr/src/contrail/contrail-web-core/webroot/img/tf-logo.png';
+config.logo_file = '/Users/zsong/Documents/Workspace/oldUI/contrail-web-core/webroot/img/tf-logo.png';
 
 /* Favicon File: Use complete path of favicon file location */
-config.favicon_file = '/usr/src/contrail/contrail-web-core/webroot/img/tf-favicon.ico';
+config.favicon_file = '/Users/zsong/Documents/Workspace/oldUI/contrail-web-core/webroot/img/tf-favicon.ico';
 
 config.featurePkg = {};
 /* Add new feature Package Config details below */
 config.featurePkg.webController = {};
-config.featurePkg.webController.path = '/usr/src/contrail/contrail-web-controller';
+config.featurePkg.webController.path = '/Users/zsong/Documents/Workspace/oldUI/contrail-web-controller';
 config.featurePkg.webController.enable = true;
 
 /* Enable/disable Stat Query Links in Sidebar*/
@@ -366,7 +367,7 @@ config.network.L2_enable = false;
  *****************************************************************************/
 config.getDomainsFromApiServer = false;
 
-config.jsonSchemaPath = "/usr/src/contrail/contrail-web-core/src/serverroot/configJsonSchemas";
+config.jsonSchemaPath = "/Users/zsong/Documents/Workspace/oldUI/contrail-web-core/src/serverroot/configJsonSchemas";
 config.connectedAppsInfo = {};
 //This is global flag which enables links (display links in footer)
 // to all the connectedApps mentioned, however we can

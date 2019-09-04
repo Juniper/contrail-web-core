@@ -8,6 +8,10 @@
         <path>./parseURLRequire</path>
     </require>
     <require>
+        <define>routesHandler</define>
+        <path>../web/routes/handler</path>
+    </require>
+    <require>
         <define>sshapi</define>
         <path>./sshcommand.api</path>
     </require>
