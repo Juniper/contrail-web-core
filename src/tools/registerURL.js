@@ -84,7 +84,7 @@ function parseURLFile (result, fileToGen, cb)
   '    parseURLReq.cacheApi.deleteCachePendingQueueEntry(req.pubChannel);\n' +    
   '  };\n' +
   '  res.req.invalidated = true;\n' +
-  '  res.send(parseURLReq.global.HTTP_STATUS_GATEWAY_TIMEOUT, str);\n' +
+  '  res.status(parseURLReq.global.HTTP_STATUS_GATEWAY_TIMEOUT).send(str);\n' +
   '}\n' +
   '\n';
   
@@ -177,10 +177,18 @@ function parseURLFile (result, fileToGen, cb)
 
     urlCbStr += "'" + itemList[i]['url'] + "', " + 
       callback.substr(1, pos - 1) + "_" + callback.slice(pos + 1) + ");\n";
- 
+
+    /* Add route to allowed route list */
+    urlCbStr += [
+      "  routesHandler.addAppRouteToAllowedList(",
+      "'", method, "', ",
+      "'", itemList[i]['url'], "'",
+      ");\n"
+    ].join("");
+
     /* Register feature string with URL */
     capStr += "  parseURLReq.rbac.setFeatureByURL(" + "'" + itemList[i]['url'] + "'";
-    capStr += ", " + "'" + method + "'" + ", " + "app.routes, " + "'" +
+    capStr += ", " + "'" + method + "'" + ", " + "'" +
       itemList[i]['feature'] + "'" + ");\n";
   }
   urlCbStr += "\n";

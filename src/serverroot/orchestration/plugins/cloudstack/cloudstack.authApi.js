@@ -154,10 +154,9 @@ function authenticate (req, res, appData, callback)
         getUsers(req, function(userLists) {
             updateUserKeys(req, username, userLists);
             logutils.logger.info("Login Successful with tenants.");
-            res.setHeader('Set-Cookie', "username=" + username +
-                          '; expires=' +
-                          new Date(new Date().getTime() +
-                                   global.MAX_AGE_SESSION_ID).toUTCString());
+            res.cookie("username", username, {
+                expires: new Date(new Date().getTime() + global.MAX_AGE_SESSION_ID).toUTCString()
+            });
             callback(null, '/' + urlHash);
         });
     });
