@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1097926b_55445d25",
+        "filename": "config/config.global.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 55
+      },
+      "writtenOn": "2019-09-05T23:19:06Z",
+      "side": 1,
+      "message": "Remove changes in this file",
+      "range": {
+        "startLine": 5,
+        "startChar": 10,
+        "endLine": 5,
+        "endChar": 20
+      },
+      "revId": "fcfdd55856f39faaf236420006032f208da8d0fb",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6071aef1_7166accb",
+        "filename": "config/userAuth.js",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 55
+      },
+      "writtenOn": "2019-09-05T23:19:06Z",
+      "side": 1,
+      "message": "wasnt this removed earlier?",
+      "range": {
+        "startLine": 10,
+        "startChar": 23,
+        "endLine": 10,
+        "endChar": 34
+      },
+      "revId": "fcfdd55856f39faaf236420006032f208da8d0fb",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "95bf9bfa_cd22268f",
+        "filename": "src/serverroot/web/routes/parseURL.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 55
+      },
+      "writtenOn": "2019-09-05T23:19:06Z",
+      "side": 1,
+      "message": "same path for routesHandler and handler?",
+      "range": {
+        "startLine": 15,
+        "startChar": 8,
+        "endLine": 15,
+        "endChar": 30
+      },
+      "revId": "fcfdd55856f39faaf236420006032f208da8d0fb",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
