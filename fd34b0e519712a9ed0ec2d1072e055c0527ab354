@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "153b7567_71378173",
+        "filename": "dev-install.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 55
+      },
+      "writtenOn": "2019-09-05T23:10:37Z",
+      "side": 1,
+      "message": "do you want to remove the older folder lodash-v4.17.2 for upgrade case?",
+      "range": {
+        "startLine": 23,
+        "startChar": 7,
+        "endLine": 23,
+        "endChar": 37
+      },
+      "revId": "fd34b0e519712a9ed0ec2d1072e055c0527ab354",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
