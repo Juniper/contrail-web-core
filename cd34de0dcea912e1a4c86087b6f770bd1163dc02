@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5b1732f0_08499f5e",
+        "filename": "src/serverroot/web/routes/parseURL.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 55
+      },
+      "writtenOn": "2019-09-05T23:52:55Z",
+      "side": 1,
+      "message": "same path added twice",
+      "range": {
+        "startLine": 15,
+        "startChar": 9,
+        "endLine": 15,
+        "endChar": 30
+      },
+      "revId": "cd34de0dcea912e1a4c86087b6f770bd1163dc02",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
