@@ -19,6 +19,7 @@ var http = require('http'),
     plugins = require('../../orchestration/plugins/plugins.api'),
     vCenterApi = require('../../orchestration/plugins/vcenter/vcenter.api');
     fs = require('fs'),
+    path = require('path'),
     _ = require("lodash"),
     messages = require('../../common/messages');
 
@@ -75,7 +76,7 @@ exports.getMenuXML = function(req,res) {
         if (featureMaps.length > 0) {
             featureMaps.sort();
             var mFileName = 'menu_' + featureMaps.join('_') + '.xml';
-            res.sendfile('webroot/' + mFileName);
+            res.sendFile(path.join(process.mainModule.exports["corePath"], 'webroot', mFileName));
         } else {
             //Add error case
         }
@@ -171,64 +172,13 @@ function vcenter_logout (req, res, appData)
 
 var urlAllowedList = {};
 
-exports.addAppReqToAllowedList = function(appRoutes) {
-    var len;
-    /* First add for get methods */
-    var getList = appRoutes['get'];
-    if (getList) {
-        len = getList.length;
-        for (i = 0; i < len; i++) {
-            if (getList[i]['path'] == '*') {
-                continue;
-            }
-            var key = 'get' + ':' + getList[i]['regexp'];
-            urlAllowedList[key] = getList[i]['path'];
-        }
-    }
-  
-    /* Add post list */
-    var postList = appRoutes['post'];
-    if (postList) {
-        len = postList.length;
-        for (i = 0; i < len; i++) {
-            if (postList[i]['path'] == '*') {
-                continue;
-            }
-            key = 'post' + ':' + postList[i]['regexp'];
-            urlAllowedList[key] = postList[i]['path'];
-        }
-    }
-  
-    /* Add put list */
-    var putList = appRoutes['put'];
-    if (putList) {
-        len = putList.length;
-        for (i = 0; i < len; i++) {
-            if (putList[i]['path'] == '*') {
-                continue;
-            }
-            key = 'put' + ':' + putList[i]['regexp'];
-            urlAllowedList[key] = putList[i]['path'];
-        }
-    }
-  
-    /* Add delete list */
-    var delList = appRoutes['delete'];
-    if (delList) {
-        len = delList.length;
-        for (i = 0; i < len; i++) {
-            key = 'delete' + ':' + delList[i]['regexp'];
-            if (delList[i]['path'] == '*') {
-                continue;
-            }
-        urlAllowedList[key] = delList[i]['path'];
-        }
-    }
+exports.addAppRouteToAllowedList = function(method, path) {
+    urlAllowedList[method + ":" + path] = path;
 }
 
 exports.checkURLInAllowedList = function(req) {
     if (req && req.route) {
-        var key = req.route.method + ':' + req.route.regexp;
+        var key = req.method.toLowerCase() + ':' + req.route.path;
         /* Lookup by this key */
         return urlAllowedList[key];
     }
@@ -310,11 +260,11 @@ function setTokensIfValidByXAuthToken (req, callback)
                                           'identityManager.apiVersion.0',
                                           'v2.0');
     authApi.fillAuthTokenObjsByXAuthToken(req, function(err) {
-        var secureCookieStr = (false == config.insecure_access) ? "; secure" : "";
         var svcCatalog = _.result(req, "session.serviceCatalog", {});
         var regionName = _.keys(svcCatalog)[0];
-        req.res.setHeader('Set-Cookie', 'region=' + regionName + '; path=/' +
-                          secureCookieStr);
+        req.res.cookie("region", regionName, {
+            secure: !config.insecure_access
+        });
         req.cookies.region = regionName;
         /* If the request contains the X-Auth-Token and URL contains the
          * forward-proxy, then set request session as authenticated
@@ -329,13 +279,14 @@ function setTokensIfValidByXAuthToken (req, callback)
    if so, then redirect to the last page, user visited
  */
 checkAndRedirect = function(req, res, sendFile) {
+    var filePath = path.join(process.mainModule.exports["corePath"], sendFile);
     //As we have a single html file,return it always
-    res.sendfile(sendFile);
+    res.sendFile(filePath);
     return;
     var data = exports.checkURLInAllowedList(req);
     var loginErrFile = 'webroot/html/login-error.html';
     if (null == data) {
-        res.send(global.HTTP_STATUS_PAGE_NOT_FOUND, "The page can not be found");
+        res.status(global.HTTP_STATUS_PAGE_NOT_FOUND).send("The page can not be found");
         res.end();
         return;
     }
@@ -344,7 +295,7 @@ checkAndRedirect = function(req, res, sendFile) {
     } else {
         var pkgList = process.mainModule.exports['pkgList'];
         if (pkgList.length > 1) {
-            res.sendfile(sendFile);
+            res.sendFile(filePath);
         } else {
             /* Only Base Package installed */
             commonUtils.changeFileContentAndSend(res, loginErrFile,
@@ -494,9 +445,9 @@ exports.testUpdate = function (req, res) {
 	var id = req.param('id');
 	putData(id, function (err, data) {
 		if (!err) {
-			res.send(data);
+			res.status(200).send(data);
 		} else {
-			res.send("Error");
+			res.status(500).send("Error");
 		}
 	});
 };
@@ -543,9 +494,9 @@ exports.testCreate = function (req, res) {
 	try {
 		postData(function (err, data) {
 			if (!err) {
-				res.send(data);
+				res.status(200).send(data);
 			} else {
-				res.send("Error");
+				res.status(500).send("Error");
 			}
 		});
 	} catch (err) {

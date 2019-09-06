@@ -18,7 +18,6 @@ var logutils = require('../../utils/log.utils');
 var orch = require('../orchestration.api');
 var global = require('../../common/global');
 var commonUtils = require('../../utils/common.utils');
-var crypto = require('crypto');
 
 var orchModels = orch.getOrchestrationModels();
 
@@ -217,23 +216,25 @@ function setAllCookies (req, res, appData, cookieObj, callback)
         }
     }
     var defDomainId;
-    var secureCookieStr = (false == config.insecure_access) ? "; secure" : "";
-    res.setHeader('Set-Cookie', 'username=' + cookieObj.username +
-                  secureCookieStr);
+    var secureCookieStr = !config.insecure_access;
+    res.cookie("username", cookieObj.username, {
+        secure: secureCookieStr
+    });
     if ((true == authApi.isCGCEnabled(req)) ||
         (true == authApi.isServiceEndptsFromOrchestrationModule())) {
         var region = authApi.getCurrentRegion(req);
         if (null != region) {
-            res.setHeader('Set-Cookie', 'region=' + region +
-                          '; path=/' + secureCookieStr);
+            res.cookie("region", region, {
+                secure: secureCookieStr
+            });
             req.cookies.region = region;
         }
     }
     authApi.getCookieObjs(req, appData, function(cookieObjs) {
         if (null != cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME]) {
-            res.setHeader('Set-Cookie', global.COOKIE_DOMAIN_DISPLAY_NAME +
-                          '=' + cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME] +
-                          secureCookieStr);
+            res.cookie(global.COOKIE_DOMAIN_DISPLAY_NAME, cookieObjs[global.COOKIE_DOMAIN_DISPLAY_NAME], {
+                secure: secureCookieStr
+            });
         }
         var cookieProject = cookieObjs[global.COOKIE_PROJECT_DISPLAY_NAME];
         if ((null == cookieProject) ||
@@ -241,15 +242,18 @@ function setAllCookies (req, res, appData, cookieObj, callback)
             cookieProject = adminProjectList[0];
         }
         if (null != cookieProject) {
-            res.setHeader('Set-Cookie', global.COOKIE_PROJECT_DISPLAY_NAME +
-                          '=' + cookieProject + secureCookieStr);
+            res.cookie(global.COOKIE_PROJECT_DISPLAY_NAME, cookieProject, {
+                secure: secureCookieStr
+            })
         }
-        if(req.session._csrf == null)
-            req.session._csrf = crypto.randomBytes(Math.ceil(24 * 3 / 4))
-                .toString('base64')
-                    .slice(0, 24);
-        res.setHeader('Set-Cookie', '_csrf=' + req.session._csrf +
-                      secureCookieStr);
+        if (null == req.session._csrf) {
+            req.session._csrf = req.csrfToken();
+        }
+        res.cookie("_csrf", req.session._csrf, {
+            secure: secureCookieStr,
+            httpOnly: !secureCookieStr
+        });
+
         callback();
     });
 }
