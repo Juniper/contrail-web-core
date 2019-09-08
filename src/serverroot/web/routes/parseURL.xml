@@ -18,114 +18,114 @@
         <url>/infra/admin</url>
         <method>get</method>
         <feature>admin-config</feature>
-        <callback>handler.admin</callback>
+        <callback>routesHandler.admin</callback>
     </item>
     <item>
         <url>/</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>handler.dashboard</callback>
+        <callback>routesHandler.dashboard</callback>
     </item>
     <item>
         <url>/vcenter</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>handler.vcenter_login</callback>
+        <callback>routesHandler.vcenter_login</callback>
     </item>
     <item>
         <url>/</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>handler.home</callback>
+        <callback>routesHandler.home</callback>
     </item>
     <item>
         <url>/login</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>handler.login</callback>
+        <callback>routesHandler.login</callback>
     </item>
     <item>
         <url>/menu</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>handler.getMenuXML</callback>
+        <callback>routesHandler.getMenuXML</callback>
     </item>
     <item>
         <url>/vcenter/menu</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>handler.getMenuXML</callback>
+        <callback>routesHandler.getMenuXML</callback>
     </item>
     <item>
         <url>/vcenter/login</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>handler.vcenter_login</callback>
+        <callback>routesHandler.vcenter_login</callback>
     </item>
     <item>
         <url>/isauthenticated</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>handler.isAuthenticated</callback>
+        <callback>routesHandler.isAuthenticated</callback>
     </item>
     <item>
         <url>/vcenter/isauthenticated</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>handler.isAuthenticated</callback>
+        <callback>routesHandler.isAuthenticated</callback>
     </item>
     <item>
         <url>/authenticate</url>
         <method>post</method>
         <feature>monitoring</feature>
-        <callback>handler.authenticate</callback>
+        <callback>routesHandler.authenticate</callback>
     </item>
     <item>
         <url>/authenticate</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>handler.doAuthenticate</callback>
+        <callback>routesHandler.doAuthenticate</callback>
     </item>
     <item>
         <url>/vcenter/authenticate</url>
         <method>post</method>
         <feature>monitoring</feature>
-        <callback>handler.vcenter_authenticate</callback>
+        <callback>routesHandler.vcenter_authenticate</callback>
     </item>
     <item>
         <url>/vcenter/authenticate</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>handler.doVcenterAuthenticate</callback>
+        <callback>routesHandler.doVcenterAuthenticate</callback>
     </item>
     <item>
         <url>/logout</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>handler.logout</callback>
+        <callback>routesHandler.logout</callback>
     </item>
     <item>
         <url>/vcenter/logout</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>handler.vcenter_logout</callback>
+        <callback>routesHandler.vcenter_logout</callback>
     </item>
     <item>
         <url>/api/admin/test-update</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>handler.testUpdate</callback>
+        <callback>routesHandler.testUpdate</callback>
     </item>
     <item>
         <url>/api/admin/test-update</url>
         <method>get</method>
         <feature>monitoring</feature>
-        <callback>handler.testUpdate</callback>
+        <callback>routesHandler.testUpdate</callback>
     </item>
     <item>
         <url>/api/admin/test-create</url>
         <method>get</method>
         <feature>bgp</feature>
-        <callback>handler.testCreate</callback>
+        <callback>routesHandler.testCreate</callback>
     </item>
 </urlLists>
