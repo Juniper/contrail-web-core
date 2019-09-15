@@ -13,9 +13,9 @@ CONTROLLER = controller
 BRANCH = master
 
 define fetch_xsd_schemas
-	 wget -qO - https://github.com/Juniper/contrail-api-client/tree/${BRANCH}/schema | \
+	 wget -qO - https://github.com/tungstenfabric/api-client/tree/${BRANCH}/schema | \
 	 awk -F '[<>]' '/.*\.xsd/ { for(i=0;i<=NF;i++) { if($$i ~ /[^<>].*\.xsd$$/) { print $$i; break; } } }' | \
-	 while read -r line; do wget https://raw.githubusercontent.com/Juniper/contrail-api-client/$(BRANCH)/schema/$$line; done;
+	 while read -r line; do wget https://raw.githubusercontent.com/tungstenfabric/api-client/$(BRANCH)/schema/$$line; done;
 endef
 
 $(WEBUISERVER):
