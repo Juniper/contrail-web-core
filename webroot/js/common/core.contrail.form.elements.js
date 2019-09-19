@@ -168,8 +168,8 @@ define([
         self.data('contrailDateTimePicker', {
             option: option,
             setMinDateTime: function(minDateTime) {
-                self.data('contrailDateTimePicker').option.minDate = moment(minDateTime).format('MMM DD, YYYY');
-                self.data('contrailDateTimePicker').option.minTime = moment(minDateTime).format('hh:mm:ss A');
+                self.data('contrailDateTimePicker').option.minDate = moment(minDateTime, option.displayFormat).format('MMM DD, YYYY');
+                self.data('contrailDateTimePicker').option.minTime = moment(minDateTime, option.displayFormat).format('hh:mm:ss A');
 
                 self.addClass('datetimepicker')
                     .datetimepicker(self.data('contrailDateTimePicker').option);
@@ -181,13 +181,16 @@ define([
             },
             val: function(dateTime) {
                 console.warn('Contrail WebUI Warning: Function val of ContrailDateTimePicker is deprecated. Use value() instead.');
-                self.val(moment(dateTime).format(option.displayFormat));
+                self.val(moment(dateTime, option.displayFormat).format(option.displayFormat));
             },
             value: function(dateTime) {
                 if(!contrail.checkIfExist(dateTime)) {
                     return self.val();
                 } else {
-                    var value = moment(dateTime).format(option.displayFormat);
+                    // Initial value is in milliseconds, output from datepicker is a string in form of `option.displayFormat`
+                    // moment.js expect explicity format description for non-standard input.
+                    var inputFormat = typeof dateTime === 'number' ? 'x' : option.displayFormat;
+                    var value = moment(dateTime + '', inputFormat).format(option.displayFormat);
                     self.val(value);
                     return value;
                 }
