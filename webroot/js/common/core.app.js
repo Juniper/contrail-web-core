@@ -174,7 +174,7 @@ function getCoreAppPaths(coreBaseDir, coreBuildDir, env) {
 
             //End - jquery.dep.libs aliases
             //Start - thirdparty-libs aliases
-            'handlebars'                : coreWebDir + "/assets/handlebars/handlebars",
+            'handlebars'                : coreWebDir + "/assets/handlebars/handlebars.min",
             'core-handlebars-utils'     : coreWebDir + "/js/common/core.handlebars.utils",
 
             'slick.grid'                : coreWebDir + "/assets/slickgrid/js/slick.grid",
