@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "87e3f38b_cfa9ef77",
+        "filename": "dev-install.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 49
+      },
+      "writtenOn": "2019-10-20T06:32:38Z",
+      "side": 1,
+      "message": "Is the file name different in this package?",
+      "revId": "79b11be2cc58698683da254b752d24731c5f66cd",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
