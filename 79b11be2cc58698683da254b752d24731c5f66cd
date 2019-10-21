@@ -16,6 +16,24 @@
       "revId": "79b11be2cc58698683da254b752d24731c5f66cd",
       "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "00f20b97_672fd8a3",
+        "filename": "dev-install.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 302
+      },
+      "writtenOn": "2019-10-21T17:32:26Z",
+      "side": 1,
+      "message": "It was a plain JS file in the cache repo for previous versions. For this new one, I uploaded a tarball. Thus, the source path is updated according to the module\u0027s folder structure.",
+      "parentUuid": "87e3f38b_cfa9ef77",
+      "revId": "79b11be2cc58698683da254b752d24731c5f66cd",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
     }
   ]
 }
