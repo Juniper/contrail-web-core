@@ -161,9 +161,6 @@ test-core:
 test: test-env test-core test-ui
 
 clean:
-	rm -f src/serverroot/jobs/core/jobsCb.api.js
-	rm -f src/serverroot/web/core/feature.list.js
-	rm -f src/serverroot/web/routes/url.routes.js
 	rm -rf node_modules
 	rm -rf webroot/assets
 
