@@ -67,16 +67,13 @@ function getServiceApiVersionObjByPubUrl (pubUrl, type)
     case 'compute':
     case 'volume':
         try {
-            var idx = pubUrl.lastIndexOf('/');
-            if (-1 == idx) {
+            var matched = /(v\d(?:\.\d+)*)/g.exec(pubUrl);
+
+            if (!matched) {
                 return null;
             }
-            var str = pubUrl.substr(0, idx);
-            idx = str.lastIndexOf('/');
-            if (-1 == idx) {
-                return null;
-            }
-            version = str.slice(idx + 1);
+
+            version = matched[1];
         } catch(e) {
             logutils.logger.error('volume|compute pubUrl parse error' + e);
         }
@@ -85,32 +82,10 @@ function getServiceApiVersionObjByPubUrl (pubUrl, type)
     case 'identity':
         try {
             var defVer = getDfltEndPointValueByType(type, 'version');
-            var protoIdx = pubUrl.indexOf('://');
-            if (protoIdx >= 0) {
-                pubUrl = pubUrl.slice(protoIdx + '://'.length);
-            }
-            var idx = pubUrl.indexOf('/');
-            if (idx >= 0) {
-                pubUrl = pubUrl.slice(idx + 1);
-                idx = pubUrl.indexOf('/');
-                if (idx >= 0) {
-                    /* Format: http://localhost:9292/v1/ or
-                     * localhost:9292/v1/
-                     */
-                    version = pubUrl.substr(0, idx);
-                } else {
-                    if (!pubUrl.length) {
-                        /* Format: http://localhost:9292/ or
-                         * localhost:9292/
-                         */
-                        version = defVer;
-                    } else {
-                        /* Format: http://localhost:9292/v1 or
-                         * localhost:9292/v1
-                         */
-                        version = pubUrl;
-                    }
-                }
+            var matched = /(v\d(?:\.\d+)*)/g.exec(pubUrl);
+
+            if (matched) {
+                version = matched[1];
             } else {
                 /* Format: http://localhost:9292 or localhost:9292 */
                 version = defVer;

@@ -1129,9 +1129,12 @@ function getServiceCatalogByRegion (req, region, accessData, doFormat)
     if ((null == accessData) || (null == accessData.serviceCatalog)) {
         return null;
     }
-    var domain =
+
+    var dfltDomain =
         commonUtils.getValueByJsonPath(accessData, 'token;tenant;domain;name',
                                        'default-domain');
+    var domain = commonUtils.getValueByJsonPath(req, 'cookies;' + global.COOKIE_DOMAIN_DISPLAY_NAME, dfltDomain);
+
     if (domain == 'Default') {
         /* V3 default domain */
         domain = 'default-domain';
