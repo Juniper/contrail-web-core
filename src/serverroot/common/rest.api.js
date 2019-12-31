@@ -5,10 +5,10 @@
 var http = require('http'),
     https = require('https'),
     configUtils = require('./config.utils'),
-	logutils = require('../utils/log.utils'),
-	messages = require('./messages'),
-	appErrors = require('../errors/app.errors'),
-	util = require('util'),
+    logutils = require('../utils/log.utils'),
+    messages = require('./messages'),
+    appErrors = require('../errors/app.errors'),
+    util = require('util'),
     commonUtils = require('../utils/common.utils'),
     restler = require('restler'),
     fs = require('fs'),
@@ -18,8 +18,8 @@ var http = require('http'),
     contrailService = require('./contrailservice.api');
 
 if (!module.parent) {
-	logutils.logger.warn(util.format(messages.warn.invalid_mod_call, module.filename));
-	process.exit(1);
+    logutils.logger.warn(util.format(messages.warn.invalid_mod_call, module.filename));
+    process.exit(1);
 }
 
 /**
@@ -28,12 +28,17 @@ if (!module.parent) {
  */
 function APIServer(params)
 {
-	var self = this;
-	self.hostname = params.server;
-	self.port = params.port;
-	self.xml2jsSettings = params.xml2jsSettings || {};
-	self.isRawData = (null != params.isRawData) ? params.isRawData : false;
-	self.api = new self.API(self, params.apiName);
+    var self = this;
+    var hostIP = params.server;
+    if (Object.prototype.toString.call(hostIP) === "[object Array]") {
+        var len = hostIP.length;
+        hostIP = hostIP[Math.floor(Math.random() * len)];
+    }
+    self.hostname = hostIP;
+    self.port = params.port;
+    self.xml2jsSettings = params.xml2jsSettings || {};
+    self.isRawData = (null != params.isRawData) ? params.isRawData : false;
+    self.api = new self.API(self, params.apiName);
 }
 
 /**
@@ -42,9 +47,9 @@ function APIServer(params)
  */
 APIServer.prototype.authorize = function (callback)
 {
-	var self = this;
-	// TODO: Implement Authentication.
-	self.cb(callback);
+    var self = this;
+    // TODO: Implement Authentication.
+    self.cb(callback);
 };
 
 /**
@@ -55,37 +60,37 @@ APIServer.prototype.authorize = function (callback)
 APIServer.prototype.API = function (self, apiName)
 {
     self.name = apiName;
-	return {
-		hostname:self.hostname,
-		port:self.port,
-		name:apiName,
-		get:function (url, callback, headers) {
-			var s = this,
-				obj = { url:s.hostname, path:url, method:'GET', port:s.port, 
-				        headers:headers, xml2jsSettings:self.xml2jsSettings };
-			self.makeCall(restler.get, obj, callback, false);
-		},
-		post:function (url, data, callback, headers) {
-			var s = this,
-				obj = { url:s.hostname, path:url, method:'POST', port:s.port, 
-				        data:data, headers:headers,
+    return {
+        hostname:self.hostname,
+        port:self.port,
+        name:apiName,
+        get:function (url, callback, headers, noRetry) {
+            var s = this,
+                obj = { url:s.hostname, path:url, method:'GET', port:s.port, 
+                        headers:headers, xml2jsSettings:self.xml2jsSettings };
+            self.makeCall(restler.get, obj, callback, noRetry || false);
+        },
+        post:function (url, data, callback, headers, noRetry) {
+            var s = this,
+                obj = { url:s.hostname, path:url, method:'POST', port:s.port, 
+                        data:data, headers:headers,
                         xml2jsSettings:self.xml2jsSettings};
-			self.makeCall(restler.post, obj, callback, false);
-		},
-		put:function (url, data, callback, headers) {
-			var s = this,
-				obj = { url:s.hostname, path:url, method:'PUT', port:s.port, 
-				        data:data, headers:headers,
+            self.makeCall(restler.post, obj, callback, noRetry || false);
+        },
+        put:function (url, data, callback, headers, noRetry) {
+            var s = this,
+                obj = { url:s.hostname, path:url, method:'PUT', port:s.port, 
+                        data:data, headers:headers,
                         xml2jsSettings:self.xml2jsSettings };
-			self.makeCall(restler.put, obj, callback, false);
-		},
-		delete:function (url, callback, headers) {
-			var s = this,
-				obj = { url:s.hostname, path:url, method:'DELETE', port:s.port,
-				        headers:headers , xml2jsSettings:self.xml2jsSettings};
-			self.makeCall(restler.del, obj, callback, false);
-		}
-	};
+            self.makeCall(restler.put, obj, callback, noRetry || false);
+        },
+        delete:function (url, callback, headers, noRetry) {
+            var s = this,
+                obj = { url:s.hostname, path:url, method:'DELETE', port:s.port,
+                        headers:headers , xml2jsSettings:self.xml2jsSettings};
+            self.makeCall(restler.del, obj, callback, noRetry || false);
+        }
+    };
 };
 
 /**
@@ -94,9 +99,9 @@ APIServer.prototype.API = function (self, apiName)
  */
 APIServer.prototype.cb = function (cb)
 {
-	if (typeof cb == 'function') {
-		cb();
-	}
+    if (typeof cb == 'function') {
+        cb();
+    }
 };
 
 /**
@@ -191,21 +196,33 @@ APIServer.prototype.retryMakeCall = function(err, restApi, params,
      * if yes then remove the server entry from the operational list and serve
      * the current request with next available server from the list
      */
-    if (('ECONNREFUSED' == err.code) || ('ETIMEDOUT' == err.code)
-            || ('ENETUNREACH' == err.code)) {
-       var reqParams = null;
-        reqParams =
-            contrailService.resetServicesByParams(params, self.name);
-        if (null != reqParams) {
-            return self.makeCall(restApi, reqParams, callback, true);
-        }
+    if (
+        (('ECONNREFUSED' == err.code) || ('ETIMEDOUT' == err.code) || ('ENETUNREACH' == err.code))
+        && !isRetry
+    ) {
+        // Remove unavailable node visited by current request
+        contrailService.obsoleteServiceNodeByParams(params, self.name);
+        // Wait for one-time connectivity check finishes, then retry request again
+        contrailService.subscribeContrailServiceOnDemand(self.name, function (serviceNode) {
+            var reqParams = commonUtils.cloneObj(params);
+            reqParams.url = serviceNode['ip-address'];
+            reqParams.port = serviceNode.port;
+            if (null != serviceNode) {
+                return self.makeCall(restApi, reqParams, callback, true);
+            } else {
+                errorback(err, response, callback);
+            }
+        });
+    } else {
+        errorback(err, response, callback);
     }
-    error = new appErrors.RESTServerError(util.format(err));
+}
+
+function errorback(err, response, callback) {
+    var error = new appErrors.RESTServerError(util.format(err));
     error['custom'] = true;
-    error['responseCode'] = ((null != response) &&
-                             (null != response.statusCode)) ?
-                             response.statusCode :
-                             global.HTTP_STATUS_INTERNAL_ERROR;
+    error['responseCode'] = ((null != response) && (null != response.statusCode)) ?
+        response.statusCode : global.HTTP_STATUS_INTERNAL_ERROR;
     error['code'] = err.code;
     callback(error, '', response);
 }
@@ -304,7 +321,7 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
                     logutils.logger.error('URL [' + reqUrl + ']' +
                                           ' returned error [' + err + ']');
                 }
-                self.retryMakeCall(err, restApi, params, response, callback, false);
+                self.retryMakeCall(err, restApi, params, response, callback, isRetry || false);
             } else {
                 self.sendParsedDataToApp(data, xml2jsSettings, response,
                                          callback);
@@ -331,7 +348,7 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
                 logutils.logger.error('URL [' + reqUrl + ']' +
                                       ' returned error [' + data + ']');
             }
-            self.retryMakeCall(data, restApi, params, response, callback, false);
+            self.retryMakeCall(data, restApi, params, response, callback, isRetry || false);
         } else {
             self.sendParsedDataToApp(data, xml2jsSettings, response, callback);
         }
@@ -351,7 +368,7 @@ APIServer.prototype.makeCall = function (restApi, params, callback, isRetry)
 // Export this as a module.
 module.exports.getAPIServer = function (params)
 {
-	return new APIServer(params);
+    return new APIServer(params);
 };
 
 // Export this as a module.

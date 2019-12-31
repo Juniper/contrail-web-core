@@ -200,7 +200,7 @@ function doEnsureExecution (func, timeout, args, thisObj)
 }
 
 function getDataFromSandeshByIPUrl (apiServer, ignoreError, params, url,
-                                    callback)
+                                    callback, noRetry)
 {
     var reqTimeout = null;
     var isRawData = false;
@@ -229,7 +229,7 @@ function getDataFromSandeshByIPUrl (apiServer, ignoreError, params, url,
                             // TODO: Currently ignoring if link is broken.
                             newCallback(null, null);
                         }
-                    }, reqTimeout));
+                    }, reqTimeout), undefined, noRetry);
                 }
             }
         } else {
@@ -248,7 +248,7 @@ function getDataFromSandeshByIPUrl (apiServer, ignoreError, params, url,
                         } else {
                             newCallback(error, '');
                         }
-                    }, reqTimeout));
+                    }, reqTimeout), undefined, noRetry);
                 }
             };
         }
@@ -276,7 +276,7 @@ function getDataFromSandeshByIPUrl (apiServer, ignoreError, params, url,
                         callback(error);
                     }
                 }
-            }, reqTimeout));
+            }, reqTimeout), undefined, noRetry);
         }
     }
 }

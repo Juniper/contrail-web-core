@@ -14,7 +14,9 @@ var serviceRespData = {},
     activeServiceRespData = {},
     unChangedActiveSvcRespData = {},
     gServerHeaders = {},
-    contrailSvcTimer = null;
+    contrailSvcTimer = null,
+    onDemandServiceInProgress = {},
+    requestsDemandingService = {};
 
 function checkIfActiveServiceRespDataChanged (serviceType)
 {
@@ -74,19 +76,6 @@ function getActiveServiceRespDataList ()
     return activeServiceRespData;
 }
 
-function getActiveRequestedService (serviceType)
-{
-    var newServiceRespData = getActiveServiceRespDataList();
-    if(checkIfActiveServiceRespDataChanged(newServiceRespData, serviceType)) {
-        activeServiceRespData[serviceType] = newServiceRespData[serviceType];
-    } else {
-        activeServiceRespData =
-            _.isEmpty(activeServiceRespData) ?
-                    unChangedActiveSvcRespData : activeServiceRespData;
-    }
-    return activeServiceRespData;
-}
-
 function storeUnChangedActiveSvcRespData (serviceType, data)
 {
     if ((null == serviceType) || (null == data)) {
@@ -127,7 +116,7 @@ function getContrailServiceByServiceType (serviceType)
             } else {
                 var service =
                     activeServRespData[serviceType]['data'][serviceType].shift();
-                activeServRespData[serviceType]['data'][serviceType].push(service);
+                service && activeServRespData[serviceType]['data'][serviceType].push(service);
                 return service;
             }
         } catch(e) {
@@ -178,7 +167,7 @@ function getServerTypeByServerName (serverName)
     }
 }
 
-function resetServicesByParams (params, apiName)
+function obsoleteServiceNodeByParams (params, apiName)
 {
     var serviceType = getServerTypeByServerName(apiName);
     if (null == serviceType) {
@@ -187,12 +176,6 @@ function resetServicesByParams (params, apiName)
     try {
         var servData = activeServiceRespData[serviceType]['data'][serviceType];
         var servCnt = servData.length;
-        if (servCnt <= 1) {
-            /* Only one/no server, so no need to do any params update, as no other
-             * server available
-             */
-            return null;
-        }
         for (var i = 0; i < servCnt; i++) {
             if ((servData[i]['ip-address'] == params['url']) &&
                 (servData[i]['port'] == params['port'])) {
@@ -200,16 +183,10 @@ function resetServicesByParams (params, apiName)
                 break;
             }
         }
-        params['url'] =
-            activeServiceRespData[serviceType]['data'][serviceType][0]['ip-address'];
-        params['port'] =
-            activeServiceRespData[serviceType]['data'][serviceType][0]['port'];
     } catch(e) {
-        logutils.logger.error("In resetServicesByParams(): exception occurred" +
+        logutils.logger.error("In obsoleteServiceNodeByParams(): exception occurred" +
                               " " + e);
-        return null;
     }
-    return params;
 }
 
 function getTokenAndServerResponse (serviceObj, callback, stopRetry)
@@ -259,7 +236,7 @@ function getServerResponse (serviceObj, callback, stopRetry)
                                               function(error, data) {
             callback(null, {err: error, data:
                      {serviceType: serviceObj.serviceType, data: data}});
-        });
+        }, true);
         return;
     }
     apiServer.api.get(serviceObj.url, function(err, data) {
@@ -272,7 +249,7 @@ function getServerResponse (serviceObj, callback, stopRetry)
         }
         callback(null, {err: err, data:
                        {serviceType: serviceObj.serviceType, data: data}});
-    }, headers);
+    }, headers, true);
 }
 
 function subscribeToContrailService (serviceObj, callback)
@@ -301,29 +278,39 @@ function subscribeToContrailService (serviceObj, callback)
     getServerResponse(serviceObj, callback);
 }
 
-function getContrailServices ()
+function getContrailServices (serviceType, cb)
 {
     var dataObjArr = [];
 
-    /* opserver */
-    processContrailService(global.CONTRAIL_SERVICE_TYPE_OP_SERVER, dataObjArr);
+    if (serviceType === global.CONTRAIL_SERVICE_TYPE_OP_SERVER || !serviceType) {
+        /* opserver */
+        processContrailService(global.CONTRAIL_SERVICE_TYPE_OP_SERVER, dataObjArr, cb);
+    }
 
-    /* apiserver */
-    dataObjArr = [];
-    processContrailService(global.CONTRAIL_SERVICE_TYPE_API_SERVER, dataObjArr);
+    if (serviceType === global.CONTRAIL_SERVICE_TYPE_API_SERVER || !serviceType) {
+        /* apiserver */
+        dataObjArr = [];
+        processContrailService(global.CONTRAIL_SERVICE_TYPE_API_SERVER, dataObjArr, cb);
+    }
 
-    /* dnsserver */
-    dataObjArr = [];
-    processContrailService(global.CONTRAIL_SERVICE_TYPE_DNS_SERVER, dataObjArr);
+    if (serviceType === global.CONTRAIL_SERVICE_TYPE_DNS_SERVER || !serviceType) {
+        /* dnsserver */
+        dataObjArr = [];
+        processContrailService(global.CONTRAIL_SERVICE_TYPE_DNS_SERVER, dataObjArr, cb);
+    }
 }
 
-function processContrailService (serviceType, dataObjArr)
+function processContrailService (serviceType, dataObjArr, cb)
 {
     storeServiceRespData({"serviceType": serviceType},
             formatDataForContrailServices(serviceType,
                     dataObjArr));
     async.map(dataObjArr, subscribeToContrailService, function(err, data) {
         updateContrailServiceData(data);
+
+        if (typeof cb === 'function') {
+            cb(activeServiceRespData[serviceType]['data'][serviceType][0]);
+        }
     });
 }
 
@@ -417,9 +404,30 @@ function startWatchContrailServiceRetryList ()
             : global.CONTRAIL_SERVICE_RETRY_TIME);
 }
 
-function subscribeContrailServiceOnDemand ()
+function subscribeContrailServiceOnDemand (apiName, cb)
 {
-    getContrailServices();
+    var serviceType = getServerTypeByServerName(apiName);
+    if (typeof cb === 'function') {
+        if (!requestsDemandingService[serviceType]) {
+            requestsDemandingService[serviceType] = [];
+        }
+
+        requestsDemandingService[serviceType].push(cb);
+    }
+
+    if (!onDemandServiceInProgress[serviceType]) {
+        onDemandServiceInProgress[serviceType] = true;
+        getContrailServices(serviceType, function (serviceNodeMeta) {
+            var serviceNode = commonUtils.cloneObj(serviceNodeMeta);
+
+            requestsDemandingService[serviceType].forEach(function (cb) {
+                cb(serviceNode);
+            });
+
+            onDemandServiceInProgress[serviceType] = false;
+            requestsDemandingService[serviceType] = [];
+        });
+    }
 }
 
 function getContrailServiceRespDataList (req, res, appData)
@@ -432,7 +440,7 @@ exports.startWatchContrailServiceRetryList = startWatchContrailServiceRetryList;
 exports.subscribeContrailServiceOnDemand = subscribeContrailServiceOnDemand;
 exports.getContrailServiceByApiServerType = getContrailServiceByApiServerType;
 exports.getActiveServiceRespDataList = getActiveServiceRespDataList;
-exports.resetServicesByParams = resetServicesByParams;
+exports.obsoleteServiceNodeByParams = obsoleteServiceNodeByParams;
 exports.getContrailServiceRespDataList = getContrailServiceRespDataList;
 
 
