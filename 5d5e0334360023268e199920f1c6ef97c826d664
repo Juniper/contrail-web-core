@@ -16,6 +16,24 @@
       "revId": "5d5e0334360023268e199920f1c6ef97c826d664",
       "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e8f9765f_f26b0e60",
+        "filename": "src/serverroot/common/rest.api.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 302
+      },
+      "writtenOn": "2020-01-13T22:47:26Z",
+      "side": 1,
+      "message": "An attempt to distribute load to each listed service node evenly.\n\nOr I can use a global counter to circulate through the node list when a new server instance is created.",
+      "parentUuid": "2c82f644_c067d77e",
+      "revId": "5d5e0334360023268e199920f1c6ef97c826d664",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
     }
   ]
 }
