@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2c82f644_c067d77e",
+        "filename": "src/serverroot/common/rest.api.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 49
+      },
+      "writtenOn": "2020-01-13T20:10:39Z",
+      "side": 1,
+      "message": "Why we are doing for random IP?",
+      "revId": "5d5e0334360023268e199920f1c6ef97c826d664",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
