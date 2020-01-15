@@ -13,7 +13,7 @@ The Contrail Web Core repository contains back end (web server) code and common 
 
 The API requests from web client to web server and web server to other components are REST based.
 
-The code that **implements** various features of the Web UI (such as Dashboard, Configuration, Monitoring, Reporting) is available in a separate code repository [Contrail Web Controller](https://github.com/Juniper/contrail-web-controller/).
+The code that **implements** various features of the Web UI (such as Dashboard, Configuration, Monitoring, Reporting) is available in a separate code repository [Contrail Web Controller](https://github.com/tungstenfabric/tf-web-controller/).
 
 ### Setting up working environment for Contrail Web UI
 ---
@@ -48,7 +48,7 @@ HTTPS clone URL:
     
     git clone https://github.com/Juniper/contrail-web-core.git
 
-3) Get [Contrail Web Controller](https://github.com/Juniper/contrail-web-controller/) code.
+3) Get [Contrail Web Controller](https://github.com/tungstenfabric/tf-web-controller/) code.
 
     cd contrail-web-core
     make repos
@@ -169,7 +169,7 @@ Default credentials are
 
 **webroot** - Contains resources such as utility files, images, customized css commonly used to render Contrail Web UI. 
 
-Note: All the files/directories under 'webroot' directory of [Contrail Web Controller](https://github.com/Juniper/contrail-web-controller/) are copied under this directory during Contrail Web UI Package creation.
+Note: All the files/directories under 'webroot' directory of [Contrail Web Controller](https://github.com/tungstenfabric/tf-web-controller/) are copied under this directory during Contrail Web UI Package creation.
 
 
 ### Contributing code
