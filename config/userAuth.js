@@ -10,5 +10,7 @@ auth.admin_user = '';
 auth.admin_password = '';
 auth.admin_token = '';
 auth.admin_tenant_name = 'admin';
+auth.project_domain_name = 'default';
+auth.user_domain_name = 'default';
 
 module.exports = auth;

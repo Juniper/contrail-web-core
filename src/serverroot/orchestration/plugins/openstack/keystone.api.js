@@ -1552,6 +1552,16 @@ function getUserAuthDataByConfigAuthObj (authObj, callback)
             return;
         }
     }
+    if (null == authObj['domain']) {
+        if ((null != authParams) &&
+            (null != authParams.project_domain_name)) {
+            authObj['domain'] = authParams.project_domain_name;
+        } else {
+            callback(error, null);
+            return;
+        }
+    }
+
     getUserAuthDataByAuthObj(authObj, callback);
 }
 
