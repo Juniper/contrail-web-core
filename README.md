@@ -1,1 +1,1 @@
-Content was moved to github.com/tungstenfabric
+Content was moved to https://github.com/tungstenfabric/tf-web-core
