@@ -606,9 +606,13 @@ function formatV3AuthTokenData (authObj, isUnscoped)
     var projectId = authObj['projectid'];
     if ((null == authObj['domain']) &&
         (null != authObj['req'])) {
-        authObj['domain'] =
+        defDomain =
             commonUtils.getValueByJsonPath(authObj['req'], 'session;domain',
                                            null, false);
+        authObj['domain'] =
+            commonUtils.getValueByJsonPath(authObj['req'],
+                                           'cookies;' + global.COOKIE_DOMAIN_DISPLAY_NAME,
+                                           defDomain, false)
     }
     var domain = getV3DomainIfNotAvailable(authObj['domain']);
     var v3data = {};
