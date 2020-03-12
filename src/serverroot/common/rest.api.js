@@ -28,12 +28,16 @@ if (!module.parent) {
  */
 function APIServer(params)
 {
-	var self = this;
-	self.hostname = params.server;
-	self.port = params.port;
-	self.xml2jsSettings = params.xml2jsSettings || {};
-	self.isRawData = (null != params.isRawData) ? params.isRawData : false;
-	self.api = new self.API(self, params.apiName);
+    var self = this;
+    var hostIP = params.server;
+    if (Object.prototype.toString.call(hostIP) === "[object Array]") {
+        hostIP = hostIP[0];
+    }
+    self.hostname = hostIP;
+    self.port = params.port;
+    self.xml2jsSettings = params.xml2jsSettings || {};
+    self.isRawData = (null != params.isRawData) ? params.isRawData : false;
+    self.api = new self.API(self, params.apiName);
 }
 
 /**
