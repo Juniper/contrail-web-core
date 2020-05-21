@@ -2100,6 +2100,13 @@ function doV3Auth (req, callback)
                             (projectCookie != lastTenantObj['name'])) {
                             cookieProjObj = projects['projects'][i];
                         }
+                        /* (gzimin) Trying to set last tenant to admin.
+                           Between non-admin and admin tenant(project) we choose
+                           admin because with it WebUI has full functionality.
+                        */
+                        if (projects['projects'][i]['name'] == 'admin') {
+                            lastTenantObj = projects['projects'][i];
+                        }
                     }
                 }
                 projects['projects'] = [lastTenantObj];
