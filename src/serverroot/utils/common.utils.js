@@ -1384,7 +1384,16 @@ function getWebServerInfo (req, res, appData)
     }
     serverObj['serverUTCTime'] = commonUtils.getCurrentUTCTime();
     serverObj['hostName'] = os.hostname();
-    serverObj['role'] = req.session.userRole;
+    var sessionProject = getValueByJsonPath(req, 'cookies;' +
+        global.COOKIE_PROJECT_DISPLAY_NAME, null, false)
+    var userProject = getValueByJsonPath(req, 'cookies;' +
+        global.COOKIE_PROJECT_DISPLAY_NAME, sessionProject, false);
+    var userRole = req.session.userRole;
+    if (userProject != null) {
+        userRole = getValueByJsonPath(req, 'session;tokenObjs;' +
+            userProject + ';userRole', userRole, false);
+    }
+    serverObj['role'] = userRole;
     serverObj['featurePkg'] = {};
     serverObj['uiConfig'] = ui;
     serverObj['isAuthenticated'] = req.session.isAuthenticated;
