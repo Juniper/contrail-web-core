@@ -1339,6 +1339,11 @@ function updateTokenIdForProject (req, tenantId, accessData)
     }
     req.session.tokenObjs[tenantId] = accessData;
     req.session.userRoles = userRoleListByTokenObjs(req.session.tokenObjs);
+    var roles = commonUtils.getValueByJsonPath(accessData, 'user;roles', [])
+    if (roles.length > 0) {
+        req.session.userRole = getUIRolesByExtRoles(accessData['user']['roles'])
+        req.session.tokenObjs[tenantId]['userRole'] = req.session.userRole
+    }
     return;
 }
 
