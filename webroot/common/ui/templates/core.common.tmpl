@@ -1669,7 +1669,7 @@
         </tr>
         </thead>
         <tbody data-bind="foreach: {{collection}}">
-        <tr class="data-row" data-bind="css: 'data-row-' + $index()">
+        <tr class="data-row" data-bind="css: 'data-row-' + $index(){{#if userVisible}}, if: userVisible(){{/if}}">
             {{#each columns}}
             <td class="data-cell data-cell-{{elementId}}"
                 style="{{#if viewConfig.verticalAlign}}
