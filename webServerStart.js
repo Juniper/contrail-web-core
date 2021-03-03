@@ -160,7 +160,16 @@ function initializeAppConfig (appObj)
     app.use(helmet.xssFilter());
     // Implement X-Frame: SameOrigin
     app.use(helmet.xframe('sameorigin'));
-    // Implement Strict-Transport-Security
+    // Implement X-Content-Type-Options: nosniff
+    app.use(helmet.noSniff());
+    // Implement content-security-policy, Allow resources from our domain only.
+    app.use(helmet.contentSecurityPolicy({
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "https:", "data:"]
+      }));
+    
     var maxAgeTime =
         ((null != config.session) && (null != config.session.timeout)) ?
         config.session.timeout : global.MAX_AGE_SESSION_ID;
@@ -174,10 +183,12 @@ function initializeAppConfig (appObj)
     app.use(express.compress(compressOptions));
     express.static.mime.define({'text/tmpl': ['tmpl']});
     registerStaticFiles(app);
+    // Implement strict-transport-security
     app.use(helmet.hsts({
         maxAge: maxAgeTime,
         includeSubdomains: true
     }));
+    
     var cookieObj = {maxAge: maxAgeTime, httpOnly: true};
     if (false == insecureAccessFlag) {
         cookieObj['secure'] = true;
