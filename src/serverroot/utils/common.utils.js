@@ -1237,25 +1237,31 @@ function getApiPostData (url, postData)
 
 function redirectToLogout (req, res, callback)
 {
-    req.session.isAuthenticated = false;
-    res.clearCookie('_csrf');
-    res.clearCookie('connect.sid');
+    // Current session should be destroyed as logging out terminates it.
+    req.session.destroy(function (err) {
+        if (err) {
+            throw err;
+        }
 
-    //If URL has '/vcenter',then redirect to /vcenter/logout
-    //x-orchestrationmode is set only for ajax requests,so if user changes browser URL then we need to check for loggedInOrchestrationMode
-    if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'vcenter') {
-        redURL = '/vcenter';
-    } else if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'none') {
-        redURL = '/';
-    } else if(req['originalUrl'].indexOf('/vcenter') > -1) {
-        redURL = '/vcenter';
-    } else {
-        redURL = '/';
-    }
-    redirectToURL(req, res, redURL);
-    if (null != callback) {
-        callback();
-    }
+        res.clearCookie('_csrf');
+        res.clearCookie('connect.sid');
+
+        //If URL has '/vcenter',then redirect to /vcenter/logout
+        //x-orchestrationmode is set only for ajax requests,so if user changes browser URL then we need to check for loggedInOrchestrationMode
+        if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'vcenter') {
+            redURL = '/vcenter';
+        } else if(req.headers['x-orchestrationmode'] != null && req.headers['x-orchestrationmode'] == 'none') {
+            redURL = '/';
+        } else if(req['originalUrl'].indexOf('/vcenter') > -1) {
+            redURL = '/vcenter';
+        } else {
+            redURL = '/';
+        }
+        redirectToURL(req, res, redURL);
+        if (null != callback) {
+            callback();
+        }
+    });
 }
 
 function redirectToLogin (req, res)
