@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9eb09af7_dae15de6",
+        "filename": "src/serverroot/utils/common.utils.js",
+        "patchSetId": 1
+      },
+      "lineNbr": 1243,
+      "author": {
+        "id": 49
+      },
+      "writtenOn": "2021-08-10T19:48:08Z",
+      "side": 1,
+      "message": "Should we gracefully handle this?",
+      "revId": "77c55e995fa7bdcd7f8922f8d5ecb469358e3065",
+      "serverId": "c72cd27d-1743-4a55-84a4-cd13b8400c52",
+      "unresolved": true
+    }
+  ]
+}
