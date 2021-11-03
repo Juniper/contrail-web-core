@@ -19,6 +19,7 @@ var http = require('http'),
     vCenterApi = require('../../orchestration/plugins/vcenter/vcenter.api');
     fs = require('fs'),
     configUtils = require("../../common/config.utils"),
+    _ = require("lodash"),
     messages = require('../../common/messages');
 
 if (!module.parent) {
@@ -331,7 +332,14 @@ exports.authenticate = function (req, res, appData) {
             res.redirect(redirectURL);
             return;
         }
-        commonUtils.getWebServerInfo(req, res);
+        var oldsession=req.session;
+        req.session.regenerate(function(err){	
+            if (err) {	
+                throw err;	
+            }	
+            _.assign(req.session, oldsession);
+            commonUtils.getWebServerInfo(req, res);
+        });
     });
 }
 exports.vcenter_authenticate = function (req, res, appData) {
