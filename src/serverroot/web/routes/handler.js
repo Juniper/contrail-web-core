@@ -332,11 +332,11 @@ exports.authenticate = function (req, res, appData) {
             res.redirect(redirectURL);
             return;
         }
-        var oldsession=req.session;
-        req.session.regenerate(function(err){	
-            if (err) {	
-                throw err;	
-            }	
+        var oldsession = req.session;
+        req.session.regenerate(function(err){
+            if (err) {
+                logutils.logger.error("Error occurred while regenerating a session");
+            }
             _.assign(req.session, oldsession);
             commonUtils.getWebServerInfo(req, res);
         });
