@@ -1218,7 +1218,10 @@ if (typeof document !== 'undefined' && document) {
                             if (globalObj['webServerInfo'] != null && globalObj['webServerInfo']['loggedInOrchestrationMode'] != null)
                                 xhr.setRequestHeader("x-orchestrationmode", globalObj['webServerInfo']['loggedInOrchestrationMode']);
                             xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-                            xhr.setRequestHeader("X-CSRF-Token", globalObj['webServerInfo']['_csrf']);
+                            var token = globalObj['webServerInfo']['_csrf'];
+                            if (token) {
+                                xhr.setRequestHeader("X-CSRF-Token", globalObj['webServerInfo']['_csrf']);
+                            }
                         }
                     });
                     globalObj['webServerInfo'] = loadUtils.parseWebServerInfo(response);
@@ -1454,6 +1457,7 @@ if (typeof document !== 'undefined' && document) {
                 }).done(function (response) {
                     //Stop the periodic alarm bell update calls on logout
                     clearTimeout(globalObj['alarmTimerCnst']);
+                    globalObj['webServerInfo'] = {};
                     $('.connectedapplink').remove();
                     loadUtils.onAuthenticationReq(response);
                 });
@@ -1503,7 +1507,10 @@ if (typeof document !== 'undefined' && document) {
                     if (globalObj['webServerInfo'] != null && globalObj['webServerInfo']['loggedInOrchestrationMode'] != null)
                         xhr.setRequestHeader("x-orchestrationmode", globalObj['webServerInfo']['loggedInOrchestrationMode']);
                     xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-                    xhr.setRequestHeader("X-CSRF-Token", loadUtils.getCookie('_csrf'));
+                    var token = loadUtils.getCookie('_csrf');
+                    if (token) {
+                        xhr.setRequestHeader("X-CSRF-Token", loadUtils.getCookie('_csrf'));
+                    }
                 },
                 error: function (xhr, e) {
                     //ajaxDefErrorHandler(xhr);
